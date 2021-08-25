@@ -61,6 +61,7 @@ jobs:
       TZ: UTC
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      CODECOV_TOKEN: '7f0d3cdb-a444-4f90-b03e-75547e958f1e'
 
     steps:
 
