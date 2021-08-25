@@ -101,7 +101,7 @@ importPeaks <- function(
 
   ## Apply the blacklist if supplied
   if (!missing(blacklist)) {
-    stopifnot(is(blackList, "GRanges"))
+    stopifnot(is(blacklist, "GRanges"))
     gr <- gr[!overlapsAny(gr, blacklist)]
   }
 
