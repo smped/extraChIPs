@@ -3,4 +3,8 @@
 export(importPeaks)
 importFrom(GenomeInfoDb,seqinfo)
 importFrom(GenomeInfoDb,seqnames)
+importFrom(GenomicRanges,GRangesList)
+importFrom(GenomicRanges,makeGRangesFromDataFrame)
 importFrom(IRanges,overlapsAny)
+importFrom(methods,is)
+importFrom(utils,read.table)

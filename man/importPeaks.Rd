@@ -14,7 +14,8 @@ importPeaks(
 )
 }
 \arguments{
-\item{x}{One or more files to be imported}
+\item{x}{One or more files to be imported. All files must be of the same
+type, i.e. narrow or broad}
 
 \item{type}{The type of peaks to be imported}
 
@@ -37,4 +38,11 @@ Import peaks in narrowPeak or broadPeak format
 \details{
 Peaks are imported from either narrowPeak or broadPeak format as
 GenomicRanges objects.
+}
+\examples{
+fl <- system.file(
+"extdata", "testFiles", "test.narrowPeak", package = "chipExtra"
+)
+gr <- importPeaks(fl, "narrow")
+
 }
