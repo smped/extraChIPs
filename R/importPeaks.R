@@ -29,12 +29,14 @@ importPeaks <- function(
 
   stopifnot(file.exists(x))
   type <- match.arg(type)
+  pruning.mode <- match.arg(pruning.mode)
   n <- length(x)
   if (type == "narrow") {
     out <- lapply(
       x,
       .importSingleNarrow,
-      seqinfo = seqinfo, blacklist = blacklist, sort = sort
+      seqinfo = seqinfo, blacklist = blacklist, sort = sort,
+      pruning.mode = pruning.mode
     )
   }
 
@@ -42,7 +44,8 @@ importPeaks <- function(
     out <- lapply(
       x,
       .importSingleBroad,
-      seqinfo = seqinfo, blacklist = blacklist, sort = sort
+      seqinfo = seqinfo, blacklist = blacklist, sort = sort,
+      pruning.mode = pruning.mode
     )
   }
 
@@ -52,7 +55,7 @@ importPeaks <- function(
 
 }
 
-.importSingleNarrow <- function(x, seqinfo, blacklist, sort) {
+.importSingleNarrow <- function(x, seqinfo, blacklist, sort, pruning.mode) {
 
   stopifnot(length(x) == 1)
   stopifnot(.isValidNarrow(x))
@@ -72,7 +75,6 @@ importPeaks <- function(
   ## Perform the conversion to a GRanges
   if (!missing(seqinfo)) {
 
-    pruning.mode <- match.arg(pruning.mode)
     stopifnot(is(seqinfo, "Seqinfo"))
 
     ## Fail if there is a mismatch between any supplied seqnames and seqinfo
@@ -110,7 +112,7 @@ importPeaks <- function(
 
 }
 
-.importSingleBroad <- function(x, seqinfo, blacklist, sort) {
+.importSingleBroad <- function(x, seqinfo, blacklist, sort, pruning.mode) {
 
   stopifnot(length(x) == 1)
   stopifnot(.isValidBroad(x))
@@ -130,7 +132,6 @@ importPeaks <- function(
   ## Perform the conversion to a GRanges
   if (!missing(seqinfo)) {
 
-    pruning.mode <- match.arg(pruning.mode)
     stopifnot(is(seqinfo, "Seqinfo"))
 
     ## Fail if there is a mismatch between any supplied seqnames and seqinfo
