@@ -1,0 +1,9 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+temp/*
+testing*
+*Rproj
+vignettes/*html
+vignettes/*R

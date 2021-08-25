@@ -1,0 +1,27 @@
+Package: chipExtra
+Version: 0.1.0
+Date: 2021/08/25
+Title: Additional functions for working with ChIP-Seq data
+Authors@R: person("Steve", "Pederson", 
+  email = "stephen.pederson.au@gmail.com", role = c("aut", "cre"))
+Description: This package builds on existing tools and adds some simple but
+   extremely useful capabilities
+License: file LICENSE
+Encoding: UTF-8
+LazyData: true
+URL: https://github.com/steveped/chipExtra
+BugReports: https://github.com/steveped/chipExtra/issues
+Depends:
+  GenomicRanges,
+  Gviz
+Imports:
+  GenomeInfoDb,
+  IRanges
+VignetteBuilder: knitr
+Suggests: 
+    testthat (>= 3.0.0)
+biocViews: ChIPSeq
+RdMacros: lifecycle
+Roxygen: list(markdown = TRUE)  
+RoxygenNote: 7.1.1
+Config/testthat/edition: 3
