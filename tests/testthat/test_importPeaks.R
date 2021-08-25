@@ -25,3 +25,50 @@ test_that("broadPeak files parse correctly", {
   expect_true(all(vapply(mcols(gr), is.numeric, logical(1))))
 })
 
+test_that("seqinfo objects behave correctly", {
+  fl <- system.file(
+    "extdata/testFiles", "test.narrowPeak", package = "chipExtra"
+  )
+  ## Succeed
+  expect_type(
+    importPeaks(
+      fl, type = "narrow",
+      seqinfo = Seqinfo(seqnames = "chr1", seqlengths = 8100000)
+    ),
+    "S4"
+  )
+  ## Empty GRanges
+  expect_message(
+    importPeaks(
+      fl, type = "narrow",
+      seqinfo = Seqinfo(seqnames = "chr2"),
+      pruning.mode = "coarse"
+    ),
+    "No ranges match the supplied seqinfo object"
+  )
+  ## Error
+  expect_error(
+    importPeaks(
+      fl, type = "narrow",
+      seqinfo = Seqinfo(seqnames = "chr2"),
+      pruning.mode = "error"
+    )
+  )
+  ## Error
+  expect_error(
+    importPeaks(fl, "narrow", seqinfo = NULL)
+  )
+})
+
+test_that("blacklists behave correctly",{
+  fl <- system.file(
+    "extdata/testFiles", "test.narrowPeak", package = "chipExtra"
+  )
+  expect_error(
+    importPeaks(gr, "narrow", blacklist = NULL)
+  )
+  expect_equal(
+    length(importPeaks(fl, blacklist = GRanges("chr1:1299700"))),
+    1L
+  )
+})
