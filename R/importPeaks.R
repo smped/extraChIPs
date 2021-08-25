@@ -158,7 +158,7 @@ importPeaks <- function(
 
   ## Apply the blacklist if supplied
   if (!missing(blacklist)) {
-    stopifnot(is(blackList, "GRanges"))
+    stopifnot(is(blacklist, "GRanges"))
     gr <- gr[!overlapsAny(gr, blacklist)]
   }
 
@@ -172,23 +172,25 @@ importPeaks <- function(
 .isValidNarrow <- function(x) {
   r1 <- read.table(x, sep = "\t", nrows = 1)
   nCols <- ncol(r1) == 10
+  if (!nCols) return(FALSE)
   allNumerics <- suppressWarnings(
     !anyNA(
       vapply(r1[c(2, 3, 5, 7, 8, 9, 10)], as.numeric, numeric(1))
     )
   )
   strandOK <- r1[[6]] %in% c("+", "-", ".")
-  all(nCols, allNumerics, strandOK)
+  all(allNumerics, strandOK)
 }
 
 .isValidBroad <- function(x) {
   r1 <- read.table(x, sep = "\t", nrows = 1)
   nCols <- ncol(r1) == 9
+  if (!nCols) return(FALSE)
   allNumerics <- suppressWarnings(
     !anyNA(
       vapply(r1[c(2, 3, 5, 7, 8, 9)], as.numeric, numeric(1))
     )
   )
   strandOK <- r1[[6]] %in% c("+", "-", ".")
-  all(nCols, allNumerics, strandOK)
+  all(allNumerics, strandOK)
 }

@@ -4,3 +4,4 @@
 ^testing.R$
 ^temp/*$
 ^.github
+^codecov\.yml$

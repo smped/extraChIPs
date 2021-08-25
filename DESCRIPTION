@@ -18,6 +18,7 @@ Imports:
   GenomeInfoDb,
   IRanges
 Suggests: 
+    covr,
     testthat (>= 3.0.0)
 biocViews: ChIPSeq
 Roxygen: list(markdown = TRUE)  
