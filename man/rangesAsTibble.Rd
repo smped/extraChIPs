@@ -5,7 +5,7 @@
 \alias{mcolsAsTibble}
 \title{Convert GRanges to a tibble}
 \usage{
-rangesAsTibble(x, var = "range", drop.existing = TRUE)
+rangesAsTibble(x, var = "range", drop.existing = FALSE)
 
 mcolsAsTibble(x)
 }

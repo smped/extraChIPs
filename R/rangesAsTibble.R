@@ -26,11 +26,11 @@
 #' mcolsAsTibble(gr)
 #'
 #' @export
-rangesAsTibble <- function(x, var = "range", drop.existing = TRUE) {
+rangesAsTibble <- function(x, var = "range", drop.existing = FALSE) {
     stopifnot(is(x, "GRanges"))
     df <- as.data.frame(mcols(x))
     cols <- colnames(df)
-    if (!drop.existing & var  %in% cols)
+    if (!drop.existing & var %in% cols)
         stop("The column ", var, " already exists")
     df[[var]] <- as.character(granges(x))
     as_tibble(df[unique(c(var, cols))])
