@@ -18,6 +18,8 @@ Imports:
   GenomeInfoDb,
   IRanges,
   methods,
+  S4Vectors,
+  tibble,
   utils
 Suggests: 
     covr,
