@@ -15,6 +15,7 @@
 #' implemented. See \link[GenomeInfoDb]{seqinfo}.
 #' @param blacklist A set of ranges to be excluded
 #' @param sort logical. Should the ranges be sorted during import
+#' @param ... passed to `sort`
 #'
 #' @return
 #' GRanges or GRangesList depending on the length of the supplied files in `x`
@@ -31,60 +32,70 @@
 #' @export
 importPeaks <- function(
     x, type = c("narrow", "broad"), seqinfo,
-    pruning.mode = c("coarse", "error"), blacklist, sort = TRUE
+    pruning.mode = c("coarse", "error"), blacklist, sort = TRUE, ...
 ) {
 
     stopifnot(file.exists(x))
     type <- match.arg(type)
     pruning.mode <- match.arg(pruning.mode)
     n <- length(x)
-    if (type == "narrow") {
-        out <- lapply(
-            x,
-            .importSingleNarrow,
-            seqinfo = seqinfo, blacklist = blacklist, sort = sort,
-            pruning.mode = pruning.mode
-        )
-    }
-
-    if (type == "broad") {
-        out <- lapply(
-            x,
-            .importSingleBroad,
-            seqinfo = seqinfo, blacklist = blacklist, sort = sort,
-            pruning.mode = pruning.mode
-        )
-    }
+    out <- lapply(
+        x,
+        .importPeakFile,
+        type = type, seqinfo = seqinfo, blacklist = blacklist, sort = sort,
+        pruning.mode = pruning.mode
+    )
 
     out <- GRangesList(out)
+    if (sort) sort(out, ...)
     if (n == 1) out <- out[[1]]
     out
 
 }
 
-#' @importFrom GenomicRanges makeGRangesFromDataFrame
+#' @importFrom GenomicRanges makeGRangesFromDataFrame GRanges
 #' @importFrom methods is
 #' @importFrom utils read.table
-.importSingleNarrow <- function(x, seqinfo, blacklist, sort, pruning.mode) {
+.importPeakFile <- function(x, type, seqinfo, blacklist, sort, pruning.mode) {
 
     stopifnot(length(x) == 1)
-    stopifnot(.isValidNarrow(x))
-    stopifnot(is.logical(sort))
-    colNames <- c(
-        "seqnames", "start", "end", "name", "score", "strand", "signalValue",
-        "pValue", "qValue", "peak"
-    )
-    classes <- c(
-        "character", "numeric", "numeric", "character", "numeric", "character",
-        rep("numeric", 4)
-    )
-    df <- read.table(x, sep = "\t", col.names = colNames, colClasses = classes)
-    rownames(df) <- df[["name"]]
-    df <- df[-4]
-
-    ## Perform the conversion to a GRanges
     if (!missing(seqinfo)) {
         stopifnot(is(seqinfo, "Seqinfo"))
+    } else {
+        seqinfo <- NULL
+    }
+
+    ## Handle empty files separately first
+    if (file.size(x) == 0) return(GRanges(NULL, seqinfo = seqinfo))
+
+    ## Define the parameters for the two types
+    colNames <- c(
+        "seqnames", "start", "end", "name", "score", "strand",
+        "signalValue", "pValue", "qValue", "peak"
+    )
+    classes <- c(
+        "character", "numeric", "numeric", "character", "numeric",
+        "character", rep("numeric", 4)
+    )
+    if (type == "narrow") {
+        stopifnot(.isValidNarrow(x))
+        ind <- seq_along(colNames)
+    }
+    if (type == "broad") {
+        stopifnot(.isValidBroad(x))
+        ind <- seq_len(length(colNames) - 1)
+    }
+
+    ## Parse
+    df <- read.table(
+        x, sep = "\t", col.names = colNames[ind], colClasses = classes[ind]
+    )
+    rownames(df) <- df[["name"]]
+    df <- df[-4] # The name column has been set as rownames
+
+    ## Deal with the Seqinfo object
+    if (!is.null(seqinfo)) {
+
         ## Fail if there is a mismatch between any seqnames and seqinfo
         if (pruning.mode == "error")
             stopifnot(df[["seqnames"]] %in% seqnames(seqinfo))
@@ -93,78 +104,18 @@ importPeaks <- function(
             df <- subset(df, seqnames %in% seqnames(seqinfo))
         if (nrow(df) == 0)
             message("No ranges match the supplied seqinfo object")
-        gr <- makeGRangesFromDataFrame(
-            df, keep.extra.columns = TRUE, seqinfo = seqinfo,
-            starts.in.df.are.0based = TRUE
-        )
-    } else {
-        gr <- makeGRangesFromDataFrame(
-            df, keep.extra.columns = TRUE, starts.in.df.are.0based = TRUE
-        )
     }
+
+    ## Form the object
+    gr <- makeGRangesFromDataFrame(
+        df, keep.extra.columns = TRUE, seqinfo = seqinfo,
+        starts.in.df.are.0based = TRUE
+    )
 
     ## Apply the blacklist if supplied
-    if (!missing(blacklist)) {
-        stopifnot(is(blacklist, "GRanges"))
-        gr <- gr[!overlapsAny(gr, blacklist)]
-    }
-
-    ## Sort if required
-    if (sort) gr <- sort(gr)
-    gr
-
-}
-
-#' @importFrom GenomicRanges makeGRangesFromDataFrame
-#' @importFrom methods is
-#' @importFrom utils read.table
-.importSingleBroad <- function(x, seqinfo, blacklist, sort, pruning.mode) {
-
-    stopifnot(length(x) == 1)
-    stopifnot(.isValidBroad(x))
-    stopifnot(is.logical(sort))
-    colNames <- c(
-        "seqnames", "start", "end", "name", "score", "strand", "signalValue",
-        "pValue", "qValue"
-    )
-    classes <- c(
-        "character", "numeric", "numeric", "character", "numeric", "character",
-        rep("numeric", 3)
-    )
-    df <- read.table(x, sep = "\t", col.names = colNames, colClasses = classes)
-    rownames(df) <- df[["name"]]
-    df <- df[-4]
-
-    ## Perform the conversion to a GRanges
-    if (!missing(seqinfo)) {
-        stopifnot(is(seqinfo, "Seqinfo"))
-        ## Fail if there is a mismatch between any seqnames and seqinfo
-        if (pruning.mode == "error")
-            stopifnot(df[["seqnames"]] %in% seqnames(seqinfo))
-        ## Subset to remove any ranges which are not included in seqinfo
-        if (pruning.mode == "coarse")
-            df <- subset(df, seqnames %in% seqnames(seqinfo))
-        if (nrow(df) == 0)
-            message("No ranges match the supplied seqinfo object")
-        gr <- makeGRangesFromDataFrame(
-            df, keep.extra.columns = TRUE, seqinfo = seqinfo,
-            starts.in.df.are.0based = TRUE
-        )
-    } else {
-        gr <- makeGRangesFromDataFrame(
-            df, keep.extra.columns = TRUE, starts.in.df.are.0based = TRUE
-        )
-    }
-
-    ## Apply the blacklist if supplied
-    if (!missing(blacklist)) {
-        stopifnot(is(blacklist, "GRanges"))
-        gr <- gr[!overlapsAny(gr, blacklist)]
-    }
-
-    ## Sort if required
-    if (sort) gr <- sort(gr)
-    gr
+    if (missing(blacklist)) blacklist <- GRanges()
+    stopifnot(is(blacklist, "GRanges"))
+    gr[!overlapsAny(gr, blacklist)]
 
 }
 

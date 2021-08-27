@@ -3,6 +3,7 @@
 export(importPeaks)
 importFrom(GenomeInfoDb,seqinfo)
 importFrom(GenomeInfoDb,seqnames)
+importFrom(GenomicRanges,GRanges)
 importFrom(GenomicRanges,GRangesList)
 importFrom(GenomicRanges,makeGRangesFromDataFrame)
 importFrom(IRanges,overlapsAny)

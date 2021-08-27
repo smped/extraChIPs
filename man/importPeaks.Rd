@@ -10,7 +10,8 @@ importPeaks(
   seqinfo,
   pruning.mode = c("coarse", "error"),
   blacklist,
-  sort = TRUE
+  sort = TRUE,
+  ...
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ implemented. See \link[GenomeInfoDb]{seqinfo}.}
 \item{blacklist}{A set of ranges to be excluded}
 
 \item{sort}{logical. Should the ranges be sorted during import}
+
+\item{...}{passed to \code{sort}}
 }
 \value{
 GRanges or GRangesList depending on the length of the supplied files in \code{x}
