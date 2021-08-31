@@ -13,7 +13,7 @@ Encoding: UTF-8
 URL: https://github.com/steveped/chipExtra
 BugReports: https://github.com/steveped/chipExtra/issues
 Depends:
-  R (>= 4.1.1),
+  R (>= 4.1.0),
   GenomicRanges
 Imports:
   GenomeInfoDb,
