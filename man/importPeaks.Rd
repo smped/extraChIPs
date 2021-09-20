@@ -7,9 +7,9 @@
 importPeaks(
   x,
   type = c("narrow", "broad"),
+  blacklist,
   seqinfo,
   pruning.mode = c("coarse", "error"),
-  blacklist,
   sort = TRUE,
   ...
 )
@@ -20,20 +20,20 @@ type, i.e. narrow or broad}
 
 \item{type}{The type of peaks to be imported}
 
+\item{blacklist}{A set of ranges to be excluded}
+
 \item{seqinfo}{A seqinfo object to be applied to the GRanges objects}
 
 \item{pruning.mode}{How to handle conflicts if supplying a seqinfo object.
 Defaults to \code{pruning.mode = "coarse"}. Only "coarse" and "error" are
 implemented. See \link[GenomeInfoDb]{seqinfo}.}
 
-\item{blacklist}{A set of ranges to be excluded}
-
 \item{sort}{logical. Should the ranges be sorted during import}
 
 \item{...}{passed to \code{sort}}
 }
 \value{
-GRanges or GRangesList depending on the length of the supplied files in \code{x}
+A GRangesList
 }
 \description{
 Import peaks in narrowPeak or broadPeak format

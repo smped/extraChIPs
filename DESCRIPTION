@@ -1,5 +1,5 @@
 Package: chipExtra
-Version: 0.1.0
+Version: 0.1.1
 Date: 2021/08/25
 Title: Additional functions for working with ChIP-Seq data
 Authors@R: person("Stephen", "Pederson", 
@@ -16,9 +16,11 @@ Depends:
   R (>= 4.1.0),
   GenomicRanges
 Imports:
+  forcats,
   GenomeInfoDb,
   IRanges,
   methods,
+  plyranges,
   S4Vectors,
   tibble,
   utils
@@ -27,5 +29,5 @@ Suggests:
     testthat (>= 3.0.0)
 biocViews: ChIPSeq, Sequencing
 Roxygen: list(markdown = TRUE)  
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Config/testthat/edition: 3

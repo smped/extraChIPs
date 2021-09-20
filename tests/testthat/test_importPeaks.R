@@ -5,7 +5,10 @@ test_that("narrowPeak files parse correctly", {
   expect_true(.isValidNarrow(fl))
   expect_false(.isValidBroad(fl))
 
-  gr <- importPeaks(fl, type = "narrow")
+  grl <- importPeaks(fl, type = "narrow")
+  gr <- unlist(grl)
+
+  expect_equal(length(grl), 1L)
   expect_equal(length(gr), 2L)
   expect_equal(width(gr), c(171, 343)) # Checks for 0-based ranges
   expect_equal(ncol(mcols(gr)), 5L)
@@ -18,7 +21,11 @@ test_that("broadPeak files parse correctly", {
   )
   expect_false(.isValidNarrow(fl))
   expect_true(.isValidBroad(fl))
-  gr <- importPeaks(fl, type = "broad")
+
+  grl <- importPeaks(fl, type = "broad")
+  gr <- unlist(grl)
+
+  expect_equal(length(grl), 1L)
   expect_equal(length(gr), 2L)
   expect_equal(width(gr), c(171, 343)) # Checks for 0-based ranges
   expect_equal(ncol(mcols(gr)), 4L)
@@ -126,13 +133,13 @@ test_that("Empty files parse empty GRanges", {
   file.create(fl)
   np1 <- importPeaks(fl, type = "narrow")
   bp1 <- importPeaks(fl, type = "broad")
-  expect_true(is(c(np1, bp1), "GRanges"))
-  expect_equal(length(c(np1, bp1)), 0)
+  expect_true(is(c(np1, bp1), "GRangesList"))
+  expect_equal(vapply(c(np1, bp1), length, integer(1)), c(0, 0))
 
   # And with a seqinfo
   sq <- Seqinfo(seqnames = "chr1")
   np2 <- importPeaks(fl, type = "narrow", seqinfo = sq)
   bp2 <- importPeaks(fl, type = "broad", seqinfo = sq)
-  expect_true(is(c(np2, bp2), "GRanges"))
-  expect_equal(length(c(np2, bp2)), 0)
+  expect_true(is(c(np1, bp1), "GRangesList"))
+  expect_equal(vapply(c(np1, bp1), length, integer(1)), c(0, 0))
 })

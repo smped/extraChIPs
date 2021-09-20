@@ -9,16 +9,16 @@
 #' @param x One or more files to be imported. All files must be of the same
 #' type, i.e. narrow or broad
 #' @param type The type of peaks to be imported
+#' @param blacklist A set of ranges to be excluded
 #' @param seqinfo A seqinfo object to be applied to the GRanges objects
 #' @param pruning.mode How to handle conflicts if supplying a seqinfo object.
 #' Defaults to `pruning.mode = "coarse"`. Only "coarse" and "error" are
 #' implemented. See \link[GenomeInfoDb]{seqinfo}.
-#' @param blacklist A set of ranges to be excluded
 #' @param sort logical. Should the ranges be sorted during import
 #' @param ... passed to `sort`
 #'
 #' @return
-#' GRanges or GRangesList depending on the length of the supplied files in `x`
+#' A GRangesList
 #'
 #' @examples
 #' fl <- system.file(
@@ -31,24 +31,26 @@
 #' @importFrom GenomicRanges GRangesList
 #' @export
 importPeaks <- function(
-    x, type = c("narrow", "broad"), seqinfo,
-    pruning.mode = c("coarse", "error"), blacklist, sort = TRUE, ...
+    x, type = c("narrow", "broad"), blacklist,
+    seqinfo, pruning.mode = c("coarse", "error"),
+    sort = TRUE, ...
 ) {
 
+    ## Argument checks
     stopifnot(file.exists(x))
     type <- match.arg(type)
     pruning.mode <- match.arg(pruning.mode)
+    stopifnot(is.logical(sort))
     n <- length(x)
     out <- lapply(
         x,
         .importPeakFile,
-        type = type, seqinfo = seqinfo, blacklist = blacklist, sort = sort,
+        type = type, seqinfo = seqinfo, blacklist = blacklist,
         pruning.mode = pruning.mode
     )
 
     out <- GRangesList(out)
     if (sort) sort(out, ...)
-    if (n == 1) out <- out[[1]]
     out
 
 }
@@ -56,7 +58,7 @@ importPeaks <- function(
 #' @importFrom GenomicRanges makeGRangesFromDataFrame GRanges
 #' @importFrom methods is
 #' @importFrom utils read.table
-.importPeakFile <- function(x, type, seqinfo, blacklist, sort, pruning.mode) {
+.importPeakFile <- function(x, type, seqinfo, blacklist, pruning.mode) {
 
     stopifnot(length(x) == 1)
     if (!missing(seqinfo)) {
@@ -113,7 +115,7 @@ importPeaks <- function(
     )
 
     ## Apply the blacklist if supplied
-    if (missing(blacklist)) blacklist <- GRanges()
+    if (missing(blacklist)) blacklist <- GRanges(seqinfo = seqinfo)
     stopifnot(is(blacklist, "GRanges"))
     gr[!overlapsAny(gr, blacklist)]
 
