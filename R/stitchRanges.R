@@ -19,13 +19,13 @@
 #'
 #' @examples
 #' x <- GRanges(c("chr1:1-10", "chr1:101-110", "chr1:1001-1010", "chr2:1-10"))
-#' stitchRanges(x, exclude = GRanges("chr1:200:+"))
-#' stitchRanges(x)
+#' y <- GRanges("chr1:200:+")
+#' stitchRanges(x, exclude = y)
 #'
 #' @importFrom plyranges join_nearest_upstream
 #' @importFrom forcats fct_explicit_na
-#' @importFrom S4Vectors splitAsList
-#' @importFrom GenomicRanges `strand<-`
+#' @importFrom S4Vectors splitAsList subjectHits
+#' @importFrom GenomicRanges `strand<-` precede resize shift
 #' @export
 stitchRanges <- function(x, exclude, maxgap = 12500L, ignore.strand = TRUE) {
 
@@ -36,22 +36,25 @@ stitchRanges <- function(x, exclude, maxgap = 12500L, ignore.strand = TRUE) {
   stopifnot(is.numeric(maxgap))
   stopifnot(is.logical(ignore.strand))
 
-  if (ignore.strand) {
-    strand(x) <- "*"
-    strand(exclude) <- "*"
-  }
+  ## Add point ranges to the end of the `exclude` object to ensure no NA values
+  ## are returned by precede
+  ## Although this should use seqinfo objects, this is more pragmatic and
+  ## allows for a missing seqinfo on either object. Perhaps this should be
+  ## added as a check at some point. Enforcing strict compatibility is a good
+  ## thing
+  all_gr <- c(x, exclude)
+  all_gr <- range(all_gr, ignore.strand = ignore.strand)
+  chr_lim <- resize(
+    all_gr, width = 1, fix = "end", ignore.strand = ignore.strand
+  )
+  chr_lim <- shift(chr_lim, 1)
+  exclude <- sort(c(exclude, chr_lim), ignore.strand = ignore.strand)
+  hits <- precede(x, exclude, select = "all", ignore.strand = ignore.strand)
 
-  exclude$id <- as.factor(seq_along(exclude))
-  out <- join_nearest_upstream(x, exclude)
-  ## Join nearest will drop any ranges beyond which there is no exclusionary
-  ## range. Add these back & set as End-Of-Chromosome so they're not dropped
-  out <- c(out, GenomicRanges::setdiff(x, out))
-  out$id <- fct_explicit_na(out$id, "EOC")
-  out <- splitAsList(out, f = out$id)
+  out <- splitAsList(x, subjectHits(hits))
   out <- GenomicRanges::reduce(out, min.gapwidth = maxgap)
   out <- unlist(out)
   names(out) <- c()
-
   out
 
 }
