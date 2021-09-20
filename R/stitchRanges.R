@@ -22,7 +22,6 @@
 #' y <- GRanges("chr1:200:+")
 #' stitchRanges(x, exclude = y)
 #'
-#' @importFrom plyranges join_nearest_upstream
 #' @importFrom forcats fct_explicit_na
 #' @importFrom S4Vectors splitAsList subjectHits
 #' @importFrom GenomicRanges `strand<-` precede resize shift
@@ -49,9 +48,9 @@ stitchRanges <- function(x, exclude, maxgap = 12500L, ignore.strand = TRUE) {
   )
   chr_lim <- shift(chr_lim, 1)
   exclude <- sort(c(exclude, chr_lim), ignore.strand = ignore.strand)
-  hits <- precede(x, exclude, select = "all", ignore.strand = ignore.strand)
+  hits <- precede(x, exclude, ignore.strand = ignore.strand)
 
-  out <- splitAsList(x, subjectHits(hits))
+  out <- splitAsList(x, hits)
   out <- GenomicRanges::reduce(out, min.gapwidth = maxgap)
   out <- unlist(out)
   names(out) <- c()

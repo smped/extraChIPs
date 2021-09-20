@@ -20,7 +20,6 @@ Imports:
   GenomeInfoDb,
   IRanges,
   methods,
-  plyranges,
   S4Vectors,
   tibble,
   utils
