@@ -14,13 +14,20 @@ URL: https://github.com/steveped/chipExtra
 BugReports: https://github.com/steveped/chipExtra/issues
 Depends:
   R (>= 4.1.0),
-  GenomicRanges
+  BiocParallel,
+  GenomicRanges,
+  Rsamtools,
+  SummarizedExperiment
 Imports:
+  BiocIO,
+  csaw,
+  edgeR,
   forcats,
   GenomeInfoDb,
   IRanges,
   methods,
   S4Vectors,
+  stats,
   tibble,
   utils
 Suggests: 
