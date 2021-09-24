@@ -42,7 +42,9 @@
 #' @importMethodsFrom SummarizedExperiment rowData 'rowData<-'
 #' @importMethodsFrom SummarizedExperiment assay 'assay<-'
 #' @export
-dualFilter <- function(x, bg, ref, q = 0.99, logCPM = TRUE, BPPARAM = bpparam()) {
+dualFilter <- function(
+  x, bg, ref, q = 0.99, logCPM = TRUE, BPPARAM = bpparam()
+) {
 
   ## Argument checks
   stopifnot(is(x, "RangedSummarizedExperiment"))
@@ -64,31 +66,21 @@ dualFilter <- function(x, bg, ref, q = 0.99, logCPM = TRUE, BPPARAM = bpparam())
   stopifnot(any(ol))
 
   rp <- readParam()
-  if (!is.null(metadata(x)$param)) {
-    rp <- metadata(x)$param
-  }
+  if (!is.null(metadata(x)$param)) rp <- metadata(x)$param
 
   ## Apply the filter using control samples
   bin_size <- 1e4
   signal_counts <- windowCounts(
     bam.files = bfl,
-    spacing = bin_size,
-    filter = 0,
-    param = rp,
-    BPPARAM = BPPARAM
+    spacing = bin_size, filter = 0, param = rp, BPPARAM = BPPARAM
   )
   bg_counts <- windowCounts(
     bam.files = bg_bfl,
-    spacing = bin_size,
-    filter = 0,
-    param = rp,
-    BPPARAM = BPPARAM
+    spacing = bin_size, filter = 0, param = rp, BPPARAM = BPPARAM
   )
   scf <- scaleControlFilter(signal_counts, bg_counts)
   control_filter <- filterWindowsControl(
-    data = x,
-    background = bg,
-    scale.info = scf
+    data = x, background = bg, scale.info = scf
   )$filter
   cuts <- list()
   cuts$control <- quantile(control_filter[ol], probs = 1 - sqrt(q))

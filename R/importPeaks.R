@@ -75,23 +75,16 @@ importPeaks <- function(
         "seqnames", "start", "end", "name", "score", "strand",
         "signalValue", "pValue", "qValue", "peak"
     )
-    classes <- c(
-        "character", "numeric", "numeric", "character", "numeric",
-        "character", rep("numeric", 4)
-    )
-    if (type == "narrow") {
-        stopifnot(.isValidNarrow(x))
-        ind <- seq_along(colNames)
-    }
+    if (type == "narrow") stopifnot(.isValidNarrow(x))
     if (type == "broad") {
         stopifnot(.isValidBroad(x))
-        ind <- seq_len(length(colNames) - 1)
+        colNames <- setdiff(colNames, "peak")
     }
+    classes <- c("character", "numeric", "numeric", "character", "numeric",
+                 "character", rep("numeric", 4))[seq_along(colNames)]
 
     ## Parse
-    df <- read.table(
-        x, sep = "\t", col.names = colNames[ind], colClasses = classes[ind]
-    )
+    df <- read.table(x, sep = "\t", col.names = colNames, colClasses = classes)
     rownames(df) <- df[["name"]]
     df <- df[-4] # The name column has been set as rownames
 
@@ -110,8 +103,7 @@ importPeaks <- function(
 
     ## Form the object
     gr <- makeGRangesFromDataFrame(
-        df, keep.extra.columns = TRUE, seqinfo = seqinfo,
-        starts.in.df.are.0based = TRUE
+        df, TRUE, seqinfo = seqinfo, starts.in.df.are.0based = TRUE
     )
 
     ## Apply the blacklist if supplied

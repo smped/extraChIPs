@@ -1,5 +1,5 @@
 Package: chipExtra
-Version: 0.1.2
+Version: 0.1.3
 Date: 2021/08/25
 Title: Additional functions for working with ChIP-Seq data
 Authors@R: person("Stephen", "Pederson", 
@@ -25,6 +25,7 @@ Imports:
   forcats,
   GenomeInfoDb,
   IRanges,
+  limma,
   methods,
   S4Vectors,
   stats,
