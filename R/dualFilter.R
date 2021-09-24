@@ -12,7 +12,8 @@
 #'
 #' Cutoff values are found such that the `q` of the windows which overlap one of
 #' the reference ranges will be returned, along with any others which match the
-#' filtering criteria
+#' filtering criteria. Cutoff values for both criteria are added to the metadata
+#' element of the returned object
 #'
 #' @param x RangedSummarizedExperiment containing sample counts
 #' @param bg RangedSummarizedExperiment containing background/input counts
@@ -25,7 +26,7 @@
 #' @return
 #' A \link[SummarizedExperiment]{RangedSummarizedExperiment} which is a
 #' filtered subset of the original object. If requested the assay "logCPM" will
-#' be added
+#' be added (`TRUE` by default)
 #'
 #' @importFrom Rsamtools BamFileList
 #' @importFrom BiocIO path
@@ -92,6 +93,7 @@ dualFilter <- function(
   keep <- control_filter > cuts$control & prop_filter > cuts$prop
   out <- x[keep,]
   rowData(out)$overlaps_ref <- ol[keep]
+  metadata(out)$cuts <- cuts
 
   if (logCPM){
     assay(out, "logCPM") <- cpm(

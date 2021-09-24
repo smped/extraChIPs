@@ -23,7 +23,7 @@ when tuning the filtering criteria}
 \value{
 A \link[SummarizedExperiment]{RangedSummarizedExperiment} which is a
 filtered subset of the original object. If requested the assay "logCPM" will
-be added
+be added (\code{TRUE} by default)
 }
 \description{
 Apply two filters to counts generated using sliding windows
@@ -38,5 +38,6 @@ filtering criteria.
 
 Cutoff values are found such that the \code{q} of the windows which overlap one of
 the reference ranges will be returned, along with any others which match the
-filtering criteria
+filtering criteria. Cutoff values for both criteria are added to the metadata
+element of the returned object
 }
