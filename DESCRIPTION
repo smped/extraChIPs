@@ -1,6 +1,6 @@
 Package: chipExtra
-Version: 0.1.3
-Date: 2021/08/25
+Version: 0.1.4
+Date: 2021/09/24
 Title: Additional functions for working with ChIP-Seq data
 Authors@R: person("Stephen", "Pederson", 
   email = "stephen.pederson.au@gmail.com", role = c("aut", "cre"))
