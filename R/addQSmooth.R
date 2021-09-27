@@ -60,13 +60,13 @@ setMethod(
     ## Add a subset of the weights to the metadata for easy plotting
     ## The original qsmoothPlotWeights limits this to 10K points
     w_df <- data.frame(
-      q = seq(0, 1, length.out = length(qsmoothWeights(qs))),
-      w = qsmoothWeights(qs)
+      quantile = seq(0, 1, length.out = length(qsmoothWeights(qs))),
+      weight = qsmoothWeights(qs)
     )
     n <- min(nrow(w_df), n_w)
     if (n == n_w) {
       i <- sample.int(nrow(w_df), n, replace = FALSE)
-      w_df <- dplyr::arrange(w_df[i, ])
+      w_df <- dplyr::arrange(w_df[i,], quantile)
     }
     metadata(x)$qsmoothWeights <- as(w_df, "DataFrame")
     x

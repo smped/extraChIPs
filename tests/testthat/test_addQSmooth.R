@@ -14,9 +14,13 @@ test_that("factor is handled correctly", {
   expect_error(addQSmooth(se, "counts", "missing"))
   expect_error(addQSmooth(se, "counts"))
 
-  se2 <- addQSmooth(se, factor = "group")
+  se2 <- addQSmooth(se, factor = "group", n_w = 50)
   expect_s4_class(se2, "SummarizedExperiment")
   expect_equal(dim(assay(se2, "qsmooth")), c(100, 10))
-  expect_equal(dim(metadata(se2)$qsmoothWeights), c(100, 2))
+
+  qs <- metadata(se2)$qsmoothWeights
+  expect_equal(dim(qs), c(50, 2))
+  expect_equal(colnames(qs), c("quantile", "weight"))
+  expect_true(all(diff(qs$quantile) >= 0))
 
 })
