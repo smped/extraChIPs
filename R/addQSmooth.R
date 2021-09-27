@@ -6,12 +6,14 @@
 #' This function adds the assay 'qsmooth' to a SummarizedExperiment or any
 #' derivative class, choosing which existing assay to normalise.
 #'
-#' The qsmooth weights are returned in the metadata element of the final object.
+#' A subsample up to 10,000 of the qsmooth weights are returned in the metadata
+#' element of the final object.
 #'
 #' @param x a RangedSummarizedExperiment object
 #' @param assay The assay to apply SmoothQuantileNormalisation to
 #' @param factor The column used to group the data. Must be one of the columns
 #' in the colData element of x
+#' @param n_w The maximum number of weights to return in the metadata
 #' @param ... Passed to \link[qsmooth]{qsmooth}
 #'
 #' @return
@@ -48,14 +50,25 @@ setGeneric(
 setMethod(
   "addQSmooth",
   signature = signature(x = "SummarizedExperiment"),
-  function(x, assay = "counts", factor, ...) {
+  function(x, assay = "counts", factor, n_w = 1e4, ...) {
     if (missing(factor)) stop("The grouping factor must be supplied")
     stopifnot(factor %in% colnames(colData(x)))
     mat <- assay(x, assay)
     f <- colData(x)[[factor]]
     qs <- qsmooth(mat, group_factor = f, ...)
     assay(x, "qsmooth") <- qsmoothData(qs)
-    metadata(x)$qsmoothWeights <- qsmoothWeights(qs)
+    ## Add a subset of the weights to the metadata for easy plotting
+    ## The original qsmoothPlotWeights limits this to 10K points
+    w_df <- data.frame(
+      q = seq(0, 1, length.out = length(qsmoothWeights(qs))),
+      w = qsmoothWeights(qs)
+    )
+    n <- min(nrow(w_df), n_w)
+    if (n == n_w) {
+      i <- sample.int(nrow(w_df), n, replace = FALSE)
+      w_df <- dplyr::arrange(w_df[i, ])
+    }
+    metadata(x)$qsmoothWeights <- as(w_df, "DataFrame")
     x
   }
 )

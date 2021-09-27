@@ -7,7 +7,7 @@
 \usage{
 addQSmooth(x, ...)
 
-\S4method{addQSmooth}{SummarizedExperiment}(x, assay = "counts", factor, ...)
+\S4method{addQSmooth}{SummarizedExperiment}(x, assay = "counts", factor, n_w = 10000, ...)
 }
 \arguments{
 \item{x}{a RangedSummarizedExperiment object}
@@ -18,6 +18,8 @@ addQSmooth(x, ...)
 
 \item{factor}{The column used to group the data. Must be one of the columns
 in the colData element of x}
+
+\item{n_w}{The maximum number of weights to return in the metadata}
 }
 \value{
 A SummarizedExperiment with additional metadata and the qsmooth assay
@@ -29,7 +31,8 @@ Smooth Quantile Normalise a SummarizedExperiment
 This function adds the assay 'qsmooth' to a SummarizedExperiment or any
 derivative class, choosing which existing assay to normalise.
 
-The qsmooth weights are returned in the metadata element of the final object.
+A subsample up to 10,000 of the qsmooth weights are returned in the metadata
+element of the final object.
 }
 \examples{
 dat <- cbind(
