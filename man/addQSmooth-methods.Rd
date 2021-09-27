@@ -16,7 +16,8 @@ addQSmooth(x, ...)
 
 \item{assay}{The assay to apply SmoothQuantileNormalisation to}
 
-\item{factor}{A factor used to group the data. See \link[qsmooth]{qsmooth}}
+\item{factor}{The column used to group the data. Must be one of the columns
+in the colData element of x}
 }
 \value{
 A SummarizedExperiment with additional metadata and the qsmooth assay

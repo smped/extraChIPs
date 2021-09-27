@@ -10,7 +10,8 @@
 #'
 #' @param x a RangedSummarizedExperiment object
 #' @param assay The assay to apply SmoothQuantileNormalisation to
-#' @param factor A factor used to group the data. See \link[qsmooth]{qsmooth}
+#' @param factor The column used to group the data. Must be one of the columns
+#' in the colData element of x
 #' @param ... Passed to \link[qsmooth]{qsmooth}
 #'
 #' @return
@@ -18,7 +19,7 @@
 #'
 #' @importFrom qsmooth qsmooth qsmoothData qsmoothWeights
 #' @importFrom S4Vectors 'metadata<-'
-#' @importFrom SummarizedExperiment assay 'assay<-'
+#' @importFrom SummarizedExperiment assay 'assay<-' colData
 #' @importClassesFrom qsmooth qsmooth
 #' @importClassesFrom SummarizedExperiment SummarizedExperiment
 #' @name addQSmooth
@@ -36,8 +37,10 @@ setMethod(
   signature = signature(x = "SummarizedExperiment"),
   function(x, assay = "counts", factor, ...) {
     if (missing(factor)) stop("The grouping factor must be supplied")
+    stopifnot(factor %in% colnames(colData(x)))
     mat <- assay(x, assay)
-    qs <- qsmooth(mat, group_factor = factor, ...)
+    f <- colData(x)[[factor]]
+    qs <- qsmooth(mat, group_factor = f, ...)
     assay(x, "qsmooth") <- qsmoothData(qs)
     metadata(x)$qsmoothWeights <- qsmoothWeights(qs)
     x

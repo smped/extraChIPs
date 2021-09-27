@@ -40,8 +40,8 @@
 #' @importFrom S4Vectors metadata 'metadata<-'
 #' @importFrom stats quantile
 #' @importClassesFrom SummarizedExperiment RangedSummarizedExperiment
-#' @importMethodsFrom SummarizedExperiment rowRanges colData 'rowData<-'
-#' @importMethodsFrom SummarizedExperiment rowData 'rowData<-'
+#' @importMethodsFrom SummarizedExperiment rowRanges rowData 'rowData<-'
+#' @importMethodsFrom SummarizedExperiment colData
 #' @importMethodsFrom SummarizedExperiment assay 'assay<-'
 #'
 #' @name dualFilter
