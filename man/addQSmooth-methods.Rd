@@ -31,3 +31,17 @@ derivative class, choosing which existing assay to normalise.
 
 The qsmooth weights are returned in the metadata element of the final object.
 }
+\examples{
+dat <- cbind(
+  matrix(rnorm(1000), nrow=100, ncol=5),
+  matrix(rnorm(1000, .1, .7), nrow=100, ncol=5)
+ )
+colnames(dat) <- c(paste0("A", 1:5), paste0("B", 1:5))
+df <- DataFrame(group = rep(c("A", "B"), each = 5))
+se <- SummarizedExperiment(
+  assays = SimpleList(counts = dat),
+  colData = df
+)
+se2 <- addQSmooth(se, "counts", "group")
+
+}
