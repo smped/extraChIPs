@@ -80,7 +80,7 @@ setMethod(
     pca <- prcomp(t(mat), ...)
     pca_df <- broom::tidy(pca)
     pca_df <- dplyr::rename(pca_df, sample = row)
-    pca_df <- left_join(pca_df, df)
+    pca_df <- left_join(pca_df, df, by = "sample")
     pca_df <- dplyr::filter(pca_df, PC %in% c(pc_x, pc_y))
     pca_df <- pivot_wider(
       data = pca_df, names_from = PC, values_from = value, names_prefix = "PC"
@@ -89,7 +89,7 @@ setMethod(
     labs <- lapply(
       list(x = pc_x, y = pc_y),
       function(x) {
-        paste0("PC ", x, "(", percent(prop_var[x], accuracy = 0.1), ")")
+        paste0("PC", x, " (", percent(prop_var[x], accuracy = 0.1), ")")
       }
     )
     col_x <- paste0("PC", pc_x)
@@ -104,7 +104,7 @@ setMethod(
     if (!is.null(label) & !show_points)
       p <- p + geom_text(aes_string(label = label), show.legend = FALSE)
     p + labs(
-      x = labs$x, y = labs$y, shpae = shape, colour = colour
+      x = labs$x, y = labs$y, shape = shape, colour = colour
     )
   }
 )
