@@ -2,9 +2,12 @@
 % Please edit documentation in R/dualFilter.R
 \name{dualFilter}
 \alias{dualFilter}
+\alias{dualFilter,RangedSummarizedExperiment,RangedSummarizedExperiment,GRanges-method}
 \title{Apply two filters to sliding windows}
 \usage{
-dualFilter(x, bg, ref, q = 0.99, logCPM = TRUE, BPPARAM = bpparam())
+dualFilter(x, bg, ref, ...)
+
+\S4method{dualFilter}{RangedSummarizedExperiment,RangedSummarizedExperiment,GRanges}(x, bg, ref, q = 0.99, logCPM = TRUE, BPPARAM = bpparam())
 }
 \arguments{
 \item{x}{RangedSummarizedExperiment containing sample counts}
@@ -12,6 +15,8 @@ dualFilter(x, bg, ref, q = 0.99, logCPM = TRUE, BPPARAM = bpparam())
 \item{bg}{RangedSummarizedExperiment containing background/input counts}
 
 \item{ref}{GRanges object containing ranges where signal is expected}
+
+\item{...}{Not used}
 
 \item{q}{The upper percentile of the reference ranges expected to be returned
 when tuning the filtering criteria}

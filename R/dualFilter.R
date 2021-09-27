@@ -22,6 +22,7 @@
 #' when tuning the filtering criteria
 #' @param logCPM logical(1) Add a logCPM assay to the returned data
 #' @param BPPARAM Settings for running in parallel
+#' @param ... Not used
 #'
 #' @return
 #' A \link[SummarizedExperiment]{RangedSummarizedExperiment} which is a
@@ -36,71 +37,82 @@
 #' @importFrom csaw filterWindowsControl filterWindowsProportion
 #' @importFrom BiocParallel bpparam
 #' @importFrom edgeR cpm
-#' @importFrom S4Vectors metadata
+#' @importFrom S4Vectors metadata 'metadata<-'
 #' @importFrom stats quantile
 #' @importClassesFrom SummarizedExperiment RangedSummarizedExperiment
 #' @importMethodsFrom SummarizedExperiment rowRanges colData 'rowData<-'
 #' @importMethodsFrom SummarizedExperiment rowData 'rowData<-'
 #' @importMethodsFrom SummarizedExperiment assay 'assay<-'
+#'
+#' @name dualFilter
+#' @rdname dualFilter-methods
 #' @export
-dualFilter <- function(
-  x, bg, ref, q = 0.99, logCPM = TRUE, BPPARAM = bpparam()
-) {
+setGeneric("dualFilter", function(x, bg, ref, ...) {
+  standardGeneric("dualFilter")
+})
+#' @rdname dualFilter-methods
+#' @export
+setMethod(
+  "dualFilter",
+  signature = signature(
+    x = "RangedSummarizedExperiment",
+    bg = "RangedSummarizedExperiment",
+    ref = "GRanges"
+  ),
+  function(x, bg, ref, q = 0.99, logCPM = TRUE, BPPARAM = bpparam()) {
 
-  ## Argument checks
-  stopifnot(is(x, "RangedSummarizedExperiment"))
-  stopifnot(is(bg, "RangedSummarizedExperiment"))
-  stopifnot(is(ref, "GRanges"))
-  stopifnot(q <= 1, q > 0)
-  stopifnot(is.logical(logCPM))
-  ## The first two objects must have identical ranges
-  stopifnot(all(rowRanges(x) == rowRanges(bg)))
+    ## Argument checks
+    stopifnot(q <= 1, q > 0)
+    stopifnot(is.logical(logCPM))
+    ## The first two objects must have identical ranges
+    stopifnot(all(rowRanges(x) == rowRanges(bg)))
 
-  ## Check the BamFiles exist
-  bfl <- BamFileList(colData(x)$bam.files)
-  stopifnot(all(file.exists(path(bfl))))
-  bg_bfl <- BamFileList(colData(bg)$bam.files)
-  stopifnot(all(file.exists(path(bg_bfl))))
+    ## Check the BamFiles exist
+    bfl <- BamFileList(colData(x)$bam.files)
+    stopifnot(all(file.exists(path(bfl))))
+    bg_bfl <- BamFileList(colData(bg)$bam.files)
+    stopifnot(all(file.exists(path(bg_bfl))))
 
-  ## Find which ranges overlap the reference
-  ol <- overlapsAny(x, ref)
-  stopifnot(any(ol))
+    ## Find which ranges overlap the reference
+    ol <- overlapsAny(x, ref)
+    stopifnot(any(ol))
 
-  rp <- readParam()
-  if (!is.null(metadata(x)$param)) rp <- metadata(x)$param
+    rp <- readParam()
+    if (!is.null(metadata(x)$param)) rp <- metadata(x)$param
 
-  ## Apply the filter using control samples
-  bin_size <- 1e4
-  signal_counts <- windowCounts(
-    bam.files = bfl,
-    spacing = bin_size, filter = 0, param = rp, BPPARAM = BPPARAM
-  )
-  bg_counts <- windowCounts(
-    bam.files = bg_bfl,
-    spacing = bin_size, filter = 0, param = rp, BPPARAM = BPPARAM
-  )
-  scf <- scaleControlFilter(signal_counts, bg_counts)
-  control_filter <- filterWindowsControl(
-    data = x, background = bg, scale.info = scf
-  )$filter
-  cuts <- list()
-  cuts$control <- quantile(control_filter[ol], probs = 1 - sqrt(q))
-
-  ## Apply the filter using the expression percentile
-  prop_filter <- filterWindowsProportion(x)$filter
-  cuts$prop <- quantile(prop_filter[ol], probs = 1 - sqrt(q))
-
-  keep <- control_filter > cuts$control & prop_filter > cuts$prop
-  out <- x[keep,]
-  rowData(out)$overlaps_ref <- ol[keep]
-  metadata(out)$cuts <- cuts
-
-  if (logCPM){
-    assay(out, "logCPM") <- cpm(
-      assay(out, "counts"), log = TRUE, lib.size = out$totals
+    ## Apply the filter using control samples
+    bin_size <- 1e4
+    signal_counts <- windowCounts(
+      bam.files = bfl,
+      spacing = bin_size, filter = 0, param = rp, BPPARAM = BPPARAM
     )
+    bg_counts <- windowCounts(
+      bam.files = bg_bfl,
+      spacing = bin_size, filter = 0, param = rp, BPPARAM = BPPARAM
+    )
+    scf <- scaleControlFilter(signal_counts, bg_counts)
+    control_filter <- filterWindowsControl(
+      data = x, background = bg, scale.info = scf
+    )$filter
+    cuts <- list()
+    cuts$control <- quantile(control_filter[ol], probs = 1 - sqrt(q))
+
+    ## Apply the filter using the expression percentile
+    prop_filter <- filterWindowsProportion(x)$filter
+    cuts$prop <- quantile(prop_filter[ol], probs = 1 - sqrt(q))
+
+    keep <- control_filter > cuts$control & prop_filter > cuts$prop
+    out <- x[keep,]
+    rowData(out)$overlaps_ref <- ol[keep]
+    metadata(out)$cuts <- lapply(cuts, as.numeric)
+
+    if (logCPM){
+      assay(out, "logCPM") <- cpm(
+        assay(out, "counts"), log = TRUE, lib.size = out$totals
+      )
+    }
+
+    out
+
   }
-
-  out
-
-}
+)
