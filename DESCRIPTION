@@ -1,5 +1,5 @@
 Package: chipExtra
-Version: 0.1.6
+Version: 0.1.7
 Date: 2021/09/27
 Title: Additional functions for working with ChIP-Seq data
 Authors@R: person("Stephen", "Pederson", 
@@ -20,17 +20,20 @@ Depends:
   SummarizedExperiment
 Imports:
   BiocIO,
+  broom,
   csaw,
   dplyr,
   edgeR,
   forcats,
   GenomeInfoDb,
   ggplot2,
+  ggrepel,
   IRanges,
   limma,
   methods,
   qsmooth,
   S4Vectors,
+  scales,
   stats,
   tibble,
   tidyr,

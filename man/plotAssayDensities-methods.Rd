@@ -7,7 +7,7 @@
 \usage{
 plotAssayDensities(x, ...)
 
-\S4method{plotAssayDensities}{SummarizedExperiment}(x, assay = "counts", colour_by = c(), group_by, ...)
+\S4method{plotAssayDensities}{SummarizedExperiment}(x, assay = "counts", colour = c(), group, ...)
 }
 \arguments{
 \item{x}{A SummarizedExperiment object}
@@ -16,9 +16,9 @@ plotAssayDensities(x, ...)
 
 \item{assay}{An assay within x}
 
-\item{colour_by}{The column in colData to colour lines by}
+\item{colour}{The column in colData to colour lines by}
 
-\item{group_by}{Draw lines based on this column in colData. Defaults to
+\item{group}{Draw lines based on this column in colData. Defaults to
 each sample}
 }
 \value{
@@ -39,6 +39,6 @@ se <- SummarizedExperiment(
   assays = SimpleList(counts = counts),
   colData = df
 )
-plotAssayDensities(se, colour_by = "treat")
+plotAssayDensities(se, colour = "treat")
 
 }

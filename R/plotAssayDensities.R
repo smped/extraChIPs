@@ -17,12 +17,12 @@
 #'   assays = SimpleList(counts = counts),
 #'   colData = df
 #' )
-#' plotAssayDensities(se, colour_by = "treat")
+#' plotAssayDensities(se, colour = "treat")
 #'
 #' @param x A SummarizedExperiment object
 #' @param assay An assay within x
-#' @param colour_by The column in colData to colour lines by
-#' @param group_by Draw lines based on this column in colData. Defaults to
+#' @param colour The column in colData to colour lines by
+#' @param group Draw lines based on this column in colData. Defaults to
 #' each sample
 #' @param ... Passed to \link[stats]{density}
 #'
@@ -48,7 +48,7 @@ setGeneric(
 setMethod(
   "plotAssayDensities",
   signature = signature(x = "SummarizedExperiment"),
-  function(x, assay = "counts", colour_by = c(), group_by, ...) {
+  function(x, assay = "counts", colour = c(), group, ...) {
 
     ## Checks
     stopifnot(assay %in% assayNames(x))
@@ -56,10 +56,10 @@ setMethod(
 
     col_data <- as.data.frame(colData(x))
     col_data <- rownames_to_column(col_data, "sample")
-    if (missing(group_by)) group_by <- "sample"
-    stopifnot(group_by %in% colnames(col_data))
-    if (!is.null(colour_by))
-      stopifnot(colour_by %in% colnames(col_data))
+    if (missing(group)) group <- "sample"
+    stopifnot(group %in% colnames(col_data))
+    if (!is.null(colour))
+      stopifnot(colour %in% colnames(col_data))
 
     mat <- assay(x, assay)
     dens <- apply(mat, MARGIN = 2, density, ...)
@@ -72,10 +72,10 @@ setMethod(
     df <- left_join(df, col_data, by = "sample")
     df <- unnest(df, dens)
 
-    ggplot(df, aes_string("x", "y", group = group_by, colour = colour_by)) +
+    ggplot(df, aes_string("x", "y", group = group, colour = colour)) +
       geom_line() +
       labs(
-        x = assay, y = "Density", colour = colour_by
+        x = assay, y = "Density", colour = colour
       )
   }
 )
