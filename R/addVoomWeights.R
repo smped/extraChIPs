@@ -39,7 +39,8 @@ setMethod(
   "addVoomWeights",
   signature = signature(x = "SummarizedExperiment"),
   function(
-    x, assay = "counts", design = NULL, w0, isLogCPM = TRUE, ..., span = 0.5
+    x, assay = "counts", design = NULL, w0 = NULL, isLogCPM = TRUE, ...,
+    span = 0.5
   ) {
 
     ## NULL specs for design will be handled by downstream functions
@@ -56,7 +57,7 @@ setMethod(
     aw_allowed <- names(formals(arrayWeights))
 
     mat <- assay(x, assay)
-    if (assay == "counts" & missing(w0)) {
+    if (assay == "counts" & is.null(w0)) {
       voom_args <- list(
         counts = mat, design = design, lib.size = x$totals, span = span,
         save.plot = TRUE
@@ -64,7 +65,7 @@ setMethod(
       voom_args <- c(voom_args, dots[intersect(names(dots), v_allowed)])
       v <- do.call(voom, voom_args)
     }
-    if (assay == "counts" & !missing(w0)) {
+    if (assay == "counts" & !is.null(w0)) {
 
       voom_args <- list(
         counts = mat, design = design, lib.size = x$totals, span = span,

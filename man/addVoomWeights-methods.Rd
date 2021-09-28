@@ -11,7 +11,7 @@ addVoomWeights(x, ...)
   x,
   assay = "counts",
   design = NULL,
-  w0,
+  w0 = NULL,
   isLogCPM = TRUE,
   ...,
   span = 0.5
