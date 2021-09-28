@@ -7,7 +7,8 @@
 #' assay
 #'
 #' @return
-#' A ggplot2 object
+#' A `ggplot2` object. Scales and labels can be added using conventional
+#' `ggplot2` syntax. (See example)
 #'
 #' @examples
 #' nrows <- 200; ncols <- 4
@@ -17,13 +18,17 @@
 #'   assays = SimpleList(counts = counts),
 #'   colData = df
 #' )
-#' plotAssayDensities(se, colour = "treat")
+#' plotAssayDensities(se, colour = "treat") +
+#'   labs(colour = "Treat")
 #'
 #' @param x A SummarizedExperiment object
 #' @param assay An assay within x
-#' @param colour The column in colData to colour lines by
 #' @param group Draw lines based on this column in colData. Defaults to
 #' each sample
+#' @param colour The column in colData to colour lines by
+#' @param linetype Any column in colData used to determine linetype
+#' @param trans character(1). Any transformative function to be applied to the
+#' data before calculating the density, e.g. `trans = "log2"`
 #' @param ... Passed to \link[stats]{density}
 #'
 #' @name plotAssayDensities
@@ -48,7 +53,11 @@ setGeneric(
 setMethod(
   "plotAssayDensities",
   signature = signature(x = "SummarizedExperiment"),
-  function(x, assay = "counts", colour = c(), group, ...) {
+  function(
+    x, assay = "counts",
+    group, colour = NULL, linetype = NULL,
+    trans = NULL, ...
+  ) {
 
     ## Checks
     stopifnot(assay %in% assayNames(x))
@@ -60,8 +69,12 @@ setMethod(
     stopifnot(group %in% colnames(col_data))
     if (!is.null(colour))
       stopifnot(colour %in% colnames(col_data))
+    if (!is.null(linetype))
+      stopifnot(linetype %in% colnames(col_data))
 
     mat <- assay(x, assay)
+    if (!is.null(trans)) mat <- match.fun(trans)(mat)
+
     dens <- apply(mat, MARGIN = 2, density, ...)
     dens <- lapply(dens, function(d){list(tibble(x = d$x, y = d$y))})
     df <- as_tibble(dens)
@@ -72,10 +85,14 @@ setMethod(
     df <- left_join(df, col_data, by = "sample")
     df <- unnest(df, dens)
 
-    ggplot(df, aes_string("x", "y", group = group, colour = colour)) +
+    ggplot(
+      df,
+      aes_string("x", "y", group = group, colour = colour, linetype = linetype)
+    ) +
       geom_line() +
       labs(
-        x = assay, y = "Density", colour = colour
+        x = ifelse(is.null(trans), assay, paste(trans, assay)),
+        y = "Density", colour = colour, linetype = linetype
       )
   }
 )

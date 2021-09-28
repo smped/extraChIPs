@@ -16,6 +16,7 @@ Depends:
   R (>= 4.1.0),
   BiocParallel,
   GenomicRanges,
+  ggplot2,
   Rsamtools,
   SummarizedExperiment
 Imports:
@@ -26,7 +27,6 @@ Imports:
   edgeR,
   forcats,
   GenomeInfoDb,
-  ggplot2,
   ggrepel,
   IRanges,
   limma,

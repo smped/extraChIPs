@@ -7,7 +7,15 @@
 \usage{
 plotAssayDensities(x, ...)
 
-\S4method{plotAssayDensities}{SummarizedExperiment}(x, assay = "counts", colour = c(), group, ...)
+\S4method{plotAssayDensities}{SummarizedExperiment}(
+  x,
+  assay = "counts",
+  group,
+  colour = NULL,
+  linetype = NULL,
+  trans = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{A SummarizedExperiment object}
@@ -16,13 +24,19 @@ plotAssayDensities(x, ...)
 
 \item{assay}{An assay within x}
 
-\item{colour}{The column in colData to colour lines by}
-
 \item{group}{Draw lines based on this column in colData. Defaults to
 each sample}
+
+\item{colour}{The column in colData to colour lines by}
+
+\item{linetype}{Any column in colData used to determine linetype}
+
+\item{trans}{character(1). Any transformative function to be applied to the
+data before calculating the density, e.g. \code{trans = "log2"}}
 }
 \value{
-A ggplot2 object
+A \code{ggplot2} object. Scales and labels can be added using conventional
+\code{ggplot2} syntax. (See example)
 }
 \description{
 Plot Densities for any assay within a SummarizedExperiment
@@ -39,6 +53,7 @@ se <- SummarizedExperiment(
   assays = SimpleList(counts = counts),
   colData = df
 )
-plotAssayDensities(se, colour = "treat")
+plotAssayDensities(se, colour = "treat") +
+  labs(colour = "Treat")
 
 }

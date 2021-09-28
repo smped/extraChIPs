@@ -1,4 +1,5 @@
-nrows <- 200; ncols <- 4
+nrows <- 200
+ncols <- 4
 counts <- matrix(runif(nrows * ncols, 1, 1e4), nrows)
 df <- DataFrame(treat = c("A", "A", "B", "B"))
 se <- SummarizedExperiment(
@@ -13,7 +14,26 @@ test_that("Assay Density plots behave correctly", {
   p <- plotAssayDensities(se)
   expect_equal(dim(p$data), c(512*4, 4))
   expect_equal(colnames(p$data), c("sample", "x", "y", "treat"))
+  expect_equal(
+    unlist(p$labels),
+    c(x = "counts", y = "Density", group = "sample")
+  )
+  p <- plotAssayDensities(se, colour = "treat", linetype = "treat")
+  expect_equal(
+    unlist(p$labels),
+    c(
+      x = "counts", y = "Density", colour = "treat", linetype = "treat",
+      group = "sample"
+    )
+  )
 
+})
+
+test_that("Assay Density transformations error", {
+  expect_error(plotAssayDensities(se, trans = ""))
+  p <- plotAssayDensities(se, trans = "log2")
+  expect_true(median(p$data$x) < log2(1e4))
+  expect_equal(p$labels$x, "log2 counts")
 })
 
 test_that("Arguments are passed to density correctly", {
