@@ -86,6 +86,7 @@ setMethod(
       )
     }
 
+    colnames(v$weights) <- colnames(v)
     assay(x, "voomweights") <- v$weights
     if (!missing(w0)) colData(x)$sample.weights <- v$targets$sample.weights
     rowData(x)$sqrt.stdev <- v$voom.xy$y
