@@ -14,13 +14,13 @@ URL: https://github.com/steveped/chipExtra
 BugReports: https://github.com/steveped/chipExtra/issues
 Depends:
   R (>= 4.1.0),
-  BiocParallel,
   GenomicRanges,
   ggplot2,
-  Rsamtools,
-  SummarizedExperiment
+  SummarizedExperiment,
+  tibble
 Imports:
   BiocIO,
+  BiocParallel,
   broom,
   csaw,
   dplyr,
@@ -32,10 +32,10 @@ Imports:
   limma,
   methods,
   rlang,
+  Rsamtools,
   S4Vectors,
   scales,
   stats,
-  tibble,
   tidyr,
   tidyselect,
   utils
