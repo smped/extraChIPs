@@ -41,7 +41,8 @@ mergeByCol(x, ...)
 
 \item{...}{Not used}
 
-\item{df}{A data.frame-like object containing the columns of interest}
+\item{df}{A data.frame-like object containing the columns of interest. If
+not provided, any columns in the mcols() slot will be used.}
 
 \item{col}{The column to select as representative of the merged ranges}
 
@@ -72,9 +73,11 @@ This merges sliding windows by a given column, returning representative
 values from each requested column, corresponding to the selected row.
 Values from the requested column can be selected using any of \code{min()},
 \code{max()}, \code{mean()} or \code{median()}, although \code{max()} is strongly recommended.
+The range corresponding to the returned values is returned as the column.
+\code{keyval_range}.
 
 Taking the p-value from the selected row, the number of windows with lower
-p-values are counted by direction and returned inthe final object
+p-values are counted by direction and returned in the final object
 }
 \examples{
 x <- GRanges(c("chr1:1-10", "chr1:6-15", "chr1:51-60"))

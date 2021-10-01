@@ -7,6 +7,8 @@
 #' values from each requested column, corresponding to the selected row.
 #' Values from the requested column can be selected using any of `min()`,
 #' `max()`, `mean()` or `median()`, although `max()` is strongly recommended.
+#' The range corresponding to the returned values is returned as the column.
+#' `keyval_range`.
 #'
 #' Taking the p-value from the selected row, the number of windows with lower
 #' p-values are counted by direction and returned in the final object
@@ -45,7 +47,7 @@ setGeneric(
 )
 #' @importClassesFrom S4Vectors HitsList
 #' @importFrom GenomicRanges findOverlaps reduce
-#' @importFrom S4Vectors subjectHits 'mcols<-' mcols
+#' @importFrom S4Vectors subjectHits queryHits 'mcols<-' mcols
 #' @importFrom dplyr group_by summarise n across
 #' @importFrom rlang sym '!!'
 #' @importFrom stats p.adjust p.adjust.methods
@@ -78,7 +80,7 @@ setMethod(
       ". Please specify the column containing signal (e.g. logCPM or AveExpr)."
     )
     ## Define the columns to return
-    ret_cols <- c(col, logfc, pval)
+    ret_cols <- c("keyval_range", col, logfc, pval)
     if (!missing(inc_cols)) {
       inc_cols <- vapply(inc_cols, match.arg, character(1), choices = df_cols)
       ret_cols <- unique(c(ret_cols, inc_cols))
@@ -95,6 +97,7 @@ setMethod(
     id <- i <- NULL # Avoid R CMD check issues
     grp_df <- as.data.frame(df)
     grp_df$id <- subjectHits(ol)
+    grp_df$keyval_range <- queryHits(ol)
     grp_df <- group_by(grp_df, id)
     merged_df <- summarise(
       grp_df,
@@ -113,6 +116,7 @@ setMethod(
         merged_df[[pval]], method = p_adj_method
       )
     mcols(ranges_out) <- merged_df
+    ranges_out$keyval_range <- x[ranges_out$keyval_range]
     ranges_out
 
   }

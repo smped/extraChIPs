@@ -1,5 +1,5 @@
 Package: chipExtra
-Version: 0.1.9
+Version: 0.1.10
 Date: 2021/09/29
 Title: Additional functions for working with ChIP-Seq data
 Authors@R: person("Stephen", "Pederson", 
