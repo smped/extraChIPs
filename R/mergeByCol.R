@@ -46,7 +46,7 @@ setGeneric(
   function(x, ...){standardGeneric("mergeByCol")}
 )
 #' @importClassesFrom S4Vectors HitsList
-#' @importFrom GenomicRanges findOverlaps reduce
+#' @importFrom GenomicRanges findOverlaps reduce granges
 #' @importFrom S4Vectors subjectHits queryHits 'mcols<-' mcols
 #' @importFrom dplyr group_by summarise n across
 #' @importFrom rlang sym '!!'
@@ -116,7 +116,7 @@ setMethod(
         merged_df[[pval]], method = p_adj_method
       )
     mcols(ranges_out) <- merged_df
-    ranges_out$keyval_range <- x[ranges_out$keyval_range]
+    ranges_out$keyval_range <- granges(x)[ranges_out$keyval_range]
     ranges_out
 
   }

@@ -41,5 +41,4 @@ as_tibble.GenomicRanges <- function(x, name = "range", rangeAsChar = TRUE, ...) 
     if (ncol(mcols(x)) == 0) return(gr_tbl)
     mc_tbl <- as_tibble(mcols(x))
     bind_cols(gr_tbl, mc_tbl)
-
 }

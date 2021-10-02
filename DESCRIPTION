@@ -1,6 +1,6 @@
 Package: chipExtra
-Version: 0.1.10
-Date: 2021/09/29
+Version: 0.1.11
+Date: 2021/10/02
 Title: Additional functions for working with ChIP-Seq data
 Authors@R: person("Stephen", "Pederson", 
   email = "stephen.pederson.au@gmail.com", role = c("aut", "cre"))
@@ -25,6 +25,7 @@ Imports:
   csaw,
   dplyr,
   edgeR,
+  EnrichedHeatmap,
   forcats,
   GenomeInfoDb,
   ggrepel,
@@ -33,6 +34,7 @@ Imports:
   methods,
   rlang,
   Rsamtools,
+  rtracklayer,
   S4Vectors,
   scales,
   stats,
