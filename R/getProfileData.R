@@ -50,7 +50,7 @@ setGeneric(
 #' @importFrom tidyr pivot_longer nest
 #' @importFrom tidyselect all_of
 #' @importFrom S4Vectors DataFrame
-#' @importFrom IRanges DataFrameList
+#' @importFrom IRanges SplitDataFrameList
 #' @importFrom dplyr left_join
 #' @rdname getProfileData-methods
 #' @export
@@ -92,8 +92,8 @@ setMethod(
     )[as.integer(tbl[["position"]])]
     tbl <- nest(tbl, profile_data = all_of(c("score", "position", "bp")))
     gr_tbl <- left_join(as_tibble(gr), tbl, by = "range")
-    gr_resize$profile_data <- DataFrameList(
-      lapply(gr_tbl$profile_data, DataFrame)
+    gr_resize$profile_data <- SplitDataFrameList(
+      lapply(gr_tbl$profile_data, DataFrame), compress = TRUE
     )
     gr_resize
   }

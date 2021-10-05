@@ -6,7 +6,7 @@ test_that("Check structure of output", {
   out <- getProfileData(bwfl, gr, upstream = 100, bins = 10)
   expect_equal(names(out), c("a", "b"))
   expect_s4_class(out, "GRangesList")
-  expect_s4_class(out$a$profile_data, "DataFrameList")
+  expect_s4_class(out$a$profile_data, "SplitDataFrameList")
   expect_equal(
     colnames(out$a$profile_data[[1]]), c("score", "position", "bp")
   )
