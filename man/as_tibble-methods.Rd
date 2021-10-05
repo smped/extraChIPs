@@ -14,7 +14,8 @@
 
 \item{...}{Not used}
 
-\item{name}{Name of column to use for ranges}
+\item{name}{Name of column to use for ranges. Ignored if rangeAsChar =
+\code{FALSE}}
 
 \item{rangeAsChar}{Convert the GRanges element to a character vector}
 }

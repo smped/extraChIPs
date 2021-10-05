@@ -8,7 +8,8 @@
 #' lost.
 #'
 #' @param x A Genomic Ranges or DataFrame object
-#' @param name Name of column to use for ranges
+#' @param name Name of column to use for ranges. Ignored if rangeAsChar =
+#' `FALSE`
 #' @param rangeAsChar Convert the GRanges element to a character vector
 #' @param ... Not used
 #'
