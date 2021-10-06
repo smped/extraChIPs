@@ -10,6 +10,9 @@ test_that("Coercion is correct where it should be", {
     c("n_windows", "n_up", "n_down", "logCPM", "logFC", "p", "fdr")
   )
   expect_equal(length(new_gr), 2)
+  df$gr <- as.character(x)
+  new_gr <- colAsRanges(df, "gr")
+  expect_s4_class(new_gr, "GRanges")
 })
 
 test_that("Coercion fails where it should", {

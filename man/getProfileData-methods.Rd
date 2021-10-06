@@ -66,7 +66,9 @@ Get Coverage Profile Data Surrounding Ranges
 \details{
 This will take all provided ranges and set as identical width ranges,
 extending by the specified amount both up and downstream of the centre of the
-provided ranges.
+provided ranges. By default, the ranges extensions are symmetrical and only
+the upstream range needs to be specified, however this parameterisation
+allows for non-symmetrical ranges to be generated.
 
 These uniform width ranges will then be used to extract the value contained
 in the score field from one or more BigWigFiles. Uniform width ranges are
