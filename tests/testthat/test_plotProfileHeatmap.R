@@ -23,4 +23,39 @@ test_that("Samples are facetted when provided as a list", {
     list(a = pd$profile_data, b = pd$profile_data), ids = granges(pd)
   )
   expect_equal(is(p$facet), "FacetSideWrap")
+  expect_equal(levels(p$data$name), c("a", "b"))
+})
+
+test_that("IDs are specified", {
+  expect_error(plotProfileHeatmap(pd$profile_data))
+})
+
+test_that("Missing names are added", {
+  expect_message(
+    plotProfileHeatmap(
+      list(pd$profile_data, pd$profile_data), ids = granges(pd)
+    ),
+    "No names provided"
+  )
+})
+
+test_that("xCol is correct", {
+  expect_error(plotProfileHeatmap(pd$profile_data, ids = granges(pd), xCol = ""))
+})
+
+test_that("Each sample/ranges are the same size", {
+  dodge <- pd$profile_data
+  dodge[[1]] <- dodge[[1]][1,]
+  expect_error(
+    plotProfileHeatmap(
+      list(a = pd$profile_data, b = dodge), ids = granges(pd)
+    )
+  )
+  dodge <- pd$profile_data
+  dodge[[2]] <- dodge[[1]]
+  expect_error(
+    plotProfileHeatmap(
+      list(a = pd$profile_data, b = dodge), ids = granges(pd)
+    )
+  )
 })

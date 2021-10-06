@@ -133,7 +133,12 @@ plotProfileHeatmap <- function(
   }
 
   ## Facet on each original list element, which will be in the 'name' column
-  if ("name" %in% colnames(data)) p <- p + facet_wrap(~name)
+  if ("name" %in% colnames(data)) {
+    chkRows <- vapply(split(p$data, f = p$data[["name"]]), nrow, integer(1))
+    if (length(unique(chkRows)) != 1)
+      stop("All samples must have identical ranges")
+    p <- p + facet_wrap(~name)
+  }
   p
 
 }
