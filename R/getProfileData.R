@@ -42,7 +42,7 @@
 #' @export
 setGeneric(
   "getProfileData",
-  function(x, gr, ...) {standardGeneric("getProfileData")}
+  function(x, gr, ...) standardGeneric("getProfileData")
 )
 #' @importFrom GenomicRanges resize promoters
 #' @importFrom rtracklayer import.bw

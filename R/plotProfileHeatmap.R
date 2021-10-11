@@ -14,163 +14,238 @@
 #' size in terms of the number of bins, each of which represent a fixed number
 #' of nucleotides.
 #'
-#' If providing a list of profile data frames, the plot will drawn with each
-#' list element as a separate panel within the larger heatmap, which assumes
-#' each element to represent a sample group. The order these are passed to the
-#' function will be the order in which they are drawn
-#'
-#' By default (addHist = `TRUE`) a summarised histogram will be drawn at the
-#' top of each sample by taking the mean coverage within each genomic bin.
-#'
-#' @param profiles A set of profile data.frames, or a list of these data frames.
-#' See details.
-#' @param ids The IDs for the profiles. Most commonly the range as a character
-#' vector
-#' @param valueCol The column in each profile data.frame with the coverage value
-#' @param valueLab The label to use for the legend, e.g. CPM, Coverage etc
-#' @param xCol The column name to be used for the x-axis
-#' @param xLab The label for the x-axis
-#' @param addHist logical(1). Add a line histogram to the top of the heatmap
-#' @param relHeights The relative heights of the histogram and heatmap. Ignored
-#' if addHist = `FALSE`
-#' @param scaleTo Scale values to the median, mean etc of the provided profile
-#' data frame. Currently, this value will be subtracted from the score for
-#' greater comparability across multiple samples within the same heatmap
+#' @param object A GRanges object
+#' @param profileCol Where to find the profile DataFrames
+#' @param xValue,fillValue Columns within the profile DataFrames for heatmaps
+#' @param facetX Column used for facetting across the x-axis
+#' @param facetY Column used for facetting across the y-axis
+#' @param colour Column used for colouring lines in the summary panel. Defaults
+#' to the column used for facetY
+#' @param linetype Column used for linetypes in the summary panel
+#' @param summariseBy FUnction for creating the summary plot in the top panel.
+#' If set to 'none', no summary plot will be drawn
+#' @param xLab,yLab,fillLab Labels for plotting aesthetics. Can be overwritten
+#' using labs()
+#' @param facetLabeller Any labeller function able to be passed to facet_grid
+#' @param relHeight The relative height of the top summary panel.
+#' Represents the fraction of the plotting area taken up by this panel.
 #' @param ... Not used
+#'
 #'
 #' @return
 #' A `ggplot2` object, able to be customised using standard `ggplot2` syntax
 #'
-#' @examples
-#' bw <- system.file("tests", "test.bw", package = "rtracklayer")
-#' gr <- GRanges("chr2:500")
-#' pd <- getProfileData(bw, gr, upstream = 100, bins = 10)
-#' ## This looks terrible given it's a single range with even coverage
-#' ## but the syntax should be helpful
-#' plotProfileHeatmap(pd$profile_data, ids = granges(pd))
-#'
-#' @importFrom dplyr arrange desc group_by summarise
-#' @importFrom rlang '!!' sym '!!!' syms
-#' @importFrom forcats fct_rev fct_inorder
-#' @importFrom ggplot2 scale_x_discrete scale_x_continuous scale_y_discrete
-#' @importFrom ggplot2 ggplot aes aes_string labs theme facet_wrap
-#' @importFrom ggplot2 geom_raster element_blank expansion
-#' @importFrom ggside geom_xsideline scale_xsidey_continuous
-#' @importFrom tidyselect everything all_of
-#'
+#' @name plotProfileHeatmap
+#' @rdname plotProfileHeatmap-methods
+#' @import methods
 #' @export
-plotProfileHeatmap <- function(
-  profiles,
-  ids,
-  valueCol = "score", valueLab = "Relative\nCoverage",
-  xCol = "bp", xLab = "Distance from Centre (bp)",
-  addHist = TRUE, relHeights = c(0.3, 0.7),
-  scaleTo = c("median", "mean", "max", "min", "none"), ...
-) {
+setGeneric(
+  "plotProfileHeatmap",
+  function(object, ...) standardGeneric("plotProfileHeatmap")
+)
+#' @import methods
+#' @importFrom S4Vectors mcols
+#' @importFrom tidyr unnest
+#' @importFrom rlang '!!' sym
+#' @importFrom dplyr arrange desc
+#' @importFrom forcats fct_rev fct_inorder
+#' @rdname plotProfileHeatmap-methods
+#' @export
+setMethod(
+  "plotProfileHeatmap",
+  signature = signature(object = "GenomicRanges"),
+  function(
+    object,
+    profileCol, xValue = "bp", fillValue = "score",
+    facetX = NULL, facetY = NULL, colour = facetY, linetype = NULL,
+    summariseBy = c("mean", "median", "min", "max", "none"),
+    xLab = xValue, yLab = NULL, fillLab = fillValue,
+    facetLabeller = "label_value", relHeight, ...
+  ) {
 
-  if (missing(ids)) stop("IDs for each range must be provided")
-  ids <- as.character(ids)
 
-  scaleTo <- match.arg(scaleTo)
-  ## After tidying, we should have a single df with all ranges combined
-  ## Range/ID will be in the column 'id' whilst the x-coords will be in xCol
-  ## and the fill values for the heatmap fill will be in valueCol.
-  ## If mutiiple treats/celllines etc, these will be in the name column
-  if (is(profiles, "list")) {
-    nm <- names(profiles)
-    if (is.null(nm)) {
-      message("No names provided on list of profiles. Setting to defaults")
-      nm <- paste0("X", seq_along(profiles))
-      names(profiles) <- nm
-    }
-    data <- lapply(
-      profiles, .tidySingleProfileSet,
-      valueCol = valueCol, ids = ids, scaleTo = scaleTo
-    )
-    data <- as_tibble(lapply(data, list))
-    data <- unnest(
-      pivot_longer(data, everything()),
-      all_of("value")
-    )
-    data[["name"]] <- factor(data[["name"]], levels = nm)
-  } else {
-    data <- .tidySingleProfileSet(
-      profiles, valueCol = valueCol, ids = ids, scaleTo = scaleTo
+    ## Check the profile data.frames for identical dimensions & required cols
+    df <- mcols(object)
+    stopifnot(profileCol %in% colnames(df))
+    stopifnot(.checkProfileDataFrames(df[[profileCol]], xValue, fillValue))
+
+    ## Check the other columns exist
+    keepCols <- setdiff(colnames(df), profileCol)
+    specCols <- unique(c(facetX, facetY, colour, linetype))
+    if (!is.null(specCols)) stopifnot(all(specCols %in% keepCols))
+
+    ## Tidy the data
+    profiles <- c() # Avoiding incorrect R CMD check errors
+    tbl <- as_tibble(df[keepCols])
+    tbl$range <- as.character(granges(object))
+    tbl$profiles <- lapply(df[[profileCol]], as_tibble)
+    tbl <- unnest(tbl, profiles)
+    tbl <- arrange(tbl, desc(!!sym(fillValue)))
+    ## Ensure the ranges are shown with the strongest signal at the top
+    tbl$range <- fct_rev(fct_inorder(tbl$range))
+    if (!is.null(facetY))
+      tbl[[facetY]] <- fct_inorder(as.character(tbl[[facetY]]))
+
+
+    ## Pass to the private function
+    summariseBy <- match.arg(summariseBy)
+    if (missing(relHeight))
+      relHeight <- abs(min(0.5 - length(object)*4.04e-5, 0.5))
+    .makeFinalProfileHeatmap(
+      data = tbl, x = xValue, y = "range", fill = fillValue, colour = colour,
+      linetype = linetype, facet_x = facetX, facet_y = facetY,
+      facet_labeller = facetLabeller, summary_fun = summariseBy,
+      rel_height = relHeight, x_lab = xLab, y_lab = yLab, fill_lab = fillLab
     )
   }
-  if (!xCol %in% colnames(data))
-    stop("All data frames must contain the column ", xCol)
-  data <- arrange(data, desc(!!sym(valueCol)))
-  data[["id"]] <- fct_rev(fct_inorder(data[["id"]]))
+)
 
-  ## Autodetect the x-axis as continuous or discrete
+
+#' @title Make a profile heatmap
+#' @description Make a profile heatmap with optional summary panel at the top
+#' @details The workhorse function for generating the final heatmap
+#' Expects a single data.frame in long form with requisite columns
+#' @return A ggplot2 object
+#' @param data A data.frame or tibble in long form
+#' @param x,y The values mapped to the x & y axes
+#' @param fill The column used for heatmap colours
+#' @param colour,linetype Columns used for the summary plot in the top panel
+#' @param facet_x,facet_y Columns used to facet the plot along these axes
+#' @param facet_labeller _labeller function
+#' @param summary_fun Function used to create the summary value at each position
+#' @param rel_height The relative height of the top panel
+#' @param x_lab,y_lab,fill_lab _labels added to x/y-zxes & the fill legend
+#' @importFrom ggplot2 ggplot aes_string facet_grid expansion theme labs
+#' @importFrom ggplot2 geom_raster geom_segment
+#' @importFrom ggplot2 scale_x_discrete scale_x_continuous element_blank
+#' @importFrom ggside geom_xsideline ggside scale_xsidey_continuous
+#' @importFrom dplyr group_by summarise
+#' @importFrom rlang '!!' sym '!!!' syms
+#' @importFrom stats as.formula
+#' @keywords internal
+.makeFinalProfileHeatmap <- function(
+  data, x = NULL, y = NULL, fill = NULL, colour = NULL, linetype = NULL,
+  facet_x = NULL, facet_y = NULL, facet_labeller = "label_value",
+  summary_fun = c("mean", "median", "min", "max", "none"),
+  rel_height = 0.3, x_lab = NULL, y_lab = NULL, fill_lab = NULL
+) {
+
+  ## data should be a simple data.frame or tibble used to make the final plot
+  all_vars <- c(x, y, fill, colour, linetype, facet_x, facet_y)
+  stopifnot(is(data, "data.frame"))
+  stopifnot(all(all_vars %in% colnames(data)))
+  summary_fun <- match.arg(summary_fun)
+
+  ## The basic plot
   x_axis <- scale_x_discrete(expand = rep(0, 4))
-  if (is.numeric(data[[xCol]]))
-    x_axis <- scale_x_continuous(expand = rep(0, 4))
-
-  p <- ggplot(data, aes_string(x = xCol, y = "id", fill = valueCol)) +
+  if (is.numeric(data[[x]])) x_axis <-  scale_x_continuous(expand = rep(0, 4))
+  p <- ggplot(
+    data,
+    aes_string(x = x, y = y, fill = fill, colour = colour, linetype = linetype)
+  ) +
     geom_raster() +
-    x_axis +
-    scale_y_discrete(breaks = NULL, label= NULL) +
-    labs(x = xLab, y = NULL, fill = valueLab)
+    x_axis
 
-  ## Add the top histogram
-  if (addHist) {
-    grps <- intersect(c(xCol, "name"), colnames(p$data))
-    grp_data <- group_by(p$data, !!!syms(grps))
-    grp_data <- summarise(
-      grp_data, mean = mean(!!sym(valueCol)), .groups = "drop"
-    )
+  ## Given that ggside does not currently create a legend for parameters only
+  ## used in these side panels, add some dummy lines here in the main panel.
+  ## This will ensure a legend appears for colour or linetype
+  if (!is.null(colour) | !is.null(linetype)) {
     p <- p +
-      geom_xsideline(
-        aes_string(x = xCol, y = "mean"), data = grp_data, inherit.aes = FALSE
-      ) +
-      scale_xsidey_continuous(expand = expansion(c(0.1, 0.1))) +
-      theme(
-        panel.grid.minor = element_blank(),
-        ggside.panel.scale = relHeights[[1]] / sum(relHeights)
+      geom_segment(
+        aes_string(
+          x = x, y = y, xend = x, yend = y,
+          colour = colour, linetype = linetype
+        ),
+        data = data[1,],
+        inherit.aes = FALSE
       )
   }
 
-  ## Facet on each original list element, which will be in the 'name' column
-  if ("name" %in% colnames(data)) {
-    chkRows <- vapply(split(p$data, f = p$data[["name"]]), nrow, integer(1))
-    if (length(unique(chkRows)) != 1)
-      stop("All samples must have identical ranges")
-    p <- p + facet_wrap(~name)
+  ## Only add the top summary if this is called
+  if (summary_fun != "none") {
+    f <- match.fun(summary_fun)
+    grp_vars <- unique(c(x, facet_x, facet_y, colour, linetype))
+    grp_df <- group_by(data, !!!syms(grp_vars))
+    summ_df <- summarise(grp_df, y = f(!!sym(fill)), .groups = "drop")
+    p <- p +
+      geom_xsideline(
+        aes_string(x = x, y = "y", colour = colour, linetype = linetype),
+        data = summ_df, inherit.aes = FALSE
+      ) +
+      ggside(collapse = "x") +
+      scale_xsidey_continuous(expand = expansion(c(0.1, 0.1))) +
+      theme(
+        panel.grid.minor = element_blank(),
+        ggside.panel.scale = rel_height[[1]]
+      )
   }
-  p
+
+  ## Add the faceting information
+  if (!is.null(facet_x) | !is.null(facet_y)) {
+    facet_x <- ifelse(is.null(facet_x), ".", facet_x)
+    facet_y <- ifelse(is.null(facet_y), ".", facet_y)
+    fm <- as.formula(paste(facet_y, facet_x, sep = "~"))
+    p <- p + facet_grid(fm, labeller = facet_labeller, scales = "free_y")
+  }
+
+  p +
+    labs(x = x_lab, y = y_lab, fill = fill_lab) +
+    theme(
+      axis.text.y = element_blank(),
+      axis.ticks.y = element_blank()
+    )
 
 }
-#' @importFrom tidyr pivot_longer unnest
-#' @importFrom tidyselect everything all_of
-.tidySingleProfileSet <- function(x, valueCol, ids, scaleTo) {
 
-  ## This is designed to work on tibbles, data.frames and DataFrames
-  ## Check all data frames have the required cols & same dimensions
-  chkCols <- vapply(x, function(x){valueCol %in% colnames(x)}, logical(1))
-  if (!all(chkCols)) stop("All DataFrames must contain the column ", valueCol)
-  chkRows <- vapply(x, nrow, integer(1))
-  if (!all(chkRows == max(chkRows)))
-    stop("All data frames must have the same number of rows")
+#' @importFrom methods is
+#' @importFrom IRanges commonColnames
+.checkProfileDataFrames <- function(df, x, fill) {
 
-  ## Convert to tibbles then pivot & unnest
-  tbl <- lapply(x, as_tibble)
-  stopifnot(length(ids) == length(tbl))
-  names(tbl) <- ids
-  tbl <- as_tibble(lapply(tbl, list))
-  tbl <- pivot_longer(tbl, everything(), names_to = "id")
-  tbl <- unnest(tbl, all_of("value"))
-  ##############################################
-  ## Keep testing to figure the best strategy ##
-  ##############################################
-  ## Define the values to scale to
-  f <- function(x, ...){x}
-  if (scaleTo != "none") f <- match.fun(scaleTo)
-  scale_val <- f(tbl[[valueCol]])
-  # tbl[[valueCol]] <- tbl[[valueCol]] / scale_val
-  tbl[[valueCol]] <- tbl[[valueCol]] - scale_val # Or divide?
+  msg <- c()
 
-  tbl
+  ## Expects a SplitDataFrameList, or similar
+  ## Needs to check all have the same dimensions & the same column names
+  if (is(df, "CompressedSplitDataFrameList")) {
+    ## CompressedSplitDataFrameList objects already have the colnames & DataFrame
+    ## stuff checked. Check these first for speed
+    nr <- vapply(df, nrow, integer(1))
+    if (length(unique(nr)) != 1)
+      msg <- c(msg, "All elements must have the same number of rows\n")
+    if (!all(c(x, fill) %in% commonColnames(df)))
+      msg <- c(
+        msg,
+        paste("Column", setdiff(c(x, fill), commonColnames(df)), "is missing")
+      )
+    if (!is.null(msg)) {
+      message(msg)
+      return(FALSE)
+    }
+    return(TRUE)
+  }
+
+  if (!is(df, "list_OR_List")) msg <- c(msg, "Object must be a list_OR_List\n")
+  isDF <- vapply(df, is, logical(1), class2 = "DataFrame")
+  is_df <- vapply(df, is, logical(1), class2 = "data.frame")
+  if (!all(isDF | is_df))
+    msg <- c(msg, "Each list element must contain DataFrame or data.frame\n")
+  if (!is.null(msg)) stop(msg)
+  ## Now check the actual data frames
+  dims <- vapply(df, dim, integer(2))
+  if (length(unique(dims[1, ])) > 1)
+    msg <- c(msg, "Each data element must have the same number of rows\n")
+  if (length(unique(dims[2, ])) > 1)
+    msg <- c(msg, "Each data element must have the same number of columns")
+  all_names <- vapply(df, colnames, character(dims[2, 1]))
+  same_cols <- apply(all_names, 1, function(df) length(unique(df)) == 1)
+  if (!x %in% all_names[,1]) msg <- c(msg, paste("Column", x, "is missing"))
+  if (!fill %in% all_names[,1])
+    msg <- c(msg, paste("Column", fill, "is missing"))
+  if (!all(same_cols))
+    msg <- c(msg, "All elements must have the same column names")
+  if (!is.null(msg)) {
+    message(msg)
+    return(FALSE)
+  }
+  TRUE
 
 }
