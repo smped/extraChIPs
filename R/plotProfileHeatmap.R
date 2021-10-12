@@ -170,7 +170,7 @@ setMethod(
 #' @param x_lab,y_lab,fill_lab _labels added to x/y-axes & the fill legend
 #' @param ... Passed to facet_grid
 #'
-#' @importFrom ggplot2 ggplot aes_string facet_grid expansion theme labs
+#' @importFrom ggplot2 ggplot aes_string facet_grid theme labs
 #' @importFrom ggplot2 geom_raster geom_segment scale_y_discrete
 #' @importFrom ggplot2 scale_x_discrete scale_x_continuous element_blank
 #' @importFrom ggside geom_xsideline ggside scale_xsidey_continuous
@@ -198,22 +198,19 @@ setMethod(
     data,
     aes_string(x = x, y = y, fill = fill, colour = colour, linetype = linetype)
   ) +
-    geom_raster() +
-    x_axis +
-    scale_y_discrete(breaks = NULL) +
+    geom_raster() + x_axis + scale_y_discrete(breaks = NULL) +
     labs(x = x_lab, y = y_lab, fill = fill_lab)
 
   ## Given that ggside does not currently create a legend for parameters only
   ## used in these side panels, add some dummy lines here in the main panel.
   ## This will ensure a legend appears for colour or linetype
   if (!is.null(colour) | !is.null(linetype)) {
-    p <- p +
-      geom_segment(
-        aes_string(
-          x = x, y = y, xend = x, yend = y, colour = colour, linetype = linetype
-        ),
-        data = data[1,], inherit.aes = FALSE
-      )
+    p <- p + geom_segment(
+      aes_string(
+        x = x, y = y, xend = x, yend = y, colour = colour, linetype = linetype
+      ),
+      data = data[1,], inherit.aes = FALSE
+    )
   }
 
   ## Only add the top summary if this is called
@@ -222,13 +219,11 @@ setMethod(
     grp_vars <- unique(c(x, facet_x, facet_y, colour, linetype))
     grp_df <- group_by(data, !!!syms(grp_vars))
     summ_df <- summarise(grp_df, y = f(!!sym(fill)), .groups = "drop")
-    p <- p +
-      geom_xsideline(
-        aes_string(x = x, y = "y", colour = colour, linetype = linetype),
-        data = summ_df, inherit.aes = FALSE
-      ) +
-      ggside(collapse = "x") +
-      scale_xsidey_continuous(expand = expansion(c(0.1, 0.1)), position = "right") +
+    p <- p + geom_xsideline(
+      aes_string(x = x, y = "y", colour = colour, linetype = linetype),
+      data = summ_df, inherit.aes = FALSE
+    ) + ggside(collapse = "x") +
+      scale_xsidey_continuous(expand = c(0.1, 0, 0.1, 0), position = "right") +
       theme(
         panel.grid.minor = element_blank(), ggside.panel.scale = rel_height[[1]]
       )
@@ -242,11 +237,7 @@ setMethod(
     p <- p + facet_grid(fm, scales = "free_y", ...)
   }
 
-  p +
-    labs(x = x_lab, y = y_lab, fill = fill_lab) +
-    theme(
-      axis.text.y = element_blank(), axis.ticks.y = element_blank()
-    )
+  p
 
 }
 
