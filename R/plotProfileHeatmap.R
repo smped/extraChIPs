@@ -81,6 +81,11 @@ setMethod(
     xLab = xValue, yLab = NULL, fillLab = fillValue,
     facetLabeller = "label_value", relHeight, ...
   ) {
+
+    ## All elements of the list should usually have identical ranges, however,
+    ## this is not enforced given that scenarios can exist where this is not
+    ## required
+
     ## Set the List element names as a column, then use these as the default
     ## for facetting along the x-axis
     if (is.null(names(object))) names(object) <- paste0("X.", seq_along(object))
@@ -198,7 +203,11 @@ setMethod(
     aes_string(x = x, y = y, fill = fill, colour = colour, linetype = linetype)
   ) +
     geom_raster() +
-    x_axis
+    x_axis +
+    labs(x = x_lab, y = y_lab, fill = fill_lab) +
+    theme(
+      axis.text.y = element_blank(), axis.ticks.y = element_blank()
+    )
 
   ## Given that ggside does not currently create a legend for parameters only
   ## used in these side panels, add some dummy lines here in the main panel.

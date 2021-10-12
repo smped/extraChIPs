@@ -109,4 +109,8 @@ plotProfileHeatmap(pd, "profile_data") +
   scale_fill_viridis_c(option = "inferno", direction = -1) +
   labs(fill = "Coverage")
 
+pd$group <- "group1"
+pdl <- GRangesList(a = pd, b = pd)
+plotProfileHeatmap(pdl, "profile_data", facetY = "group")
+
 }
