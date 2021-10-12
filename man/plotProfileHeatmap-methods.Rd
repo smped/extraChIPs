@@ -96,7 +96,9 @@ specified genomic region.
 If using a GRangesList, each list element will be drawn as a separate panel
 by default. These panels will appear in the same order as the list elements
 of the GRangesList, although this can easily be overwritten by passing a
-column name to the facetX argument.
+column name to the facetX argument. The default approach will add the
+original element names as the column "name" which can be seen in the $data
+element of any resultant ggplot object produced by this function.
 }
 \examples{
 bw <- system.file("tests", "test.bw", package = "rtracklayer")

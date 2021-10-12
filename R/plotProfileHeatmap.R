@@ -22,7 +22,9 @@
 #' If using a GRangesList, each list element will be drawn as a separate panel
 #' by default. These panels will appear in the same order as the list elements
 #' of the GRangesList, although this can easily be overwritten by passing a
-#' column name to the facetX argument.
+#' column name to the facetX argument. The default approach will add the
+#' original element names as the column "name" which can be seen in the $data
+#' element of any resultant ggplot object produced by this function.
 #'
 #' @param object A GRanges or GRangesList object
 #' @param profileCol Column name specifying where to find the profile DataFrames
@@ -234,7 +236,7 @@ setMethod(
     facet_x <- ifelse(is.null(facet_x), ".", facet_x)
     facet_y <- ifelse(is.null(facet_y), ".", facet_y)
     fm <- as.formula(paste(facet_y, facet_x, sep = "~"))
-    p <- p + facet_grid(fm, scales = "free_y", ...)
+    p <- p + facet_grid(fm, scales = "free_y", space = "free_y", ...)
   }
 
   p
