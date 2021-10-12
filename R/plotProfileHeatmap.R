@@ -79,7 +79,7 @@ setMethod(
     profileCol, xValue = "bp", fillValue = "score",
     facetX = NULL, facetY = NULL, colour = facetY, linetype = NULL,
     summariseBy = c("mean", "median", "min", "max", "none"),
-    xLab = xValue, yLab = NULL, fillLab = fillValue, relHeight, ...
+    xLab = xValue, yLab = NULL, fillLab = fillValue, relHeight = 0.3, ...
   ) {
 
     ## All elements of the list should usually have identical ranges, however,
@@ -118,7 +118,7 @@ setMethod(
     profileCol, xValue = "bp", fillValue = "score",
     facetX = NULL, facetY = NULL, colour = facetY, linetype = NULL,
     summariseBy = c("mean", "median", "min", "max", "none"),
-    xLab = xValue, yLab = NULL, fillLab = fillValue, relHeight, ...
+    xLab = xValue, yLab = NULL, fillLab = fillValue, relHeight = 0.3, ...
   ) {
 
     ## Check the profile data.frames for identical dimensions & required cols
@@ -145,8 +145,6 @@ setMethod(
 
     ## Pass to the private function
     summariseBy <- match.arg(summariseBy)
-    if (missing(relHeight))
-      relHeight <- abs(min(0.5 - length(object)*4.04e-5, 0.5))
     .makeFinalProfileHeatmap(
       data = tbl, x = xValue, y = "range", fill = fillValue, colour = colour,
       linetype = linetype, facet_x = facetX, facet_y = facetY,

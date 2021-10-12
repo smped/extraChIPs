@@ -21,7 +21,7 @@ plotProfileHeatmap(object, ...)
   xLab = xValue,
   yLab = NULL,
   fillLab = fillValue,
-  relHeight,
+  relHeight = 0.3,
   ...
 )
 
@@ -38,7 +38,7 @@ plotProfileHeatmap(object, ...)
   xLab = xValue,
   yLab = NULL,
   fillLab = fillValue,
-  relHeight,
+  relHeight = 0.3,
   ...
 )
 }
