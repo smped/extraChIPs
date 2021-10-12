@@ -13,12 +13,12 @@
   linetype = NULL,
   facet_x = NULL,
   facet_y = NULL,
-  facet_labeller = "label_value",
   summary_fun = c("mean", "median", "min", "max", "none"),
   rel_height = 0.3,
   x_lab = NULL,
   y_lab = NULL,
-  fill_lab = NULL
+  fill_lab = NULL,
+  ...
 )
 }
 \arguments{
@@ -32,13 +32,13 @@
 
 \item{facet_x, facet_y}{Columns used to facet the plot along these axes}
 
-\item{facet_labeller}{_labeller function}
-
 \item{summary_fun}{Function used to create the summary value at each position}
 
 \item{rel_height}{The relative height of the top panel}
 
-\item{x_lab, y_lab, fill_lab}{_labels added to x/y-zxes & the fill legend}
+\item{x_lab, y_lab, fill_lab}{_labels added to x/y-axes & the fill legend}
+
+\item{...}{Passed to facet_grid}
 }
 \value{
 A ggplot2 object

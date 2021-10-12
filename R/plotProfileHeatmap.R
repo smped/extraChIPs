@@ -37,11 +37,10 @@
 #' contain a line-plot representing this summary value for each x-axis bin
 #' @param xLab,yLab,fillLab Labels for plotting aesthetics. Can be overwritten
 #' using labs() on any returned object
-#' @param facetLabeller Any labeller function able to be passed to facet_grid
 #' @param relHeight The relative height of the top summary panel.
 #' Represents the fraction of the plotting area taken up by the summary panel.
-#' @param ... Not used
-#'
+#' @param ... Passed to \link[ggplot2]{facet_grid} internally. Can be utilised
+#' for switching panel strips or passing a labeller function
 #'
 #' @return
 #' A `ggplot2` object, able to be customised using standard `ggplot2` syntax
@@ -78,8 +77,7 @@ setMethod(
     profileCol, xValue = "bp", fillValue = "score",
     facetX = NULL, facetY = NULL, colour = facetY, linetype = NULL,
     summariseBy = c("mean", "median", "min", "max", "none"),
-    xLab = xValue, yLab = NULL, fillLab = fillValue,
-    facetLabeller = "label_value", relHeight, ...
+    xLab = xValue, yLab = NULL, fillLab = fillValue, relHeight, ...
   ) {
 
     ## All elements of the list should usually have identical ranges, however,
@@ -98,8 +96,7 @@ setMethod(
       object = gr, profileCol = profileCol, xValue = xValue,
       fillValue = fillValue, facetX = facetX, facetY = facetY, colour = colour,
       linetype = linetype, summariseBy = summariseBy, xLab = xLab, yLab = yLab,
-      fillLab = fillLab, facetLabeller = facetLabeller, relHeight = relHeight,
-      ...
+      fillLab = fillLab, relHeight = relHeight, ...
     )
   }
 )
@@ -119,8 +116,7 @@ setMethod(
     profileCol, xValue = "bp", fillValue = "score",
     facetX = NULL, facetY = NULL, colour = facetY, linetype = NULL,
     summariseBy = c("mean", "median", "min", "max", "none"),
-    xLab = xValue, yLab = NULL, fillLab = fillValue,
-    facetLabeller = "label_value", relHeight, ...
+    xLab = xValue, yLab = NULL, fillLab = fillValue, relHeight, ...
   ) {
 
     ## Check the profile data.frames for identical dimensions & required cols
@@ -145,7 +141,6 @@ setMethod(
     if (!is.null(facetY))
       tbl[[facetY]] <- fct_inorder(as.character(tbl[[facetY]]))
 
-
     ## Pass to the private function
     summariseBy <- match.arg(summariseBy)
     if (missing(relHeight))
@@ -153,8 +148,8 @@ setMethod(
     .makeFinalProfileHeatmap(
       data = tbl, x = xValue, y = "range", fill = fillValue, colour = colour,
       linetype = linetype, facet_x = facetX, facet_y = facetY,
-      facet_labeller = facetLabeller, summary_fun = summariseBy,
-      rel_height = relHeight, x_lab = xLab, y_lab = yLab, fill_lab = fillLab
+      summary_fun = summariseBy, rel_height = relHeight, x_lab = xLab,
+      y_lab = yLab, fill_lab = fillLab, ...
     )
   }
 )
@@ -170,12 +165,13 @@ setMethod(
 #' @param fill The column used for heatmap colours
 #' @param colour,linetype Columns used for the summary plot in the top panel
 #' @param facet_x,facet_y Columns used to facet the plot along these axes
-#' @param facet_labeller _labeller function
 #' @param summary_fun Function used to create the summary value at each position
 #' @param rel_height The relative height of the top panel
-#' @param x_lab,y_lab,fill_lab _labels added to x/y-zxes & the fill legend
+#' @param x_lab,y_lab,fill_lab _labels added to x/y-axes & the fill legend
+#' @param ... Passed to facet_grid
+#'
 #' @importFrom ggplot2 ggplot aes_string facet_grid expansion theme labs
-#' @importFrom ggplot2 geom_raster geom_segment
+#' @importFrom ggplot2 geom_raster geom_segment scale_y_discrete
 #' @importFrom ggplot2 scale_x_discrete scale_x_continuous element_blank
 #' @importFrom ggside geom_xsideline ggside scale_xsidey_continuous
 #' @importFrom dplyr group_by summarise
@@ -184,9 +180,9 @@ setMethod(
 #' @keywords internal
 .makeFinalProfileHeatmap <- function(
   data, x = NULL, y = NULL, fill = NULL, colour = NULL, linetype = NULL,
-  facet_x = NULL, facet_y = NULL, facet_labeller = "label_value",
+  facet_x = NULL, facet_y = NULL,
   summary_fun = c("mean", "median", "min", "max", "none"),
-  rel_height = 0.3, x_lab = NULL, y_lab = NULL, fill_lab = NULL
+  rel_height = 0.3, x_lab = NULL, y_lab = NULL, fill_lab = NULL, ...
 ) {
 
   ## data should be a simple data.frame or tibble used to make the final plot
@@ -204,10 +200,8 @@ setMethod(
   ) +
     geom_raster() +
     x_axis +
-    labs(x = x_lab, y = y_lab, fill = fill_lab) +
-    theme(
-      axis.text.y = element_blank(), axis.ticks.y = element_blank()
-    )
+    scale_y_discrete(breaks = NULL) +
+    labs(x = x_lab, y = y_lab, fill = fill_lab)
 
   ## Given that ggside does not currently create a legend for parameters only
   ## used in these side panels, add some dummy lines here in the main panel.
@@ -234,7 +228,7 @@ setMethod(
         data = summ_df, inherit.aes = FALSE
       ) +
       ggside(collapse = "x") +
-      scale_xsidey_continuous(expand = expansion(c(0.1, 0.1))) +
+      scale_xsidey_continuous(expand = expansion(c(0.1, 0.1)), position = "right") +
       theme(
         panel.grid.minor = element_blank(), ggside.panel.scale = rel_height[[1]]
       )
@@ -245,7 +239,7 @@ setMethod(
     facet_x <- ifelse(is.null(facet_x), ".", facet_x)
     facet_y <- ifelse(is.null(facet_y), ".", facet_y)
     fm <- as.formula(paste(facet_y, facet_x, sep = "~"))
-    p <- p + facet_grid(fm, labeller = facet_labeller, scales = "free_y")
+    p <- p + facet_grid(fm, scales = "free_y", ...)
   }
 
   p +

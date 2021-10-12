@@ -21,7 +21,6 @@ plotProfileHeatmap(object, ...)
   xLab = xValue,
   yLab = NULL,
   fillLab = fillValue,
-  facetLabeller = "label_value",
   relHeight,
   ...
 )
@@ -39,7 +38,6 @@ plotProfileHeatmap(object, ...)
   xLab = xValue,
   yLab = NULL,
   fillLab = fillValue,
-  facetLabeller = "label_value",
   relHeight,
   ...
 )
@@ -47,7 +45,8 @@ plotProfileHeatmap(object, ...)
 \arguments{
 \item{object}{A GRanges or GRangesList object}
 
-\item{...}{Not used}
+\item{...}{Passed to \link[ggplot2]{facet_grid} internally. Can be utilised
+for switching panel strips or passing a labeller function}
 
 \item{profileCol}{Column name specifying where to find the profile DataFrames}
 
@@ -67,8 +66,6 @@ contain a line-plot representing this summary value for each x-axis bin}
 
 \item{xLab, yLab, fillLab}{Labels for plotting aesthetics. Can be overwritten
 using labs() on any returned object}
-
-\item{facetLabeller}{Any labeller function able to be passed to facet_grid}
 
 \item{relHeight}{The relative height of the top summary panel.
 Represents the fraction of the plotting area taken up by the summary panel.}
