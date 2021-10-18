@@ -78,9 +78,9 @@ object should be included.}
 \item{gradient}{Colour gradient for heatmaps}
 
 \item{hiccol}{list with names \code{"anchors"} and \code{"interactions"}. Colours
-to be passed to these elements}
+are passed to these elements}
 
-\item{featurecol}{Named vector of colours for each feature}
+\item{featurecol}{Named vector (or list) of colours for each feature}
 
 \item{genecol}{Named vector (or list) of colours for each gene category}
 
@@ -141,9 +141,11 @@ individual files within each BigWigFileList overlaid within each track.
 Cytogenetic band information must be in the structure required by
 \link[Gviz]{IdeogramTrack}, with data for both GRCh37 and GRCh38 provided in
 this package (\link{grch37.cytobands}, \link{grch38.cytobands}).
+
+A highlight overlay over the GRanges provided as the \code{gr} argument will be
+added if a colour is provided. If set to NULL, no highlight will be added.
 }
 \examples{
-data(grch37.cytobands)
 gr <- GRanges("chr1:11869-12227")
 feat_gr <- GRangesList(
   Promoter = GRanges("chr1:11800-12000"),
@@ -156,6 +158,7 @@ mcols(genes) <- DataFrame(
   feature = "exon", gene = "ENSG00000223972", exon = 1:3,
   transcript = "ENST00000456328", symbol = "DDX11L1"
 )
+data(grch37.cytobands)
 plotHFGC(
   gr, hic = hic, features = feat_gr, genes = genes,
   zoom = 2, cytobands = grch37.cytobands, rotation.title = 90,
