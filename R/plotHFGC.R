@@ -465,16 +465,17 @@ plotHFGC <- function(
           )
       genes <- unlist(genes)
     }
-    if (!is(genes, "GRanges"))
+    if (!is(genes, "GRanges")) {
       msg <- c(msg, "genes must be a 'GRanges' or GRangesList object\n")
-
-    gene_mcols <- c("feature", "gene", "exon", "transcript", "symbol")
-    if (!all(gene_mcols %in% colnames(mcols(genes))))
-      msg <- c(
-        msg, paste(
-          "'genes' must have an mcols component with the columns:",
-          paste(gene_mcols, collapse = ", "), "\n")
-      )
+    } else {
+      gene_mcols <- c("feature", "gene", "exon", "transcript", "symbol")
+      if (!all(gene_mcols %in% colnames(mcols(genes))))
+        msg <- c(
+          msg, paste(
+            "'genes' must have an mcols component with the columns:",
+            paste(gene_mcols, collapse = ", "), "\n")
+        )
+    }
   }
 
   if (!missing(coverage)) {

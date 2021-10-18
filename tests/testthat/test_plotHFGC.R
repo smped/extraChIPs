@@ -16,6 +16,36 @@ test_path <- system.file("tests", "test.bw", package = "rtracklayer")
 test_bw <- BigWigFileList(test_path)
 names(test_bw) <- "a"
 
+
+test_that("Correct plotting works", {
+  data(grch37.cytobands)
+  gr <- GRanges("chr1:11869-12227")
+  feat_gr <- GRangesList(
+    Promoter = GRanges("chr1:11800-12000"),
+    Enhancer = GRanges("chr1:13000-13200")
+  )
+  hic <- InteractionSet::GInteractions(feat_gr$Promoter, feat_gr$Enhancer)
+  genes <- c("chr1:11869-12227:+", "chr1:12613-12721:+", "chr1:13221-14409:+")
+  genes <- GRanges(genes)
+  mcols(genes) <- DataFrame(
+    feature = "exon", gene = "ENSG00000223972", exon = 1:3,
+    transcript = "ENST00000456328", symbol = "DDX11L1"
+  )
+  p <- plotHFGC(
+    gr, hic = hic, features = feat_gr, genes = genes,
+    zoom = 2, cytobands = grch37.cytobands, rotation.title = 90,
+    featurecol = c(Promoter = "red", Enhancer = "yellow")
+  )
+  expect_true(is(p, "list"))
+  expect_equal(length(p), 6)
+  expect_true(is(p[[1]], "IdeogramTrack"))
+  expect_true(is(p[[2]], "GenomeAxisTrack"))
+  expect_true(is(p[[3]], "InteractionTrack"))
+  expect_true(is(p[[4]], "AnnotationTrack"))
+  expect_true(is(p[[5]], "GeneRegionTrack"))
+  expect_true(is(p[[6]], "ImageMap"))
+})
+
 test_that(".checkHFGCArgs catches GRanges issues", {
   expect_error(
     .checkHFGCArgs(zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, type = "l")
@@ -33,11 +63,26 @@ test_that(".checkHFGCArgs catches GRanges issues", {
     ),
     "Cannot be an empty range"
   )
+  expect_message(
+    .checkHFGCArgs(
+      gr = GRanges(c("chr1:1", "chr2:1")), zoom = 1, shift = 0, max = 1e7,
+      axistrack = TRUE, type = "l"
+    ),
+    "All ranges must be on the same chromosome"
+  )
+  expect_message(
+    .checkHFGCArgs(
+      gr = gr1, zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, type = "l",
+      genes = c()
+    ),
+    "genes must be a 'GRanges' or GRangesList object"
+  )
   expect_true(
     .checkHFGCArgs(
       gr = gr1, zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, type = "l"
     )
   )
+
 })
 
 test_that("Malformed numerics/bools are caught", {
@@ -190,6 +235,13 @@ test_that("Malformed cytobands are caught", {
     ),
     "seqnames not found in cytobands"
   )
+  expect_message(
+    .checkHFGCArgs(
+      gr1, zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, type = "l",
+      cytobands = c()
+    ),
+    "cytobands must be supplied as a data.frame"
+  )
 })
 
 test_that("Ideogram forms correctly", {
@@ -213,6 +265,7 @@ test_that("HiC Track forms correctly", {
   expect_equal(hic_track@dp@pars$size, 2)
   expect_equal(hic_track@dp@pars$rotation.title, 90)
   expect_null(.makeHiCTrack(hic, GRanges()))
+  expect_null(.makeHiCTrack())
 })
 
 test_that("Feature Track forms correctly", {
@@ -228,9 +281,11 @@ test_that("Feature Track forms correctly", {
       .rot = 0
     )
   )
+  expect_null(.makeFeatureTrack())
 })
 
 test_that("Genes Track forms correctly", {
+  expect_equal(.makeGeneTracks(), list(NULL))
   gene_track <- .makeGeneTracks(
     genes, gr1, "meta", .tracksize = 1, .cex = 1, .rot = 0, .fontsize = 12
   )
@@ -279,5 +334,12 @@ test_that("Coverage Track forms correctly", {
     .makeCoverageTracks(.coverage = test_bw, .gr = gr1),
     "'which' contains seqnames not known to BigWig file: chr1"
   )
+  expect_equal(.makeCoverageTracks(), list(NULL))
+  expect_equal(.makeCoverageTracks(.coverage = NULL), list(NULL))
+  cov_heat <- .makeCoverageTracks(
+    .coverage = test_bw, .gr = GRanges("chr2:1-10"), .type = "heatmap",
+    .fontsize = 12, .gradient = "blue", .tracksize = 1, .cex = 1, .rot = 0
+  )
+  expect_null(cov_heat[[1]]@dp@pars$col)
 
 })
