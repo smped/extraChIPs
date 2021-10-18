@@ -105,10 +105,7 @@ setMethod(
       n_windows = dplyr::n(),
       n_up = sum(!!sym(pval) <= (!!sym(pval))[i] & !!sym(logfc) > 0),
       n_down = sum(!!sym(pval) <= (!!sym(pval))[i] & !!sym(logfc) < 0),
-      across(
-        all_of(ret_cols), function(x) {x[i]}
-      ),
-      .groups = "drop"
+      across(all_of(ret_cols), function(x) {x[i]}), .groups = "drop"
     )
     merged_df <- as.data.frame(merged_df[c(n_cols, ret_cols)])
     if (p_adj_method != "none")

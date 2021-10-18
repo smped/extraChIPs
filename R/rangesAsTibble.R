@@ -36,7 +36,9 @@ as_tibble.DataFrame <- function(x, ...) {
 #' @importFrom dplyr bind_cols
 #' @rdname as_tibble-methods
 #' @export
-as_tibble.GenomicRanges <- function(x, name = "range", rangeAsChar = TRUE, ...) {
+as_tibble.GenomicRanges <- function(
+    x, name = "range", rangeAsChar = TRUE, ...
+) {
     if (!rangeAsChar) return(as_tibble(as.data.frame(x)))
     gr_tbl <- tibble("{name}" := as.character(x))
     if (ncol(mcols(x)) == 0) return(gr_tbl)

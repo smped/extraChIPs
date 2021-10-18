@@ -1,6 +1,6 @@
 Package: chipExtra
-Version: 0.1.14
-Date: 2021/10/12
+Version: 0.1.15
+Date: 2021/10/18
 Title: Additional functions for working with ChIP-Seq data
 Authors@R: person("Stephen", "Pederson", 
   email = "stephen.pederson.au@gmail.com", role = c("aut", "cre"))
@@ -28,17 +28,23 @@ Imports:
   EnrichedHeatmap,
   forcats,
   GenomeInfoDb,
+  GenomicInteractions,
   ggrepel,
   ggside,
+  grDevices,
+  Gviz,
+  InteractionSet,
   IRanges,
   limma,
   methods,
+  RColorBrewer,
   rlang,
   Rsamtools,
   rtracklayer,
   S4Vectors,
   scales,
   stats,
+  stringr,
   tidyr,
   tidyselect,
   utils
@@ -49,3 +55,4 @@ biocViews: ChIPSeq, Sequencing
 Roxygen: list(markdown = TRUE)  
 RoxygenNote: 7.1.2
 Config/testthat/edition: 3
+LazyData: true

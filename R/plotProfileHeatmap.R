@@ -201,18 +201,15 @@ setMethod(
     geom_raster() + x_axis + scale_y_discrete(breaks = NULL) +
     labs(x = x_lab, y = y_lab, fill = fill_lab)
 
-  ## Given that ggside does not currently create a legend for parameters only
+    ## Given that ggside does not currently create a legend for parameters only
   ## used in these side panels, add some dummy lines here in the main panel.
   ## This will ensure a legend appears for colour or linetype
-  if (!is.null(colour) | !is.null(linetype)) {
+  if (!is.null(colour) | !is.null(linetype))
     p <- p + geom_segment(
       aes_string(
         x = x, y = y, xend = x, yend = y, colour = colour, linetype = linetype
-      ),
-      data = data[1,], inherit.aes = FALSE
+      ), data = data[1,], inherit.aes = FALSE
     )
-  }
-
   ## Only add the top summary if this is called
   if (summary_fun != "none") {
     f <- match.fun(summary_fun)
@@ -228,7 +225,6 @@ setMethod(
         panel.grid.minor = element_blank(), ggside.panel.scale = rel_height[[1]]
       )
   }
-
   ## Add the faceting information
   if (!is.null(facet_x) | !is.null(facet_y)) {
     facet_x <- ifelse(is.null(facet_x), ".", facet_x)
@@ -236,7 +232,6 @@ setMethod(
     fm <- as.formula(paste(facet_y, facet_x, sep = "~"))
     p <- p + facet_grid(fm, scales = "free_y", space = "free_y", ...)
   }
-
   p
 
 }
@@ -250,8 +245,8 @@ setMethod(
   ## Expects a SplitDataFrameList, or similar
   ## Needs to check all have the same dimensions & the same column names
   if (is(df, "CompressedSplitDataFrameList")) {
-    ## CompressedSplitDataFrameList objects already have the colnames & DataFrame
-    ## stuff checked. Check these first for speed
+    ## CompressedSplitDataFrameList objects already have the colnames &
+    ## DataFrame stuff checked. Check these first for speed
     nr <- vapply(df, nrow, integer(1))
     if (length(unique(nr)) != 1)
       msg <- c(msg, "All elements must have the same number of rows\n")
