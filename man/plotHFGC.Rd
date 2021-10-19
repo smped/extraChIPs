@@ -10,6 +10,7 @@ plotHFGC(
   features,
   genes,
   coverage,
+  annotation,
   zoom = 1,
   shift = 0,
   max = 1e+07,
@@ -21,6 +22,7 @@ plotHFGC(
   hiccol = list(anchors = "lightblue", interactions = "red"),
   featurecol,
   genecol,
+  annotcol,
   highlight = "blue",
   hicsize = 1,
   featsize = 1,
@@ -54,6 +56,12 @@ track. List names will become track names. Alternatively, a single
 BigWigFileList will plot all individual files on separate tracks.
 If not included, no coverage tracks will be drawn.}
 
+\item{annotation}{Annotations for the coverage track(s).
+A single GRangesList if coverage is a BigWigListList.
+If coverage is supplied as a list of BigWigFileLists, a named list of
+GRangesList objects for each coverage track being annotatated. Names must
+match those given for coverage.}
+
 \item{zoom}{Multiplicative factor for zooming in and out}
 
 \item{shift}{Shift the plot. Applied after zooming}
@@ -83,6 +91,8 @@ are passed to these elements}
 \item{featurecol}{Named vector (or list) of colours for each feature}
 
 \item{genecol}{Named vector (or list) of colours for each gene category}
+
+\item{annotcol}{Colours matching the coverage annotations}
 
 \item{highlight}{Outline colour for the highlight track. Setting this to
 \code{NULL} will remove the highlight}

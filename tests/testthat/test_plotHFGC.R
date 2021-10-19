@@ -44,6 +44,17 @@ test_that("Correct plotting works", {
   expect_true(is(p[[4]], "AnnotationTrack"))
   expect_true(is(p[[5]], "GeneRegionTrack"))
   expect_true(is(p[[6]], "ImageMap"))
+
+  p <- plotHFGC(
+    GRanges("chr2:1-1000"), coverage = test_bw, cytobands = grch37.cytobands,
+    axistrack = FALSE, annotation = GRangesList(up = GRanges("chr2:501-505")),
+    annotcol = list(up = "red")
+  )
+  expect_equal(length(p), 4)
+  expect_true(is(p[[2]], "AnnotationTrack"))
+  expect_equal(p[[2]]@dp@pars$fill, c(up = "red"))
+  expect_true(is(p[[3]], "DataTrack"))
+
 })
 
 test_that(".checkHFGCArgs catches GRanges issues", {
