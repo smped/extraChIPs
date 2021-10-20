@@ -58,6 +58,7 @@ test_that("Correct plotting works", {
 })
 
 test_that(".checkHFGCArgs catches GRanges issues", {
+  expect_error(suppressMessages(plotHFGC(gr = NULL)))
   expect_error(
     .checkHFGCArgs(zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, type = "l")
   )

@@ -145,7 +145,7 @@ plotHFGC <- function(
     linecol = linecol, genecol = genecol, featurecol = featurecol,
     annotcol = annotcol, type = coverage_type
   )
-  if (is.character(checkArgs)) stop(checkArgs)
+  stopifnot(checkArgs)
 
   ## Form the HiC track, including all interactions beyond the max
   hic_track <- .makeHiCTrack(
@@ -558,6 +558,7 @@ plotHFGC <- function(
 
   if (is.null(msg)) return(TRUE)
   message(msg)
+  FALSE
 }
 
 .checkCoverage <- function(msg, coverage, linecol, type, annotation, annotcol) {
