@@ -28,6 +28,7 @@ plotHFGC(
   featsize = 1,
   genesize = 1,
   covsize = 4,
+  annotsize = 0.5,
   ...,
   fontsize = 12,
   cex.title = 0.8,
@@ -97,7 +98,7 @@ are passed to these elements}
 \item{highlight}{Outline colour for the highlight track. Setting this to
 \code{NULL} will remove the highlight}
 
-\item{hicsize, featsize, genesize, covsize}{Relative sizes for each track}
+\item{hicsize, featsize, genesize, covsize, annotsize}{Relative sizes for each track (hic, features, genes, coverage & annotation)}
 
 \item{...}{Passed to \link[Gviz]{DataTrack} for the \strong{coverage tracks} only.
 Useful arguments may be things like \code{ylim}, \code{legend}}

@@ -222,6 +222,45 @@ test_that("Malformed coverage parameters are caught", {
     ),
     "'linecol' must be a named vector of colours"
   )
+  expect_message(
+    .checkHFGCArgs(
+      gr = GRanges("chr2:1-1000"), coverage = test_bw, annotation = GRanges(),
+      zoom = 1, shift = 0, max = Inf, type = "l", axistrack = TRUE
+    ),
+    "annotation must be a GRangesList"
+  )
+  expect_message(
+    .checkHFGCArgs(
+      gr = GRanges("chr2:1-1000"), coverage = list(a = test_bw),
+      annotation = GRangesList(),
+      zoom = 1, shift = 0, max = Inf, type = "l", axistrack = TRUE
+      ),
+    "annotation must be a list of GRangesList objects"
+  )
+  expect_message(
+    .checkHFGCArgs(
+      gr = GRanges("chr2:1-1000"), coverage = list(a = test_bw),
+      annotation = list(NULL),
+      zoom = 1, shift = 0, max = Inf, type = "l", axistrack = TRUE
+    ),
+    "annotation must be a list of GRangesList objects"
+  )
+  expect_message(
+    .checkHFGCArgs(
+      gr = GRanges("chr2:1-1000"), coverage = test_bw,
+      annotation = GRangesList(a = GRanges()), annotcol = c(b = "blue"),
+      zoom = 1, shift = 0, max = Inf, type = "l", axistrack = TRUE
+    ),
+    "Colours not specified for a"
+  )
+  expect_message(
+    .checkHFGCArgs(
+      gr = GRanges("chr2:1-1000"), coverage = list(a = test_bw, test_bw),
+      zoom = 1, shift = 0, max = Inf, type = "l", axistrack = TRUE
+    ),
+    "'coverage' must a be a named list"
+  )
+
 
 })
 

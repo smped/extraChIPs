@@ -106,7 +106,8 @@
 #' @param gradient Colour gradient for heatmaps
 #' @param highlight Outline colour for the highlight track. Setting this to
 #' `NULL` will remove the highlight
-#' @param hicsize,featsize,genesize,covsize Relative sizes for each track
+#' @param hicsize,featsize,genesize,covsize,annotsize
+#' Relative sizes for each track (hic, features, genes, coverage & annotation)
 #' @param ... Passed to \link[Gviz]{DataTrack} for the **coverage tracks** only.
 #' Useful arguments may be things like `ylim`, `legend`
 #' @param cex.title Passed to all tracks
@@ -130,8 +131,9 @@ plotHFGC <- function(
   linecol, gradient = hcl.colors(101, "viridis"),
   hiccol = list(anchors = "lightblue", interactions = "red"),
   featurecol, genecol, annotcol, highlight = "blue",
-  hicsize = 1, featsize = 1, genesize = 1, covsize = 4, ..., fontsize = 12,
-  cex.title = 0.8, rotation.title = 0, collapseTranscripts = "meta"
+  hicsize = 1, featsize = 1, genesize = 1, covsize = 4, annotsize = 0.5, ...,
+  fontsize = 12, cex.title = 0.8, rotation.title = 0,
+  collapseTranscripts = "meta"
 ) {
 
   ## Argument checks
@@ -143,9 +145,9 @@ plotHFGC <- function(
     linecol = linecol, genecol = genecol, featurecol = featurecol,
     annotcol = annotcol, type = coverage_type
   )
-  if (!checkArgs) stop("Inputs incorrect see additional messages")
+  if (is.character(checkArgs)) stop(checkArgs)
 
-  ## Form the HiC track, leaving all interactions beyond the max
+  ## Form the HiC track, including all interactions beyond the max
   hic_track <- .makeHiCTrack(
     hic, gr, fontsize, hicsize, cex.title, rotation.title, hiccol
   )
@@ -158,7 +160,7 @@ plotHFGC <- function(
     anchors <- anchors(hic[calculateDistances(hic) < max])
     plot_range <- range(unlist(GRangesList(anchors)))
   }
-  ## Now resize as required
+  ## Now resize/shift as required
   plot_range <- resize(plot_range, zoom*width(plot_range), fix = "center")
   plot_range <- shift(plot_range, shift)
 
@@ -183,7 +185,7 @@ plotHFGC <- function(
     cex.title, rotation.title, ...
   )
   cov_tracks <- .addAnnotations(
-    annotation, plot_range, cov_tracks, coverage, annotcol
+    annotation, plot_range, cov_tracks, coverage, annotcol, annotsize
   )
 
   ## Add the highlight track if wanted. Include features, genes & coverage
@@ -275,16 +277,17 @@ plotHFGC <- function(
 }
 
 #' @importFrom methods is
-.addAnnotations <- function(.annotation, .gr, .cov_tracks, .coverage, .fill) {
+.addAnnotations <- function(
+  .annotation, .gr, .cov_tracks, .coverage, .fill, .size
+  ) {
   if (missing(.annotation) | is.null(.cov_tracks)) return(.cov_tracks)
 
   if (is(.coverage, "BigWigFileList")) {
     ## Here we just add another feature track. Input will be a single GRList
-    tracksize <- .cov_tracks[[1]]@dp@pars$size * 0.15
     fontsize <- .cov_tracks[[1]]@dp@pars$fontsize
     cex <- .cov_tracks[[1]]@dp@pars$cex.title
     annot_track <- .makeFeatureTrack(
-      .annotation, .gr, fontsize, .fill, tracksize, cex, 0
+      .annotation, .gr, fontsize, .fill, .size, cex, 0
     )
     annot_track@name <- ""
     tracks <- c(list(annot_track), .cov_tracks)
@@ -301,13 +304,12 @@ plotHFGC <- function(
       function(x) {
         nm <- x@name
         if (!nm %in% cov2add) return(x)
-        tracksize <- x@dp@pars$size * 0.15
         fontsize <- x@dp@pars$fontsize
         cex <- x@dp@pars$cex.title
         annot_track <- .makeFeatureTrack(
-          .annotation[[nm]], .gr, fontsize, .fill, tracksize, cex, 0
+          .annotation[[nm]], .gr, fontsize, .fill, .size, cex, 0
         )
-        annot_track@name <- ""
+        annot_track@name <- nm
         c(list(annot_track), x)
       }
     )
@@ -535,69 +537,7 @@ plotHFGC <- function(
     }
   }
 
-  if (!missing(coverage)) {
-
-    ## Add checks for coverage. This can be a list of BigWigFileLists, or a
-    ## single BigWigFileList
-    if (is(coverage, "list")) {
-      chk <- vapply(coverage, is, logical(1), class2 = "BigWigFileList")
-      if (!all(chk))
-        msg <- c(msg, "All elements of 'coverage' must be a BigWigFileList\n")
-      if (length(names(coverage)) != length(coverage))
-        msg <- c(msg, "'coverage' must a be a named list\n")
-    } else {
-      if (!is(coverage, "BigWigFileList"))
-        msg <- c(msg, "'coverage' should be a BigWigFileList or a list\n")
-    }
-    if (!missing(linecol) & type == "l") {
-      # This must be a named vector
-      if (length(names(linecol)) != length(linecol))
-        msg <- c(msg, "'linecol' must be a named vector of colours\n")
-      # All names in the coverage objects must also be present
-      all_names <- c()
-      if (is(coverage, "list")) all_names <- unlist(lapply(coverage, names))
-      if (is(coverage, "BigWigFileList")) all_names <- names(coverage)
-      miss <- setdiff(all_names, names(linecol))
-      if (length(miss) > 0)
-        msg <- c(msg, "Colours not specified for ", miss, "\n")
-    }
-
-    if (!missing(annotation)) {
-
-      all_annot <- c()
-      ## We need to check that it's a GRangesList if coverage is a BigWigFileList
-      if (is(coverage, "BigWigFileList")) {
-        if (!is(annotation, "GRangesList")) {
-          msg <- c(msg, "annotation must be a GRangesList\n")
-        } else {
-          all_annot <- names(annotation)
-        }
-      }
-
-      ## Or a list of GRangesLists if coverage is a list of BigWigFileLists
-      if (is(coverage, "list")) {
-        if (!is(annotation, "list")) {
-          msg <- c(msg, "annotation must be a list of GRangesList objects\n")
-        } else {
-          is_grl <- vapply(annotation, is, logical(1), class2 = "GRangesList")
-          if (!all(is_grl)) {
-            msg <- c(msg, "annotation must be a list of GRangesList objects\n")
-          } else {
-            all_annot <- unlist(lapply(annotation, names))
-          }
-        }
-      }
-
-      ## Also we need to check that colours match if specified
-      if (!missing(annotcol)) {
-        all_cols <- names(annotcol)
-        miss <- setdiff(all_annot, all_cols)
-        if (length(miss) > 0)
-          msg <- c(msg, "Colours not specified for ", miss, "\n")
-      }
-
-    }
-  }
+  msg <- .checkCoverage(msg, coverage, linecol, type, annotation, annotcol)
 
   bools <- c(axistrack)
   if (!is.logical(bools)) msg <- c(msg, "axistrack must be logical values")
@@ -618,5 +558,73 @@ plotHFGC <- function(
 
   if (is.null(msg)) return(TRUE)
   message(msg)
-  FALSE
+}
+
+.checkCoverage <- function(msg, coverage, linecol, type, annotation, annotcol) {
+
+  if (missing(coverage)) return(msg)
+
+  ## Add checks for coverage. This can be a list of BigWigFileLists, or a
+  ## single BigWigFileList
+  if (is(coverage, "list")) {
+    chk <- vapply(coverage, is, logical(1), class2 = "BigWigFileList")
+    if (!all(chk))
+      msg <- c(msg, "All elements of 'coverage' must be a BigWigFileList\n")
+    if ("" %in% names(coverage))
+      msg <- c(msg, "'coverage' must a be a named list\n")
+  } else {
+    if (!is(coverage, "BigWigFileList"))
+      msg <- c(msg, "'coverage' should be a BigWigFileList or a list\n")
+  }
+  if (!missing(linecol) & type == "l") {
+    # This must be a named vector
+    if (length(names(linecol)) != length(linecol))
+      msg <- c(msg, "'linecol' must be a named vector of colours\n")
+    # All names in the coverage objects must also be present
+    all_names <- c()
+    if (is(coverage, "list")) all_names <- unlist(lapply(coverage, names))
+    if (is(coverage, "BigWigFileList")) all_names <- names(coverage)
+    miss <- setdiff(all_names, names(linecol))
+    if (length(miss) > 0)
+      msg <- c(msg, "Colours not specified for ", miss, "\n")
+  }
+
+  if (missing(annotation)) return(msg)
+
+  all_annot <- c()
+  ## We need to check that it's a GRangesList if coverage is a BigWigFileList
+  if (is(coverage, "BigWigFileList")) {
+    if (!is(annotation, "GRangesList")) {
+      msg <- c(msg, "annotation must be a GRangesList\n")
+    } else {
+      all_annot <- names(annotation)
+    }
+  }
+
+  ## Or a list of GRangesLists if coverage is a list of BigWigFileLists
+  if (is(coverage, "list")) {
+    if (!is(annotation, "list")) {
+      msg <- c(msg, "annotation must be a list of GRangesList objects\n")
+    } else {
+      is_grl <- vapply(annotation, is, logical(1), class2 = "GRangesList")
+      if (!all(is_grl)) {
+        msg <- c(msg, "annotation must be a list of GRangesList objects\n")
+      } else {
+        all_annot <- unlist(lapply(annotation, names))
+      }
+    }
+  }
+
+  if (missing(annotcol)) return(msg)
+
+  ## Also we need to check that colours match if specified
+  if (!missing(annotcol)) {
+    all_cols <- names(annotcol)
+    miss <- setdiff(all_annot, all_cols)
+    if (length(miss) > 0)
+      msg <- c(msg, "Colours not specified for ", miss, "\n")
+  }
+
+  msg
+
 }
