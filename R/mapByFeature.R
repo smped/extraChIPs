@@ -127,7 +127,8 @@ mapByFeature <- function(
 #' @importFrom tidyselect everything
 .mapFeatures <- function(.gr, .feat, .genes, .cols, .gr2feat, .feat2gene, ...) {
 
-  if (missing(.feat) | length(.gr) == 0) return(NULL)
+  if (missing(.feat)) return(NULL)
+  if (length(.feat) == 0 | length(.gr) == 0) return(NULL)
   if (!missing(.genes)) {
     .cols <- intersect(.cols, names(mcols(.genes)))
   } else {
@@ -136,33 +137,33 @@ mapByFeature <- function(
   stopifnot(length(.cols) > 0)
   if (!all(.cols %in% names(mcols(.feat)))) {
     ## Map to genes if any requested column is absent from any existing mapping
-    prom_to_gene <- findOverlaps(.feat, .genes, maxgap = .feat2gene, ...)
-    prom_to_gene <- as.data.frame(prom_to_gene)
-    prom_df <- data.frame(queryHits = seq_along(.feat))
-    prom_df <- left_join(prom_df, prom_to_gene, by = "queryHits")
+    feat_to_gene <- findOverlaps(.feat, .genes, maxgap = .feat2gene, ...)
+    feat_to_gene <- as.data.frame(feat_to_gene)
+    feat_df <- data.frame(queryHits = seq_along(.feat))
+    feat_df <- left_join(feat_df, feat_to_gene, by = "queryHits")
     .genes$subjectHits <- seq_along(.genes)
     gene_df <- as.data.frame(mcols(.genes)[c("subjectHits", .cols)])
-    prom_df <- left_join(prom_df, gene_df, by = "subjectHits")
-    prom_df <- prom_df[c("queryHits", .cols)]
-    names(prom_df) <- gsub("queryHits", "subjectHits", names(prom_df))
+    feat_df <- left_join(feat_df, gene_df, by = "subjectHits")
+    feat_df <- feat_df[c("queryHits", .cols)]
+    names(feat_df) <- gsub("queryHits", "subjectHits", names(feat_df))
   } else {
     ## Setup as the same format otherwise
-    prom_df <- mcols(.feat)[.cols]
-    prom_df[["subjectHits"]] <- seq_along(.feat)
-    prom_df <- as.data.frame(prom_df)
-    prom_df <- mutate_all(prom_df, vec_proxy) # Remove an AsIs attributes!!!
-    prom_df <- unnest(prom_df, everything())
+    feat_df <- mcols(.feat)[.cols]
+    feat_df[["subjectHits"]] <- seq_along(.feat)
+    feat_df <- as.data.frame(feat_df)
+    feat_df <- mutate_all(feat_df, vec_proxy) # Remove an AsIs attributes!!!
+    feat_df <- unnest(feat_df, everything())
   }
 
-  ## Map ranges to promoters
-  range_to_prom <- findOverlaps(.gr, .feat, maxgap = .gr2feat, ...)
-  range_to_prom <- as.data.frame(range_to_prom)
+  ## Map ranges to featoters
+  range_to_feat <- findOverlaps(.gr, .feat, maxgap = .gr2feat, ...)
+  range_to_feat <- as.data.frame(range_to_feat)
   range_df <- as_tibble(.gr)
   range_df$queryHits <- seq_along(.gr)
   ## This will drop any additional columns. They can be replaced back in the
   ## parent function
-  range_df <- inner_join(range_df, range_to_prom, by = "queryHits")
-  range_df <- left_join(range_df, prom_df, by = "subjectHits")
+  range_df <- inner_join(range_df, range_to_feat, by = "queryHits")
+  range_df <- left_join(range_df, feat_df, by = "subjectHits")
   range_df <- range_df[c("range", .cols)]
 
   ## Return the tibble
@@ -214,6 +215,10 @@ mapByFeature <- function(
     return(range_df)
   }
 
+
+  ##################################
+  ## Incorrect!!! Use .mapWithin  ##
+  ##################################
   ## Otherwise, just map the anchors
   lapply(anchors(.gi), function(x) {
     .mapFeatures(.gr, x, .genes, .cols, .gr2gi, .gi2gene, ...)
