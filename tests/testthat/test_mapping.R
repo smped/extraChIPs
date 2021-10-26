@@ -54,3 +54,9 @@ test_that(".mapFeatures returns NULL & errors where expected", {
 # test_that(".mapGi produces the expected output",{
 #
 # })
+
+test_that(".mapWithin returns NULL & errors when expected", {
+  expect_null(.mapWithin(NULL))
+  expect_null(.mapWithin(gr))
+  expect_error(.mapWithin(gr, genes, ""))
+})

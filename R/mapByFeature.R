@@ -197,32 +197,38 @@ mapByFeature <- function(
   }
   stopifnot(length(.cols) > 0)
 
-  if (all(.cols %in% names(mcols(.gi)))) {
-    ## If we have all of the mappings already, just use them
-    mapped_df <- mcols(.gi)[.cols]
-    mapped_df[["subjectHits"]] <- seq_along(.gi)
-    mapped_df <- as.data.frame(mapped_df)
-    mapped_df <- mutate_all(mapped_df, vec_proxy) # Remove AsIs attributes!!!
-    mapped_df <- unnest(mapped_df, everything())
-    range_to_gi <- as.data.frame(findOverlaps(.gr, .gi, maxgap = .gr2gi, ...))
-    range_df <- as_tibble(.gr)
-    range_df$queryHits <- seq_along(.gr)
-    ## This will drop any additional columns. They can be replaced back in the
-    ## parent function
-    range_df <- inner_join(range_df, range_to_gi, by = "queryHits")
-    range_df <- left_join(range_df, mapped_df, by = "subjectHits")
-    range_df <- range_df[c("range", .cols)]
-    return(range_df)
+  if (!all(.cols %in% names(mcols(.gi)))) {
+    .gi <- subsetByOverlaps(.gi, .gr)
+    anchors_to_gene <- lapply(
+      anchors(.gi), .mapWithin, .genes = .genes, .cols = .cols, .within = 0
+    ) # This returns the anchor range, not .gr
+    anchors_to_gene <- bind_rows(anchors_to_gene)
+    anchors_to_gene <- mutate_all(anchors_to_gene, vec_proxy)
+    anchors_to_gene <- unnest(anchors_to_gene, everything())
+    anchors_to_gene$which <- subjectHits(findOverlaps(GRanges(anchors_to_gene$range), .gi))
+    tbl <- left_join(tibble(which = seq_along(.gi)), anchors_to_gene)[c("which", .cols)]
+    tbl <- chop(tbl, all_of(.cols))
+    stopifnot(length(.gi) == nrow(tbl))
+    mapped_list <- lapply(tbl[.cols], function(x) as(as.list(x), "List"))
+    mcols(.gi)[.cols] <- mapped_list
   }
 
-
-  ##################################
-  ## Incorrect!!! Use .mapWithin  ##
-  ##################################
-  ## Otherwise, just map the anchors
-  lapply(anchors(.gi), function(x) {
-    .mapFeatures(.gr, x, .genes, .cols, .gr2gi, .gi2gene, ...)
-  })
+  ## If we have all of the mappings already, just use them
+  mapped_df <- mcols(.gi)[.cols]
+  mapped_df[["subjectHits"]] <- seq_along(.gi)
+  mapped_df <- as.data.frame(mapped_df)
+  mapped_df <- mutate_all(mapped_df, vec_proxy) # Remove AsIs attributes!!!
+  mapped_df <- unnest(mapped_df, everything())
+  range_to_gi <- as.data.frame(findOverlaps(.gr, .gi, maxgap = .gr2gi, ...))
+  range_df <- as_tibble(.gr)
+  range_df$queryHits <- seq_along(.gr)
+  ## This will drop any additional columns. They can be replaced back in the
+  ## parent function
+  range_df <- inner_join(range_df, range_to_gi, by = "queryHits")
+  range_df <- left_join(range_df, mapped_df, by = "subjectHits")
+  range_df <- range_df[c("range", .cols)]
+  return(range_df)
+  ## Looks right. Needs more testing
 
 }
 
