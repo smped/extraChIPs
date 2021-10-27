@@ -19,7 +19,7 @@
 
 \item{.feat2gene}{The maximum distance between features & genes}
 
-\item{...}{Passed to findOverlaps}
+\item{...}{Passed to findOverlaps and subsetByOverlaps}
 }
 \value{
 A data.frame

@@ -22,7 +22,7 @@
 \item{...}{Passed to findOverlaps}
 }
 \value{
-List (length 2) of tibbles
+data.frame of mapped ranges
 }
 \description{
 Map ranges to genes via Interactions

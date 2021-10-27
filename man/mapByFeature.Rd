@@ -11,10 +11,10 @@ mapByFeature(
   enh,
   gi,
   cols = c("gene_id", "gene_name", "symbol"),
-  range2prom = 0,
-  range2enh = 0,
-  range2gi = 0,
-  range2gene = 1e+05,
+  gr2prom = 0,
+  gr2enh = 0,
+  gr2gi = 0,
+  gr2gene = 1e+05,
   prom2gene = 0,
   enh2gene = 1e+05,
   gi2gene = 0,
@@ -22,7 +22,7 @@ mapByFeature(
 )
 }
 \arguments{
-\item{gr}{GRanges object with ranges to be mapped to genes}
+\item{gr}{GRanges object with query ranges to be mapped to genes}
 
 \item{genes}{GRanges object containing genes (or any other nominal feature)
 to be assigned}
@@ -35,19 +35,20 @@ to be assigned}
 interactions to genes should be performed as a separate prior step.}
 
 \item{cols}{Column names to be assigned as mcols in the output. Columns
-must be present in both \code{gi} and \code{genes} if using both objects as
-references. Any columns not found in reference objects will be ignored}
+must be minimally present in \code{genes}. If all requested colunms are found in
+any of prom, enh or gi, these pre-existing mappings will be preferentially
+used. Any columns not found in utilised reference objects will be ignored.}
 
-\item{range2prom}{The maximum permissible distance between a query range and
+\item{gr2prom}{The maximum permissible distance between a query range and
 any ranges defined as promoters}
 
-\item{range2enh}{The maximum permissible distance between a query range and
+\item{gr2enh}{The maximum permissible distance between a query range and
 any ranges defined as enhancers}
 
-\item{range2gi}{The maximum permissible distance between a query range and
+\item{gr2gi}{The maximum permissible distance between a query range and
 any ranges defined as GInteraction anchors}
 
-\item{range2gene}{The maximum permissible distance between a query range and
+\item{gr2gene}{The maximum permissible distance between a query range and
 genes (for ranges not otherwise mapped)}
 
 \item{prom2gene}{The maximum permissible distance between a range provided
@@ -85,4 +86,16 @@ to the nearest gene within a specified distance
 For long-range interactions, the above strategy is again used, taking each
 anchor as a distinct range. Mappings for both anchors are then combined for
 interaction-specific mappings
+}
+\examples{
+## Define some genes
+genes <- GRanges(c("chr1:2-10:*", "chr1:25-30:-", "chr1:31-40:+"))
+genes$gene_id <- paste0("gene", seq_along(genes))
+## Add a promoter for each gene
+prom <- promoters(genes, upstream = 1, downstream = 1)
+## Some ranges to map
+gr <- GRanges(paste0("chr1:", seq(0, 50, by = 10)))
+mapByFeature(gr, genes)
+mapByFeature(gr, genes, prom)
+
 }
