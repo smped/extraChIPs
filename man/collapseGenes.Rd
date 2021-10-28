@@ -32,6 +32,8 @@ collapseGenes(
 \item{numeric}{logical(1) sort digits numerically, instead of as strings}
 
 \item{width}{The maximum width of the string before truncating to ...}
+
+\item{...}{passed to \link[stringr]{str_sort}}
 }
 \value{
 a glue object
