@@ -69,9 +69,10 @@ A GRanges object with added mcols as specified
 Map Genomic Ranges to Genes using Key Features
 }
 \details{
-This function is able to incorporate feature-level information and long-range
-interactions to enable better mapping of regions to genes. For GRanges, the
-following sequential strategy is used.
+This function is able to utilise feature-level information and long-range
+interactions to enable better mapping of regions to genes. If provided, this
+essentially maps from ranges to genes using the regulatory features as a
+framework. The following sequential strategy is used:
 
 \enumerate{
 \item Ranges overlapping a promoter are assigned to that gene
@@ -80,12 +81,21 @@ a specified distance
 \item Ranges overlapping a long-range interaction are assigned to all genes
 connected by the interaction
 \item Ranges with no gene assignment from the previous steps are assigned
-to the nearest gene within a specified distance
+to \emph{all genes} within a specified distance
 }
 
-For long-range interactions, the above strategy is again used, taking each
-anchor as a distinct range. Mappings for both anchors are then combined for
-interaction-specific mappings
+If information is missing for one of these steps, the algorithm will simply
+proceed to the next step. If no promoter, enhancer or interaction data is
+provided, all ranges will be simply mapped by step 4.
+
+Distances between each set of features and the query range can be
+individually specified by modifying the \code{gr2prom}, \code{gr2enh}, \code{gr2gi} or
+\code{gr2gene} parameters. Distances between features and genes can also be set
+using the parameters \code{prom2gene}, \code{enh2gene} and \code{gi2gene}.
+
+Additionally, if previously defined mappings are included with any of the
+\code{prom}, \code{enh} or \code{gi} objects, this will be used in preference to any
+obtained from the \code{genes} object.
 }
 \examples{
 ## Define some genes

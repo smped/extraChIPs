@@ -3,9 +3,10 @@
 #' @description Map Genomic Ranges to Genes using Key Features
 #'
 #' @details
-#' This function is able to incorporate feature-level information and long-range
-#' interactions to enable better mapping of regions to genes. For GRanges, the
-#' following sequential strategy is used.
+#' This function is able to utilise feature-level information and long-range
+#' interactions to enable better mapping of regions to genes. If provided, this
+#' essentially maps from ranges to genes using the regulatory features as a
+#' framework. The following sequential strategy is used:
 #'
 #' \enumerate{
 #'   \item Ranges overlapping a promoter are assigned to that gene
@@ -14,12 +15,21 @@
 #'   \item Ranges overlapping a long-range interaction are assigned to all genes
 #'   connected by the interaction
 #'   \item Ranges with no gene assignment from the previous steps are assigned
-#'   to the nearest gene within a specified distance
+#'   to *all genes* within a specified distance
 #' }
 #'
-#' For long-range interactions, the above strategy is again used, taking each
-#' anchor as a distinct range. Mappings for both anchors are then combined for
-#' interaction-specific mappings
+#' If information is missing for one of these steps, the algorithm will simply
+#' proceed to the next step. If no promoter, enhancer or interaction data is
+#' provided, all ranges will be simply mapped by step 4.
+#'
+#' Distances between each set of features and the query range can be
+#' individually specified by modifying the `gr2prom`, `gr2enh`, `gr2gi` or
+#' `gr2gene` parameters. Distances between features and genes can also be set
+#' using the parameters `prom2gene`, `enh2gene` and `gi2gene`.
+#'
+#' Additionally, if previously defined mappings are included with any of the
+#' `prom`, `enh` or `gi` objects, this will be used in preference to any
+#' obtained from the `genes` object.
 #'
 #' @return
 #' A GRanges object with added mcols as specified
@@ -63,6 +73,7 @@
 #' mapByFeature(gr, genes, prom)
 #'
 #' @importFrom S4Vectors mcols subjectHits
+#' @importClassesFrom IRanges CompressedList
 #' @importFrom dplyr bind_rows distinct across
 #' @importFrom tidyr chop
 #' @importFrom tidyselect all_of
@@ -121,7 +132,7 @@ mapByFeature <- function(
   list_cols <- vapply(mapped_list, is.list, logical(1))
   mapped_list[list_cols] <- lapply(
     ## The new vctrs-based types are problematic still. coerce via as.list()
-    mapped_list[list_cols], function(x) as(as.list(x), "List")
+    mapped_list[list_cols], function(x) as(as.list(x), "CompressedList")
   )
   grl <- as.list(split(gr, f = seq_along(gr) %in% queryHits(index)))
   mcols(grl[["TRUE"]])[cols] <- mapped_list

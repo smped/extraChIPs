@@ -93,11 +93,13 @@ test_that(".mapWithin returns NULL & errors when expected", {
 test_that("mapByFeature produces the correct output", {
   ol_only <- mapByFeature(gr, genes, cols = "gene_id", gr2gene = 0)$gene_id
   expected <- new(
-    "SimpleCharacterList", elementType = "character", elementMetadata = NULL,
-    metadata = list(),
-    listData = list(
-      character(0), "gene1", character(0), c("gene2", "gene3"), "gene3",
-      character(0))
+    "CompressedCharacterList", elementType = "character",
+    elementMetadata = NULL, metadata = list(),
+    unlistData = c("gene1", "gene2", "gene3", "gene3"),
+    partitioning = new(
+      "PartitioningByEnd", end = c(0L, 1L, 1L, 3L, 4L, 4L),
+      NAMES = NULL, elementType = "ANY", elementMetadata = NULL, metadata = list()
+    )
   )
   expect_equal(ol_only, expected)
   ## Update promoter only mappings
