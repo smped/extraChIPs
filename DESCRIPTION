@@ -1,5 +1,5 @@
 Package: chipExtra
-Version: 0.1.18
+Version: 0.1.19
 Date: 2021/10/28
 Title: Additional functions for working with ChIP-Seq data
 Authors@R: person("Stephen", "Pederson", 
@@ -31,6 +31,7 @@ Imports:
   GenomicInteractions,
   ggrepel,
   ggside,
+  glue,
   grDevices,
   Gviz,
   InteractionSet,
