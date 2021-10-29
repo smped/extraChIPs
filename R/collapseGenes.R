@@ -30,6 +30,7 @@ collapseGenes <- function(
   x, sort = TRUE, dedup = TRUE, format = "_", sep = ", ", last = " and ",
   numeric = TRUE, width = Inf, ...
 ) {
+  if (length(x) == 0) return(glue(x))
   if (dedup) x <- unique(x)
   if (sort) x <- str_sort(x, numeric = numeric, ...)
   x <- paste0(format, x, format)
