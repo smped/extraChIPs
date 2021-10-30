@@ -23,7 +23,7 @@
 #' genes <- c("FOXP3", "BRCA1", "TP53")
 #' collapseGenes(genes)
 #'
-#' @importFrom glue glue_collapse
+#' @importFrom glue glue_collapse glue
 #' @importFrom stringr str_sort
 #' @export
 collapseGenes <- function(
