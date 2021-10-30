@@ -27,3 +27,4 @@ A data.frame
 \description{
 Map ranges to genes using features as an anchor
 }
+\keyword{internal}

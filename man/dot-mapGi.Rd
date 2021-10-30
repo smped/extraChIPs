@@ -27,3 +27,4 @@ data.frame of mapped ranges
 \description{
 Map ranges to genes via Interactions
 }
+\keyword{internal}

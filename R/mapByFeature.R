@@ -164,6 +164,7 @@ mapByFeature <- function(
 #' @importFrom vctrs vec_proxy
 #' @importFrom tidyr unnest
 #' @importFrom tidyselect everything
+#' @keywords internal
 .mapFeatures <- function(.gr, .feat, .genes, .cols, .gr2feat, .feat2gene, ...) {
 
   ## Restrict the data to just the overlapping subsets
@@ -238,6 +239,7 @@ mapByFeature <- function(
 #' @importFrom dplyr inner_join mutate_all
 #' @importFrom tidyr unnest
 #' @importFrom tidyselect everything
+#' @keywords internal
 .mapGi <- function(.gr, .gi, .genes, .cols, .gr2gi, .gi2gene , ...) {
 
   ## Restrict the data to just the overlapping subsets
@@ -309,6 +311,7 @@ mapByFeature <- function(
 #' @importFrom dplyr inner_join mutate_all
 #' @importFrom tidyr unnest
 #' @importFrom tidyselect everything
+#' @keywords internal
 .mapWithin <- function(.gr, .genes, .cols, .within, ...) {
   if (missing(.genes) | length(.gr) == 0) return(NULL)
   .cols <- intersect(.cols, names(mcols(.genes)))

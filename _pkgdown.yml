@@ -1,0 +1,39 @@
+template:
+  params:
+    bootswatch: flatly
+  opengraph:
+    twitter:
+      creator: "@StevePederson8"
+
+authors:
+  Stephen Pederson:
+    href: https://github.com/steveped
+
+reference:
+
+- title: Range-Based Functions
+  contents:
+    - dualFilter
+    - getProfileData
+    - mapByFeature
+    - mergeByCol
+    - stitchRanges
+
+- title: Visualisation
+  contents:
+    - starts_with("plot")
+
+- title: Convenience Functions
+  contents:
+    - contains("as_tibble")
+    - colAsRanges
+    - collapseGenes
+    - voomWeightsFromCPM
+
+- title: Data Import
+  contents:
+    - importPeaks
+
+- title: Data Objects
+  contents:
+    - contains("cytobands")

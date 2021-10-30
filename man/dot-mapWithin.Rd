@@ -23,3 +23,4 @@ A data.frame
 \description{
 Map ranges to all genes within a set distance
 }
+\keyword{internal}
