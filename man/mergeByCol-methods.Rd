@@ -53,7 +53,9 @@ not provided, any columns in the mcols() slot will be used.}
 \item{pval}{Column containing p-values}
 
 \item{inc_cols}{Any additional columns to return. Output will always include
-columns specified in the arguments \code{col}, \code{logfc} and \code{pval}}
+columns specified in the arguments \code{col}, \code{logfc} and \code{pval}. Note that
+values from any additional columns will correspond to the selected range
+returned in keyval_range}
 
 \item{p_adj_method}{Any of \link{p.adjust.methods}}
 

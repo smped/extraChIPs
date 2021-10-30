@@ -22,7 +22,9 @@
 #' @param logfc Column containing logFC values
 #' @param pval Column containing p-values
 #' @param inc_cols Any additional columns to return. Output will always include
-#' columns specified in the arguments `col`, `logfc` and `pval`
+#' columns specified in the arguments `col`, `logfc` and `pval`. Note that
+#' values from any additional columns will correspond to the selected range
+#' returned in keyval_range
 #' @param p_adj_method Any of \link{p.adjust.methods}
 #' @param merge_within Merge any ranges within this distance
 #' @param ignore_strand Passed internally to \link[GenomicRanges]{reduce} and
@@ -94,11 +96,11 @@ setMethod(
     ol <- findOverlaps(x, ranges_out, ignore.strand = ignore_strand)
 
     ## Merged the data.frame rows
-    id <- i <- NULL # Avoid R CMD check issues
+    temp_id <- i <- NULL # Avoid R CMD check issues
     grp_df <- as.data.frame(df)
-    grp_df$id <- subjectHits(ol)
+    grp_df$temp_id <- subjectHits(ol)
     grp_df$keyval_range <- queryHits(ol)
-    grp_df <- group_by(grp_df, id)
+    grp_df <- group_by(grp_df, temp_id)
     merged_df <- summarise(
       grp_df,
       i = which.min(abs(!!sym(col) - f(!!sym(col))))[[1]],

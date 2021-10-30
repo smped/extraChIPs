@@ -11,13 +11,16 @@ test_that("Function behaves correctly for GRanges",{
   )
   expect_s4_class(
     mergeByCol(x, df, col = "logCPM", pval = "p")$keyval_range, "GRanges"
-    )
+  )
 })
 
 test_that("Function errors as expected", {
   expect_error(mergeByCol(x, df[1,], col = "logCPM", pval = "p"))
   expect_error(mergeByCol(x, df))
-  expect_error(mergeByCol(x, df, col = "logFC"))
+  expect_error(
+    mergeByCol(x, df, col = "logFC", pval = "p"),
+    "Merging not implemented for logFC"
+  )
   expect_error(mergeByCol(x, df, col = ""))
 })
 
@@ -33,4 +36,17 @@ test_that("P-value adjustment columns are correct", {
     ),
     7
   )
+})
+
+test_that("RangedSummarizedExperiment works", {
+  mcols(x) <- DataFrame(df)
+  x$id <- letters[seq_along(x)]
+  rse <- SummarizedExperiment(
+    assays = SimpleList(counts = matrix(runif(length(x)), ncol =1)),
+    rowRanges = x
+  )
+  mbc <- mergeByCol(rse, col = "logCPM", pval = "p", inc_cols = "id")
+  expect_equal(length(mbc), 2)
+  expect_true("id" %in% colnames(mcols(mbc)))
+
 })
