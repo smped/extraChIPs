@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Stitch GRanges Within A Given Distance — stitchRanges • extraChIPs</title>
+<title>Stitch Ranges within a given distance — stitchRanges • extraChIPs</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,9 @@
 
 
 
-<meta property="og:title" content="Stitch GRanges Within A Given Distance — stitchRanges" />
-<meta property="og:description" content="Stitch together ranges within a given distance" />
+<meta property="og:title" content="Stitch Ranges within a given distance — stitchRanges" />
+<meta property="og:description" content="Stitch together ranges within a given distance, using excluded ranges as
+barriers that cannot be crossed" />
 
 
 
@@ -72,7 +73,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.19</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.1</span>
       </span>
     </div>
 
@@ -108,13 +109,14 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Stitch GRanges Within A Given Distance</h1>
+    <h1>Stitch Ranges within a given distance</h1>
     <small class="dont-index">Source: <a href='https://github.com/steveped/extraChIPs/blob/master/R/stitchRanges.R'><code>R/stitchRanges.R</code></a></small>
     <div class="hidden name"><code>stitchRanges.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Stitch together ranges within a given distance</p>
+    <p>Stitch together ranges within a given distance, using excluded ranges as
+barriers that cannot be crossed</p>
     </div>
 
     <pre class="usage"><span class='fu'>stitchRanges</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>exclude</span>, maxgap <span class='op'>=</span> <span class='fl'>12500L</span>, ignore.strand <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
