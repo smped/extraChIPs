@@ -1,4 +1,4 @@
-# chipExtra
+# chipExtra <img id="plyranges_logo" src="figures/extraChIPs.png" align="right" width = "125" />
 
 <!-- badges: start -->
 [![Build Status](https://github.com/steveped/chipExtra/workflows/R-CMD-check-bioc/badge.svg)](https://github.com/steveped/chipExtra/actions)

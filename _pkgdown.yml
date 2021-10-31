@@ -1,9 +1,6 @@
 template:
   params:
-    bootswatch: flatly
-  opengraph:
-    twitter:
-      creator: "@StevePederson8"
+    bootswatch: simplex
 
 authors:
   Stephen Pederson:
