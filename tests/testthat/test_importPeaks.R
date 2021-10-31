@@ -1,6 +1,6 @@
 test_that("narrowPeak files parse correctly", {
   fl <- system.file(
-    "extdata/testFiles", "test.narrowPeak", package = "chipExtra"
+    "extdata/testFiles", "test.narrowPeak", package = "extraChIPs"
   )
   expect_true(.isValidNarrow(fl))
   expect_false(.isValidBroad(fl))
@@ -17,7 +17,7 @@ test_that("narrowPeak files parse correctly", {
 
 test_that("broadPeak files parse correctly", {
   fl <- system.file(
-    "extdata/testFiles", "test.broadPeak", package = "chipExtra"
+    "extdata/testFiles", "test.broadPeak", package = "extraChIPs"
   )
   expect_false(.isValidNarrow(fl))
   expect_true(.isValidBroad(fl))
@@ -34,7 +34,7 @@ test_that("broadPeak files parse correctly", {
 
 test_that("seqinfo objects behave correctly for narrowPeak files", {
   fl <- system.file(
-    "extdata/testFiles", "test.narrowPeak", package = "chipExtra"
+    "extdata/testFiles", "test.narrowPeak", package = "extraChIPs"
   )
   ## Succeed
   expect_type(
@@ -69,7 +69,7 @@ test_that("seqinfo objects behave correctly for narrowPeak files", {
 
 test_that("blacklists behave correctly",{
   fl <- system.file(
-    "extdata/testFiles", "test.narrowPeak", package = "chipExtra"
+    "extdata/testFiles", "test.narrowPeak", package = "extraChIPs"
   )
   expect_error(
     importPeaks(gr, "narrow", blacklist = NULL)
@@ -82,7 +82,7 @@ test_that("blacklists behave correctly",{
 
 test_that("seqinfo objects behave correctly for broadPeak files", {
   fl <- system.file(
-    "extdata/testFiles", "test.broadPeak", package = "chipExtra"
+    "extdata/testFiles", "test.broadPeak", package = "extraChIPs"
   )
   ## Succeed
   expect_type(
@@ -117,7 +117,7 @@ test_that("seqinfo objects behave correctly for broadPeak files", {
 
 test_that("blacklists behave correctly for broadPeak files",{
   fl <- system.file(
-    "extdata/testFiles", "test.broadPeak", package = "chipExtra"
+    "extdata/testFiles", "test.broadPeak", package = "extraChIPs"
   )
   expect_error(
     importPeaks(gr, "broad", blacklist = NULL)

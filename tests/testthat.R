@@ -1,4 +1,4 @@
 library(testthat)
-library(chipExtra)
+library(extraChIPs)
 
-test_check("chipExtra")
+test_check("extraChIPs")

@@ -22,7 +22,7 @@
 #'
 #' @examples
 #' fl <- system.file(
-#' "extdata", "testFiles", "test.narrowPeak", package = "chipExtra"
+#' "extdata", "testFiles", "test.narrowPeak", package = "extraChIPs"
 #' )
 #' gr <- importPeaks(fl, "narrow")
 #'
