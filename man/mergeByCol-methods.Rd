@@ -4,7 +4,7 @@
 \alias{mergeByCol}
 \alias{mergeByCol,GenomicRanges-method}
 \alias{mergeByCol,RangedSummarizedExperiment-method}
-\title{Merge Sliding Windows}
+\title{Merge sliding windows using a specified column}
 \usage{
 mergeByCol(x, ...)
 
@@ -68,7 +68,7 @@ returned in keyval_range}
 A Genomic Ranges object
 }
 \description{
-Merge Sliding Windows by a given column
+Merge sliding windows using a specified column
 }
 \details{
 This merges sliding windows by a given column, returning representative

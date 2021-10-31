@@ -1,4 +1,4 @@
-#' @title Plot Densities For Any Assay
+#' @title Plot Densities for any assay within a SummarizedExperiment
 #'
 #' @description Plot Densities for any assay within a SummarizedExperiment
 #'

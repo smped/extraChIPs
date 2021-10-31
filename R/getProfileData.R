@@ -1,6 +1,6 @@
-#' @title Get Profile Data Surrounding Ranges
+#' @title Get Profile Data surrounding specified ranges
 #'
-#' @description Get Coverage Profile Data Surrounding Ranges
+#' @description Get coverage Profile Data surrounding specified ranges
 #'
 #' @details
 #' This will take all provided ranges and set as identical width ranges,

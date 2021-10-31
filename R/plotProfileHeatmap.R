@@ -1,6 +1,6 @@
-#' @title Draw a Coverage Profile Heatmap
+#' @title Draw a coverage Profile Heatmap
 #'
-#' @description Plot a Coverage Profile Heatmap across multiple ranges
+#' @description Plot a coverage Profile Heatmap across multiple ranges
 #'
 #' @details
 #' Convenience function for plotting coverage heatmaps across a common set of

@@ -1,4 +1,4 @@
-#' @title Convert GRanges or DFrame to a tibble
+#' @title Convert a GRanges or DataFrame to a tibble
 #'
 #' @description Convert GRanges or DataFrame objects to tibble objects
 #'

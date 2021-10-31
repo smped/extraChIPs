@@ -4,7 +4,7 @@
 \alias{plotProfileHeatmap}
 \alias{plotProfileHeatmap,GenomicRangesList-method}
 \alias{plotProfileHeatmap,GenomicRanges-method}
-\title{Draw a Coverage Profile Heatmap}
+\title{Draw a coverage Profile Heatmap}
 \usage{
 plotProfileHeatmap(object, ...)
 
@@ -74,7 +74,7 @@ Represents the fraction of the plotting area taken up by the summary panel.}
 A \code{ggplot2} object, able to be customised using standard \code{ggplot2} syntax
 }
 \description{
-Plot a Coverage Profile Heatmap across multiple ranges
+Plot a coverage Profile Heatmap across multiple ranges
 }
 \details{
 Convenience function for plotting coverage heatmaps across a common set of

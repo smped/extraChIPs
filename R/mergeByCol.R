@@ -1,6 +1,6 @@
-#' @title Merge Sliding Windows
+#' @title Merge sliding windows using a specified column
 #'
-#' @description Merge Sliding Windows by a given column
+#' @description Merge sliding windows using a specified column
 #'
 #' @details
 #' This merges sliding windows by a given column, returning representative

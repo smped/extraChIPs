@@ -2,7 +2,7 @@
 % Please edit documentation in R/mapByFeature.R
 \name{mapByFeature}
 \alias{mapByFeature}
-\title{Map Genomic Ranges to Genes}
+\title{Map Genomic Ranges to genes using defined features}
 \usage{
 mapByFeature(
   gr,
@@ -66,7 +66,7 @@ anchor (provided in \code{gi}) and a gene}
 A GRanges object with added mcols as specified
 }
 \description{
-Map Genomic Ranges to Genes using Key Features
+Map Genomic Ranges to genes using defined regulatory features
 }
 \details{
 This function is able to utilise feature-level information and long-range

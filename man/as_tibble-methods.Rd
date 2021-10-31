@@ -3,7 +3,7 @@
 \name{as_tibble.DataFrame}
 \alias{as_tibble.DataFrame}
 \alias{as_tibble.GenomicRanges}
-\title{Convert GRanges or DFrame to a tibble}
+\title{Convert a GRanges or DataFrame to a tibble}
 \usage{
 \method{as_tibble}{DataFrame}(x, ...)
 

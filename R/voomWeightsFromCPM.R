@@ -1,6 +1,6 @@
-#' @title Estimate Voom Precision Weights Directly From CPM Values
+#' @title Estimate voom precision weights directly From CPM values
 #'
-#' @description Estimate Voom Precision Weights Directly From CPM Values
+#' @description Estimate voom precision weights directly From CPM values
 #'
 #' @details
 #' This function takes CPM or logCPM values and estimates the precision weights

@@ -2,7 +2,7 @@
 % Please edit documentation in R/stitchRanges.R
 \name{stitchRanges}
 \alias{stitchRanges}
-\title{Stitch GRanges Within A Given Distance}
+\title{Stitch Ranges within a given distance}
 \usage{
 stitchRanges(x, exclude, maxgap = 12500L, ignore.strand = TRUE)
 }
@@ -19,7 +19,8 @@ stitchRanges(x, exclude, maxgap = 12500L, ignore.strand = TRUE)
 A GRanges object
 }
 \description{
-Stitch together ranges within a given distance
+Stitch together ranges within a given distance, using excluded ranges as
+barriers that cannot be crossed
 }
 \details{
 Stitches together ranges within a given distance, using any ranges provided

@@ -2,7 +2,7 @@
 % Please edit documentation in R/voomWeightsFromCPM.R
 \name{voomWeightsFromCPM}
 \alias{voomWeightsFromCPM}
-\title{Estimate Voom Precision Weights Directly From CPM Values}
+\title{Estimate voom precision weights directly From CPM values}
 \usage{
 voomWeightsFromCPM(
   cpm,
@@ -55,7 +55,7 @@ weights ensuring the correct mean-variance relationship is used for the final
 estimation of sample weights
 }
 \description{
-Estimate Voom Precision Weights Directly From CPM Values
+Estimate voom precision weights directly From CPM values
 }
 \details{
 This function takes CPM or logCPM values and estimates the precision weights

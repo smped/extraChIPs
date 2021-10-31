@@ -3,7 +3,7 @@
 \name{plotAssayDensities}
 \alias{plotAssayDensities}
 \alias{plotAssayDensities,SummarizedExperiment-method}
-\title{Plot Densities For Any Assay}
+\title{Plot Densities for any assay within a SummarizedExperiment}
 \usage{
 plotAssayDensities(x, ...)
 

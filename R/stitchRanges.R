@@ -1,6 +1,8 @@
-#' @title Stitch GRanges Within A Given Distance
+#' @title Stitch Ranges within a given distance
 #'
-#' @description Stitch together ranges within a given distance
+#' @description
+#' Stitch together ranges within a given distance, using excluded ranges as
+#' barriers that cannot be crossed
 #'
 #' @details
 #' Stitches together ranges within a given distance, using any ranges provided

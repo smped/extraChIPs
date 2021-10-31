@@ -1,6 +1,6 @@
-#' @title Plot PCA For Any Assay
+#' @title Plot PCA For any assay within a SummarizedExperiment
 #'
-#' @description Plot PCA for any assay within a SummarizedExperiment
+#' @description Plot PCA for any assay within a SummarizedExperiment object
 #'
 #' @details
 #' Uses ggplot2 to create a PCA plot for the selected assay. Any numerical

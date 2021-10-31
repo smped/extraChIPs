@@ -3,7 +3,7 @@
 \name{plotAssayPCA}
 \alias{plotAssayPCA}
 \alias{plotAssayPCA,SummarizedExperiment-method}
-\title{Plot PCA For Any Assay}
+\title{Plot PCA For any assay within a SummarizedExperiment}
 \usage{
 plotAssayPCA(x, ...)
 
@@ -47,7 +47,7 @@ data before performing the PCA, e.g. \code{trans = "log2"}}
 A ggplot2 object
 }
 \description{
-Plot PCA for any assay within a SummarizedExperiment
+Plot PCA for any assay within a SummarizedExperiment object
 }
 \details{
 Uses ggplot2 to create a PCA plot for the selected assay. Any numerical

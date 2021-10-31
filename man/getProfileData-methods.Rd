@@ -5,7 +5,7 @@
 \alias{getProfileData,BigWigFile,GenomicRanges-method}
 \alias{getProfileData,BigWigFileList,GenomicRanges-method}
 \alias{getProfileData,character,GenomicRanges-method}
-\title{Get Profile Data Surrounding Ranges}
+\title{Get Profile Data surrounding specified ranges}
 \usage{
 getProfileData(x, gr, ...)
 
@@ -61,7 +61,7 @@ See \link[EnrichedHeatmap]{normalizeToMatrix} for details}
 GRanges or GrangesList with column profile_data, as described above
 }
 \description{
-Get Coverage Profile Data Surrounding Ranges
+Get coverage Profile Data surrounding specified ranges
 }
 \details{
 This will take all provided ranges and set as identical width ranges,

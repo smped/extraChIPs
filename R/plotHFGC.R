@@ -1,6 +1,6 @@
-#' @title Plot a Genomic Region
+#' @title Plot a Genomic Region showing HiC, Features, Genes and Coverage
 #'
-#' @description Plot a region with HiC, Features, Genes and Coverage
+#' @description Plot a region with showing HiC, Features, Genes and Coverage
 #'
 #' @details
 #' Convenience function for plotting a common set of tracks. All tracks are

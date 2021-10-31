@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotHFGC.R
 \name{plotHFGC}
 \alias{plotHFGC}
-\title{Plot a Genomic Region}
+\title{Plot a Genomic Region showing HiC, Features, Genes and Coverage}
 \usage{
 plotHFGC(
   gr,
@@ -116,7 +116,7 @@ genes track}
 A Gviz object
 }
 \description{
-Plot a region with HiC, Features, Genes and Coverage
+Plot a region with showing HiC, Features, Genes and Coverage
 }
 \details{
 Convenience function for plotting a common set of tracks. All tracks are

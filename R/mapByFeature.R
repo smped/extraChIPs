@@ -1,6 +1,6 @@
-#' @title Map Genomic Ranges to Genes
+#' @title Map Genomic Ranges to genes using defined features
 #'
-#' @description Map Genomic Ranges to Genes using Key Features
+#' @description Map Genomic Ranges to genes using defined regulatory features
 #'
 #' @details
 #' This function is able to utilise feature-level information and long-range
