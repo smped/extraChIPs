@@ -78,3 +78,30 @@ test_that("data is transformed correctly", {
   expect_error(plotAssayPCA(se, trans = ""))
   ## Still need to test this
 })
+
+test_that("plotAssayRle errors correctly", {
+  err <- "'arg' should be one of \"sample\", \"treat\""
+  expect_error(plotAssayRle(se, "counts", x_col = ""), err)
+  expect_error(plotAssayRle(se, "counts", colour = ""), err)
+  expect_error(plotAssayRle(se, "counts", fill = ""), err)
+  expect_error(plotAssayRle(se, "counts", rle_group = ""), err)
+  expect_error(
+    plotAssayRle(se, "counts", trans = "a"),
+    "object 'a' of mode 'function' was not found"
+  )
+  expect_error(
+    plotAssayRle(se, "counts", trans = "mean"),
+    "This transformation is not applicable"
+  )
+
+})
+
+test_that("plotAssayRle creates a plot", {
+  p <- plotAssayRle(se, "counts", fill = "treat")
+  expect_true(is(p, "gg"))
+  expect_equal(dim(p$data), c(nrows*ncols, 6))
+  expect_equal(
+    unlist(p$labels),
+    c(y = "RLE", fill = "treat", colour = "colour", x = "sample")
+  )
+})
