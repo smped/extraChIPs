@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.2</span>
       </span>
     </div>
 
@@ -315,26 +315,27 @@ this package (<a href='grch37.cytobands.html'>grch37.cytobands</a>, <a href='grc
 added if a colour is provided. If set to NULL, no highlight will be added.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>gr</span> <span class='op'>&lt;-</span> <span class='fu'>GRanges</span><span class='op'>(</span><span class='st'>"chr1:11869-12227"</span><span class='op'>)</span>
-<span class='va'>feat_gr</span> <span class='op'>&lt;-</span> <span class='fu'>GRangesList</span><span class='op'>(</span>
-  Promoter <span class='op'>=</span> <span class='fu'>GRanges</span><span class='op'>(</span><span class='st'>"chr1:11800-12000"</span><span class='op'>)</span>,
-  Enhancer <span class='op'>=</span> <span class='fu'>GRanges</span><span class='op'>(</span><span class='st'>"chr1:13000-13200"</span><span class='op'>)</span>
-<span class='op'>)</span>
-<span class='va'>hic</span> <span class='op'>&lt;-</span> <span class='fu'>InteractionSet</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/InteractionSet/man/GInteractions-class.html'>GInteractions</a></span><span class='op'>(</span><span class='va'>feat_gr</span><span class='op'>$</span><span class='va'>Promoter</span>, <span class='va'>feat_gr</span><span class='op'>$</span><span class='va'>Enhancer</span><span class='op'>)</span>
-<span class='va'>genes</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"chr1:11869-12227:+"</span>, <span class='st'>"chr1:12613-12721:+"</span>, <span class='st'>"chr1:13221-14409:+"</span><span class='op'>)</span>
-<span class='va'>genes</span> <span class='op'>&lt;-</span> <span class='fu'>GRanges</span><span class='op'>(</span><span class='va'>genes</span><span class='op'>)</span>
-<span class='fu'>mcols</span><span class='op'>(</span><span class='va'>genes</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'>DataFrame</span><span class='op'>(</span>
-  feature <span class='op'>=</span> <span class='st'>"exon"</span>, gene <span class='op'>=</span> <span class='st'>"ENSG00000223972"</span>, exon <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>,
-  transcript <span class='op'>=</span> <span class='st'>"ENST00000456328"</span>, symbol <span class='op'>=</span> <span class='st'>"DDX11L1"</span>
-<span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>grch37.cytobands</span><span class='op'>)</span>
-<span class='fu'>plotHFGC</span><span class='op'>(</span>
-  <span class='va'>gr</span>, hic <span class='op'>=</span> <span class='va'>hic</span>, features <span class='op'>=</span> <span class='va'>feat_gr</span>, genes <span class='op'>=</span> <span class='va'>genes</span>,
-  zoom <span class='op'>=</span> <span class='fl'>2</span>, cytobands <span class='op'>=</span> <span class='va'>grch37.cytobands</span>, rotation.title <span class='op'>=</span> <span class='fl'>90</span>,
-  featurecol <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>Promoter <span class='op'>=</span> <span class='st'>"red"</span>, Enhancer <span class='op'>=</span> <span class='st'>"yellow"</span><span class='op'>)</span>
-<span class='op'>)</span>
-</div><div class='img'><img src='plotHFGC-1.png' alt='' width='700' height='433' /></div><div class='input'>
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='va'>gr</span> <span class='op'>&lt;-</span> <span class='fu'>GRanges</span><span class='op'>(</span><span class='st'>"chr1:11869-12227"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>feat_gr</span> <span class='op'>&lt;-</span> <span class='fu'>GRangesList</span><span class='op'>(</span></span>
+<span class='r-in'>  Promoter <span class='op'>=</span> <span class='fu'>GRanges</span><span class='op'>(</span><span class='st'>"chr1:11800-12000"</span><span class='op'>)</span>,</span>
+<span class='r-in'>  Enhancer <span class='op'>=</span> <span class='fu'>GRanges</span><span class='op'>(</span><span class='st'>"chr1:13000-13200"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>hic</span> <span class='op'>&lt;-</span> <span class='fu'>InteractionSet</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/InteractionSet/man/GInteractions-class.html'>GInteractions</a></span><span class='op'>(</span><span class='va'>feat_gr</span><span class='op'>$</span><span class='va'>Promoter</span>, <span class='va'>feat_gr</span><span class='op'>$</span><span class='va'>Enhancer</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>genes</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"chr1:11869-12227:+"</span>, <span class='st'>"chr1:12613-12721:+"</span>, <span class='st'>"chr1:13221-14409:+"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>genes</span> <span class='op'>&lt;-</span> <span class='fu'>GRanges</span><span class='op'>(</span><span class='va'>genes</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'>mcols</span><span class='op'>(</span><span class='va'>genes</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'>DataFrame</span><span class='op'>(</span></span>
+<span class='r-in'>  feature <span class='op'>=</span> <span class='st'>"exon"</span>, gene <span class='op'>=</span> <span class='st'>"ENSG00000223972"</span>, exon <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>,</span>
+<span class='r-in'>  transcript <span class='op'>=</span> <span class='st'>"ENST00000456328"</span>, symbol <span class='op'>=</span> <span class='st'>"DDX11L1"</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>grch37.cytobands</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'>plotHFGC</span><span class='op'>(</span></span>
+<span class='r-in'>  <span class='va'>gr</span>, hic <span class='op'>=</span> <span class='va'>hic</span>, features <span class='op'>=</span> <span class='va'>feat_gr</span>, genes <span class='op'>=</span> <span class='va'>genes</span>,</span>
+<span class='r-in'>  zoom <span class='op'>=</span> <span class='fl'>2</span>, cytobands <span class='op'>=</span> <span class='va'>grch37.cytobands</span>, rotation.title <span class='op'>=</span> <span class='fl'>90</span>,</span>
+<span class='r-in'>  featurecol <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>Promoter <span class='op'>=</span> <span class='st'>"red"</span>, Enhancer <span class='op'>=</span> <span class='st'>"yellow"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='op'>)</span></span>
+<span class='r-plt img'><img src='plotHFGC-1.png' alt='' width='700' height='433' /></span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
