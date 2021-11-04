@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3</span>
       </span>
     </div>
 
@@ -127,6 +127,7 @@
   colour <span class='op'>=</span> <span class='cn'>NULL</span>,
   linetype <span class='op'>=</span> <span class='cn'>NULL</span>,
   trans <span class='op'>=</span> <span class='cn'>NULL</span>,
+  n_max <span class='op'>=</span> <span class='cn'>Inf</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
@@ -139,7 +140,7 @@
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Passed to <a href='https://rdrr.io/r/stats/density.html'>density</a></p></td>
+      <td><p>Not used</p></td>
     </tr>
     <tr>
       <th>assay</th>
@@ -162,6 +163,10 @@ each sample</p></td>
       <th>trans</th>
       <td><p>character(1). Any transformative function to be applied to the
 data before calculating the density, e.g. <code>trans = "log2"</code></p></td>
+    </tr>
+    <tr>
+      <th>n_max</th>
+      <td><p>Maximum number of points to use when calculating densities</p></td>
     </tr>
     </table>
 
