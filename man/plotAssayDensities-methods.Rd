@@ -10,7 +10,6 @@ plotAssayDensities(x, ...)
 \S4method{plotAssayDensities}{SummarizedExperiment}(
   x,
   assay = "counts",
-  group,
   colour = NULL,
   linetype = NULL,
   trans = NULL,
@@ -24,9 +23,6 @@ plotAssayDensities(x, ...)
 \item{...}{Not used}
 
 \item{assay}{An assay within x}
-
-\item{group}{Draw lines based on this column in colData. Defaults to
-each sample}
 
 \item{colour}{The column in colData to colour lines by}
 

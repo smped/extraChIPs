@@ -23,8 +23,6 @@
 #'
 #' @param x A SummarizedExperiment object
 #' @param assay An assay within x
-#' @param group Draw lines based on this column in colData. Defaults to
-#' each sample
 #' @param colour The column in colData to colour lines by
 #' @param linetype Any column in colData used to determine linetype
 #' @param trans character(1). Any transformative function to be applied to the
@@ -42,7 +40,7 @@ setGeneric(
 )
 #' @importFrom SummarizedExperiment assayNames colData
 #' @importFrom stats density
-#' @importFrom tibble as_tibble tibble rownames_to_column
+#' @importFrom tibble as_tibble tibble
 #' @importFrom tidyr pivot_longer unnest
 #' @importFrom tidyselect everything
 #' @importFrom ggplot2 ggplot aes_string geom_line labs
@@ -56,17 +54,13 @@ setMethod(
   signature = signature(x = "SummarizedExperiment"),
   function(
     x, assay = "counts",
-    group, colour = NULL, linetype = NULL, trans = NULL, n_max = Inf, ...
+    colour = NULL, linetype = NULL, trans = NULL, n_max = Inf, ...
   ) {
 
     ## Checks
-    stopifnot(assay %in% assayNames(x))
     if (is.null(colnames(x))) colnames(x) <- as.character(seq_len(ncol(x)))
 
     col_data <- as.data.frame(colData(x))
-    col_data <- rownames_to_column(col_data, "sample")
-    if (missing(group)) group <- "sample"
-    group <- match.arg(group, colnames(col_data))
     if (!is.null(colour)) colour <- match.arg(colour, colnames(col_data))
     if (!is.null(linetype)) linetype <- match.arg(linetype, colnames(col_data))
 
@@ -87,14 +81,16 @@ setMethod(
     dens <- lapply(dens, function(d){list(tibble(x = d$x, y = d$y))})
     df <- as_tibble(dens)
     df <- pivot_longer(
-      df, cols = everything(), names_to = "sample", values_to = "dens"
+      df, cols = everything(), names_to = "colnames", values_to = "dens"
     )
-    df <- left_join(df, col_data, by = "sample")
+    df <- bind_cols(df, col_data)
     df <- unnest(df, dens)
 
     ggplot(
       df,
-      aes_string("x", "y", group = group, colour = colour, linetype = linetype)
+      aes_string(
+        "x", "y", group = "colnames", colour = colour, linetype = linetype
+      )
     ) +
       geom_line() +
       labs(

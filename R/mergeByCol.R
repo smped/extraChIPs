@@ -11,7 +11,10 @@
 #' `keyval_range`.
 #'
 #' Taking the p-value from the selected row, the number of windows with lower
-#' p-values are counted by direction and returned in the final object
+#' p-values are counted by direction and returned in the final object.
+#'
+#' If called on a SummarizedExperiment object, the function will be applied to
+#' the rowRanges element.
 #'
 #'
 #' @param x A GenomicRanges or SummarizedExperiment object
