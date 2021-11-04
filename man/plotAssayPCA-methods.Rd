@@ -17,13 +17,14 @@ plotAssayPCA(x, ...)
   pc_x = 1,
   pc_y = 2,
   trans = c(),
+  n_max = Inf,
   ...
 )
 }
 \arguments{
 \item{x}{An object containing an assay slot}
 
-\item{...}{Passed to \link[stats]{prcomp}}
+\item{...}{Not used}
 
 \item{assay}{The assay to perform PCA on}
 
@@ -42,6 +43,8 @@ repel. If \code{FALSE}, labels will appear at the exact points}
 
 \item{trans}{character(1). Any transformative function to be applied to the
 data before performing the PCA, e.g. \code{trans = "log2"}}
+
+\item{n_max}{Subsample the data to this many points before performing PCA}
 }
 \value{
 A ggplot2 object
@@ -63,5 +66,6 @@ se <- SummarizedExperiment(
   colData = df
 )
 plotAssayPCA(se, "counts", colour = "treat", label = "sample")
+
 
 }

@@ -14,13 +14,14 @@ plotAssayDensities(x, ...)
   colour = NULL,
   linetype = NULL,
   trans = NULL,
+  n_max = Inf,
   ...
 )
 }
 \arguments{
 \item{x}{A SummarizedExperiment object}
 
-\item{...}{Passed to \link[stats]{density}}
+\item{...}{Not used}
 
 \item{assay}{An assay within x}
 
@@ -33,6 +34,8 @@ each sample}
 
 \item{trans}{character(1). Any transformative function to be applied to the
 data before calculating the density, e.g. \code{trans = "log2"}}
+
+\item{n_max}{Maximum number of points to use when calculating densities}
 }
 \value{
 A \code{ggplot2} object. Scales and labels can be added using conventional

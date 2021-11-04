@@ -36,10 +36,6 @@ test_that("Assay Density transformations error", {
   expect_equal(p$labels$x, "log2 counts")
 })
 
-test_that("Arguments are passed to density correctly", {
-  p <- plotAssayDensities(se, n = 500)
-  expect_equal(dim(p$data), c(500*4, 4))
-})
 
 test_that("Assay PCA plots error correctly", {
   expect_error(plotAssayPCA(se, colour = "col"))
@@ -97,9 +93,9 @@ test_that("plotAssayRle errors correctly", {
 })
 
 test_that("plotAssayRle creates a plot", {
-  p <- plotAssayRle(se, "counts", fill = "treat")
+  p <- plotAssayRle(se, "counts", fill = "treat", n_max = 100)
   expect_true(is(p, "gg"))
-  expect_equal(dim(p$data), c(nrows*ncols, 6))
+  expect_equal(dim(p$data), c(100*ncols, 6))
   expect_equal(
     unlist(p$labels),
     c(y = "RLE", fill = "treat", colour = "colour", x = "sample")

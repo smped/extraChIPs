@@ -29,7 +29,8 @@
 #' @param linetype Any column in colData used to determine linetype
 #' @param trans character(1). Any transformative function to be applied to the
 #' data before calculating the density, e.g. `trans = "log2"`
-#' @param ... Passed to \link[stats]{density}
+#' @param n_max Maximum number of points to use when calculating densities
+#' @param ... Not used
 #'
 #' @name plotAssayDensities
 #' @rdname plotAssayDensities-methods
@@ -55,8 +56,7 @@ setMethod(
   signature = signature(x = "SummarizedExperiment"),
   function(
     x, assay = "counts",
-    group, colour = NULL, linetype = NULL,
-    trans = NULL, ...
+    group, colour = NULL, linetype = NULL, trans = NULL, n_max = Inf, ...
   ) {
 
     ## Checks
@@ -66,21 +66,28 @@ setMethod(
     col_data <- as.data.frame(colData(x))
     col_data <- rownames_to_column(col_data, "sample")
     if (missing(group)) group <- "sample"
-    stopifnot(group %in% colnames(col_data))
-    if (!is.null(colour))
-      stopifnot(colour %in% colnames(col_data))
-    if (!is.null(linetype))
-      stopifnot(linetype %in% colnames(col_data))
+    group <- match.arg(group, colnames(col_data))
+    if (!is.null(colour)) colour <- match.arg(colour, colnames(col_data))
+    if (!is.null(linetype)) linetype <- match.arg(linetype, colnames(col_data))
 
-    mat <- assay(x, assay)
-    if (!is.null(trans)) mat <- match.fun(trans)(mat)
+    n_max <- min(nrow(x), n_max)
+    ind <- seq_len(n_max)
+    if (n_max < nrow(x)) ind <- sample.int(nrow(x), n_max, replace = FALSE)
 
-    dens <- apply(mat, MARGIN = 2, density, ...)
+    mat <- assay(x[ind,], assay)
+    if (!is.null(trans)) {
+      mat <- match.fun(trans)(mat)
+      trans_ok <- all(
+        is.matrix(mat), nrow(mat) == length(ind), colnames(mat) == colnames(x)
+      )
+      if (!trans_ok) stop("This transformation is not applicable")
+    }
+
+    dens <- apply(mat, MARGIN = 2, density)
     dens <- lapply(dens, function(d){list(tibble(x = d$x, y = d$y))})
     df <- as_tibble(dens)
     df <- pivot_longer(
-      df,
-      cols = everything(), names_to = "sample", values_to = "dens"
+      df, cols = everything(), names_to = "sample", values_to = "dens"
     )
     df <- left_join(df, col_data, by = "sample")
     df <- unnest(df, dens)

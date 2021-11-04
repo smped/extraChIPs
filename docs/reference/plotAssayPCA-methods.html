@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3</span>
       </span>
     </div>
 
@@ -130,6 +130,7 @@
   pc_x <span class='op'>=</span> <span class='fl'>1</span>,
   pc_y <span class='op'>=</span> <span class='fl'>2</span>,
   trans <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='op'>)</span>,
+  n_max <span class='op'>=</span> <span class='cn'>Inf</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
@@ -142,7 +143,7 @@
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Passed to <a href='https://rdrr.io/r/stats/prcomp.html'>prcomp</a></p></td>
+      <td><p>Not used</p></td>
     </tr>
     <tr>
       <th>assay</th>
@@ -178,6 +179,10 @@ repel. If <code>FALSE</code>, labels will appear at the exact points</p></td>
       <td><p>character(1). Any transformative function to be applied to the
 data before performing the PCA, e.g. <code>trans = "log2"</code></p></td>
     </tr>
+    <tr>
+      <th>n_max</th>
+      <td><p>Subsample the data to this many points before performing PCA</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -199,6 +204,7 @@ transformation prior to performing the PCA can be specified using the
 <span class='r-in'><span class='op'>)</span></span>
 <span class='r-in'><span class='fu'>plotAssayPCA</span><span class='op'>(</span><span class='va'>se</span>, <span class='st'>"counts"</span>, colour <span class='op'>=</span> <span class='st'>"treat"</span>, label <span class='op'>=</span> <span class='st'>"sample"</span><span class='op'>)</span></span>
 <span class='r-plt img'><img src='plotAssayPCA-methods-1.png' alt='' width='700' height='433' /></span>
+<span class='r-in'></span>
 <span class='r-in'></span>
 </pre>
   </div>
