@@ -27,7 +27,7 @@
 #' @examples
 #' nrows <- 200; ncols <- 4
 #' counts <- matrix(runif(nrows * ncols, 1, 1e4), nrows)
-#' df <- DataFrame(treat = c("A", "A", "B", "B"))
+#' df <- DataFrame(treat = c("A", "A", "B", "B"), sample = seq_len(4))
 #' se <- SummarizedExperiment(
 #'   assays = SimpleList(counts = counts),
 #'   colData = df
@@ -46,7 +46,7 @@ setGeneric(
 #' @importFrom SummarizedExperiment colData assay
 #' @importFrom tibble rownames_to_column
 #' @importFrom broom tidy
-#' @importFrom dplyr left_join filter rename
+#' @importFrom dplyr left_join filter
 #' @importFrom tidyr pivot_wider
 #' @importFrom scales percent
 #' @importFrom stats prcomp
@@ -67,12 +67,11 @@ setMethod(
 
     if (is.null(colnames(x))) colnames(x) <- as.character(seq_len(ncol(x)))
     df <- as.data.frame(colData(x))
-    df <- rownames_to_column(df, "sample")
+    df$row <- rownames(df)
     if (!is.null(colour)) colour <- match.arg(colour, colnames(df))
     if (!is.null(shape)) shape <- match.arg(shape, colnames(df))
     if (!is.null(label)) label <- match.arg(label, colnames(df))
     stopifnot(is.logical(show_points))
-    stopifnot(length(pc_x) == 1 & length(pc_y) == 1)
 
     n_max <- min(nrow(x), n_max)
     ind <- seq_len(n_max)
@@ -89,24 +88,20 @@ setMethod(
 
     pca <- prcomp(t(mat), center = TRUE, scale. = TRUE)
     pca_df <- tidy(pca)
-    pca_df <- dplyr::rename(pca_df, sample = row)
-    pca_df <- left_join(pca_df, df, by = "sample")
+    pca_df <- left_join(pca_df, df, by = "row")
     pca_df <- dplyr::filter(pca_df, PC %in% c(pc_x, pc_y))
     pca_df <- pivot_wider(
       data = pca_df, names_from = PC, values_from = value, names_prefix = "PC"
     )
     prop_var <- pca$sdev^2/sum(pca$sdev^2)
-    labs <- lapply(
-      list(x = pc_x, y = pc_y),
-      function(x) {
-        paste0("PC", x, " (", percent(prop_var[x], accuracy = 0.1), ")")
-      }
-    )
-    col_x <- paste0("PC", pc_x)
-    col_y <- paste0("PC", pc_y)
+    comps <- c(x = pc_x[[1]], y = pc_y[[1]])
+    labs <- lapply(comps, function(x) {
+      paste0("PC", x, " (", percent(prop_var[x], accuracy = 0.1), ")")
+    })
+    cols <- setNames(paste0("PC", comps), c("x", "y"))
 
     p <- ggplot(
-      pca_df, aes_string(col_x, col_y, colour = colour, shape = shape)
+      pca_df, aes_string(cols[["x"]], cols[["y"]], colour = colour, shape = shape)
     )
     if (show_points) p <- p + geom_point()
     if (!is.null(label) & show_points)

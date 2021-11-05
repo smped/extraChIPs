@@ -60,7 +60,7 @@ transformation prior to performing the PCA can be specified using the
 \examples{
 nrows <- 200; ncols <- 4
 counts <- matrix(runif(nrows * ncols, 1, 1e4), nrows)
-df <- DataFrame(treat = c("A", "A", "B", "B"))
+df <- DataFrame(treat = c("A", "A", "B", "B"), sample = seq_len(4))
 se <- SummarizedExperiment(
   assays = SimpleList(counts = counts),
   colData = df

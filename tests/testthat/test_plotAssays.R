@@ -61,10 +61,10 @@ test_that("colours are added correctly", {
 })
 
 test_that("labels repel correctly", {
-  p <- plotAssayPCA(se, label = "sample")
+  p <- plotAssayPCA(se, label = "row")
   expect_equal(length(p$layers), 2)
   expect_s3_class(p$layers[[2]]$geom, "GeomTextRepel")
-  p <- plotAssayPCA(se, label = "sample", show_points = FALSE)
+  p <- plotAssayPCA(se, label = "row", show_points = FALSE)
   expect_equal(length(p$layers), 1)
   expect_s3_class(p$layers[[1]]$geom, "GeomText")
 })
