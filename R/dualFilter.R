@@ -68,8 +68,11 @@ setMethod(
     stopifnot(all(rowRanges(x) == rowRanges(bg)))
 
     ## Check the BamFiles exist
+    stopifnot("bam.files" %in% colnames(colData(x)))
     bfl <- BamFileList(colData(x)$bam.files)
     stopifnot(all(file.exists(path(bfl))))
+
+    stopifnot("bam.files" %in% colnames(colData(bg)))
     bg_bfl <- BamFileList(colData(bg)$bam.files)
     stopifnot(all(file.exists(path(bg_bfl))))
 
