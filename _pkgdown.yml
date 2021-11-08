@@ -15,6 +15,7 @@ reference:
     - mapByFeature
     - mergeByCol
     - stitchRanges
+    - grlToSE
 
 - title: Visualisation
   contents:

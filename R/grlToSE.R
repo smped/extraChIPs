@@ -1,0 +1,237 @@
+#' @title Set columns from a GRangesList as Assays in a SummarizedExperiment
+#'
+#' @description Move one or more columns from a GRangesList elements into
+#' assays in a RangesSummarizedEperiment
+#'
+#' @details
+#' Given a GRangesList which would commonly represent multiple samples, reduce
+#' any overlapping ranges into a consensus range, setting any metadata columns
+#' to be retained as separate assays. These columns may contain values such as
+#' coverage, p-values etc.
+#'
+#' Additional columns can also be placed as rowData columns where the original
+#' values are better suited to information about the consensus range rather
+#' than the sample (or GRangesList element).
+#'
+#'
+#' Only one value for each range will be retained, and these are chosen using
+#' the value provided as the keyvals, taking either the min or max value in this
+#' column as the representative range.
+#'
+#' @param x A GrangesList
+#' @param assayCols Columns to move to separate assays
+#' @param metaCols Columns to move to mcols within the rowRanges element
+#' @param keyvals The value to use when choosing representative values
+#' @param by How to choose by keyvals
+#' @param ... Passed to \link[GenomicRanges]{reduce}
+#' @param ignore.strand logical(1). Whether the strand of the input ranges
+#' should be ignored or not.
+#'
+#' @return
+#' A RangedSummarizedExperiment
+#'
+#' @examples
+#' a <- GRanges("chr1:1-10")
+#' a$feature <- "Gene"
+#' a$logFC <- 1
+#' b <- GRanges(c("chr1:6-15", "chr1:15"))
+#' b$feature <- c("Gene", "Promoter")
+#' b$logFC <- c(0, -1)
+#' grl <- GRangesList(a = a, b = b)
+#' se <- grlToSE(
+#'   grl, assayCols = "logFC", metaCols = "feature", keyvals = "logFC",
+#'   by = "max"
+#' )
+#' assay(se, "logFC")
+#' rowRanges(se)
+#'
+#' @name grlToSE
+#' @rdname grlToSE-methods
+#' @export
+setGeneric("grlToSE", function(x, ...) {
+  standardGeneric("grlToSE")
+})
+#' @importFrom GenomicRanges reduce
+#' @importFrom S4Vectors mcols
+#' @importFrom SummarizedExperiment SummarizedExperiment
+#' @rdname grlToSE-methods
+#' @export
+setMethod(
+  "grlToSE",
+  signature = signature(x = "GRangesList"),
+  function(
+    x, assayCols = c(), metaCols = c(), keyvals = c(), by = c("min", "max"),
+    ..., ignore.strand = FALSE
+  ) {
+
+    ## Return an empty object retaining any seqinfo
+    if (length(x) == 0) return(.emptySE(x))
+    all_mcols <- colnames(mcols(unlist(x)))
+    stopifnot(.checkArgsGrlToSe(x, assayCols, metaCols, keyvals, all_mcols))
+
+    by <- match.arg(by)
+    assayCols <- intersect(assayCols, all_mcols)
+    metaCols <- intersect(metaCols, all_mcols)
+    keyvals <- intersect(keyvals, all_mcols)
+
+    nm <- names(x)
+    fix_id <- paste0("X", seq_along(x))
+    if (is.null(nm)) nm <- fix_id
+    if (any(nm == "")) nm[nm == ""] <- fix_id[nm == ""]
+    names(x) <- nm
+
+    ## By now we have a named GRL, so get the backbone consensus ranges & sort
+    merged_ranges <- reduce(unlist(x), ..., ignore.strand = ignore.strand)
+    merged_ranges <- sort(merged_ranges, ignore.strand = ignore.strand)
+
+    assays <- .cols2Assays(merged_ranges, x, assayCols, keyvals, by)
+    merged_ranges <- .addMcols(merged_ranges, metaCols, x, ignore.strand)
+
+    SummarizedExperiment(assays = assays, rowRanges = merged_ranges)
+
+  }
+)
+
+#' @importFrom S4Vectors SimpleList queryHits subjectHits 'mcols<-' mcols
+#' @importFrom GenomicRanges findOverlaps GRangesList
+#' @importFrom dplyr arrange distinct left_join select across
+#' @importFrom rlang '!!!' syms
+#' @importFrom tidyr pivot_wider
+#' @importFrom tidyselect all_of
+.cols2Assays <- function(.merged, .grl, .assayCols, .keyvals, .by) {
+
+  ## This needs to be performed for all assayCols together given that values
+  ## will be selected based on that in the kay value column
+  if (length(.assayCols) == 0) return(SimpleList())
+  ## Now move the values to assays using .merged as the backbone
+  nm <- names(.grl)
+  all_cols <- unique(c(.assayCols, .keyvals))
+  ## Return a list with just the values we need
+  merged_list <- lapply(
+    nm,
+    function(i) {
+      ## Map each element of the GRList onto the merged backbone in a way that
+      ## will return nothing if there's no match
+      hits <- findOverlaps(.merged, .grl[[i]])
+      gr <- .merged[queryHits(hits)]
+      mcols(gr) <- mcols(.grl[[i]][subjectHits(hits)])[all_cols]
+      gr$source_in_grl <- i
+      gr
+    }
+  )
+  merged_list <- GRangesList(merged_list)
+  merged_df <- as_tibble(sort(unlist(merged_list)))
+
+  ## If no key values are given, this will only sort by range
+  merged_df <- arrange(merged_df, range, !!!syms(.keyvals))
+  # Multiple columns can't be passed to desc so simply reverse here
+  if (.by == "max")
+    merged_df <- merged_df[seq(nrow(merged_df), 1, by = -1),]
+  ## Now by using distinct, we'll effectively have selected by the key values
+  merged_df <- distinct(
+    merged_df, across(all_of(c("range", "source_in_grl"))), .keep_all = TRUE
+  )
+
+  mats <- lapply(
+    .assayCols,
+    function(x) {
+      df <- pivot_wider(
+        merged_df, id_cols = all_of("range"),
+        names_from = all_of("source_in_grl"), values_from = all_of(x),
+        values_fill = NA
+      )
+      df <- left_join(tibble(range = as.character(.merged)), df, by = "range")
+      df <- dplyr::select(df, all_of(nm))
+      stopifnot(length(.merged) == nrow(df)) # Make sure of dims
+      stopifnot(length(nm) == ncol(df)) # Make sure of dims
+      as.matrix(df)
+    }
+  )
+  names(mats) <- .assayCols
+  SimpleList(mats)
+
+}
+
+#' @importFrom plyranges join_overlap_left reduce_ranges reduce_ranges_directed
+#' @importFrom rlang '!!' sym
+#' @importFrom S4Vectors mcols 'mcols<-'
+.addMcols <- function(.merged, .metaCols, .grl, ignore.strand) {
+  ## This should be redon following the same strategy as for assayCols
+  ## using reduce, not reduce ranges. THis will enable better handling of
+  ## ignore.strand
+  if (length(.metaCols) == 0) return(.merged)
+  mc <- lapply(
+    .metaCols,
+    function(i) {
+      ## Attach the original ranges to the merged backbone
+      y <- join_overlap_left(.merged, unlist(.grl))
+      ## Reduce taking all unique values mapped to each merged range
+      if (ignore.strand) y_red <- reduce_ranges(y, "{i}" := unique(!!sym(i)))
+      if (!ignore.strand)
+        y_red <- reduce_ranges_directed(y, "{i}" := unique(!!sym(i)))
+      ## Just return the values
+      vals <- mcols(y_red)[[i]]
+      ## Unlist if everything is a single value
+      if (all(vapply(vals, length, numeric(1)) == 1)) vals <- unlist(vals)
+      ## We need to ensure that any weirdness from missing values etc
+      ## is caught
+      stopifnot(length(vals) == length(.merged))
+      vals
+    }
+  )
+
+  ## Now attach these as mcols & return the original ranges
+  names(mc) <- .metaCols
+  mcols(.merged) <- DataFrame(mc)
+  .merged
+
+}
+
+.emptySE <- function(.x) {
+  warning("Returned object will contain no assays or rowData")
+  sq <- seqinfo(.x)
+  SummarizedExperiment(rowRanges = GRanges(seqinfo = sq))
+}
+
+.checkArgsGrlToSe <- function(.x, .assayCols, .metaCols, .keyvals, .all_mcols) {
+
+  ret_val <- TRUE
+  msg <- NULL
+
+  if (length(names(.x)) != length(.x))
+    msg <- c(msg, "All elements of the x should be given informative names\n")
+
+  if (length(.assayCols) > 0) {
+    if (!all(.assayCols %in% .all_mcols)) {
+      msg <- c(
+        msg,
+        "Some columns requested as assays are missing and will be ignored.\n"
+      )
+    }
+    if (length(.keyvals) == 0 ) {
+      msg <- c(msg, "Missing keyvals. Values will be chosen at random.\n")
+    }
+    if (!any(.keyvals %in% .all_mcols)) {
+      ret_val <- FALSE
+      msg <- c(msg, "No specified 'keyvals'were found.\n")
+    }
+  }
+
+  if (length(.metaCols) > 0) {
+    if (!all(.metaCols %in% .all_mcols)) {
+      msg <- c(
+        msg,
+        "Some columns requested as mcols are missing and will be ignored.\n"
+      )
+    }
+  }
+
+  if (any(.metaCols %in% .assayCols)) {
+    ret_val <- FALSE
+    msg <- c(msg, "Columns for assays and mcols must be distinct.\n")
+  }
+
+  if (length(msg) > 0) warning(msg)
+  ret_val
+
+}

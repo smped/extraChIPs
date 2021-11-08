@@ -1,6 +1,6 @@
 Package: extraChIPs
-Version: 0.99.3
-Date: 2021/11/04
+Version: 0.99.4
+Date: 2021/11/08
 Title: Additional functions for working with ChIP-Seq data
 Authors@R: person("Stephen", "Pederson", 
   email = "stephen.pederson.au@gmail.com", role = c("aut", "cre"))
@@ -38,6 +38,7 @@ Imports:
   IRanges,
   limma,
   methods,
+  plyranges,
   RColorBrewer,
   rlang,
   Rsamtools,
