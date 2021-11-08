@@ -23,7 +23,7 @@ test_that("grlToSE returns correct object", {
 
 test_that(".cols2Assay returned expected values", {
   expect_equal(.cols2Assays(merged, grl, c()), SimpleList())
-  test_merge <- .cols2Assays(merged, grl, "logFC", "logFC", "min")
+  test_merge <- .cols2Assays(merged, grl, "logFC", "logFC", "min", TRUE)
   expect_true(is(test_merge, "SimpleList"))
   expect_equal(
     test_merge[[1]],

@@ -84,7 +84,10 @@ setMethod(
     merged_ranges <- reduce(unlist(x), ..., ignore.strand = ignore.strand)
     merged_ranges <- sort(merged_ranges, ignore.strand = ignore.strand)
 
-    assays <- .cols2Assays(merged_ranges, x, assayCols, keyvals, by)
+    assays <- .cols2Assays(
+      .merged = merged_ranges, .grl = x, .assayCols = assayCols,
+      .keyvals = keyvals, .by = by, .ignore.strand = ignore.strand
+    )
     merged_ranges <- .addMcols(merged_ranges, metaCols, x, ignore.strand)
 
     SummarizedExperiment(assays = assays, rowRanges = merged_ranges)
@@ -98,7 +101,9 @@ setMethod(
 #' @importFrom rlang '!!!' syms
 #' @importFrom tidyr pivot_wider
 #' @importFrom tidyselect all_of
-.cols2Assays <- function(.merged, .grl, .assayCols, .keyvals, .by) {
+.cols2Assays <- function(
+  .merged, .grl, .assayCols, .keyvals, .by, .ignore.strand
+) {
 
   ## This needs to be performed for all assayCols together given that values
   ## will be selected based on that in the kay value column
@@ -112,7 +117,7 @@ setMethod(
     function(i) {
       ## Map each element of the GRList onto the merged backbone in a way that
       ## will return nothing if there's no match
-      hits <- findOverlaps(.merged, .grl[[i]])
+      hits <- findOverlaps(.merged, .grl[[i]], ignore.strand = .ignore.strand)
       gr <- .merged[queryHits(hits)]
       mcols(gr) <- mcols(.grl[[i]][subjectHits(hits)])[all_cols]
       gr$source_in_grl <- i
@@ -152,37 +157,31 @@ setMethod(
 
 }
 
-#' @importFrom plyranges join_overlap_left reduce_ranges reduce_ranges_directed
 #' @importFrom rlang '!!' sym
-#' @importFrom S4Vectors mcols 'mcols<-'
-.addMcols <- function(.merged, .metaCols, .grl, ignore.strand) {
+#' @importFrom S4Vectors mcols 'mcols<-' DataFrame
+#' @importFrom dplyr group_by summarise across
+#' @importFrom tidyselect all_of
+#' @importClassesFrom IRanges CompressedList
+.addMcols <- function(.merged, .metaCols, .grl, .ignore.strand) {
   ## This should be redon following the same strategy as for assayCols
   ## using reduce, not reduce ranges. THis will enable better handling of
   ## ignore.strand
   if (length(.metaCols) == 0) return(.merged)
-  mc <- lapply(
-    .metaCols,
-    function(i) {
-      ## Attach the original ranges to the merged backbone
-      y <- join_overlap_left(.merged, unlist(.grl))
-      ## Reduce taking all unique values mapped to each merged range
-      if (ignore.strand) y_red <- reduce_ranges(y, "{i}" := unique(!!sym(i)))
-      if (!ignore.strand)
-        y_red <- reduce_ranges_directed(y, "{i}" := unique(!!sym(i)))
-      ## Just return the values
-      vals <- mcols(y_red)[[i]]
-      ## Unlist if everything is a single value
-      if (all(vapply(vals, length, numeric(1)) == 1)) vals <- unlist(vals)
-      ## We need to ensure that any weirdness from missing values etc
-      ## is caught
-      stopifnot(length(vals) == length(.merged))
-      vals
-    }
+  gr <- unlist(.grl)
+  hits <- findOverlaps(.merged, gr, ignore.strand = .ignore.strand)
+  df <- data.frame(range = as.character(.merged)[queryHits(hits)])
+  df <- cbind(df, as.data.frame(mcols(gr[subjectHits(hits)])[.metaCols]))
+  df <- group_by(df, !!sym("range"))
+  df <- summarise(
+    df, across(all_of(.metaCols), function(x) list(sort(unique(x))))
   )
-
-  ## Now attach these as mcols & return the original ranges
-  names(mc) <- .metaCols
-  mcols(.merged) <- DataFrame(mc)
+  vars <- as.list(df[.metaCols])
+  vars <- lapply(vars, function(x){
+    if (all(vapply(x, length, integer(1)) == 1)) return(unlist(x))
+    as(x, "CompressedList")
+  })
+  stopifnot(all(vapply(vars, length, integer(1)) == length(.merged)))
+  mcols(.merged) <- DataFrame(vars)
   .merged
 
 }
