@@ -164,25 +164,26 @@ setMethod(
 #' @importFrom vctrs vec_proxy
 #' @importClassesFrom IRanges CompressedList
 .addMcols <- function(.merged, .metaCols, .grl, .ignore.strand) {
-  ## This should be redon following the same strategy as for assayCols
-  ## using reduce, not reduce ranges. THis will enable better handling of
-  ## ignore.strand
   if (length(.metaCols) == 0) return(.merged)
   gr <- unlist(.grl)
   hits <- findOverlaps(.merged, gr, ignore.strand = .ignore.strand)
   df <- data.frame(range = as.character(.merged)[queryHits(hits)])
   df <- cbind(df, as.data.frame(mcols(gr[subjectHits(hits)])[.metaCols]))
   df <- mutate_all(df, vec_proxy) # This handles any AsIs columns
-  df <- unnest(df, everything()) # Now deal with any potential list columns
-  df <- group_by(df, !!sym("range"))
-  df <- summarise(
-    df, across(all_of(.metaCols), function(x) list(sort(unique(x))))
+  ## Given that unnesting may behave differently for each required column
+  ## unnest within an lapply, then return the vars
+  vars <- lapply(
+    .metaCols,
+    function(x) {
+      var_df <- unnest(df[c("range", x)], all_of(x), keep_empty = TRUE)
+      var_df <- group_by(var_df, !!sym("range"))
+      var <- summarise(var_df, var = list(sort(unique(!!sym(x)))))[["var"]]
+      var <- as(var, "CompressedList")
+      if (all(vapply(var, length, integer(1)) == 1)) var <- unlist(var)
+      var
+    }
   )
-  vars <- as.list(df[.metaCols])
-  vars <- lapply(vars, function(x){
-    if (all(vapply(x, length, integer(1)) == 1)) return(unlist(x))
-    as(x, "CompressedList")
-  })
+  names(vars) <- .metaCols
   stopifnot(all(vapply(vars, length, integer(1)) == length(.merged)))
   mcols(.merged) <- DataFrame(vars)
   .merged
