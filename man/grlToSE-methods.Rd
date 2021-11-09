@@ -57,16 +57,16 @@ column as the representative range.
 \examples{
 a <- GRanges("chr1:1-10")
 a$feature <- "Gene"
-a$logFC <- 1
+a$p <- 0.1
 b <- GRanges(c("chr1:6-15", "chr1:15"))
 b$feature <- c("Gene", "Promoter")
-b$logFC <- c(0, -1)
+b$p <- c(0.5, 0.01)
 grl <- GRangesList(a = a, b = b)
+grl
 se <- grlToSE(
-  grl, assayCols = "logFC", metaCols = "feature", keyvals = "logFC",
-  by = "max"
+  grl, assayCols = "p", metaCols = "feature", keyvals = "p", by = "min"
 )
-assay(se, "logFC")
+assay(se, "p")
 rowRanges(se)
 
 }

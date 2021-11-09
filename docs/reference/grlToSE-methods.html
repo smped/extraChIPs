@@ -185,18 +185,36 @@ column as the representative range.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='r-in'><span class='va'>a</span> <span class='op'>&lt;-</span> <span class='fu'>GRanges</span><span class='op'>(</span><span class='st'>"chr1:1-10"</span><span class='op'>)</span></span>
 <span class='r-in'><span class='va'>a</span><span class='op'>$</span><span class='va'>feature</span> <span class='op'>&lt;-</span> <span class='st'>"Gene"</span></span>
-<span class='r-in'><span class='va'>a</span><span class='op'>$</span><span class='va'>logFC</span> <span class='op'>&lt;-</span> <span class='fl'>1</span></span>
+<span class='r-in'><span class='va'>a</span><span class='op'>$</span><span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fl'>0.1</span></span>
 <span class='r-in'><span class='va'>b</span> <span class='op'>&lt;-</span> <span class='fu'>GRanges</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"chr1:6-15"</span>, <span class='st'>"chr1:15"</span><span class='op'>)</span><span class='op'>)</span></span>
 <span class='r-in'><span class='va'>b</span><span class='op'>$</span><span class='va'>feature</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Gene"</span>, <span class='st'>"Promoter"</span><span class='op'>)</span></span>
-<span class='r-in'><span class='va'>b</span><span class='op'>$</span><span class='va'>logFC</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='op'>-</span><span class='fl'>1</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>b</span><span class='op'>$</span><span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.5</span>, <span class='fl'>0.01</span><span class='op'>)</span></span>
 <span class='r-in'><span class='va'>grl</span> <span class='op'>&lt;-</span> <span class='fu'>GRangesList</span><span class='op'>(</span>a <span class='op'>=</span> <span class='va'>a</span>, b <span class='op'>=</span> <span class='va'>b</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>grl</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GRangesList object of length 2:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $a</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GRanges object with 1 range and 2 metadata columns:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       seqnames    ranges strand |     feature         p</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;numeric&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1]     chr1      1-10      * |        Gene       0.1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   -------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> $b</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GRanges object with 2 ranges and 2 metadata columns:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       seqnames    ranges strand |     feature         p</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;numeric&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [1]     chr1      6-15      * |        Gene      0.50</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [2]     chr1        15      * |    Promoter      0.01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   -------</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
 <span class='r-in'><span class='va'>se</span> <span class='op'>&lt;-</span> <span class='fu'>grlToSE</span><span class='op'>(</span></span>
-<span class='r-in'>  <span class='va'>grl</span>, assayCols <span class='op'>=</span> <span class='st'>"logFC"</span>, metaCols <span class='op'>=</span> <span class='st'>"feature"</span>, keyvals <span class='op'>=</span> <span class='st'>"logFC"</span>,</span>
-<span class='r-in'>  by <span class='op'>=</span> <span class='st'>"max"</span></span>
+<span class='r-in'>  <span class='va'>grl</span>, assayCols <span class='op'>=</span> <span class='st'>"p"</span>, metaCols <span class='op'>=</span> <span class='st'>"feature"</span>, keyvals <span class='op'>=</span> <span class='st'>"p"</span>, by <span class='op'>=</span> <span class='st'>"min"</span></span>
 <span class='r-in'><span class='op'>)</span></span>
-<span class='r-in'><span class='fu'>assay</span><span class='op'>(</span><span class='va'>se</span>, <span class='st'>"logFC"</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>      a b</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> [1,] 1 0</span>
+<span class='r-in'><span class='fu'>assay</span><span class='op'>(</span><span class='va'>se</span>, <span class='st'>"p"</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>        a    b</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1,] 0.1 0.01</span>
 <span class='r-in'><span class='fu'>rowRanges</span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> GRanges object with 1 range and 1 metadata column:</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>       seqnames    ranges strand |         feature</span>

@@ -82,6 +82,8 @@ Column names in each DataFrame are \code{score}, \code{position} and \code{bp}.
 \examples{
 bw <- system.file("tests", "test.bw", package = "rtracklayer")
 gr <- GRanges("chr2:500")
-getProfileData(bw, gr, upstream = 100, bins = 10)
+pd <- getProfileData(bw, gr, upstream = 100, bins = 10)
+pd
+pd$profile_data
 
 }

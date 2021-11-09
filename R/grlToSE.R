@@ -33,16 +33,16 @@
 #' @examples
 #' a <- GRanges("chr1:1-10")
 #' a$feature <- "Gene"
-#' a$logFC <- 1
+#' a$p <- 0.1
 #' b <- GRanges(c("chr1:6-15", "chr1:15"))
 #' b$feature <- c("Gene", "Promoter")
-#' b$logFC <- c(0, -1)
+#' b$p <- c(0.5, 0.01)
 #' grl <- GRangesList(a = a, b = b)
+#' grl
 #' se <- grlToSE(
-#'   grl, assayCols = "logFC", metaCols = "feature", keyvals = "logFC",
-#'   by = "max"
+#'   grl, assayCols = "p", metaCols = "feature", keyvals = "p", by = "min"
 #' )
-#' assay(se, "logFC")
+#' assay(se, "p")
 #' rowRanges(se)
 #'
 #' @name grlToSE
@@ -128,7 +128,7 @@ setMethod(
   merged_df <- as_tibble(sort(unlist(merged_list)))
 
   ## If no key values are given, this will only sort by range
-  merged_df <- arrange(merged_df, range, !!!syms(.keyvals))
+  merged_df <- arrange(merged_df, !!!syms(c("range", .keyvals)))
   # Multiple columns can't be passed to desc so simply reverse here
   if (.by == "max")
     merged_df <- merged_df[seq(nrow(merged_df), 1, by = -1),]
@@ -159,8 +159,9 @@ setMethod(
 
 #' @importFrom rlang '!!' sym
 #' @importFrom S4Vectors mcols 'mcols<-' DataFrame
-#' @importFrom dplyr group_by summarise across
-#' @importFrom tidyselect all_of
+#' @importFrom dplyr group_by summarise across mutate_all
+#' @importFrom tidyselect all_of everything
+#' @importFrom vctrs vec_proxy
 #' @importClassesFrom IRanges CompressedList
 .addMcols <- function(.merged, .metaCols, .grl, .ignore.strand) {
   ## This should be redon following the same strategy as for assayCols
@@ -171,6 +172,8 @@ setMethod(
   hits <- findOverlaps(.merged, gr, ignore.strand = .ignore.strand)
   df <- data.frame(range = as.character(.merged)[queryHits(hits)])
   df <- cbind(df, as.data.frame(mcols(gr[subjectHits(hits)])[.metaCols]))
+  df <- mutate_all(df, vec_proxy) # This handles any AsIs columns
+  df <- unnest(df, everything()) # Now deal with any potential list columns
   df <- group_by(df, !!sym("range"))
   df <- summarise(
     df, across(all_of(.metaCols), function(x) list(sort(unique(x))))

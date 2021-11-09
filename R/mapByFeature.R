@@ -21,6 +21,8 @@
 #' If information is missing for one of these steps, the algorithm will simply
 #' proceed to the next step. If no promoter, enhancer or interaction data is
 #' provided, all ranges will be simply mapped by step 4.
+#' Ranges can be mapped by any or all of the first three steps, but step 4 is
+#' mutually exclusive with the first 3 steps.
 #'
 #' Distances between each set of features and the query range can be
 #' individually specified by modifying the `gr2prom`, `gr2enh`, `gr2gi` or
@@ -65,12 +67,21 @@
 #' ## Define some genes
 #' genes <- GRanges(c("chr1:2-10:*", "chr1:25-30:-", "chr1:31-40:+"))
 #' genes$gene_id <- paste0("gene", seq_along(genes))
+#' genes
 #' ## Add a promoter for each gene
 #' prom <- promoters(genes, upstream = 1, downstream = 1)
+#' prom
 #' ## Some ranges to map
-#' gr <- GRanges(paste0("chr1:", seq(0, 50, by = 10)))
-#' mapByFeature(gr, genes)
-#' mapByFeature(gr, genes, prom)
+#' gr <- GRanges(paste0("chr1:", seq(0, 60, by = 15)))
+#' gr
+#'
+#' ## Map so that any gene within 25bp of the range is assigned
+#' mapByFeature(gr, genes, gr2gene = 25)
+#'
+#' ## Now use promoters to be more accurate in the gene assignment
+#' ## Given that the first range overlaps the promoter of gene1, this is a
+#' ## more targetted approach
+#' mapByFeature(gr, genes, prom, gr2gene = 25)
 #'
 #' @importFrom S4Vectors mcols subjectHits
 #' @importClassesFrom IRanges CompressedList

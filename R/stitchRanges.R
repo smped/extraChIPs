@@ -20,9 +20,9 @@
 #' A GRanges object
 #'
 #' @examples
-#' x <- GRanges(c("chr1:1-10", "chr1:101-110", "chr1:1001-1010", "chr2:1-10"))
+#' x <- GRanges(c("chr1:1-10", "chr1:101-110", "chr1:201-210", "chr2:1-10"))
 #' y <- GRanges("chr1:200:+")
-#' stitchRanges(x, exclude = y)
+#' stitchRanges(x, exclude = y, maxgap = 100)
 #'
 #' @importFrom forcats fct_explicit_na
 #' @importFrom S4Vectors splitAsList subjectHits

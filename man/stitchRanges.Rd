@@ -30,8 +30,8 @@ useful if wanting to stitch enhancers whilst excluding promoters.
 All inputs and outputs are Genomic Ranges objects
 }
 \examples{
-x <- GRanges(c("chr1:1-10", "chr1:101-110", "chr1:1001-1010", "chr2:1-10"))
+x <- GRanges(c("chr1:1-10", "chr1:101-110", "chr1:201-210", "chr2:1-10"))
 y <- GRanges("chr1:200:+")
-stitchRanges(x, exclude = y)
+stitchRanges(x, exclude = y, maxgap = 100)
 
 }
