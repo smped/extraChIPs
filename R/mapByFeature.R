@@ -80,7 +80,7 @@
 #'
 #' ## Now use promoters to be more accurate in the gene assignment
 #' ## Given that the first range overlaps the promoter of gene1, this is a
-#' ## more targetted approach
+#' ## more targetted approach. Similarly for the third range
 #' mapByFeature(gr, genes, prom, gr2gene = 25)
 #'
 #' @importFrom S4Vectors mcols subjectHits
