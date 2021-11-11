@@ -48,7 +48,7 @@ test_that("Correct plotting works", {
   p <- plotHFGC(
     GRanges("chr2:1-1000"), coverage = test_bw, cytobands = grch37.cytobands,
     axistrack = FALSE, annotation = GRangesList(up = GRanges("chr2:501-505")),
-    annotcol = list(up = "red"), ylim = list(a = c(-1, 5))
+    annotcol = list(up = "red"), ylim = c(-1, 5)
   )
   expect_equal(length(p), 4)
   expect_true(is(p[[2]], "AnnotationTrack"))
@@ -194,7 +194,7 @@ test_that("Malformed coverage parameters are caught", {
   expect_true(
     .checkHFGCArgs(
       gr1, zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, type = "l",
-      coverage = test_bw, linecol = c(a = "blue"), ylim = list(a = c(0, 1))
+      coverage = test_bw, linecol = c(a = "blue"), ylim = c(0, 1)
     )
   )
   expect_true(
@@ -214,7 +214,7 @@ test_that("Malformed coverage parameters are caught", {
   expect_message(
     .checkHFGCArgs(
       gr1, zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, type = "l",
-      coverage = c(), ylim = list(a = c(0, 1))
+      coverage = c(), ylim = c(0, 1)
     ),
     "'coverage' should be a BigWigFileList or a list"
   )
@@ -229,7 +229,7 @@ test_that("Malformed coverage parameters are caught", {
     .checkHFGCArgs(
       gr = GRanges("chr2:1-1000"), coverage = test_bw, annotation = GRanges(),
       zoom = 1, shift = 0, max = Inf, type = "l", axistrack = TRUE,
-      ylim = list(a = c(0, 1))
+      ylim = c(0, 1)
     ),
     "annotation must be a GRangesList"
   )
@@ -256,7 +256,7 @@ test_that("Malformed coverage parameters are caught", {
       gr = GRanges("chr2:1-1000"), coverage = test_bw,
       annotation = GRangesList(a = GRanges()), annotcol = c(b = "blue"),
       zoom = 1, shift = 0, max = Inf, type = "l", axistrack = TRUE,
-      ylim = list(a = c(0, 1))
+      ylim =c(0, 1)
     ),
     "Colours not specified for a"
   )
@@ -274,7 +274,7 @@ test_that("Malformed coverage parameters are caught", {
       zoom = 1, shift = 0, max = Inf, type = "l", axistrack = TRUE,
       ylim = c(0, 1)
     ),
-    "ylim not specified for a"
+    "ylim must be passed as a list which matches coverage"
   )
 
 })
@@ -410,4 +410,17 @@ test_that("Coverage Track forms correctly", {
   )
   expect_null(cov_heat[[1]]@dp@pars$col)
 
+})
+
+test_that("ylim & linecol are parsed correctly", {
+  cov_track <- .makeCoverageTracks(
+    .coverage = list(a = test_bw, b = test_bw), .gr = GRanges("chr2:1-10"),
+    .fontsize = 12, .type = "l", .gradient = "blue", .tracksize = 1, .cex = 1,
+    .rot = 0, .linecol = list(a = c(a = "red"), b = c(a = "blue")),
+    .ylim = list(a = c(-1, 5), b = c(-1, 2))
+  )
+  expect_equal(cov_track[[1]]@dp@pars$col, c(a = "red"))
+  expect_equal(cov_track[[2]]@dp@pars$col, c(a = "blue"))
+  expect_equal(cov_track[[1]]@dp@pars$ylim, c(-1, 5))
+  expect_equal(cov_track[[2]]@dp@pars$ylim, c(-1, 2))
 })

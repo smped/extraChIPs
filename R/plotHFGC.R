@@ -428,27 +428,37 @@ plotHFGC <- function(
   if (is.null(.coverage)) return(list(NULL))
   .type <- match.arg(.type)
 
-  ## Split a single BigWigFileList
-  if (is(.coverage, "BigWigFileList")) {
-    .coverage <- split(.coverage, f = names(.coverage))
-  }
+  is_single_list <- is(.coverage, "BigWigFileList")
+  ## Split a single BigWigFileList. This will give a list of BigWigFileLists
+  ## which is a little unexpected.
+  ## After this step, we will always have a named S3 list of BigWigFileLists
+  if (is_single_list) .coverage <- split(.coverage, f = names(.coverage))
 
   tracks <- lapply(
     names(.coverage),
     function(x, .linecol) {
+      # .coverage[[x]] will always be a BigWigFileList!!!
       nm <- names(.coverage[[x]])
-      if (.type == "heatmap") .linecol <- NULL
-      if (missing(.linecol) & .type == "l") {
-        pos <- ((seq_along(nm) - 1) %% 6) + 1 # Use modulo for recursion
+      if (missing(.linecol)) {
+        ## If we originally had a single BigWigFileList, set all colours
+        ## the same. This will return 1 in that instance, or more if not
+        pos <- ((seq_along(nm) - 1) %% 6) + 1
         ## These are the default colours from Gviz
         .linecol <- c(
-          "#0080ff", "#ff00ff", "darkgreen", "#ff0000", "orange", "#00ff00",
-          "brown"
+          "#0080ff", "#ff00ff", "darkgreen", "#ff0000", "orange",
+          "#00ff00", "brown"
         )[pos]
         names(.linecol) <- nm
       }
-      if (!is.null(.ylim)) .ylim <- range(unlist(.ylim[nm]))
-
+      y <- .ylim
+      if (is_single_list) {
+        .linecol <- .linecol[nm]
+      } else {
+        .linecol <- .linecol[[x]][nm]
+        if (!is.null(.ylim)) y <- range(.ylim[[x]])
+      }
+      ## And undo all of that if we have a heatmap
+      if (.type == "heatmap") .linecol <- NULL
       ## groups need to be unset if drawing a heatmap
       grp <- NULL
       if (.type == "l") grp <- factor(nm, levels = nm)
@@ -463,12 +473,13 @@ plotHFGC <- function(
       DataTrack(
         range = unlist(GRangesList(cov)),
         name = x, groups = grp, type = .type,
-        fontsize = .fontsize, col = .linecol[nm], gradient = .gradient,
+        fontsize = .fontsize, col = .linecol, gradient = .gradient,
         showSampleNames = .type == "heatmap", # Always set for heatmaps
         size = .tracksize, cex.title = .cex, rotation.title = .rot,
-        ylim = .ylim, ...
+        ylim = y, ...
       )
     },
+    ## Pass the parameter here
     .linecol = .linecol
   )
   tracks
@@ -600,16 +611,30 @@ plotHFGC <- function(
   }
 
   if (!is.null(ylim)) {
-    # This must be a named vector
-    if (length(names(ylim)) != length(ylim))
-      msg <- c(msg, "'ylim' must be a named list\n")
-    # All names in the coverage objects must also be present
-    all_names <- c()
-    if (is(coverage, "list")) all_names <- unlist(lapply(coverage, names))
-    if (is(coverage, "BigWigFileList")) all_names <- names(coverage)
-    miss <- setdiff(all_names, names(ylim))
-    if (length(miss) > 0)
-      msg <- c(msg, "ylim not specified for ", miss, "\n")
+    if (is(coverage, "list")) {
+      if (!is(ylim, "list")) {
+        msg <- c(
+          msg, "ylim must be passed as a list which matches coverage"
+        )
+      } else {
+        if (!all(names(coverage) %in% names(ylim)))
+          msg <- c(
+            msg,
+            "All named elements of the coverage tracks mnust also be named in ylim"
+          )
+        if (!all(vapply(ylim, length, integer(1)) == 2))
+          msg <- c(
+            msg,
+            "All supplied elements of ylim must be of length 2"
+          )
+      }
+    }
+    if (is(coverage, "BigWigFileList")) {
+      if (length(ylim) != 2 | !is.numeric(ylim))
+        msg <- c(
+          msg, "ylim should be passed as a single range of length 2"
+        )
+    }
   }
 
   if (missing(annotation)) return(msg)
