@@ -142,6 +142,7 @@
   genesize <span class='op'>=</span> <span class='fl'>1</span>,
   covsize <span class='op'>=</span> <span class='fl'>4</span>,
   annotsize <span class='op'>=</span> <span class='fl'>0.5</span>,
+  ylim <span class='op'>=</span> <span class='cn'>NULL</span>,
   <span class='va'>...</span>,
   fontsize <span class='op'>=</span> <span class='fl'>12</span>,
   cex.title <span class='op'>=</span> <span class='fl'>0.8</span>,
@@ -256,9 +257,14 @@ are passed to these elements</p></td>
       <td><p>Relative sizes for each track (hic, features, genes, coverage &amp; annotation)</p></td>
     </tr>
     <tr>
+      <th>ylim</th>
+      <td><p>Named list of ylimits for each coverage track. All named elements
+within the coverage object should be included</p></td>
+    </tr>
+    <tr>
       <th>...</th>
       <td><p>Passed to <a href='https://rdrr.io/pkg/Gviz/man/DataTrack-class.html'>DataTrack</a> for the <strong>coverage tracks</strong> only.
-Useful arguments may be things like <code>ylim</code>, <code>legend</code></p></td>
+Useful arguments may be things like <code>legend</code></p></td>
     </tr>
     <tr>
       <th>fontsize</th>
