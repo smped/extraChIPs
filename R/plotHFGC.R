@@ -108,8 +108,10 @@
 #' `NULL` will remove the highlight
 #' @param hicsize,featsize,genesize,covsize,annotsize
 #' Relative sizes for each track (hic, features, genes, coverage & annotation)
+#' @param ylim Named list of ylimits for each coverage track. All named elements
+#' within the coverage object should be included
 #' @param ... Passed to \link[Gviz]{DataTrack} for the **coverage tracks** only.
-#' Useful arguments may be things like `ylim`, `legend`
+#' Useful arguments may be things like `legend`
 #' @param cex.title Passed to all tracks
 #' @param rotation.title Passed to all tracks
 #' @param collapseTranscripts Passed to \link[Gviz]{GeneRegionTrack} for the
@@ -131,7 +133,8 @@ plotHFGC <- function(
   linecol, gradient = hcl.colors(101, "viridis"),
   hiccol = list(anchors = "lightblue", interactions = "red"),
   featurecol, genecol, annotcol, highlight = "blue",
-  hicsize = 1, featsize = 1, genesize = 1, covsize = 4, annotsize = 0.5, ...,
+  hicsize = 1, featsize = 1, genesize = 1, covsize = 4, annotsize = 0.5,
+  ylim = NULL, ...,
   fontsize = 12, cex.title = 0.8, rotation.title = 0,
   collapseTranscripts = "meta"
 ) {
@@ -143,7 +146,7 @@ plotHFGC <- function(
     genes = genes, coverage = coverage, annotation = annotation,
     axistrack = axistrack, cytobands = cytobands, max = max, hiccol = hiccol,
     linecol = linecol, genecol = genecol, featurecol = featurecol,
-    annotcol = annotcol, type = coverage_type
+    annotcol = annotcol, type = coverage_type, ylim = ylim
   )
   stopifnot(checkArgs)
 
@@ -182,7 +185,7 @@ plotHFGC <- function(
   ## The coverage tracks NB: This will be list of tracks
   cov_tracks <- .makeCoverageTracks(
     coverage, plot_range, fontsize, coverage_type, linecol, gradient, covsize,
-    cex.title, rotation.title, ...
+    cex.title, rotation.title, ylim, ...
   )
   cov_tracks <- .addAnnotations(
     annotation, plot_range, cov_tracks, coverage, annotcol, annotsize
@@ -417,7 +420,7 @@ plotHFGC <- function(
 #' @importFrom GenomicRanges GRangesList
 .makeCoverageTracks <- function(
   .coverage, .gr, .fontsize, .type = c("l", "heatmap"), .linecol,
-  .gradient, .tracksize, .cex, .rot, ...
+  .gradient, .tracksize, .cex, .rot, .ylim,  ...
 ) {
 
   ## Always returns a list
@@ -444,6 +447,8 @@ plotHFGC <- function(
         )[pos]
         names(.linecol) <- nm
       }
+      if (!is.null(.ylim)) .ylim <- range(unlist(.ylim[nm]))
+
       ## groups need to be unset if drawing a heatmap
       grp <- NULL
       if (.type == "l") grp <- factor(nm, levels = nm)
@@ -461,7 +466,7 @@ plotHFGC <- function(
         fontsize = .fontsize, col = .linecol[nm], gradient = .gradient,
         showSampleNames = .type == "heatmap", # Always set for heatmaps
         size = .tracksize, cex.title = .cex, rotation.title = .rot,
-        ...
+        ylim = .ylim, ...
       )
     },
     .linecol = .linecol
@@ -474,7 +479,7 @@ plotHFGC <- function(
 #' @importFrom GenomeInfoDb seqnames
 .checkHFGCArgs <- function(
   gr, zoom, shift, hic, features, genes, coverage, annotation, axistrack,
-  cytobands, max, hiccol, linecol, genecol, featurecol, annotcol, type
+  cytobands, max, hiccol, linecol, genecol, featurecol, annotcol, type, ylim
 ) {
 
   msg <- c()
@@ -537,7 +542,9 @@ plotHFGC <- function(
     }
   }
 
-  msg <- .checkCoverage(msg, coverage, linecol, type, annotation, annotcol)
+  msg <- .checkCoverage(
+    msg, coverage, linecol, type, annotation, annotcol, ylim
+  )
 
   bools <- c(axistrack)
   if (!is.logical(bools)) msg <- c(msg, "axistrack must be logical values")
@@ -561,7 +568,9 @@ plotHFGC <- function(
   FALSE
 }
 
-.checkCoverage <- function(msg, coverage, linecol, type, annotation, annotcol) {
+.checkCoverage <- function(
+  msg, coverage, linecol, type, annotation, annotcol, ylim
+) {
 
   if (missing(coverage)) return(msg)
 
@@ -588,6 +597,19 @@ plotHFGC <- function(
     miss <- setdiff(all_names, names(linecol))
     if (length(miss) > 0)
       msg <- c(msg, "Colours not specified for ", miss, "\n")
+  }
+
+  if (!is.null(ylim)) {
+    # This must be a named vector
+    if (length(names(ylim)) != length(ylim))
+      msg <- c(msg, "'ylim' must be a named list\n")
+    # All names in the coverage objects must also be present
+    all_names <- c()
+    if (is(coverage, "list")) all_names <- unlist(lapply(coverage, names))
+    if (is(coverage, "BigWigFileList")) all_names <- names(coverage)
+    miss <- setdiff(all_names, names(ylim))
+    if (length(miss) > 0)
+      msg <- c(msg, "ylim not specified for ", miss, "\n")
   }
 
   if (missing(annotation)) return(msg)

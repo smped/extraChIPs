@@ -48,12 +48,13 @@ test_that("Correct plotting works", {
   p <- plotHFGC(
     GRanges("chr2:1-1000"), coverage = test_bw, cytobands = grch37.cytobands,
     axistrack = FALSE, annotation = GRangesList(up = GRanges("chr2:501-505")),
-    annotcol = list(up = "red")
+    annotcol = list(up = "red"), ylim = list(a = c(-1, 5))
   )
   expect_equal(length(p), 4)
   expect_true(is(p[[2]], "AnnotationTrack"))
   expect_equal(p[[2]]@dp@pars$fill, c(up = "red"))
   expect_true(is(p[[3]], "DataTrack"))
+  expect_equal(p[[3]]@dp@pars$ylim, c(-1, 5))
 
 })
 
@@ -193,40 +194,42 @@ test_that("Malformed coverage parameters are caught", {
   expect_true(
     .checkHFGCArgs(
       gr1, zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, type = "l",
-      coverage = test_bw, linecol = c(a = "blue")
+      coverage = test_bw, linecol = c(a = "blue"), ylim = list(a = c(0, 1))
     )
   )
   expect_true(
     .checkHFGCArgs(
       gr1, zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, type = "l",
-      coverage = list(a = test_bw), linecol = c(a = "blue")
+      coverage = list(a = test_bw), linecol = c(a = "blue"),
+      ylim = list(a = c(0, 1))
     )
   )
   expect_message(
     .checkHFGCArgs(
       gr1, zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, type = "l",
-      coverage = list(a = c())
+      coverage = list(a = c()), ylim = list(a = c(0, 1))
     ),
    "All elements of 'coverage' must be a BigWigFileList"
   )
   expect_message(
     .checkHFGCArgs(
       gr1, zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, type = "l",
-      coverage = c()
+      coverage = c(), ylim = list(a = c(0, 1))
     ),
     "'coverage' should be a BigWigFileList or a list"
   )
   expect_message(
     .checkHFGCArgs(
       gr1, zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, type = "l",
-      coverage = list(a = test_bw), linecol =  "blue"
+      coverage = list(a = test_bw), linecol =  "blue", ylim = list(a = c(0, 1))
     ),
     "'linecol' must be a named vector of colours"
   )
   expect_message(
     .checkHFGCArgs(
       gr = GRanges("chr2:1-1000"), coverage = test_bw, annotation = GRanges(),
-      zoom = 1, shift = 0, max = Inf, type = "l", axistrack = TRUE
+      zoom = 1, shift = 0, max = Inf, type = "l", axistrack = TRUE,
+      ylim = list(a = c(0, 1))
     ),
     "annotation must be a GRangesList"
   )
@@ -234,7 +237,8 @@ test_that("Malformed coverage parameters are caught", {
     .checkHFGCArgs(
       gr = GRanges("chr2:1-1000"), coverage = list(a = test_bw),
       annotation = GRangesList(),
-      zoom = 1, shift = 0, max = Inf, type = "l", axistrack = TRUE
+      zoom = 1, shift = 0, max = Inf, type = "l", axistrack = TRUE,
+      ylim = list(a = c(0, 1))
       ),
     "annotation must be a list of GRangesList objects"
   )
@@ -242,7 +246,8 @@ test_that("Malformed coverage parameters are caught", {
     .checkHFGCArgs(
       gr = GRanges("chr2:1-1000"), coverage = list(a = test_bw),
       annotation = list(NULL),
-      zoom = 1, shift = 0, max = Inf, type = "l", axistrack = TRUE
+      zoom = 1, shift = 0, max = Inf, type = "l", axistrack = TRUE,
+      ylim = list(a = c(0, 1))
     ),
     "annotation must be a list of GRangesList objects"
   )
@@ -250,18 +255,27 @@ test_that("Malformed coverage parameters are caught", {
     .checkHFGCArgs(
       gr = GRanges("chr2:1-1000"), coverage = test_bw,
       annotation = GRangesList(a = GRanges()), annotcol = c(b = "blue"),
-      zoom = 1, shift = 0, max = Inf, type = "l", axistrack = TRUE
+      zoom = 1, shift = 0, max = Inf, type = "l", axistrack = TRUE,
+      ylim = list(a = c(0, 1))
     ),
     "Colours not specified for a"
   )
   expect_message(
     .checkHFGCArgs(
       gr = GRanges("chr2:1-1000"), coverage = list(a = test_bw, test_bw),
-      zoom = 1, shift = 0, max = Inf, type = "l", axistrack = TRUE
+      zoom = 1, shift = 0, max = Inf, type = "l", axistrack = TRUE,
+      ylim = list(a = c(0, 1))
     ),
     "'coverage' must a be a named list"
   )
-
+  expect_message(
+    .checkHFGCArgs(
+      gr = GRanges("chr2:1-1000"), coverage = list(a = test_bw),
+      zoom = 1, shift = 0, max = Inf, type = "l", axistrack = TRUE,
+      ylim = c(0, 1)
+    ),
+    "ylim not specified for a"
+  )
 
 })
 
@@ -367,7 +381,7 @@ test_that("Coverage Track forms correctly", {
   cov_track <- .makeCoverageTracks(
     .coverage = test_bw, .gr = GRanges("chr2:1-10"),
     .fontsize = 12, .type = "l", .gradient = "blue", .tracksize = 1, .cex = 1,
-    .rot = 0, .linecol = c(a = "red")
+    .rot = 0, .linecol = c(a = "red"), .ylim = c()
   )
   expect_true(is(cov_track, "list"))
   expect_true(is(cov_track[[1]], "DataTrack"))
@@ -378,18 +392,21 @@ test_that("Coverage Track forms correctly", {
   expect_equal(cov_track[[1]]@dp@pars$col, c(a = "red"))
   expect_equal(levels(cov_track[[1]]@dp@pars$groups), "a")
   expect_equal(
-    suppressWarnings(.makeCoverageTracks(.coverage = test_bw, .gr = gr1)),
+    suppressWarnings(
+      .makeCoverageTracks(.coverage = test_bw, .gr = gr1, .ylim = c())
+    ),
     list(NULL)
   )
   expect_warning(
-    .makeCoverageTracks(.coverage = test_bw, .gr = gr1),
+    .makeCoverageTracks(.coverage = test_bw, .gr = gr1, .ylim = c()),
     "'which' contains seqnames not known to BigWig file: chr1"
   )
   expect_equal(.makeCoverageTracks(), list(NULL))
   expect_equal(.makeCoverageTracks(.coverage = NULL), list(NULL))
   cov_heat <- .makeCoverageTracks(
     .coverage = test_bw, .gr = GRanges("chr2:1-10"), .type = "heatmap",
-    .fontsize = 12, .gradient = "blue", .tracksize = 1, .cex = 1, .rot = 0
+    .fontsize = 12, .gradient = "blue", .tracksize = 1, .cex = 1, .rot = 0,
+    .ylim = c()
   )
   expect_null(cov_heat[[1]]@dp@pars$col)
 

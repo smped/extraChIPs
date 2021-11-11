@@ -29,6 +29,7 @@ plotHFGC(
   genesize = 1,
   covsize = 4,
   annotsize = 0.5,
+  ylim = NULL,
   ...,
   fontsize = 12,
   cex.title = 0.8,
@@ -100,8 +101,11 @@ are passed to these elements}
 
 \item{hicsize, featsize, genesize, covsize, annotsize}{Relative sizes for each track (hic, features, genes, coverage & annotation)}
 
+\item{ylim}{Named list of ylimits for each coverage track. All named elements
+within the coverage object should be included}
+
 \item{...}{Passed to \link[Gviz]{DataTrack} for the \strong{coverage tracks} only.
-Useful arguments may be things like \code{ylim}, \code{legend}}
+Useful arguments may be things like \code{legend}}
 
 \item{fontsize}{Applied across all tracks}
 
