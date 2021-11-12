@@ -200,21 +200,21 @@ test_that("Malformed coverage parameters are caught", {
   expect_true(
     .checkHFGCArgs(
       gr1, zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, type = "l",
-      coverage = list(a = test_bw), linecol = c(a = "blue"),
+      coverage = list(a = test_bw), linecol = list(a = c(a = "blue")),
       ylim = list(a = c(0, 1))
     )
   )
   expect_message(
     .checkHFGCArgs(
       gr1, zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, type = "l",
-      coverage = list(a = c()), ylim = list(a = c(0, 1))
+      coverage = list(a = c()), ylim = list(a = c(0, 1)), linecol = c()
     ),
    "All elements of 'coverage' must be a BigWigFileList"
   )
   expect_message(
     .checkHFGCArgs(
       gr1, zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, type = "l",
-      coverage = c(), ylim = c(0, 1)
+      coverage = c(), ylim = c(0, 1), linecol = c()
     ),
     "'coverage' should be a BigWigFileList or a list"
   )
@@ -223,13 +223,13 @@ test_that("Malformed coverage parameters are caught", {
       gr1, zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, type = "l",
       coverage = list(a = test_bw), linecol =  "blue", ylim = list(a = c(0, 1))
     ),
-    "'linecol' must be a named vector of colours"
+    "linecol must be a named list"
   )
   expect_message(
     .checkHFGCArgs(
       gr = GRanges("chr2:1-1000"), coverage = test_bw, annotation = GRanges(),
       zoom = 1, shift = 0, max = Inf, type = "l", axistrack = TRUE,
-      ylim = c(0, 1)
+      ylim = c(0, 1), linecol = c()
     ),
     "annotation must be a GRangesList"
   )
@@ -238,7 +238,7 @@ test_that("Malformed coverage parameters are caught", {
       gr = GRanges("chr2:1-1000"), coverage = list(a = test_bw),
       annotation = GRangesList(),
       zoom = 1, shift = 0, max = Inf, type = "l", axistrack = TRUE,
-      ylim = list(a = c(0, 1))
+      ylim = list(a = c(0, 1)), linecol = c()
       ),
     "annotation must be a list of GRangesList objects"
   )
@@ -247,7 +247,7 @@ test_that("Malformed coverage parameters are caught", {
       gr = GRanges("chr2:1-1000"), coverage = list(a = test_bw),
       annotation = list(NULL),
       zoom = 1, shift = 0, max = Inf, type = "l", axistrack = TRUE,
-      ylim = list(a = c(0, 1))
+      ylim = list(a = c(0, 1)), linecol = c()
     ),
     "annotation must be a list of GRangesList objects"
   )
@@ -256,7 +256,7 @@ test_that("Malformed coverage parameters are caught", {
       gr = GRanges("chr2:1-1000"), coverage = test_bw,
       annotation = GRangesList(a = GRanges()), annotcol = c(b = "blue"),
       zoom = 1, shift = 0, max = Inf, type = "l", axistrack = TRUE,
-      ylim =c(0, 1)
+      ylim =c(0, 1), linecol = c()
     ),
     "Colours not specified for a"
   )
@@ -264,7 +264,7 @@ test_that("Malformed coverage parameters are caught", {
     .checkHFGCArgs(
       gr = GRanges("chr2:1-1000"), coverage = list(a = test_bw, test_bw),
       zoom = 1, shift = 0, max = Inf, type = "l", axistrack = TRUE,
-      ylim = list(a = c(0, 1))
+      ylim = list(a = c(0, 1)), linecol = c()
     ),
     "'coverage' must a be a named list"
   )
@@ -272,9 +272,9 @@ test_that("Malformed coverage parameters are caught", {
     .checkHFGCArgs(
       gr = GRanges("chr2:1-1000"), coverage = list(a = test_bw),
       zoom = 1, shift = 0, max = Inf, type = "l", axistrack = TRUE,
-      ylim = c(0, 1)
+      ylim = 1, linecol = c()
     ),
-    "ylim must be passed as a list which matches coverage"
+    "ylim can be a named list or numeric vector of length >= 2"
   )
 
 })
@@ -381,7 +381,7 @@ test_that("Coverage Track forms correctly", {
   cov_track <- .makeCoverageTracks(
     .coverage = test_bw, .gr = GRanges("chr2:1-10"),
     .fontsize = 12, .type = "l", .gradient = "blue", .tracksize = 1, .cex = 1,
-    .rot = 0, .linecol = c(a = "red"), .ylim = c()
+    .rot = 0, .linecol = c(a = "red"), .ylim = c(0, 1)
   )
   expect_true(is(cov_track, "list"))
   expect_true(is(cov_track[[1]], "DataTrack"))
@@ -389,16 +389,20 @@ test_that("Coverage Track forms correctly", {
   expect_equal(cov_track[[1]]@dp@pars$gradient, "blue")
   expect_equal(cov_track[[1]]@dp@pars$size, 1)
   expect_equal(cov_track[[1]]@dp@pars$rotation, 0)
-  expect_equal(cov_track[[1]]@dp@pars$col, c(a = "red"))
+  expect_equal(cov_track[[1]]@dp@pars$col, "red")
   expect_equal(levels(cov_track[[1]]@dp@pars$groups), "a")
   expect_equal(
     suppressWarnings(
-      .makeCoverageTracks(.coverage = test_bw, .gr = gr1, .ylim = c())
+      .makeCoverageTracks(
+        .coverage = test_bw, .gr = gr1, .linecol = c(), .ylim = c()
+      )
     ),
     list(NULL)
   )
   expect_warning(
-    .makeCoverageTracks(.coverage = test_bw, .gr = gr1, .ylim = c()),
+    .makeCoverageTracks(
+      .coverage = test_bw, .gr = gr1, .linecol = c(), .ylim = c()
+    ),
     "'which' contains seqnames not known to BigWig file: chr1"
   )
   expect_equal(.makeCoverageTracks(), list(NULL))
@@ -406,21 +410,48 @@ test_that("Coverage Track forms correctly", {
   cov_heat <- .makeCoverageTracks(
     .coverage = test_bw, .gr = GRanges("chr2:1-10"), .type = "heatmap",
     .fontsize = 12, .gradient = "blue", .tracksize = 1, .cex = 1, .rot = 0,
-    .ylim = c()
+    .linecol = c(), .ylim = c()
   )
   expect_null(cov_heat[[1]]@dp@pars$col)
 
 })
 
-test_that("ylim & linecol are parsed correctly", {
-  cov_track <- .makeCoverageTracks(
-    .coverage = list(a = test_bw, b = test_bw), .gr = GRanges("chr2:1-10"),
-    .fontsize = 12, .type = "l", .gradient = "blue", .tracksize = 1, .cex = 1,
-    .rot = 0, .linecol = list(a = c(a = "red"), b = c(a = "blue")),
-    .ylim = list(a = c(-1, 5), b = c(-1, 2))
+test_that("ylim is parsed correctly", {
+  expect_equal(.assignLimits(test_bw, c()), list(a = c()))
+  expect_equal(.assignLimits(test_bw, c(0, 1)), list(a = c(0, 1)))
+  expect_equal(
+    .assignLimits(list(test= test_bw), c(0, 1)),
+    list(test = c(0, 1))
   )
-  expect_equal(cov_track[[1]]@dp@pars$col, c(a = "red"))
-  expect_equal(cov_track[[2]]@dp@pars$col, c(a = "blue"))
-  expect_equal(cov_track[[1]]@dp@pars$ylim, c(-1, 5))
-  expect_equal(cov_track[[2]]@dp@pars$ylim, c(-1, 2))
+  expect_equal(
+    .assignLimits(
+      list(test1 = test_bw, test2 = test_bw),
+      list(test1 = c(0, 1), test2 = c(1,5))
+    ),
+    list(
+      test1 = c(0, 1), test2 = c(1, 5)
+    )
+  )
 })
+
+test_that("linecol is parsed correctly",{
+  expect_equal(.assignColours(test_bw, c(), "heatmap"), list(a = NULL))
+  expect_equal(.assignColours(test_bw, c(), "l"), list(a = "#0080ff"))
+  expect_equal(
+    .assignColours(list(test = c(test_bw, test_bw)), c(), "l"),
+    list(test = c("#0080ff", "#ff00ff"))
+  )
+  expect_equal(.assignColours(test_bw, "red", "l"), list(a = "red"))
+  expect_equal(
+    .assignColours(list(a = test_bw, b = test_bw), c("red", "blue"), "l"),
+    list(a = "red", b = "blue")
+  )
+  expect_equal(
+    .assignColours(
+      setNames(c(test_bw, test_bw), c("a", "b")), c("red", "blue"), "l"
+    ),
+    list(a = "red", b = "blue")
+  )
+})
+
+

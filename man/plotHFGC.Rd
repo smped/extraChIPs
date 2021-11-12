@@ -17,7 +17,7 @@ plotHFGC(
   axistrack = TRUE,
   cytobands,
   coverage_type = c("l", "heatmap"),
-  linecol,
+  linecol = c(),
   gradient = hcl.colors(101, "viridis"),
   hiccol = list(anchors = "lightblue", interactions = "red"),
   featurecol,
@@ -81,9 +81,11 @@ interactions are supplied.}
 \item{coverage_type}{The plot type for coverage. Currently only lines ("l")
 and heatmaps ("heatmap") are supported}
 
-\item{linecol}{Named vector (or list) of colours for each coverage track.
-Only used if coverage_type = "l". All named elements within the coverage
-object should be included.}
+\item{linecol}{If passing a BigWigFileList to coverage, a vector of colours.
+If passing a list of BigWigFileList objects to coverage, a list of colours
+with structure that matches the object being passed to coverage, i.e. a
+named list of the same length, with elements who's length matches each
+BigWigFileList. Only used if coverage_type = "l".}
 
 \item{gradient}{Colour gradient for heatmaps}
 
@@ -101,8 +103,9 @@ are passed to these elements}
 
 \item{hicsize, featsize, genesize, covsize, annotsize}{Relative sizes for each track (hic, features, genes, coverage & annotation)}
 
-\item{ylim}{Named list of ylimits for each coverage track. All named elements
-within the coverage object should be included}
+\item{ylim}{If a numeric vector, this will be passed to all coverage tracks.
+Alternatively, a named list of y-limits for each coverage track with names
+that match those in each element of the coverage list.}
 
 \item{...}{Passed to \link[Gviz]{DataTrack} for the \strong{coverage tracks} only.
 Useful arguments may be things like \code{legend}}
