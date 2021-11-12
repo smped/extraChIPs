@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.6</span>
       </span>
     </div>
 
@@ -130,7 +130,7 @@
   axistrack <span class='op'>=</span> <span class='cn'>TRUE</span>,
   <span class='va'>cytobands</span>,
   coverage_type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"l"</span>, <span class='st'>"heatmap"</span><span class='op'>)</span>,
-  <span class='va'>linecol</span>,
+  linecol <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='op'>)</span>,
   gradient <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/grDevices/palettes.html'>hcl.colors</a></span><span class='op'>(</span><span class='fl'>101</span>, <span class='st'>"viridis"</span><span class='op'>)</span>,
   hiccol <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>anchors <span class='op'>=</span> <span class='st'>"lightblue"</span>, interactions <span class='op'>=</span> <span class='st'>"red"</span><span class='op'>)</span>,
   <span class='va'>featurecol</span>,
@@ -222,9 +222,11 @@ and heatmaps ("heatmap") are supported</p></td>
     </tr>
     <tr>
       <th>linecol</th>
-      <td><p>Named vector (or list) of colours for each coverage track.
-Only used if coverage_type = "l". All named elements within the coverage
-object should be included.</p></td>
+      <td><p>If passing a BigWigFileList to coverage, a vector of colours.
+If passing a list of BigWigFileList objects to coverage, a list of colours
+with structure that matches the object being passed to coverage, i.e. a
+named list of the same length, with elements who's length matches each
+BigWigFileList. Only used if coverage_type = "l".</p></td>
     </tr>
     <tr>
       <th>gradient</th>
@@ -258,8 +260,9 @@ are passed to these elements</p></td>
     </tr>
     <tr>
       <th>ylim</th>
-      <td><p>Named list of ylimits for each coverage track. All named elements
-within the coverage object should be included</p></td>
+      <td><p>If a numeric vector, this will be passed to all coverage tracks.
+Alternatively, a named list of y-limits for each coverage track with names
+that match those in each element of the coverage list.</p></td>
     </tr>
     <tr>
       <th>...</th>
