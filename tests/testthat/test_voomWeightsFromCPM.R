@@ -29,7 +29,7 @@ test_that("voomChecks error correctly", {
     "Library sizes must be > 0"
   )
   expect_error(
-    .voomChecks(matrix(rnorm(10), ncol = 2), c(1,1), c(1, 1), isLogCPM = FALSE),
+    .voomChecks(matrix(rnorm(100), ncol = 2), c(1,1), c(1, 1), isLogCPM = FALSE),
     "Negative CPM values not allowed"
   )
   expect_true(

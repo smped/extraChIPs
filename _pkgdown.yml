@@ -14,6 +14,7 @@ reference:
     - getProfileData
     - mapByFeature
     - mergeByCol
+    - setdiffWithMcols
     - stitchRanges
     - grlToSE
 
