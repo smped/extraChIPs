@@ -67,7 +67,7 @@
     <loc>/reference/plotAssayPCA-methods.html</loc>
   </url>
   <url>
-    <loc>/reference/plotAssayRle-methods.html</loc>
+    <loc>/reference/plotAssayRle.html</loc>
   </url>
   <url>
     <loc>/reference/plotHFGC.html</loc>
@@ -76,7 +76,7 @@
     <loc>/reference/plotProfileHeatmap-methods.html</loc>
   </url>
   <url>
-    <loc>/reference/setdiffWithMcols.html</loc>
+    <loc>/reference/setoptsMC.html</loc>
   </url>
   <url>
     <loc>/reference/stitchRanges.html</loc>
