@@ -14,9 +14,12 @@ reference:
     - getProfileData
     - mapByFeature
     - mergeByCol
-    - setdiffWithMcols
     - stitchRanges
     - grlToSE
+
+- title: Set Operations
+  contents:
+    - ends_with("MC")
 
 - title: Visualisation
   contents:

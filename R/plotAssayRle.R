@@ -32,14 +32,6 @@
 #' )
 #' plotAssayRle(se, "counts", fill = "treat")
 #'
-#' @name plotAssayRle
-#' @rdname plotAssayRle-methods
-#'
-#' @export
-setGeneric(
-  "plotAssayRle",
-  function(x, ...){standardGeneric("plotAssayRle")}
-)
 #' @importFrom SummarizedExperiment assay
 #' @importFrom tidyr pivot_longer
 #' @importFrom tidyselect all_of
@@ -48,7 +40,8 @@ setGeneric(
 #' @importFrom ggplot2 ggplot aes_string geom_boxplot labs
 #' @importFrom stats median
 #'
-#' @rdname plotAssayRle-methods
+#' @rdname plotAssayRle
+#' @aliases plotAssayRle
 #' @export
 setMethod(
   "plotAssayRle",
