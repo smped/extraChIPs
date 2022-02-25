@@ -3,12 +3,26 @@
 \name{setdiffMC,GRanges,GRanges-method}
 \alias{setdiffMC,GRanges,GRanges-method}
 \alias{setdiffMC}
+\alias{intersectMC,GRanges,GRanges-method}
+\alias{intersectMC}
+\alias{unionMC,GRanges,GRanges-method}
+\alias{unionMC}
 \alias{setdiffMC,ANY,ANY-method}
+\alias{intersectMC,ANY,ANY-method}
+\alias{unionMC,ANY,ANY-method}
 \title{Perform set operations retaining mcols}
 \usage{
 \S4method{setdiffMC}{GRanges,GRanges}(x, y, ignore.strand = FALSE, simplify = TRUE, ...)
 
+\S4method{intersectMC}{GRanges,GRanges}(x, y, ignore.strand = FALSE, simplify = TRUE, ...)
+
+\S4method{unionMC}{GRanges,GRanges}(x, y, ignore.strand = FALSE, simplify = TRUE, ...)
+
 \S4method{setdiffMC}{ANY,ANY}(x, y, ignore.strand = FALSE, simplify = TRUE, ...)
+
+\S4method{intersectMC}{ANY,ANY}(x, y, ignore.strand = FALSE, simplify = TRUE, ...)
+
+\S4method{unionMC}{ANY,ANY}(x, y, ignore.strand = FALSE, simplify = TRUE, ...)
 }
 \arguments{
 \item{x, y}{GenomicRanges objects}
@@ -26,14 +40,28 @@ present in all initial elements.}
 A GRanges object with all mcols returned form the original object.
 If a range obtained by setdiff maps back to two or more ranges in the
 original set of Ranges, mcols will be returned as
-\link[IRanges]{CompressedList} or
-\link[S4Vectors]{SimpleList} columns
+\link[IRanges]{CompressedList} columns
 }
 \description{
 Perform set operations retaining all mcols from the query range
 }
 \details{
-This extends the methods provided by \link[GenomicRanges]{setdiff}
+This extends the methods provided by \link[GenomicRanges]{setdiff},
+\link[GenomicRanges]{intersect} and \link[GenomicRanges]{union} so that
+\code{mcols} from \code{x} will be returned as part of the output.
+
+Where output ranges map back to multiple ranges in \code{x}, \code{CompressedList}
+columns will be returned.
+By default, these will be simplified if possible, however this behaviour
+can be disabled by setting \code{simplify = FALSE}.
+
+All columns will be returned which can also be time-consuming.
+A wise approach is to only provide columns you require as part of the
+query ranges \code{x}.
+
+If more nuanced approaches are required, the returned columns can be
+further modified by many functions included in the \code{plyranges} package,
+such as \code{mutate()}.
 }
 \examples{
 x <- GRanges("chr1:1-100:+")
@@ -41,5 +69,13 @@ x$id <- "range1"
 y <- GRanges(c("chr1:51-60:+", "chr1:21-30:-"))
 setdiffMC(x, y)
 setdiffMC(x, y, ignore.strand = TRUE)
+
+# The intersection works similarly
+intersectMC(x, y)
+
+# Union may contain ranges not initially in x
+unionMC(x, y)
+unionMC(x, y, ignore.strand = TRUE)
+
 
 }

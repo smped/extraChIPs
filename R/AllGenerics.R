@@ -7,6 +7,27 @@ setGeneric(
   }
 )
 
+setGeneric(
+  "intersectMC",
+  function(x, y, ignore.strand = FALSE, simplify = TRUE, ...) {
+    standardGeneric("intersectMC")
+  }
+)
+
+setGeneric(
+  "unionMC",
+  function(x, y, ignore.strand = FALSE, simplify = TRUE, ...) {
+    standardGeneric("unionMC")
+  }
+)
+
+setGeneric(
+  "reduceMC",
+  function(x, ignore.strand = FALSE, simplify = TRUE, ...) {
+    standardGeneric("reduceMC")
+  }
+)
+
 .errNotImp <- function(...){
   args <- list(...)
   cl <- vapply(args, class, character(1))

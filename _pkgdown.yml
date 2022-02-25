@@ -14,12 +14,15 @@ reference:
     - getProfileData
     - mapByFeature
     - mergeByCol
+    - reduceMC
     - stitchRanges
     - grlToSE
 
 - title: Set Operations
   contents:
-    - ends_with("MC")
+    - setdiffMC
+    - intersectMC
+    - unionMC
 
 - title: Visualisation
   contents:
