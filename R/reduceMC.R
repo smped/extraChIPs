@@ -39,30 +39,7 @@ setMethod(
   function(x, ignore.strand, simplify, ...) {
 
     gr <- GenomicRanges::reduce(x, ignore.strand = ignore.strand, ...)
-    if (ncol(mcols(x)) == 0) return(gr)
-
-    hits <- findOverlaps(gr, x, ignore.strand = ignore.strand)
-    i <- queryHits(hits)
-    j <- subjectHits(hits)
-
-    ## If mcols only has one column, a vector will be returned so this handles
-    ## the multi-column and single-column case
-    DF <- DataFrame(mcols(x)[j,])
-    DF <- setNames(DF, names(mcols(x)))
-
-    ## Return columns as CompressedList objects if the new ranges map
-    ## to multiple ranges in the original object
-    if (any(duplicated(i))) {
-      DF <- bplapply(
-        DF,
-        .returnListColumn, i = i, j = j, .simplify = simplify,
-        BPPARAM = bpparam()
-      )
-
-    }
-    mcols(gr) <- DF
-    gr
-
+    .mapMcols2Ranges(gr, x, ignore.strand, simplify)
   }
 )
 #' @export

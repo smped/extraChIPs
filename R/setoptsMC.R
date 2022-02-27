@@ -63,29 +63,7 @@ setMethod(
   function(x, y, ignore.strand = FALSE, simplify = TRUE, ...) {
 
     gr <- GenomicRanges::setdiff(x, y, ignore.strand)
-    if (ncol(mcols(x)) == 0) return(gr)
-
-    hits <- findOverlaps(gr, x, ignore.strand = ignore.strand)
-    i <- queryHits(hits)
-    j <- subjectHits(hits)
-
-    ## If mcols only has one column, a vector will be returned so this handles
-    ## the multi-column and single-column case
-    DF <- DataFrame(mcols(x)[j,])
-    DF <- setNames(DF, names(mcols(x)))
-
-    ## Return columns as CompressedList objects if the new ranges map
-    ## to multiple ranges in the original object
-    if (any(duplicated(i))) {
-      DF <- bplapply(
-        DF,
-        .returnListColumn, i = i, j = j, .simplify = simplify,
-        BPPARAM = bpparam()
-      )
-
-    }
-    mcols(gr) <- DF
-    gr
+    .mapMcols2Ranges(gr, x, ignore.strand, simplify)
 
   }
 )
@@ -95,30 +73,9 @@ setMethod(
 setMethod(
   "intersectMC", c("GRanges", "GRanges"),
   function(x, y, ignore.strand = FALSE, simplify = TRUE, ...) {
+
     gr <- GenomicRanges::intersect(x, y, ignore.strand)
-    if (ncol(mcols(x)) == 0) return(gr)
-
-    hits <- findOverlaps(gr, x, ignore.strand = ignore.strand)
-    i <- queryHits(hits)
-    j <- subjectHits(hits)
-
-    ## If mcols only has one column, a vector will be returned so this handles
-    ## the multi-column and single-column case
-    DF <- DataFrame(mcols(x)[j,])
-    DF <- setNames(DF, names(mcols(x)))
-
-    ## Return columns as CompressedList objects if the new ranges map
-    ## to multiple ranges in the original object
-    if (any(duplicated(i))) {
-      DF <- bplapply(
-        DF,
-        .returnListColumn, i = i, j = j, .simplify = simplify,
-        BPPARAM = bpparam()
-      )
-
-    }
-    mcols(gr) <- DF
-    gr
+    .mapMcols2Ranges(gr, x, ignore.strand, simplify)
 
   }
 )
@@ -129,51 +86,10 @@ setMethod(
 setMethod(
   "unionMC", c("GRanges", "GRanges"),
   function(x, y, ignore.strand = FALSE, simplify = TRUE, ...) {
+
     gr <- GenomicRanges::union(x, y, ignore.strand)
-    if (ncol(mcols(x)) == 0) return(gr)
+    .mapMcols2Ranges(gr, x, ignore.strand, simplify)
 
-    ## In this case, some ranges may not overlap x
-    ## Treat the two sets of ranges separately
-    grl <- as.list(split(gr, f = overlapsAny(gr, x)))
-    hits <- findOverlaps(grl[["TRUE"]], x, ignore.strand = ignore.strand)
-    i <- queryHits(hits)
-    j <- subjectHits(hits)
-
-    ## If mcols only has one column, a vector will be returned so this handles
-    ## the multi-column and single-column case
-    DF <- DataFrame(mcols(x)[j,])
-    DF <- setNames(DF, names(mcols(x)))
-
-    ## Return columns as CompressedList objects if the new ranges map
-    ## to multiple ranges in the original object
-    if (any(duplicated(i))) {
-      DF <- bplapply(
-        DF,
-        .returnListColumn, i = i, j = j, .simplify = simplify,
-        BPPARAM = bpparam()
-      )
-
-    }
-    mcols(grl[["TRUE"]]) <- DF
-
-    ## Now replicate the structure of DF exactly for the ranges from y
-    n <- length(grl[["FALSE"]])
-    if (n > 0) {
-      mcols(grl[["FALSE"]]) <- lapply(
-        DF,
-        function(x) {
-          if (is(x, "list_OR_List")) {
-            col <- vector("list", n)
-          } else {
-            col <- rep(NA, n)
-          }
-          as(col, is(x)[[1]])
-        }
-      )
-    }
-    gr <- unlist(GRangesList(grl))
-    names(gr) <- c()
-    sort(gr)
   }
 )
 #' @export
@@ -188,6 +104,59 @@ setMethod("intersectMC", c("ANY", "ANY"), function(x, y, ...) .errNotImp(x, y))
 #' @rdname setoptsMC
 #' @aliases unionMC
 setMethod("unionMC", c("ANY", "ANY"), function(x, y, ...) .errNotImp(x, y))
+
+#' @importClassesFrom GenomicRanges GRangesList
+#' @importFrom IRanges overlapsAny
+#' @importFrom GenomicRanges findOverlaps
+#' @importFrom S4Vectors mcols queryHits subjectHits DataFrame
+#' @importFrom BiocParallel bplapply bpparam
+.mapMcols2Ranges <- function(.gr, .x, .ignore.strand, .simplify) {
+
+  if (ncol(mcols(.x)) == 0) return(.gr)
+
+  ## Treat the ranges differently if there is a match, or no match
+  grl <- as.list(split(.gr, f = overlapsAny(.gr, .x)))
+  hits <- findOverlaps(grl[["TRUE"]], .x, ignore.strand = .ignore.strand)
+  i <- queryHits(hits)
+  j <- subjectHits(hits)
+
+  ## If mcols only has one column, a vector will be returned so this handles
+  ## the multi-column and single-column case
+  DF <- DataFrame(mcols(.x)[j,])
+  DF <- setNames(DF, names(mcols(.x)))
+
+  ## Return columns as CompressedList objects if the new ranges map
+  ## to multiple ranges in the original object
+  if (any(duplicated(i))) {
+    DF <- bplapply(
+      DF,
+      .returnListColumn, i = i, j = j, .simplify = .simplify,
+      BPPARAM = bpparam()
+    )
+
+  }
+  mcols(grl[["TRUE"]]) <- DF
+
+  ## Now replicate the structure of DF exactly for the ranges from y
+  n <- length(grl[["FALSE"]])
+  if (n > 0) {
+    mcols(grl[["FALSE"]]) <- lapply(
+      DF,
+      function(x) {
+        if (is(x, "list_OR_List")) {
+          col <- vector("list", n)
+        } else {
+          col <- rep(NA, n)
+        }
+        as(col, is(x)[[1]])
+      }
+    )
+  }
+  gr <- unlist(GRangesList(grl))
+  names(gr) <- c()
+  sort(gr)
+
+}
 
 #' @importFrom S4Vectors splitAsList endoapply
 .returnListColumn <- function(x, i, j, .simplify) {

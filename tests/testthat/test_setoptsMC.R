@@ -23,16 +23,26 @@ test_that("setdiffMC doesn't return a list when not expected", {
   expect_equal(length(cv), 10)
 })
 
-test_that("setdiffMC passes to default when no mcols provided", {
+test_that(".mapMcols2Ranges returns empty mcols when required", {
   x <- GRanges("chr1:1-10")
   y <- GRanges("chr1:5")
-  sd <- setdiffMC(x, y)
+  sd <- .mapMcols2Ranges(x, y, TRUE, TRUE)
   expect_equal(
     mcols(sd),
     new(
-      "DFrame", rownames = NULL, nrows = 2L,
+      "DFrame", rownames = NULL, nrows = 1L,
       listData = structure(list(), .Names = character(0)),
       elementType = "ANY", elementMetadata = NULL, metadata = list()
     )
   )
+})
+
+test_that("reduceMC returns a list when expected", {
+
+  x <- GRanges(c("chr1:1-10:+", "chr1:6-12:-"))
+  x$id <- c("range1", "range2")
+  id <- reduceMC(x, ignore.strand = TRUE)$id
+  expect_true(is(id, "CompressedCharacterList"))
+  expect_equal(id[[1]], c("range1", "range2"))
+
 })
