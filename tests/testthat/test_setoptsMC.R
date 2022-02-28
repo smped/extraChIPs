@@ -49,3 +49,12 @@ test_that("reduceMC returns a list when expected", {
   expect_equal(id, c("range1", "range2"))
 
 })
+
+test_that("empty ranges are returned when expected", {
+  x <- GRanges(c("chr1:1-10:+", "chr1:6-12:-"))
+  x$id <- c("range1", "range2")
+  expect_equal(
+    .mapMcols2Ranges(GRanges(), x, FALSE, TRUE),
+    GRanges()
+  )
+})

@@ -113,6 +113,7 @@ setMethod("unionMC", c("ANY", "ANY"), function(x, y, ...) .errNotImp(x, y))
 .mapMcols2Ranges <- function(.gr, .x, .ignore.strand, .simplify) {
 
   if (ncol(mcols(.x)) == 0) return(.gr)
+  if (length(.gr) == 0) return(GRanges())
 
   ## Treat the ranges differently if there is a match, or no match
   grl <- as.list(split(.gr, f = overlapsAny(.gr, .x)))
