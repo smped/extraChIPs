@@ -130,7 +130,7 @@ setMethod("unionMC", c("ANY", "ANY"), function(x, y, ...) .errNotImp(x, y))
   if (any(duplicated(i))) {
     DF <- bplapply(
       DF,
-      .returnListColumn, i = i, j = j, .simplify = .simplify,
+      .returnListColumn, i = i, .simplify = .simplify,
       BPPARAM = bpparam()
     )
 
@@ -159,12 +159,12 @@ setMethod("unionMC", c("ANY", "ANY"), function(x, y, ...) .errNotImp(x, y))
 }
 
 #' @importFrom S4Vectors splitAsList endoapply
-.returnListColumn <- function(x, i, j, .simplify) {
+.returnListColumn <- function(x, i, .simplify) {
 
   ## x is a vector of any type
-  ## i & j are integers denoting vector positions (from queryHits etc)
+  ## i is an integer denoting vector positions (from queryHits etc)
 
-  out <- splitAsList(x[j], f = as.factor(i))
+  out <- splitAsList(x, f = as.factor(i))
   names(out) <- c()
   if (is(x, "list_OR_List")) {
     ## Restructure so we have a merged list of the same type as the input
