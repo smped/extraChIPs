@@ -58,3 +58,17 @@ test_that("empty ranges are returned when expected", {
     GRanges()
   )
 })
+
+test_that("unionMC works correctly", {
+  x <- GRanges("chr1:1-100:+")
+  x$id <- "range1"
+  y <- GRanges(c("chr1:51-60:+", "chr1:21-30:-"))
+  expect_equal(
+    unionMC(x, y)$id, c("range1", NA_character_)
+  )
+  x$id <- CharacterList("range1")
+  expect_equal(
+    unionMC(x, y)$id,
+    CharacterList("range1", character())
+  )
+})

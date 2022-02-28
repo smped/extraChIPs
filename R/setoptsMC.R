@@ -109,7 +109,6 @@ setMethod("unionMC", c("ANY", "ANY"), function(x, y, ...) .errNotImp(x, y))
 #' @importFrom IRanges overlapsAny
 #' @importFrom GenomicRanges findOverlaps
 #' @importFrom S4Vectors mcols queryHits subjectHits DataFrame
-#' @importFrom BiocParallel bplapply bpparam
 .mapMcols2Ranges <- function(.gr, .x, .ignore.strand, .simplify) {
 
   if (ncol(mcols(.x)) == 0) return(.gr)
@@ -129,10 +128,9 @@ setMethod("unionMC", c("ANY", "ANY"), function(x, y, ...) .errNotImp(x, y))
   ## Return columns as CompressedList objects if the new ranges map
   ## to multiple ranges in the original object
   if (any(duplicated(i))) {
-    DF <- bplapply(
+    DF <- lapply(
       DF,
-      .returnListColumn, i = i, .simplify = .simplify,
-      BPPARAM = bpparam()
+      .returnListColumn, i = i, .simplify = .simplify
     )
 
   }
@@ -140,26 +138,28 @@ setMethod("unionMC", c("ANY", "ANY"), function(x, y, ...) .errNotImp(x, y))
 
   ## Now replicate the structure of DF exactly for the ranges from y
   n <- length(grl[["FALSE"]])
+  col_names <- colnames(DF)
   if (n > 0) {
-    mcols(grl[["FALSE"]]) <- lapply(
-      DF,
-      function(x) {
-        if (is(x, "list_OR_List")) {
-          col <- vector("list", n)
-        } else {
-          col <- rep(NA, n)
-        }
-        as(col, is(x)[[1]])
+    DF2 <- list()
+    for (i in seq_along(col_names)){
+      vec <- DF[[i]]
+      nm <- col_names[[i]]
+      type <- is(vec)[[1]]
+      if (is(vec, "list_OR_List"))   {
+        DF2[[nm]] <- as(vector("list", n), type)
+      } else {
+        DF2[[nm]] <- as(rep(NA, n), type)
       }
-    )
+    }
+    mcols(grl[["FALSE"]]) <- DF2
   }
   gr <- unlist(GRangesList(grl))
   names(gr) <- c()
   sort(gr)
-
 }
 
 #' @importFrom S4Vectors splitAsList endoapply
+#' @importFrom stats na.omit
 .returnListColumn <- function(x, i, .simplify) {
 
   ## x is a vector of any type
