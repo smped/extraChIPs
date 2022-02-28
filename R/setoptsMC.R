@@ -172,8 +172,9 @@ setMethod("unionMC", c("ANY", "ANY"), function(x, y, ...) .errNotImp(x, y))
 
   if (.simplify) {
     ## Now make sure only unique entries are returned, and unlist if possible
-    out <- endoapply(out, unique)
-    all_unique <- all(vapply(out, function(x) length(x) == 1, logical(1)))
+    ## Also remove NA values
+    out <- endoapply(out, function(x) setdiff(unique(x), NA))
+    all_unique <- all(vapply(out, function(x) length(x) <= 1, logical(1)))
     if (all_unique) out <- unlist(out)
   }
 

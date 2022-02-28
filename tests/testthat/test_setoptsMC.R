@@ -45,4 +45,7 @@ test_that("reduceMC returns a list when expected", {
   expect_true(is(id, "CompressedCharacterList"))
   expect_equal(id[[1]], c("range1", "range2"))
 
+  id <- reduceMC(x, ignore.strand = FALSE)$id
+  expect_equal(id, c("range1", "range2"))
+
 })
