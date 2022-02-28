@@ -161,20 +161,25 @@ setMethod("unionMC", c("ANY", "ANY"), function(x, y, ...) .errNotImp(x, y))
 #' @importFrom S4Vectors splitAsList endoapply
 .returnListColumn <- function(x, i, j, .simplify) {
 
+  ## x is a vector of any type
+  ## i & j are integers denoting vector positions (from queryHits etc)
+
   out <- splitAsList(x[j], f = as.factor(i))
   names(out) <- c()
   if (is(x, "list_OR_List")) {
     ## Restructure so we have a merged list of the same type as the input
     out <- lapply(out, setNames, nm = c())
     out <- lapply(out, unlist)
+    ## Remove explicit NA values as these prevent simplifying later
+    out <- lapply(out, na.omit)
     out <- as(out, is(x)[[1]])
   }
 
   if (.simplify) {
     ## Now make sure only unique entries are returned, and unlist if possible
     ## Also remove NA values
-    out <- endoapply(out, function(x) setdiff(unique(x), NA))
-    all_unique <- all(vapply(out, function(x) length(x) <= 1, logical(1)))
+    out <- endoapply(out, unique)
+    all_unique <- all(vapply(out, function(x) length(x) == 1, logical(1)))
     if (all_unique) out <- unlist(out)
   }
 
