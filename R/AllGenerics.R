@@ -28,6 +28,11 @@ setGeneric(
   }
 )
 
+setGeneric(
+  "overlapsProp",
+  function(x, y, ignore.strand = FALSE, ...) standardGeneric("overlapsProp")
+)
+
 .errNotImp <- function(...){
   args <- list(...)
   cl <- vapply(args, class, character(1))
