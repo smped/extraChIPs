@@ -33,6 +33,13 @@ setGeneric(
   function(x, y, ignore.strand = FALSE, ...) standardGeneric("overlapsProp")
 )
 
+setGeneric(
+  "partitionRanges",
+  function(x, y, ignore.strand = FALSE, suffix = c(".x", ".y"), ...) {
+    standardGeneric("partitionRanges")
+  }
+)
+
 .errNotImp <- function(...){
   args <- list(...)
   cl <- vapply(args, class, character(1))

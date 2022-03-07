@@ -12,7 +12,7 @@
 #' @param dedup logical(1) Should duplicate names be removed
 #' @param format character string for markdown formatting as italics/bold
 #' @param sep separator between vector elements
-#' @param last character string to plast before the last element
+#' @param last character string to place before the last element
 #' @param numeric logical(1) sort digits numerically, instead of as strings
 #' @param width The maximum width of the string before truncating to ...
 #' @param ... passed to \link[stringr]{str_sort}

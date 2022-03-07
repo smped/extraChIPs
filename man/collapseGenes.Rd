@@ -27,7 +27,7 @@ collapseGenes(
 
 \item{sep}{separator between vector elements}
 
-\item{last}{character string to plast before the last element}
+\item{last}{character string to place before the last element}
 
 \item{numeric}{logical(1) sort digits numerically, instead of as strings}
 

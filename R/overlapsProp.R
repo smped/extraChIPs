@@ -21,8 +21,8 @@
 #' overlapsProp(x, y)
 #' overlapsProp(y, x)
 #'
-#' @importFrom GenomicRanges intersect findOverlaps width
-#' @importFrom dplyr left_join group_by summarise
+#' @importFrom GenomicRanges intersect findOverlaps width pintersect reduce
+#' @importFrom S4Vectors queryHits subjectHits splitAsList
 #' @export
 #' @rdname overlapsProp
 #' @aliases overlapsProp
@@ -30,15 +30,15 @@ setMethod(
   "overlapsProp", c("GRanges", "GRanges"),
   function(x, y, ignore.strand = FALSE, ...) {
 
-    gr <- GenomicRanges::intersect(x, y, ignore.strand)
-    hits <- as.data.frame(findOverlaps(x, gr, ignore.strand = ignore.strand))
-    hits$width <- width(gr)[hits$subjectHits]
-    query_df <- data.frame(queryHits = seq_along(x))
-    merged_df <- left_join(query_df, hits, by = "queryHits")
-    merged_df$width[is.na(merged_df$width)] <- 0
-    merged_df <- group_by(merged_df, queryHits)
-    merged_df <- summarise(merged_df, width = sum(width))
-    merged_df$width / width(x)
+    hits <- findOverlaps(x, y, ignore.strand = ignore.strand)
+    gr <- pintersect(
+      x[queryHits(hits)], y[subjectHits(hits)]
+    )
+    w <- width(reduce(splitAsList(gr, queryHits(hits))))
+    w <- vapply(w, sum, integer(1))
+    out <- rep(0, length(x))
+    out[unique(queryHits(hits))] <- w
+    out / width(x)
 
   }
 )
