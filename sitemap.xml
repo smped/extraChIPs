@@ -16,7 +16,7 @@
     <loc>/reference/as_tibble-methods.html</loc>
   </url>
   <url>
-    <loc>/reference/colAsRanges-methods.html</loc>
+    <loc>/reference/colToRanges.html</loc>
   </url>
   <url>
     <loc>/reference/collapseGenes.html</loc>
@@ -34,7 +34,7 @@
     <loc>/reference/dot-mapWithin.html</loc>
   </url>
   <url>
-    <loc>/reference/dualFilter-methods.html</loc>
+    <loc>/reference/dualFilter.html</loc>
   </url>
   <url>
     <loc>/reference/getProfileData-methods.html</loc>
