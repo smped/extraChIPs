@@ -19,6 +19,9 @@
     <loc>/reference/colAsRanges-methods.html</loc>
   </url>
   <url>
+    <loc>/reference/colToRanges.html</loc>
+  </url>
+  <url>
     <loc>/reference/collapseGenes.html</loc>
   </url>
   <url>
@@ -35,6 +38,9 @@
   </url>
   <url>
     <loc>/reference/dualFilter-methods.html</loc>
+  </url>
+  <url>
+    <loc>/reference/dualFilter.html</loc>
   </url>
   <url>
     <loc>/reference/getProfileData-methods.html</loc>

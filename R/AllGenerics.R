@@ -1,3 +1,11 @@
+setGeneric(
+  "colToRanges", function(x, var, ...) standardGeneric("colToRanges")
+)
+
+setGeneric(
+  "dualFilter", function(x, bg, ref, ...) standardGeneric("dualFilter")
+)
+
 setGeneric( "plotAssayRle", function(x, ...) standardGeneric("plotAssayRle"))
 
 setGeneric(

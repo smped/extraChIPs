@@ -10,6 +10,7 @@ reference:
 
 - title: Range-Based Functions
   contents:
+    - colToRanges
     - dualFilter
     - getProfileData
     - mapByFeature
@@ -33,7 +34,6 @@ reference:
 - title: Convenience Functions
   contents:
     - contains("as_tibble")
-    - colAsRanges
     - collapseGenes
     - voomWeightsFromCPM
 

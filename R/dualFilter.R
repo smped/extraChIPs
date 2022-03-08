@@ -21,6 +21,8 @@
 #' @param q The upper percentile of the reference ranges expected to be returned
 #' when tuning the filtering criteria
 #' @param logCPM logical(1) Add a logCPM assay to the returned data
+#' @param keep.totals logical(1) Keep the original library sizes or replace
+#' using only the retained windows
 #' @param BPPARAM Settings for running in parallel
 #' @param ... Not used
 #'
@@ -29,13 +31,13 @@
 #' filtered subset of the original object. If requested the assay "logCPM" will
 #' be added (`TRUE` by default)
 #'
-#' @importFrom Rsamtools BamFileList
+#' @importFrom Rsamtools BamFileList ScanBamParam countBam
 #' @importFrom BiocIO path
 #' @importFrom methods is
 #' @importFrom IRanges overlapsAny
 #' @importFrom csaw windowCounts readParam scaleControlFilter
 #' @importFrom csaw filterWindowsControl filterWindowsProportion
-#' @importFrom BiocParallel bpparam
+#' @importFrom BiocParallel bpparam bplapply
 #' @importFrom edgeR cpm
 #' @importFrom S4Vectors metadata 'metadata<-'
 #' @importFrom stats quantile
@@ -44,13 +46,8 @@
 #' @importMethodsFrom SummarizedExperiment colData
 #' @importMethodsFrom SummarizedExperiment assay 'assay<-'
 #'
-#' @name dualFilter
-#' @rdname dualFilter-methods
-#' @export
-setGeneric("dualFilter", function(x, bg, ref, ...) {
-  standardGeneric("dualFilter")
-})
-#' @rdname dualFilter-methods
+#' @rdname dualFilter
+#' @aliases dualFilter
 #' @export
 setMethod(
   "dualFilter",
@@ -59,7 +56,10 @@ setMethod(
     bg = "RangedSummarizedExperiment",
     ref = "GRanges"
   ),
-  function(x, bg, ref, q = 0.99, logCPM = TRUE, BPPARAM = bpparam()) {
+  function(
+    x, bg, ref, q = 0.99, logCPM = TRUE,
+    keep.totals = FALSE, BPPARAM = bpparam()
+  ) {
 
     ## Argument checks
     stopifnot(q <= 1, q > 0)
@@ -109,13 +109,26 @@ setMethod(
     rowData(out)$overlaps_ref <- ol[keep]
     metadata(out)$cuts <- lapply(cuts, as.numeric)
 
-    if (logCPM){
+    if (!keep.totals) {
+      gr <- rowRanges(out)
+      totals <- bplapply(bfl, countBam, param = ScanBamParam(which = gr))
+      out$totals <- vapply(totals, function(x) sum(x$records), numeric(1))
+    }
+
+    if (logCPM) {
       assay(out, "logCPM") <- cpm(
         assay(out, "counts"), log = TRUE, lib.size = out$totals
       )
     }
-
     out
 
   }
+)
+#' @export
+#' @rdname dualFilter
+#' @aliases dualFilter
+setMethod(
+  "dualFilter",
+  signature = signature(x = "ANY", bg = "ANY", ref = "ANY"),
+  function(x, bg, ref, ...) .errNotImp(x, bg, ref)
 )
