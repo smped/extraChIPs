@@ -13,10 +13,10 @@
     <loc>/index.html</loc>
   </url>
   <url>
-    <loc>/reference/as_tibble-methods.html</loc>
+    <loc>/reference/as_tibble.html</loc>
   </url>
   <url>
-    <loc>/reference/colToRanges.html</loc>
+    <loc>/reference/colToRanges-methods.html</loc>
   </url>
   <url>
     <loc>/reference/collapseGenes.html</loc>
@@ -34,7 +34,7 @@
     <loc>/reference/dot-mapWithin.html</loc>
   </url>
   <url>
-    <loc>/reference/dualFilter.html</loc>
+    <loc>/reference/dualFilter-methods.html</loc>
   </url>
   <url>
     <loc>/reference/getProfileData-methods.html</loc>
@@ -61,10 +61,10 @@
     <loc>/reference/mergeByCol-methods.html</loc>
   </url>
   <url>
-    <loc>/reference/overlapsProp.html</loc>
+    <loc>/reference/overlapsProp-methods.html</loc>
   </url>
   <url>
-    <loc>/reference/partitionRanges.html</loc>
+    <loc>/reference/partitionRanges-methods.html</loc>
   </url>
   <url>
     <loc>/reference/plotAssayDensities-methods.html</loc>
@@ -73,7 +73,7 @@
     <loc>/reference/plotAssayPCA-methods.html</loc>
   </url>
   <url>
-    <loc>/reference/plotAssayRle.html</loc>
+    <loc>/reference/plotAssayRle-methods.html</loc>
   </url>
   <url>
     <loc>/reference/plotHFGC.html</loc>
@@ -82,10 +82,10 @@
     <loc>/reference/plotProfileHeatmap-methods.html</loc>
   </url>
   <url>
-    <loc>/reference/reduceMC.html</loc>
+    <loc>/reference/reduceMC-methods.html</loc>
   </url>
   <url>
-    <loc>/reference/setoptsMC.html</loc>
+    <loc>/reference/setoptsMC-methods.html</loc>
   </url>
   <url>
     <loc>/reference/stitchRanges.html</loc>
