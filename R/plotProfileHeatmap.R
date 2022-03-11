@@ -106,7 +106,7 @@ setMethod(
 #' @importFrom S4Vectors mcols
 #' @importFrom tidyr unnest
 #' @importFrom rlang '!!' sym
-#' @importFrom dplyr arrange desc
+#' @importFrom dplyr arrange desc bind_cols
 #' @importFrom forcats fct_rev fct_inorder
 #' @rdname plotProfileHeatmap-methods
 #' @export

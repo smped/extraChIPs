@@ -4,18 +4,21 @@
 \alias{as_tibble}
 \alias{as_tibble.DataFrame}
 \alias{as_tibble.GenomicRanges}
-\title{Convert a GRanges or DataFrame to a tibble}
+\alias{as_tibble.Seqinfo}
+\title{Convert to a tibble}
 \usage{
 \method{as_tibble}{DataFrame}(x, rangeAsChar = TRUE, ...)
 
 \method{as_tibble}{GenomicRanges}(x, rangeAsChar = TRUE, name = "range", ...)
+
+\method{as_tibble}{Seqinfo}(x, ...)
 }
 \arguments{
 \item{x}{A Genomic Ranges or DataFrame object}
 
 \item{rangeAsChar}{Convert any GRanges element to a character vector}
 
-\item{...}{Not used}
+\item{...}{Passed to \code{\link[tibble:as_tibble]{tibble::as_tibble()}}}
 
 \item{name}{Name of column to use for ranges. Ignored if rangeAsChar =
 \code{FALSE}}
@@ -24,21 +27,34 @@
 A \link[tibble]{tibble}
 }
 \description{
-Convert GRanges or DataFrame objects to tibble objects
+Convert multiple Genomic objects to tibbles
 }
 \details{
-Quick and dirty conversion into a tibble. The ranges will be
-returned as a character column called \code{range}. Seqinfo information will be
-lost.
+Quick and dirty conversion into a tibble.
 
-Any Compressed/SimpleList columns will be coerced to S3 list columns
+By default, GenomicRanges will be returned with the range as a character
+column called \code{range} and all mcols parsed as the remaining columns.
+Seqinfo information will be lost during coercion.
 
-Defined as an S3 method for compatibility with existing tidy methods
+Given that names for ranges are considered as rownames in the mcols element,
+these can be simply parsed by setting \code{rownames = "id"} in the call to
+\code{as_tibble()}
+
+When coercing a DataFrame, any Compressed/SimpleList columns will be coerced
+to S3 list columns.
+Any GRanges columns will be returned as a character column, losing any
+additional mcols from these secondary ranges
+
+Defined as an S3 method for consistency with existing tidy methods
 }
 \examples{
 gr <- GRanges("chr1:1-10")
 gr$p_value <- runif(1)
-as_tibble(mcols(gr))
+names(gr) <- "range1"
+gr
 as_tibble(gr)
+as_tibble(gr, rownames = "id")
+as_tibble(mcols(gr))
+as_tibble(seqinfo(gr))
 
 }

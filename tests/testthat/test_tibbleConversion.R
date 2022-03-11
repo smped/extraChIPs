@@ -12,7 +12,8 @@ test_that("DFrame conversion is successful", {
     df <- DataFrame(
         id = seq_along(letters),
         listCol = as(as.list(letters), "CharacterList"),
-        gr = GRanges(paste0("chr1:", seq_along(letters)))
+        gr = GRanges(paste0("chr1:", seq_along(letters))),
+        row.names = LETTERS
     )
     tbl <- as_tibble(df)
     expect_equal(df$id, tbl$id)
@@ -23,4 +24,17 @@ test_that("DFrame conversion is successful", {
         c("id", "listCol", "gr.seqnames", "gr.start", "gr.end", "gr.width",
           "gr.strand")
     )
+    expect_equal(rownames(tbl), as.character(seq_along(letters)))
+    tbl2 <- as_tibble(df, rownames = "rownames")
+    expect_equal(tbl2$rownames, LETTERS)
+
+})
+
+test_that("Seqinfo objects are successfully coerced", {
+    sq <- Seqinfo("chr1", 10, FALSE, "test")
+    tbl <- tibble(
+        seqnames = "chr1", seqlengths = 10,
+        is_circular = FALSE, genome = "test"
+    )
+    expect_equal(as_tibble(sq), tbl)
 })

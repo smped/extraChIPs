@@ -45,7 +45,7 @@ setGeneric(
 #' @importFrom tidyselect everything
 #' @importFrom ggplot2 ggplot aes_string geom_line labs
 #' @importFrom methods as
-#' @importFrom dplyr left_join
+#' @importFrom dplyr left_join bind_cols
 #'
 #' @rdname plotAssayDensities-methods
 #' @export
