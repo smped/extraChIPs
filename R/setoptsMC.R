@@ -56,7 +56,7 @@
 #' @importFrom BiocParallel bplapply bpparam
 #'
 #' @export
-#' @rdname setoptsMC
+#' @rdname setoptsMC-methods
 #' @aliases setdiffMC
 setMethod(
   "setdiffMC", c("GRanges", "GRanges"),
@@ -68,7 +68,7 @@ setMethod(
   }
 )
 #' @export
-#' @rdname setoptsMC
+#' @rdname setoptsMC-methods
 #' @aliases intersectMC
 setMethod(
   "intersectMC", c("GRanges", "GRanges"),
@@ -81,7 +81,7 @@ setMethod(
 )
 #' @importClassesFrom GenomicRanges GRangesList
 #' @export
-#' @rdname setoptsMC
+#' @rdname setoptsMC-methods
 #' @aliases unionMC
 setMethod(
   "unionMC", c("GRanges", "GRanges"),
@@ -93,16 +93,13 @@ setMethod(
   }
 )
 #' @export
-#' @rdname setoptsMC
-#' @aliases setdiffMC
+#' @rdname setoptsMC-methods
 setMethod("setdiffMC", c("ANY", "ANY"), function(x, y, ...) .errNotImp(x, y))
 #' @export
-#' @rdname setoptsMC
-#' @aliases intersectMC
+#' @rdname setoptsMC-methods
 setMethod("intersectMC", c("ANY", "ANY"), function(x, y, ...) .errNotImp(x, y))
 #' @export
-#' @rdname setoptsMC
-#' @aliases unionMC
+#' @rdname setoptsMC-methods
 setMethod("unionMC", c("ANY", "ANY"), function(x, y, ...) .errNotImp(x, y))
 
 #' @importClassesFrom GenomicRanges GRangesList

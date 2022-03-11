@@ -5,6 +5,7 @@
 \alias{getProfileData,BigWigFile,GenomicRanges-method}
 \alias{getProfileData,BigWigFileList,GenomicRanges-method}
 \alias{getProfileData,character,GenomicRanges-method}
+\alias{getProfileData,ANY,ANY-method}
 \title{Get Profile Data surrounding specified ranges}
 \usage{
 getProfileData(x, gr, ...)
@@ -38,6 +39,18 @@ getProfileData(x, gr, ...)
   mean_mode = "w0",
   ...
 )
+
+\S4method{getProfileData}{character,GenomicRanges}(
+  x,
+  gr,
+  upstream = 2500,
+  downstream = upstream,
+  bins = 100,
+  mean_mode = "w0",
+  ...
+)
+
+\S4method{getProfileData}{ANY,ANY}(x, gr)
 }
 \arguments{
 \item{x}{A BigWigFile or BigWiFileList}

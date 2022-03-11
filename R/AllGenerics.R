@@ -1,13 +1,25 @@
+#' @export
+#' @name colToRanges
+#' @rdname colToRanges-methods
 setGeneric(
   "colToRanges", function(x, var, ...) standardGeneric("colToRanges")
 )
 
+#' @export
+#' @name dualFilter
+#' @rdname dualFilter-methods
 setGeneric(
   "dualFilter", function(x, bg, ref, ...) standardGeneric("dualFilter")
 )
 
+#' @export
+#' @name plotAssayRle
+#' @rdname plotAssayRle-methods
 setGeneric( "plotAssayRle", function(x, ...) standardGeneric("plotAssayRle"))
 
+#' @export
+#' @name setoptsMC
+#' @rdname setoptsMC-methods
 setGeneric(
   "setdiffMC",
   function(x, y, ignore.strand = FALSE, simplify = TRUE, ...) {
@@ -15,6 +27,9 @@ setGeneric(
   }
 )
 
+#' @export
+#' @name setoptsMC
+#' @rdname setoptsMC-methods
 setGeneric(
   "intersectMC",
   function(x, y, ignore.strand = FALSE, simplify = TRUE, ...) {
@@ -22,6 +37,9 @@ setGeneric(
   }
 )
 
+#' @export
+#' @name setoptsMC
+#' @rdname setoptsMC-methods
 setGeneric(
   "unionMC",
   function(x, y, ignore.strand = FALSE, simplify = TRUE, ...) {
@@ -29,22 +47,31 @@ setGeneric(
   }
 )
 
-setGeneric(
-  "reduceMC",
-  function(x, ignore.strand = FALSE, simplify = TRUE, ...) {
-    standardGeneric("reduceMC")
-  }
-)
-
+#' @export
+#' @name overlapsProp
+#' @rdname overlapsProp-methods
 setGeneric(
   "overlapsProp",
   function(x, y, ignore.strand = FALSE, ...) standardGeneric("overlapsProp")
 )
 
+#' @export
+#' @name partitionRanges
+#' @rdname partitionRanges-methods
 setGeneric(
   "partitionRanges",
   function(x, y, ignore.strand = FALSE, suffix = c(".x", ".y"), ...) {
     standardGeneric("partitionRanges")
+  }
+)
+
+#' @export
+#' @name reduceMC
+#' @rdname reduceMC-methods
+setGeneric(
+  "reduceMC",
+  function(x, ignore.strand = FALSE, simplify = TRUE, ...) {
+    standardGeneric("reduceMC")
   }
 )
 

@@ -133,8 +133,8 @@ setMethod(
 
     ## Tidy the data
     profiles <- c() # Avoiding incorrect R CMD check errors
-    tbl <- as_tibble(df[keepCols])
-    tbl$range <- as.character(granges(object))
+    tbl <- as_tibble(granges(object))
+    if (length(keepCols) > 0) tbl <- bind_cols(tbl, as_tibble(df[keepCols]))
     tbl$profiles <- lapply(df[[profileCol]], as_tibble)
     tbl <- unnest(tbl, profiles)
     tbl <- arrange(tbl, desc(!!sym(fillValue)))

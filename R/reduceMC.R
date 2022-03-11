@@ -32,7 +32,7 @@
 #'
 #'
 #' @export
-#' @rdname reduceMC
+#' @rdname reduceMC-methods
 #' @aliases reduceMC
 setMethod(
   "reduceMC", "GRanges",
@@ -43,6 +43,6 @@ setMethod(
   }
 )
 #' @export
-#' @rdname reduceMC
+#' @rdname reduceMC-methods
 #' @aliases reduceMC
 setMethod("reduceMC", "ANY", function(x, ...) .errNotImp(x))

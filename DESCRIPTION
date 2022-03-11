@@ -1,5 +1,5 @@
 Package: extraChIPs
-Version: 0.99.12
+Version: 0.99.13
 Date: 2022/03/07
 Title: Additional functions for working with ChIP-Seq data
 Authors@R: person("Stephen", "Pederson", 

@@ -24,8 +24,7 @@
 #' @importFrom GenomicRanges intersect findOverlaps width pintersect reduce
 #' @importFrom S4Vectors queryHits subjectHits splitAsList
 #' @export
-#' @rdname overlapsProp
-#' @aliases overlapsProp
+#' @rdname overlapsProp-methods
 setMethod(
   "overlapsProp", c("GRanges", "GRanges"),
   function(x, y, ignore.strand = FALSE, ...) {
@@ -43,6 +42,5 @@ setMethod(
   }
 )
 #' @export
-#' @rdname overlapsProp
-#' @aliases overlapsProp
+#' @rdname overlapsProp-methods
 setMethod("overlapsProp", c("ANY", "ANY"), function(x, y, ...) .errNotImp(x, y))

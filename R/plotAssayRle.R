@@ -40,7 +40,7 @@
 #' @importFrom ggplot2 ggplot aes_string geom_boxplot labs
 #' @importFrom stats median
 #'
-#' @rdname plotAssayRle
+#' @rdname plotAssayRle-methods
 #' @aliases plotAssayRle
 #' @export
 setMethod(
@@ -88,4 +88,11 @@ setMethod(
       labs(y = "RLE")
 
   }
+)
+#' @rdname plotAssayRle-methods
+#' @aliases plotAssayRle
+#' @export
+setMethod(
+  "plotAssayRle", signature = signature(x = "ANY"),
+  function(x, ...) .errNotImp(x)
 )

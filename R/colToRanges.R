@@ -24,9 +24,10 @@
 #' @param x A data-frame or GRanges object containing the column to coerce
 #' @param var The name of the column to coerce
 #' @param ... Not used
+#'
 #' @importFrom methods as
 #' @importFrom GenomicRanges 'mcols<-'
-#' @rdname colToRanges
+#' @rdname colToRanges-methods
 #' @aliases colToRanges
 #' @export
 setMethod(
@@ -41,7 +42,7 @@ setMethod(
   }
 )
 #' @importFrom GenomicRanges mcols
-#' @rdname colToRanges
+#' @rdname colToRanges-methods
 #' @aliases colToRanges
 #' @export
 setMethod(
@@ -53,7 +54,7 @@ setMethod(
   }
 )
 #' @importFrom GenomicRanges mcols
-#' @rdname colToRanges
+#' @rdname colToRanges-methods
 #' @aliases colToRanges
 #' @export
 setMethod(
@@ -66,4 +67,12 @@ setMethod(
     mcols(gr) <- x[keep]
     gr
   }
+)
+#' @rdname colToRanges-methods
+#' @aliases colToRanges
+#' @export
+setMethod(
+  "colToRanges",
+  signature = signature(x = "ANY", var= "ANY"),
+  function(x, var, ...) .errNotImp(x, var)
 )

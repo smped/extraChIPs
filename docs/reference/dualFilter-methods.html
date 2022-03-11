@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.12</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.13</span>
       </span>
     </div>
 
@@ -41,7 +41,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Apply two filters to sliding windows</h1>
-    <small class="dont-index">Source: <a href="https://github.com/steveped/extraChIPs/blob/HEAD/R/dualFilter.R" class="external-link"><code>R/dualFilter.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/steveped/extraChIPs/blob/HEAD/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/steveped/extraChIPs/blob/HEAD/R/dualFilter.R" class="external-link"><code>R/dualFilter.R</code></a></small>
     <div class="hidden name"><code>dualFilter-methods.Rd</code></div>
     </div>
 
@@ -53,7 +53,18 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">dualFilter</span><span class="op">(</span><span class="va">x</span>, <span class="va">bg</span>, <span class="va">ref</span>, <span class="va">...</span><span class="op">)</span>
 
 <span class="co"># S4 method for RangedSummarizedExperiment,RangedSummarizedExperiment,GRanges</span>
-<span class="fu">dualFilter</span><span class="op">(</span><span class="va">x</span>, <span class="va">bg</span>, <span class="va">ref</span>, q <span class="op">=</span> <span class="fl">0.99</span>, logCPM <span class="op">=</span> <span class="cn">TRUE</span>, BPPARAM <span class="op">=</span> <span class="fu">bpparam</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="fu">dualFilter</span><span class="op">(</span>
+  <span class="va">x</span>,
+  <span class="va">bg</span>,
+  <span class="va">ref</span>,
+  q <span class="op">=</span> <span class="fl">0.5</span>,
+  logCPM <span class="op">=</span> <span class="cn">TRUE</span>,
+  keep.totals <span class="op">=</span> <span class="cn">FALSE</span>,
+  BPPARAM <span class="op">=</span> <span class="fu">bpparam</span><span class="op">(</span><span class="op">)</span>
+<span class="op">)</span>
+
+<span class="co"># S4 method for ANY,ANY,ANY</span>
+<span class="fu">dualFilter</span><span class="op">(</span><span class="va">x</span>, <span class="va">bg</span>, <span class="va">ref</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -71,6 +82,9 @@
 when tuning the filtering criteria</p></dd>
 <dt>logCPM</dt>
 <dd><p>logical(1) Add a logCPM assay to the returned data</p></dd>
+<dt>keep.totals</dt>
+<dd><p>logical(1) Keep the original library sizes or replace
+using only the retained windows</p></dd>
 <dt>BPPARAM</dt>
 <dd><p>Settings for running in parallel</p></dd>
 </dl></div>
@@ -88,10 +102,16 @@ strategy of applying <a href="https://rdrr.io/pkg/csaw/man/filterWindows.html" c
 <a href="https://rdrr.io/pkg/csaw/man/filterWindows.html" class="external-link">filterWindowsProportion</a> will then be applied. A set of
 reference ranges for which signal is expected is used to refine the
 filtering criteria.</p>
-<p>Cutoff values are found such that the <code>q</code> of the windows which overlap one of
-the reference ranges will be returned, along with any others which match the
-filtering criteria. Cutoff values for both criteria are added to the metadata
-element of the returned object</p>
+<p>Cutoff values are found for both signal relative to input and overall signal,
+such that the <code>100*q%</code> of the (sliding) windows which overlap a reference
+range will be returned, along with any others which match the
+dual filtering criteria.
+In general, higher values of <code>q</code> will return more windows as those with weak
+signal and a marginal overlap with a reference range will be returned.
+Lower values will ensure that fewer windows, generally with the strongest
+signal, are retained.
+Cutoff values for both criteria are added to the metadata
+element of the returned object.</p>
     </div>
 
   </div>

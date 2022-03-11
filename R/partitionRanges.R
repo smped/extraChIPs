@@ -30,8 +30,7 @@
 #' @importFrom GenomicRanges findOverlaps pintersect setdiff sort
 #'
 #' @export
-#' @rdname partitionRanges
-#' @aliases partitionRanges
+#' @rdname partitionRanges-methods
 setMethod(
   "partitionRanges", c("GRanges", "GRanges"),
   function(x, y, ignore.strand = FALSE, suffix = c(".x", ".y"), ...) {
@@ -63,8 +62,7 @@ setMethod(
   }
 )
 #' @export
-#' @rdname partitionRanges
-#' @aliases partitionRanges
+#' @rdname partitionRanges-methods
 setMethod(
   "partitionRanges", c("ANY", "ANY"), function(x, y, ...) .errNotImp(x, y)
 )

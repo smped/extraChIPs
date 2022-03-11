@@ -10,10 +10,16 @@
 #' reference ranges for which signal is expected is used to refine the
 #' filtering criteria.
 #'
-#' Cutoff values are found such that the `q` of the windows which overlap one of
-#' the reference ranges will be returned, along with any others which match the
-#' filtering criteria. Cutoff values for both criteria are added to the metadata
-#' element of the returned object
+#' Cutoff values are found for both signal relative to input and overall signal,
+#' such that the `100*q%` of the (sliding) windows which overlap a reference
+#' range will be returned, along with any others which match the
+#' dual filtering criteria.
+#' In general, higher values of `q` will return more windows as those with weak
+#' signal and a marginal overlap with a reference range will be returned.
+#' Lower values will ensure that fewer windows, generally with the strongest
+#' signal, are retained.
+#' Cutoff values for both criteria are added to the metadata
+#' element of the returned object.
 #'
 #' @param x RangedSummarizedExperiment containing sample counts
 #' @param bg RangedSummarizedExperiment containing background/input counts
@@ -46,8 +52,7 @@
 #' @importMethodsFrom SummarizedExperiment colData
 #' @importMethodsFrom SummarizedExperiment assay 'assay<-'
 #'
-#' @rdname dualFilter
-#' @aliases dualFilter
+#' @rdname dualFilter-methods
 #' @export
 setMethod(
   "dualFilter",
@@ -57,7 +62,7 @@ setMethod(
     ref = "GRanges"
   ),
   function(
-    x, bg, ref, q = 0.99, logCPM = TRUE,
+    x, bg, ref, q = 0.5, logCPM = TRUE,
     keep.totals = FALSE, BPPARAM = bpparam()
   ) {
 
@@ -125,8 +130,7 @@ setMethod(
   }
 )
 #' @export
-#' @rdname dualFilter
-#' @aliases dualFilter
+#' @rdname dualFilter-methods
 setMethod(
   "dualFilter",
   signature = signature(x = "ANY", bg = "ANY", ref = "ANY"),

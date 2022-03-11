@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.12</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.13</span>
       </span>
     </div>
 
@@ -55,7 +55,7 @@
   <span class="va">x</span>,
   <span class="va">bg</span>,
   <span class="va">ref</span>,
-  q <span class="op">=</span> <span class="fl">0.99</span>,
+  q <span class="op">=</span> <span class="fl">0.5</span>,
   logCPM <span class="op">=</span> <span class="cn">TRUE</span>,
   keep.totals <span class="op">=</span> <span class="cn">FALSE</span>,
   BPPARAM <span class="op">=</span> <span class="fu">bpparam</span><span class="op">(</span><span class="op">)</span>
@@ -100,10 +100,16 @@ strategy of applying <a href="https://rdrr.io/pkg/csaw/man/filterWindows.html" c
 <a href="https://rdrr.io/pkg/csaw/man/filterWindows.html" class="external-link">filterWindowsProportion</a> will then be applied. A set of
 reference ranges for which signal is expected is used to refine the
 filtering criteria.</p>
-<p>Cutoff values are found such that the <code>q</code> of the windows which overlap one of
-the reference ranges will be returned, along with any others which match the
-filtering criteria. Cutoff values for both criteria are added to the metadata
-element of the returned object</p>
+<p>Cutoff values are found for both signal relative to input and overall signal,
+such that the <code>100*q%</code> of the (sliding) windows which overlap a reference
+range will be returned, along with any others which match the
+dual filtering criteria.
+In general, higher values of <code>q</code> will return more windows as those with weak
+signal and a marginal overlap with a reference range will be returned.
+Lower values will ensure that fewer windows, generally with the strongest
+signal, are retained.
+Cutoff values for both criteria are added to the metadata
+element of the returned object.</p>
     </div>
 
   </div>

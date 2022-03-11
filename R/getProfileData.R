@@ -138,3 +138,28 @@ setMethod(
     getProfileData(x, gr, upstream, downstream, bins, mean_mode, ...)
   }
 )
+#' @rdname getProfileData-methods
+#' @export
+setMethod(
+  "getProfileData",
+  signature = signature(x = "character", gr = "GenomicRanges"),
+  function(
+    x, gr, upstream = 2500, downstream = upstream, bins = 100, mean_mode = "w0",
+    ...
+  ) {
+    stopifnot(all(file.exists(x)))
+    if (length(x) == 1) {
+      x <- BigWigFile(x)
+    } else {
+      x <- BigWigFileList(x)
+    }
+    getProfileData(x, gr, upstream, downstream, bins, mean_mode, ...)
+  }
+)
+#' @rdname getProfileData-methods
+#' @export
+setMethod(
+  "getProfileData",
+  signature = signature(x = "ANY", gr = "ANY"),
+  function(x, gr) .errNotImp(x, gr)
+)

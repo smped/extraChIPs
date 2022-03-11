@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.12</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.13</span>
       </span>
     </div>
 
@@ -83,7 +83,21 @@
   bins <span class="op">=</span> <span class="fl">100</span>,
   mean_mode <span class="op">=</span> <span class="st">"w0"</span>,
   <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+<span class="op">)</span>
+
+<span class="co"># S4 method for character,GenomicRanges</span>
+<span class="fu">getProfileData</span><span class="op">(</span>
+  <span class="va">x</span>,
+  <span class="va">gr</span>,
+  upstream <span class="op">=</span> <span class="fl">2500</span>,
+  downstream <span class="op">=</span> <span class="va">upstream</span>,
+  bins <span class="op">=</span> <span class="fl">100</span>,
+  mean_mode <span class="op">=</span> <span class="st">"w0"</span>,
+  <span class="va">...</span>
+<span class="op">)</span>
+
+<span class="co"># S4 method for ANY,ANY</span>
+<span class="fu">getProfileData</span><span class="op">(</span><span class="va">x</span>, <span class="va">gr</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">

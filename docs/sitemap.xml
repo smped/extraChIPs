@@ -16,7 +16,13 @@
     <loc>/reference/as_tibble-methods.html</loc>
   </url>
   <url>
+    <loc>/reference/as_tibble.html</loc>
+  </url>
+  <url>
     <loc>/reference/colAsRanges-methods.html</loc>
+  </url>
+  <url>
+    <loc>/reference/colToRanges-methods.html</loc>
   </url>
   <url>
     <loc>/reference/colToRanges.html</loc>
@@ -67,7 +73,13 @@
     <loc>/reference/mergeByCol-methods.html</loc>
   </url>
   <url>
+    <loc>/reference/overlapsProp-methods.html</loc>
+  </url>
+  <url>
     <loc>/reference/overlapsProp.html</loc>
+  </url>
+  <url>
+    <loc>/reference/partitionRanges-methods.html</loc>
   </url>
   <url>
     <loc>/reference/partitionRanges.html</loc>
@@ -91,6 +103,9 @@
     <loc>/reference/plotProfileHeatmap-methods.html</loc>
   </url>
   <url>
+    <loc>/reference/reduceMC-methods.html</loc>
+  </url>
+  <url>
     <loc>/reference/reduceMC.html</loc>
   </url>
   <url>
@@ -98,6 +113,9 @@
   </url>
   <url>
     <loc>/reference/setdiffWithMcols.html</loc>
+  </url>
+  <url>
+    <loc>/reference/setoptsMC-methods.html</loc>
   </url>
   <url>
     <loc>/reference/setoptsMC.html</loc>
