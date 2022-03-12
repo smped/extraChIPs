@@ -38,3 +38,32 @@ test_that("Seqinfo objects are successfully coerced", {
     )
     expect_equal(as_tibble(sq), tbl)
 })
+
+test_that("GInteractions are converted correctly", {
+    hic <- InteractionSet::GInteractions(
+        GRanges("chr1:1-10"), GRanges("chr1:201-210")
+    )
+    # Test without mcols
+    tbl <- as_tibble(hic)
+    expect_equal(names(tbl), paste0("anchor", 1:2))
+    expect_true(all(vapply(tbl, is, logical(1), class2 = "character")))
+    tbl <- as_tibble(hic, rangeAsChar = FALSE)
+    expect_equal(
+        names(tbl),
+        paste0(
+            c("seqnames", "start", "end", "width", "strand"),
+            rep(c(".x", ".y"), each = 5)
+        )
+    )
+    hic$id <- "interaction1"
+    tbl <- as_tibble(hic)
+    expect_equal(names(tbl), c("anchor1", "anchor2", "id"))
+
+})
+
+test_that("Empty objects return empty tibble objects", {
+    expect_equal(as_tibble(DataFrame()), tibble())
+    expect_equal(as_tibble(GRanges()), tibble())
+    expect_equal(as_tibble(InteractionSet::GInteractions()), tibble())
+
+})

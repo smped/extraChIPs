@@ -24,6 +24,8 @@
 #' @param rangeAsChar Convert any GRanges element to a character vector
 #' @param name Name of column to use for ranges. Ignored if rangeAsChar =
 #' `FALSE`
+#' @param suffix Suffix appended to column names for anchor1 and anchor2 of a
+#' GInteractions object. Only used if specifying rangeAsChar = FALSE
 #' @param ... Passed to [tibble::as_tibble()]
 #'
 #'
@@ -39,6 +41,10 @@
 #' as_tibble(gr, rownames = "id")
 #' as_tibble(mcols(gr))
 #' as_tibble(seqinfo(gr))
+#'
+#' hic <- InteractionSet::GInteractions(gr, GRanges("chr1:201-210"))
+#' hic$id <- "interaction1"
+#' as_tibble(hic)
 #'
 #' @importFrom tibble as_tibble
 #' @importFrom methods as
@@ -65,11 +71,13 @@ as_tibble.DataFrame <- function(x, rangeAsChar = TRUE, ...) {
 #' @importFrom tibble as_tibble
 #' @importFrom tidyselect all_of everything
 #' @importFrom dplyr select
+#' @importFrom S4Vectors mcols
 #' @rdname as_tibble
 #' @export
 as_tibble.GenomicRanges <- function(
     x, rangeAsChar = TRUE, name = "range", ...
 ) {
+    if (length(x) == 0) return(tibble())
     if (!rangeAsChar) return(as_tibble(as.data.frame(x), ...))
     if (name %in% names(mcols(x)))
         stop("A column named ", name, " already exists. Please choose another.")
@@ -86,4 +94,29 @@ as_tibble.Seqinfo <- function(x, ...) {
     df <- lapply(nm, function(i) slot(x, i))
     names(df) <- nm
     as_tibble(df)
+}
+#' @importFrom tibble as_tibble
+#' @importFrom InteractionSet anchors
+#' @importFrom dplyr bind_cols
+#' @importFrom S4Vectors mcols
+#' @rdname as_tibble
+#' @export
+as_tibble.GInteractions <- function(
+    x, rangeAsChar = TRUE, suffix = c(".x", ".y"), ...
+) {
+    if (length(x) == 0) return(tibble())
+    gi_list <- lapply(anchors(x), as_tibble, rangeAsChar = rangeAsChar, ...)
+    if (rangeAsChar) {
+        ## We will have two tibbles with single column character vectors 'range'
+        names(gi_list[[1]]) <- "anchor1"
+        names(gi_list[[2]]) <- "anchor2"
+    }
+    if (!rangeAsChar) {
+        stopifnot(is.character(suffix) & length(suffix) > 1)
+        names(gi_list[[1]]) <- paste0(names(gi_list[[1]]), suffix[[1]])
+        names(gi_list[[2]]) <- paste0(names(gi_list[[2]]), suffix[[2]])
+    }
+    gi_list[["mcols"]] <- as_tibble(mcols(x), rangeAsChar = rangeAsChar, ...)
+    bind_cols(gi_list)
+
 }

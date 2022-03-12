@@ -5,6 +5,7 @@
 \alias{as_tibble.DataFrame}
 \alias{as_tibble.GenomicRanges}
 \alias{as_tibble.Seqinfo}
+\alias{as_tibble.GInteractions}
 \title{Convert to a tibble}
 \usage{
 \method{as_tibble}{DataFrame}(x, rangeAsChar = TRUE, ...)
@@ -12,6 +13,8 @@
 \method{as_tibble}{GenomicRanges}(x, rangeAsChar = TRUE, name = "range", ...)
 
 \method{as_tibble}{Seqinfo}(x, ...)
+
+\method{as_tibble}{GInteractions}(x, rangeAsChar = TRUE, suffix = c(".x", ".y"), ...)
 }
 \arguments{
 \item{x}{A Genomic Ranges or DataFrame object}
@@ -22,6 +25,9 @@
 
 \item{name}{Name of column to use for ranges. Ignored if rangeAsChar =
 \code{FALSE}}
+
+\item{suffix}{Suffix appended to column names for anchor1 and anchor2 of a
+GInteractions object. Only used if specifying rangeAsChar = FALSE}
 }
 \value{
 A \link[tibble]{tibble}
@@ -56,5 +62,9 @@ as_tibble(gr)
 as_tibble(gr, rownames = "id")
 as_tibble(mcols(gr))
 as_tibble(seqinfo(gr))
+
+hic <- InteractionSet::GInteractions(gr, GRanges("chr1:201-210"))
+hic$id <- "interaction1"
+as_tibble(hic)
 
 }

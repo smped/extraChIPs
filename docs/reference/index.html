@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.13</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.14</span>
       </span>
     </div>
 
@@ -48,10 +48,6 @@
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="colToRanges-methods.html">colToRanges()</a></code> </p>
-        </td>
-        <td><p>Coerce a column to a GRanges object</p></td>
-      </tr><tr><td>
           <p><code><a href="dualFilter-methods.html">dualFilter()</a></code> </p>
         </td>
         <td><p>Apply two filters to sliding windows</p></td>
@@ -83,10 +79,6 @@
           <p><code><a href="stitchRanges.html">stitchRanges()</a></code> </p>
         </td>
         <td><p>Stitch Ranges within a given distance</p></td>
-      </tr><tr><td>
-          <p><code><a href="grlToSE-methods.html">grlToSE()</a></code> </p>
-        </td>
-        <td><p>Set columns from a GRangesList as Assays in a SummarizedExperiment</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="set-operations">Set Operations <a href="#set-operations" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p>
@@ -120,14 +112,26 @@
         </td>
         <td><p>Draw a coverage Profile Heatmap</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="coercion">Coercion <a href="#coercion" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="as_tibble.html">as_tibble(<i>&lt;DataFrame&gt;</i>)</a></code> <code><a href="as_tibble.html">as_tibble(<i>&lt;GenomicRanges&gt;</i>)</a></code> <code><a href="as_tibble.html">as_tibble(<i>&lt;Seqinfo&gt;</i>)</a></code> <code><a href="as_tibble.html">as_tibble(<i>&lt;GInteractions&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Convert to a tibble</p></td>
+      </tr><tr><td>
+          <p><code><a href="colToRanges-methods.html">colToRanges()</a></code> </p>
+        </td>
+        <td><p>Coerce a column to a GRanges object</p></td>
+      </tr><tr><td>
+          <p><code><a href="grlToSE-methods.html">grlToSE()</a></code> </p>
+        </td>
+        <td><p>Set columns from a GRangesList as Assays in a SummarizedExperiment</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="convenience-functions">Convenience Functions <a href="#convenience-functions" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="as_tibble.html">as_tibble(<i>&lt;DataFrame&gt;</i>)</a></code> <code><a href="as_tibble.html">as_tibble(<i>&lt;GenomicRanges&gt;</i>)</a></code> <code><a href="as_tibble.html">as_tibble(<i>&lt;Seqinfo&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Convert to a tibble</p></td>
-      </tr><tr><td>
           <p><code><a href="collapseGenes.html">collapseGenes()</a></code> </p>
         </td>
         <td><p>Collapse a vector of gene names</p></td>

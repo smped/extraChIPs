@@ -1,6 +1,6 @@
 Package: extraChIPs
-Version: 0.99.13
-Date: 2022/03/07
+Version: 0.99.14
+Date: 2022/03/12
 Title: Additional functions for working with ChIP-Seq data
 Authors@R: person("Stephen", "Pederson", 
   email = "stephen.pederson.au@gmail.com", role = c("aut", "cre"))
