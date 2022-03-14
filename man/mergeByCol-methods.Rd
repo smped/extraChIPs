@@ -4,6 +4,7 @@
 \alias{mergeByCol}
 \alias{mergeByCol,GenomicRanges-method}
 \alias{mergeByCol,RangedSummarizedExperiment-method}
+\alias{mergeByCol,ANY-method}
 \title{Merge sliding windows using a specified column}
 \usage{
 mergeByCol(x, ...)
@@ -35,6 +36,8 @@ mergeByCol(x, ...)
   ignore_strand = FALSE,
   ...
 )
+
+\S4method{mergeByCol}{ANY}(x, ...)
 }
 \arguments{
 \item{x}{A GenomicRanges or SummarizedExperiment object}
@@ -71,18 +74,30 @@ A Genomic Ranges object
 Merge sliding windows using a specified column
 }
 \details{
-This merges sliding windows by a given column, returning representative
-values from each requested column, corresponding to the selected row.
-Values from the requested column can be selected using any of \code{min()},
-\code{max()}, \code{mean()} or \code{median()}, although \code{max()} is strongly recommended.
-The range corresponding to the returned values is returned as the column.
+This merges sliding windows using the values in a given column to select
+representative values for the subsequent merged windows.
+Values can be chosen from the specified column using any of \code{min()},
+\code{max()}, \code{mean()} or \code{median()}, although \code{max()} is strongly recommended
+when specifying values like logCPM.
+Once a representative range is selected using the specified column, values
+from columns specified using \code{inc_cols} are also returned.
+In addition to these columns, the range from the representative window is
+returned in the mcols element as a GRanges object in the column
 \code{keyval_range}.
 
-Taking the p-value from the selected row, the number of windows with lower
-p-values are counted by direction and returned in the final object.
+Merging windows using either the logFC or p-value columns is not implemented.
+
+If adjusted p-values are requested an additional column names the same as
+the initial p-value, but tagged with the adjustment method, will be added.
+In addition, using the p-value from the selected window, the number of
+windows with lower p-values are counted by direction and returned in the
+final object.
+The selected window will always be counted as up/down regardless of
+significance as the p-value for this column is taken as the threshold.
+This is a not dissimilar approach to \link[csaw]{cluster-direction}.
 
 If called on a SummarizedExperiment object, the function will be applied to
-the rowRanges element.
+the \code{rowRanges} element.
 }
 \examples{
 x <- GRanges(c("chr1:1-10", "chr1:6-15", "chr1:51-60"))

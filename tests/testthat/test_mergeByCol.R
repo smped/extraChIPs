@@ -26,7 +26,7 @@ test_that("Function errors as expected", {
 
 test_that("P-value adjustment columns are correct", {
   expect_true(
-    "fdr" %in% colnames(
+    "p_fdr" %in% colnames(
       mcols(mergeByCol(x, df, col = "logCPM", pval = "p"))
     )
   )

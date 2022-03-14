@@ -3,19 +3,30 @@
 #' @description Merge sliding windows using a specified column
 #'
 #' @details
-#' This merges sliding windows by a given column, returning representative
-#' values from each requested column, corresponding to the selected row.
-#' Values from the requested column can be selected using any of `min()`,
-#' `max()`, `mean()` or `median()`, although `max()` is strongly recommended.
-#' The range corresponding to the returned values is returned as the column.
+#' This merges sliding windows using the values in a given column to select
+#' representative values for the subsequent merged windows.
+#' Values can be chosen from the specified column using any of `min()`,
+#' `max()`, `mean()` or `median()`, although `max()` is strongly recommended
+#' when specifying values like logCPM.
+#' Once a representative range is selected using the specified column, values
+#' from columns specified using `inc_cols` are also returned.
+#' In addition to these columns, the range from the representative window is
+#' returned in the mcols element as a GRanges object in the column
 #' `keyval_range`.
 #'
-#' Taking the p-value from the selected row, the number of windows with lower
-#' p-values are counted by direction and returned in the final object.
+#' Merging windows using either the logFC or p-value columns is not implemented.
+#'
+#' If adjusted p-values are requested an additional column names the same as
+#' the initial p-value, but tagged with the adjustment method, will be added.
+#' In addition, using the p-value from the selected window, the number of
+#' windows with lower p-values are counted by direction and returned in the
+#' final object.
+#' The selected window will always be counted as up/down regardless of
+#' significance as the p-value for this column is taken as the threshold.
+#' This is a not dissimilar approach to \link[csaw]{cluster-direction}.
 #'
 #' If called on a SummarizedExperiment object, the function will be applied to
-#' the rowRanges element.
-#'
+#' the `rowRanges` element.
 #'
 #' @param x A GenomicRanges or SummarizedExperiment object
 #' @param df A data.frame-like object containing the columns of interest. If
@@ -87,12 +98,15 @@ setMethod(
       "Merging not implemented for ", col,
       ". Please specify the column containing signal (e.g. logCPM or AveExpr)."
     )
+
     ## Define the columns to return
     ret_cols <- c("keyval_range", col, logfc, pval)
+    ## Can this be rewritten for tidyeval?
     if (!missing(inc_cols)) {
       inc_cols <- vapply(inc_cols, match.arg, character(1), choices = df_cols)
       ret_cols <- unique(c(ret_cols, inc_cols))
     }
+    ## Always return the columns counting the total, up & down windows
     n_cols <- c("n_windows", "n_up", "n_down")
 
     ## Merge the ranges and get the map back to the original windows
@@ -102,26 +116,27 @@ setMethod(
     ol <- findOverlaps(x, ranges_out, ignore.strand = ignore_strand)
 
     ## Merged the data.frame rows
-    temp_id <- i <- NULL # Avoid R CMD check issues
-    grp_df <- as.data.frame(df)
-    grp_df$temp_id <- subjectHits(ol)
-    grp_df$keyval_range <- queryHits(ol)
-    grp_df <- group_by(grp_df, temp_id)
+    i <- NULL # Avoid R CMD check issues
+    grp_df <- as.data.frame(ol)
+    grp_df[["keyval_range"]] <- queryHits(ol)
+    grp_df <- cbind(grp_df, df[queryHits(ol),])
+    grp_df <- group_by(grp_df, subjectHits)
     merged_df <- summarise(
       grp_df,
       i = which.min(abs(!!sym(col) - f(!!sym(col))))[[1]],
       n_windows = dplyr::n(),
       n_up = sum(!!sym(pval) <= (!!sym(pval))[i] & !!sym(logfc) > 0),
       n_down = sum(!!sym(pval) <= (!!sym(pval))[i] & !!sym(logfc) < 0),
-      across(all_of(ret_cols), function(x) {x[i]}), .groups = "drop"
+      across(all_of(ret_cols), function(x) x[i]),
+      .groups = "drop"
     )
-    merged_df <- as.data.frame(merged_df[c(n_cols, ret_cols)])
+
+    DF <- DataFrame(merged_df[c(n_cols, ret_cols)])
+    adj_col <- paste0(pval, "_", p_adj_method)
     if (p_adj_method != "none")
-      merged_df[[p_adj_method]] <- p.adjust(
-        merged_df[[pval]], method = p_adj_method
-      )
-    mcols(ranges_out) <- merged_df
-    ranges_out$keyval_range <- granges(x)[ranges_out$keyval_range]
+      DF[[adj_col]] <- p.adjust(DF[[pval]], method = p_adj_method)
+    DF[["keyval_range"]] <- granges(x)[DF[["keyval_range"]]]
+    mcols(ranges_out) <- DF
     ranges_out
 
   }
@@ -148,4 +163,9 @@ setMethod(
 
   }
 
+)
+#' @rdname mergeByCol-methods
+#' @export
+setMethod(
+  "mergeByCol", signature = signature(x = "ANY"), function(x, ...) .errNotImp(x)
 )

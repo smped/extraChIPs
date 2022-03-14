@@ -7,7 +7,7 @@ test_that("Coercion is correct where it should be", {
   expect_s4_class(new_gr, "GRanges")
   expect_equal(
     colnames(mcols(new_gr)),
-    c("n_windows", "n_up", "n_down", "logCPM", "logFC", "p", "fdr")
+    c("n_windows", "n_up", "n_down", "logCPM", "logFC", "p", "p_fdr")
   )
   expect_equal(length(new_gr), 2)
   df$gr <- as.character(x)
