@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.15</span>
       </span>
     </div>
 
@@ -80,7 +80,10 @@
   merge_within <span class="op">=</span> <span class="fl">1L</span>,
   ignore_strand <span class="op">=</span> <span class="cn">FALSE</span>,
   <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+<span class="op">)</span>
+
+<span class="co"># S4 method for ANY</span>
+<span class="fu">mergeByCol</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -119,16 +122,27 @@ returned in keyval_range</p></dd>
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>This merges sliding windows by a given column, returning representative
-values from each requested column, corresponding to the selected row.
-Values from the requested column can be selected using any of <code><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min()</a></code>,
-<code><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max()</a></code>, <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean()</a></code> or <code><a href="https://rdrr.io/r/stats/median.html" class="external-link">median()</a></code>, although <code><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max()</a></code> is strongly recommended.
-The range corresponding to the returned values is returned as the column.
+    <p>This merges sliding windows using the values in a given column to select
+representative values for the subsequent merged windows.
+Values can be chosen from the specified column using any of <code><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min()</a></code>,
+<code><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max()</a></code>, <code><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean()</a></code> or <code><a href="https://rdrr.io/r/stats/median.html" class="external-link">median()</a></code>, although <code><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max()</a></code> is strongly recommended
+when specifying values like logCPM.
+Once a representative range is selected using the specified column, values
+from columns specified using <code>inc_cols</code> are also returned.
+In addition to these columns, the range from the representative window is
+returned in the mcols element as a GRanges object in the column
 <code>keyval_range</code>.</p>
-<p>Taking the p-value from the selected row, the number of windows with lower
-p-values are counted by direction and returned in the final object.</p>
+<p>Merging windows using either the logFC or p-value columns is not implemented.</p>
+<p>If adjusted p-values are requested an additional column names the same as
+the initial p-value, but tagged with the adjustment method, will be added.
+In addition, using the p-value from the selected window, the number of
+windows with lower p-values are counted by direction and returned in the
+final object.
+The selected window will always be counted as up/down regardless of
+significance as the p-value for this column is taken as the threshold.
+This is a not dissimilar approach to <a href="https://rdrr.io/pkg/csaw/man/cluster-direction.html" class="external-link">cluster-direction</a>.</p>
 <p>If called on a SummarizedExperiment object, the function will be applied to
-the rowRanges element.</p>
+the <code>rowRanges</code> element.</p>
     </div>
 
     <div id="ref-examples">
@@ -139,12 +153,12 @@ the rowRanges element.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 2 ranges and 8 metadata columns:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand | n_windows      n_up    n_down keyval_range</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;    &lt;GRanges&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1      1-15      * |         2         0         1    chr1:6-15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chr1     51-60      * |         1         0         1   chr1:51-60</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          logCPM      logFC         p       fdr</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1      1-15      * |         2         0         2    chr1:6-15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chr1     51-60      * |         1         1         0   chr1:51-60</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          logCPM      logFC         p     p_fdr</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;numeric&gt;  &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]   8.56420 -0.0698309 0.0210755 0.0421509</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]   7.94037 -1.7801859 0.0422285 0.0422285</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]   7.90523 -0.0759471  0.871993  0.871993</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]   7.11454  1.1275323  0.184567  0.369134</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
 <span class="r-in"><span class="fu">mcols</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">df</span></span>
@@ -152,21 +166,21 @@ the rowRanges element.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 3 ranges and 3 metadata columns:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand |      logFC    logCPM         p</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; |  &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1      1-10      * | -0.8347658   7.42447 0.0255527</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chr1      6-15      * | -0.0698309   8.56420 0.0210755</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [3]     chr1     51-60      * | -1.7801859   7.94037 0.0422285</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1      1-10      * | -0.3362998   6.34488  0.850469</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chr1      6-15      * | -0.0759471   7.90523  0.871993</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [3]     chr1     51-60      * |  1.1275323   7.11454  0.184567</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
 <span class="r-in"><span class="fu">mergeByCol</span><span class="op">(</span><span class="va">x</span>, col <span class="op">=</span> <span class="st">"logCPM"</span>, pval <span class="op">=</span> <span class="st">"p"</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 2 ranges and 8 metadata columns:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand | n_windows      n_up    n_down keyval_range</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;    &lt;GRanges&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1      1-15      * |         2         0         1    chr1:6-15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chr1     51-60      * |         1         0         1   chr1:51-60</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          logCPM      logFC         p       fdr</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1      1-15      * |         2         0         2    chr1:6-15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chr1     51-60      * |         1         1         0   chr1:51-60</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          logCPM      logFC         p     p_fdr</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;numeric&gt;  &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]   8.56420 -0.0698309 0.0210755 0.0421509</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]   7.94037 -1.7801859 0.0422285 0.0422285</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]   7.90523 -0.0759471  0.871993  0.871993</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]   7.11454  1.1275323  0.184567  0.369134</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
 <span class="r-in"></span>
