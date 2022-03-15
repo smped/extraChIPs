@@ -14,7 +14,7 @@ dualFilter(x, bg, ref, ...)
   ref,
   q = 0.5,
   logCPM = TRUE,
-  keep.totals = FALSE,
+  keep.totals = TRUE,
   BPPARAM = bpparam()
 )
 

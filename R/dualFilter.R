@@ -63,7 +63,7 @@ setMethod(
   ),
   function(
     x, bg, ref, q = 0.5, logCPM = TRUE,
-    keep.totals = FALSE, BPPARAM = bpparam()
+    keep.totals = TRUE, BPPARAM = bpparam()
   ) {
 
     ## Argument checks

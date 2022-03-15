@@ -170,7 +170,7 @@ setMethod(
 #' @param x_lab,y_lab,fill_lab _labels added to x/y-axes & the fill legend
 #' @param ... Passed to facet_grid
 #'
-#' @importFrom ggplot2 ggplot aes_string facet_grid theme labs
+#' @importFrom ggplot2 ggplot aes_string facet_grid theme labs expansion
 #' @importFrom ggplot2 geom_raster geom_segment scale_y_discrete
 #' @importFrom ggplot2 scale_x_discrete scale_x_continuous element_blank
 #' @importFrom ggside geom_xsideline ggside scale_xsidey_continuous
@@ -198,10 +198,11 @@ setMethod(
     data,
     aes_string(x = x, y = y, fill = fill, colour = colour, linetype = linetype)
   ) +
-    geom_raster() + x_axis + scale_y_discrete(breaks = NULL) +
+    geom_raster() + x_axis +
+    scale_y_discrete(breaks = NULL, expand = expansion(c(0, 0))) +
     labs(x = x_lab, y = y_lab, fill = fill_lab)
 
-    ## Given that ggside does not currently create a legend for parameters only
+  ## Given that ggside does not currently create a legend for parameters only
   ## used in these side panels, add some dummy lines here in the main panel.
   ## This will ensure a legend appears for colour or linetype
   if (!is.null(colour) | !is.null(linetype))
