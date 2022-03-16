@@ -596,7 +596,7 @@ plotHFGC <- function(
     if (!is(genes, "GRanges")) {
       msg <- c(msg, "genes must be a 'GRanges' or GRangesList object\n")
     } else {
-      gene_mcols <- c("feature", "gene", "exon", "transcript", "symbol")
+      gene_mcols <- c("gene", "exon", "transcript", "symbol")
       if (!all(gene_mcols %in% colnames(mcols(genes))))
         msg <- c(
           msg, paste(
