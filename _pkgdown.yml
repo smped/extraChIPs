@@ -47,3 +47,13 @@ reference:
 - title: Data Objects
   contents:
     - contains("cytobands")
+
+navbar:
+  type: default
+  left:
+  - text: Reference
+    href: reference/index.html
+  - text: Vignettes
+    menu:
+    - text: Introduction to extraChIPs
+      href: articles/extraChIPs_Introduction.html

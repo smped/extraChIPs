@@ -71,7 +71,7 @@
 #' matching those provided in `featurecol`. If not included, no feature track
 #' will be drawn
 #' @param genes A GRanges object with exon structure for each transcript/gene.
-#' If not included, to track will be drawn for gene/transcript structure
+#' If not included, no track will be drawn for gene/transcript structure
 #' @param coverage A named list of BigWigFileList objects containing the
 #' primary tracks to show coverage for. Each list element will be drawn on a
 #' separate track, with elements within each BigWigFileList shown on the same

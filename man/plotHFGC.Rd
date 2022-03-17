@@ -49,7 +49,7 @@ matching those provided in \code{featurecol}. If not included, no feature track
 will be drawn}
 
 \item{genes}{A GRanges object with exon structure for each transcript/gene.
-If not included, to track will be drawn for gene/transcript structure}
+If not included, no track will be drawn for gene/transcript structure}
 
 \item{coverage}{A named list of BigWigFileList objects containing the
 primary tracks to show coverage for. Each list element will be drawn on a

@@ -1,0 +1,30 @@
+---
+title: "An Introduction To extraChIPs"
+author:
+- name: Steve Pederson
+  affiliation: Dame Roma Mitchell Cancer Research Laboratories, Adelaide Medical School, University of Adelaide
+  email: stephen.pederson.au@gmail.com
+package: extraChIPs
+output:
+  BiocStyle::html_document
+vignette: >
+  %\VignetteIndexEntry{An Introduction To extraChIPs}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+```
+
+# Introduction
+
+This package is designed to enable the Gene Regulatory Analysis using Variable 
+IP ([GRAVI](https://github.com/steveped/GRAVI)) workflow, as a method for
+detecting differential binding in ChIP-Seq datasets.
+There are essentially four sets of functions provided with this package:
+
+1. Those which manipulate with conventional *GRanges* objects
+2. Functions for visualisation of ChIP-Seq and related data
+3. Functions for aiding the analysis during the workflow
+4. General coercion functions which may be more widely applicable
