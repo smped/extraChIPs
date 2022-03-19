@@ -20,7 +20,7 @@ plotHFGC(
   linecol = c(),
   gradient = hcl.colors(101, "viridis"),
   hiccol = list(anchors = "lightblue", interactions = "red"),
-  featurecol,
+  featcol,
   genecol,
   annotcol,
   highlight = "blue",
@@ -29,12 +29,16 @@ plotHFGC(
   genesize = 1,
   covsize = 4,
   annotsize = 0.5,
+  hicname = "HiC",
+  featname = "Features",
+  featstack = c("full", "hide", "dense", "squish", "pack"),
   ylim = NULL,
   ...,
   fontsize = 12,
   cex.title = 0.8,
   rotation.title = 0,
-  collapseTranscripts = "meta"
+  collapseTranscripts = "meta",
+  title.width = NULL
 )
 }
 \arguments{
@@ -45,7 +49,7 @@ object. If not supplied, no HiC track will be drawn.}
 
 \item{features}{A named GRangesList object containing regulatory features in
 each list element. Features will be drawn on a single track with colours
-matching those provided in \code{featurecol}. If not included, no feature track
+matching those provided in \code{featcol}. If not included, no feature track
 will be drawn}
 
 \item{genes}{A GRanges object with exon structure for each transcript/gene.
@@ -92,7 +96,7 @@ BigWigFileList. Only used if coverage_type = "l".}
 \item{hiccol}{list with names \code{"anchors"} and \code{"interactions"}. Colours
 are passed to these elements}
 
-\item{featurecol}{Named vector (or list) of colours for each feature}
+\item{featcol}{Named vector (or list) of colours for each feature}
 
 \item{genecol}{Named vector (or list) of colours for each gene category}
 
@@ -102,6 +106,10 @@ are passed to these elements}
 \code{NULL} will remove the highlight}
 
 \item{hicsize, featsize, genesize, covsize, annotsize}{Relative sizes for each track (hic, features, genes, coverage & annotation)}
+
+\item{hicname, featname}{Names displayed in the LHS panel}
+
+\item{featstack}{Stacking for the fature track}
 
 \item{ylim}{If a numeric vector, this will be passed to all coverage tracks.
 Alternatively, a named list of y-limits for each coverage track with names
@@ -118,6 +126,11 @@ Useful arguments may be things like \code{legend}}
 
 \item{collapseTranscripts}{Passed to \link[Gviz]{GeneRegionTrack} for the
 genes track}
+
+\item{title.width}{Expansion factor passed to \link[Gviz]{plotTracks}, and
+used to widen thepanels on the LHS of all tracks.
+Can have unpredictable effects on the font
+size of y-axis limits due to the algorithm applied by \code{plotTracks}}
 }
 \value{
 A Gviz object
@@ -144,6 +157,7 @@ In descending order the tracks displayed will be:
 }
 
 All tracks are optional and will simply be omitted if no data is supplied.
+See individual sections below for a more detailed explanation of each track
 
 If wanting a single track of genes, simply pass a GRanges object in the
 format specified for a \link[Gviz]{GeneRegionTrack}. Passing a GRangesList
@@ -152,7 +166,9 @@ with each track shown by default as a separate colour. This can be used for
 showing Up/Down-regulated genes, or Detected/Undetected genes.
 
 If passing a BigWigFileList for the coverage track, each file within the
-object will be drawn on a separate track. If passing a list of BigWigFileList
+object will be drawn on a separate track. If specified, the same y-limits
+will be applied to each track
+If passing a list of BigWigFileList
 objects, each list element will be drawn as a single track with the
 individual files within each BigWigFileList overlaid within each track.
 
@@ -163,6 +179,138 @@ this package (\link{grch37.cytobands}, \link{grch38.cytobands}).
 A highlight overlay over the GRanges provided as the \code{gr} argument will be
 added if a colour is provided. If set to NULL, no highlight will be added.
 }
+\section{Displaying HiC Interactions}{
+
+
+The available arguments for displaying HiC Interactions are defined below.
+If \code{hic} is supplied, a single \link[GenomicInteractions]{InteractionTrack}
+will be added displaying
+all interactions with an anchor within the range specified by \code{gr}.
+Only interactions with an anchor explicitly overlapping \code{gr} will be shown.
+If no interactions are found within \code{gr}, the track will not be displayed.
+The \strong{plotting range will expand to incorporate these interactions}, with
+the paramater \code{max} providing an upper limit on the displayed range.
+
+\describe{
+\item{hic}{This is the \code{GInteractions} object required for inclusion of
+a HiC track in the final output. Will be ignored if not supplied}
+\item{hiccol}{Determines the colours used for display of anchors and
+interactions}
+\item{hicsize}{Relative size of the track compared to others}
+\item{hicname}{The name to display on the LHS panel}
+\item{max}{The maximum width of the plotted region. If multiple long-range
+interactions are identified, this provides an upper limit for the display.
+This defaults to \verb{10Mb}.}
+}
+}
+
+\section{Displaying Features}{
+
+
+If wanting to add an \link[Gviz]{AnnotationTrack} with regions defined as
+'features', the following arguments are highly relevant.
+All are ignored if \code{features} is not provided.
+
+\describe{
+\item{features}{A named \code{GRangesList}. Each element will be considered as
+a separate feature and drawn as a block in a distinct colour. Any \code{mcols}
+data will be ignored.}
+\item{featcol}{A \strong{named} vector (or list) providing a colour for each
+element of \code{features}}
+\item{featname}{The name to display on the LHS panel}
+\item{featstack}{Stacking to be applied to all supplied features}
+\item{featsize}{Relative size of the track compared to others}
+}
+}
+
+\section{Displaying Genes And Transcripts}{
+
+
+To display genes or transcripts, simply provide a single \code{GRanges} object if
+you wish to display all genes on a single track.
+The \code{mcols} element of this object should contain the columns \code{feature},
+\code{gene}, \code{exon}, \code{transcript} and \code{symbol} as seen on the
+\link[Gviz]{GeneRegionTrack} help page.
+
+Alternatively, a \code{GRangesList} can be provided to display genes on separate
+tracks based on their category.
+This can be useful for separating and colouring Up/Down regulated genes in a
+precise way.
+All elements should be as described above.
+Again, all parameters associated with this track-set will be ignored of no
+object is supplied to this argument.
+
+\describe{
+\item{genes}{A \code{GRanges} or \code{GRangesList} object as described above}
+\item{genecol}{A single colour if supplying a \code{GRanges} object, or a
+\strong{named} vector/list of colours matching the \code{GRangesList}}
+\item{genesize}{Relative size of the track compared to others}
+\item{collapseTranscripts}{Passed to all tracks. See the GeneRegionTrack
+section in \link[Gviz]{settings} for detail regarding possible arguments.
+If genes is a \code{GRangesList}, can be a \strong{named} vector/list with names
+matching the names of the \code{genes} object.
+}
+}
+}
+
+\section{Displaying Coverage Tracks}{
+
+
+This section contains the most flexibility and can take two types of input.
+The first option is a \code{BigWigFileList}, which will lead to each BigWig file
+being plotted on it's own track.
+An alternative is a list of \code{BigWigFileList} objects.
+In this case, each list element will be plotted as a separate track,
+with all individual \code{BigWig} files within each list element
+overlaid within the relevant track.
+
+In addition to the coverage tracks, annotations can be added to each
+\code{BigWigFileList} in the form of coloured ranges, indicating anything of the
+users choice. Common usage may be to indicate regions with binding of a
+ChIP target is found to be detected, unchanged, gained or lost.
+
+\describe{
+\item{coverage}{A \code{BigWigFileList} or \code{list} of \code{BigWigFileList} objects.
+A single \code{BigWigFileList} will be displayed with each individual file on a
+separate track with independent y-axes. Each element of the
+\code{BigWigFileList} \strong{must be named} and these names will be displayed on the
+LHS panels
+A list of \code{BigWigFileList} objects will be displayed with each list element
+as a separate track, with any \code{BigWig} files overlaid using the same
+y-axis. The list \strong{must be named} with these names displayed on the LHS
+panel. Each internal \code{BigWig} within a \code{BigWigFileList} must also be named.
+}
+\item{coverage_type}{Currently only lines (\code{coverage_type = "l"}) and
+heatmaps (\verb{coverage_type = "heatmap}) are supported. Colours can be
+specified using the arguments below}
+\item{linecol}{Can be a single colour applied to all tracks, or a \emph{named}
+vector (or list) of colours. If \code{coverage} is a single \code{BigWigFileList},
+these names should match the names of this object exactly.
+If \code{coverage} is a list of \code{BigWigFileList} objects, \code{linecol} should be
+a list with matching names. Each element of this list should also be a
+\strong{named} vector with names that exactly match those of each corresponding
+\code{BigWigFileList}.}
+\item{gradient}{A colour gradient applied to all heatmap tracks. No
+specific structure is required beyond a vector of colours.}
+\item{covsize}{Relative size of the tracks compared to others}
+\item{ylim}{Can be a vector of length 2 applied to all coverage tracks.
+Alternatively, if passing a list of \code{BigWigFlieList} objects to the
+\code{coverage} argument, this can be a \strong{named} list of numeric vectors with
+names matching \code{coverage}}
+\item{annotation}{Each \code{BigWigFileList} needs annotations to be passed to
+this argument as a \strong{named} \code{GRangesList}, with names being used to
+associate unique colours with that set of ranges. If \code{coverage} is a
+\code{BigWigFileList} a simple \code{GRangesList} would be supplied and a single
+'annotation' track will appear at the top of the set of coverage tracks.
+If \code{coverage} is a \code{list}, then a \strong{named} list of \code{GRangesList} objects
+should be supplied, with each being displayed above the corresponding track
+from the \code{coverage} object.}
+\item{annotcol}{A vector of colours corresponding to all names within all
+\code{GRangesList} elements supplied as \code{annotation}}
+\item{annotsize}{Relative size of the tracks compared to others}
+}
+}
+
 \examples{
 gr <- GRanges("chr1:11869-12227")
 feat_gr <- GRangesList(
@@ -180,7 +328,7 @@ data(grch37.cytobands)
 plotHFGC(
   gr, hic = hic, features = feat_gr, genes = genes,
   zoom = 2, cytobands = grch37.cytobands, rotation.title = 90,
-  featurecol = c(Promoter = "red", Enhancer = "yellow")
+  featcol = c(Promoter = "red", Enhancer = "yellow")
 )
 
 }

@@ -21,6 +21,7 @@
 #' }
 #'
 #' All tracks are optional and will simply be omitted if no data is supplied.
+#' See individual sections below for a more detailed explanation of each track
 #'
 #' If wanting a single track of genes, simply pass a GRanges object in the
 #' format specified for a \link[Gviz]{GeneRegionTrack}. Passing a GRangesList
@@ -29,7 +30,9 @@
 #' showing Up/Down-regulated genes, or Detected/Undetected genes.
 #'
 #' If passing a BigWigFileList for the coverage track, each file within the
-#' object will be drawn on a separate track. If passing a list of BigWigFileList
+#' object will be drawn on a separate track. If specified, the same y-limits
+#' will be applied to each track
+#' If passing a list of BigWigFileList
 #' objects, each list element will be drawn as a single track with the
 #' individual files within each BigWigFileList overlaid within each track.
 #'
@@ -39,6 +42,132 @@
 #'
 #' A highlight overlay over the GRanges provided as the `gr` argument will be
 #' added if a colour is provided. If set to NULL, no highlight will be added.
+#'
+#' @section Displaying HiC Interactions:
+#'
+#' The available arguments for displaying HiC Interactions are defined below.
+#' If `hic` is supplied, a single \link[GenomicInteractions]{InteractionTrack}
+#' will be added displaying
+#' all interactions with an anchor within the range specified by `gr`.
+#' Only interactions with an anchor explicitly overlapping `gr` will be shown.
+#' If no interactions are found within `gr`, the track will not be displayed.
+#' The **plotting range will expand to incorporate these interactions**, with
+#' the paramater `max` providing an upper limit on the displayed range.
+#'
+#' \describe{
+#'   \item{hic}{This is the `GInteractions` object required for inclusion of
+#'   a HiC track in the final output. Will be ignored if not supplied}
+#'   \item{hiccol}{Determines the colours used for display of anchors and
+#'   interactions}
+#'   \item{hicsize}{Relative size of the track compared to others}
+#'   \item{hicname}{The name to display on the LHS panel}
+#'   \item{max}{The maximum width of the plotted region. If multiple long-range
+#'   interactions are identified, this provides an upper limit for the display.
+#'   This defaults to `10Mb`.}
+#' }
+#'
+#'
+#' @section Displaying Features:
+#'
+#' If wanting to add an \link[Gviz]{AnnotationTrack} with regions defined as
+#' 'features', the following arguments are highly relevant.
+#' All are ignored if `features` is not provided.
+#'
+#' \describe{
+#'   \item{features}{A named `GRangesList`. Each element will be considered as
+#'   a separate feature and drawn as a block in a distinct colour. Any `mcols`
+#'   data will be ignored.}
+#'   \item{featcol}{A **named** vector (or list) providing a colour for each
+#'   element of `features`}
+#'   \item{featname}{The name to display on the LHS panel}
+#'   \item{featstack}{Stacking to be applied to all supplied features}
+#'   \item{featsize}{Relative size of the track compared to others}
+#' }
+#'
+#' @section Displaying Genes And Transcripts:
+#'
+#' To display genes or transcripts, simply provide a single `GRanges` object if
+#' you wish to display all genes on a single track.
+#' The `mcols` element of this object should contain the columns `feature`,
+#' `gene`, `exon`, `transcript` and `symbol` as seen on the
+#' \link[Gviz]{GeneRegionTrack} help page.
+#'
+#' Alternatively, a `GRangesList` can be provided to display genes on separate
+#' tracks based on their category.
+#' This can be useful for separating and colouring Up/Down regulated genes in a
+#' precise way.
+#' All elements should be as described above.
+#' Again, all parameters associated with this track-set will be ignored of no
+#' object is supplied to this argument.
+#'
+#' \describe{
+#'   \item{genes}{A `GRanges` or `GRangesList` object as described above}
+#'   \item{genecol}{A single colour if supplying a `GRanges` object, or a
+#'   **named** vector/list of colours matching the `GRangesList`}
+#'   \item{genesize}{Relative size of the track compared to others}
+#'   \item{collapseTranscripts}{Passed to all tracks. See the GeneRegionTrack
+#'   section in \link[Gviz]{settings} for detail regarding possible arguments.
+#'   If genes is a `GRangesList`, can be a **named** vector/list with names
+#'   matching the names of the `genes` object.
+#'   }
+#' }
+#'
+#' @section Displaying Coverage Tracks:
+#'
+#' This section contains the most flexibility and can take two types of input.
+#' The first option is a `BigWigFileList`, which will lead to each BigWig file
+#' being plotted on it's own track.
+#' An alternative is a list of `BigWigFileList` objects.
+#' In this case, each list element will be plotted as a separate track,
+#' with all individual `BigWig` files within each list element
+#' overlaid within the relevant track.
+#'
+#' In addition to the coverage tracks, annotations can be added to each
+#' `BigWigFileList` in the form of coloured ranges, indicating anything of the
+#' users choice. Common usage may be to indicate regions with binding of a
+#' ChIP target is found to be detected, unchanged, gained or lost.
+#'
+#' \describe{
+#'   \item{coverage}{A `BigWigFileList` or `list` of `BigWigFileList` objects.
+#'   A single `BigWigFileList` will be displayed with each individual file on a
+#'   separate track with independent y-axes. Each element of the
+#'   `BigWigFileList` **must be named** and these names will be displayed on the
+#'   LHS panels
+#'   A list of `BigWigFileList` objects will be displayed with each list element
+#'   as a separate track, with any `BigWig` files overlaid using the same
+#'   y-axis. The list **must be named** with these names displayed on the LHS
+#'   panel. Each internal `BigWig` within a `BigWigFileList` must also be named.
+#'   }
+#'   \item{coverage_type}{Currently only lines (`coverage_type = "l"`) and
+#'   heatmaps (`coverage_type = "heatmap`) are supported. Colours can be
+#'   specified using the arguments below}
+#'   \item{linecol}{Can be a single colour applied to all tracks, or a *named*
+#'   vector (or list) of colours. If `coverage` is a single `BigWigFileList`,
+#'   these names should match the names of this object exactly.
+#'   If `coverage` is a list of `BigWigFileList` objects, `linecol` should be
+#'   a list with matching names. Each element of this list should also be a
+#'   **named** vector with names that exactly match those of each corresponding
+#'   `BigWigFileList`.}
+#'   \item{gradient}{A colour gradient applied to all heatmap tracks. No
+#'   specific structure is required beyond a vector of colours.}
+#'   \item{covsize}{Relative size of the tracks compared to others}
+#'   \item{ylim}{Can be a vector of length 2 applied to all coverage tracks.
+#'   Alternatively, if passing a list of `BigWigFlieList` objects to the
+#'   `coverage` argument, this can be a **named** list of numeric vectors with
+#'   names matching `coverage`}
+#'   \item{annotation}{Each `BigWigFileList` needs annotations to be passed to
+#'   this argument as a **named** `GRangesList`, with names being used to
+#'   associate unique colours with that set of ranges. If `coverage` is a
+#'   `BigWigFileList` a simple `GRangesList` would be supplied and a single
+#'   'annotation' track will appear at the top of the set of coverage tracks.
+#'   If `coverage` is a `list`, then a **named** list of `GRangesList` objects
+#'   should be supplied, with each being displayed above the corresponding track
+#'   from the `coverage` object.}
+#'   \item{annotcol}{A vector of colours corresponding to all names within all
+#'   `GRangesList` elements supplied as `annotation`}
+#'   \item{annotsize}{Relative size of the tracks compared to others}
+#' }
+#'
 #'
 #' @examples
 #' gr <- GRanges("chr1:11869-12227")
@@ -57,7 +186,7 @@
 #' plotHFGC(
 #'   gr, hic = hic, features = feat_gr, genes = genes,
 #'   zoom = 2, cytobands = grch37.cytobands, rotation.title = 90,
-#'   featurecol = c(Promoter = "red", Enhancer = "yellow")
+#'   featcol = c(Promoter = "red", Enhancer = "yellow")
 #' )
 #'
 #' @return
@@ -68,7 +197,7 @@
 #' object. If not supplied, no HiC track will be drawn.
 #' @param features A named GRangesList object containing regulatory features in
 #' each list element. Features will be drawn on a single track with colours
-#' matching those provided in `featurecol`. If not included, no feature track
+#' matching those provided in `featcol`. If not included, no feature track
 #' will be drawn
 #' @param genes A GRanges object with exon structure for each transcript/gene.
 #' If not included, no track will be drawn for gene/transcript structure
@@ -95,7 +224,7 @@
 #' @param fontsize Applied across all tracks
 #' @param hiccol list with names `"anchors"` and `"interactions"`. Colours
 #' are passed to these elements
-#' @param featurecol Named vector (or list) of colours for each feature
+#' @param featcol Named vector (or list) of colours for each feature
 #' @param genecol Named vector (or list) of colours for each gene category
 #' @param annotcol Colours matching the coverage annotations
 #' @param coverage_type The plot type for coverage. Currently only lines ("l")
@@ -110,6 +239,8 @@
 #' `NULL` will remove the highlight
 #' @param hicsize,featsize,genesize,covsize,annotsize
 #' Relative sizes for each track (hic, features, genes, coverage & annotation)
+#' @param hicname,featname Names displayed in the LHS panel
+#' @param featstack Stacking for the fature track
 #' @param ylim If a numeric vector, this will be passed to all coverage tracks.
 #' Alternatively, a named list of y-limits for each coverage track with names
 #' that match those in each element of the coverage list.
@@ -119,6 +250,10 @@
 #' @param rotation.title Passed to all tracks
 #' @param collapseTranscripts Passed to \link[Gviz]{GeneRegionTrack} for the
 #' genes track
+#' @param title.width Expansion factor passed to \link[Gviz]{plotTracks}, and
+#' used to widen thepanels on the LHS of all tracks.
+#' Can have unpredictable effects on the font
+#' size of y-axis limits due to the algorithm applied by `plotTracks`
 #'
 #' @importFrom methods slot
 #' @importFrom InteractionSet anchors
@@ -135,11 +270,14 @@ plotHFGC <- function(
   coverage_type = c("l", "heatmap"),
   linecol = c(), gradient = hcl.colors(101, "viridis"),
   hiccol = list(anchors = "lightblue", interactions = "red"),
-  featurecol, genecol, annotcol, highlight = "blue",
+  featcol, genecol, annotcol, highlight = "blue",
   hicsize = 1, featsize = 1, genesize = 1, covsize = 4, annotsize = 0.5,
+  hicname = "HiC", featname = "Features",
+  featstack = c("full", "hide", "dense", "squish", "pack"),
   ylim = NULL, ...,
   fontsize = 12, cex.title = 0.8, rotation.title = 0,
-  collapseTranscripts = "meta"
+  collapseTranscripts = "meta",
+  title.width = NULL
 ) {
 
   ## Argument checks
@@ -148,14 +286,15 @@ plotHFGC <- function(
     gr = gr, zoom = zoom, shift = shift, hic = hic, features = features,
     genes = genes, coverage = coverage, annotation = annotation,
     axistrack = axistrack, cytobands = cytobands, max = max, hiccol = hiccol,
-    linecol = linecol, genecol = genecol, featurecol = featurecol,
-    annotcol = annotcol, type = coverage_type, ylim = ylim
+    linecol = linecol, genecol = genecol, featcol = featcol,
+    annotcol = annotcol, type = coverage_type, ylim = ylim,
+    collapseTranscripts = collapseTranscripts
   )
   stopifnot(checkArgs)
 
   ## Form the HiC track, including all interactions beyond the max
   hic_track <- .makeHiCTrack(
-    hic, gr, fontsize, hicsize, cex.title, rotation.title, hiccol
+    hic, gr, fontsize, hicsize, cex.title, rotation.title, hiccol, hicname
   )
 
   ## If interactions were found, reset the plot range. This should be the
@@ -174,9 +313,10 @@ plotHFGC <- function(
   ideo_track <- .makeIdeoTrack(plot_range, cytobands, fontsize)
 
   ## Form the features track
+  featstack <- match.arg(featstack)
   feature_track <- .makeFeatureTrack(
-    features, plot_range, fontsize, featurecol, featsize, cex.title,
-    rotation.title
+    features, plot_range, fontsize, featcol, featsize, cex.title,
+    rotation.title, featname, featstack
   )
 
   ## Form the genes tracks. NB: This will be a list of tracks
@@ -208,7 +348,10 @@ plotHFGC <- function(
     plot_list <- c(plot_list, GenomeAxisTrack(plot_range, fontsize = fontsize))
 
   plot_list <- c(plot_list, hic_track, hl_track)
-  plotTracks(plot_list, from = start(plot_range), end(plot_range))
+  plotTracks(
+    plot_list,
+    from = start(plot_range), end(plot_range), title.width = title.width
+  )
 
 }
 
@@ -253,7 +396,9 @@ plotHFGC <- function(
 #' @importFrom GenomicInteractions GenomicInteractions InteractionTrack
 #' @importFrom GenomeInfoDb seqnames
 #' @importFrom IRanges subsetByOverlaps
-.makeHiCTrack <- function(.hic, .gr, .fontsize, .tracksize, .cex, .rot, .col) {
+.makeHiCTrack <- function(
+  .hic, .gr, .fontsize, .tracksize, .cex, .rot, .col, .name
+) {
 
   if (missing(.hic)) return(NULL)
 
@@ -270,7 +415,7 @@ plotHFGC <- function(
   track <- InteractionTrack(
     x = GenomicInteractions(.hic),
     chromosome = chr,
-    name = "HiC"
+    name = .name
   )
   track@dp@pars$size <- .tracksize
   track@dp@pars$fontsize <- .fontsize
@@ -293,7 +438,8 @@ plotHFGC <- function(
     fontsize <- .cov_tracks[[1]]@dp@pars$fontsize
     cex <- .cov_tracks[[1]]@dp@pars$cex.title
     annot_track <- .makeFeatureTrack(
-      .annotation, .gr, fontsize, .fill, .size, cex, 0
+      .annotation, .gr, fontsize, .fill, .size, cex, 0, .name = c(),
+      .stacking = "full"
     )
     annot_track@name <- ""
     tracks <- c(list(annot_track), .cov_tracks)
@@ -329,7 +475,7 @@ plotHFGC <- function(
 #' @importFrom IRanges subsetByOverlaps
 #' @importFrom Gviz AnnotationTrack
 .makeFeatureTrack <- function(
-  .features, .gr, .fontsize, .fill, .tracksize, .cex, .rot
+  .features, .gr, .fontsize, .fill, .tracksize, .cex, .rot, .name, .stacking
 ) {
 
   if (missing(.features)) return(NULL)
@@ -347,7 +493,7 @@ plotHFGC <- function(
   if (length(.features) == 0) return(NULL)
   AnnotationTrack(
     ## Change the name later
-    range = .features, name = "Features", stacking = "full",
+    range = .features, name = .name, stacking = .stacking,
     col = "transparent", fill = .fill[.features$feature],
     feature = .features$feature,
     ## Tidy setting this up later & also tidy the colour setting
@@ -402,12 +548,18 @@ plotHFGC <- function(
   }
   .col <- .col[names(.genes)]
 
+  ## Setup the collapseTranscripts argument if we just have a vector
+  if (length(.collapse) == 1){
+    .collapse <- rep(.collapse[[1]], length(.genes))
+    names(.collapse) <- names(.genes)
+  }
+
   trackList <- lapply(names(.genes),
     function(x) {
       GeneRegionTrack(
         .genes[[x]], name = str_to_title(x),
         transcriptAnnotation = "symbol",
-        collapseTranscripts = .collapse,
+        collapseTranscripts = .collapse[[x]],
         size = .tracksize, fontsize = .fontsize, col = .col[[x]],
         fill = .col[[x]], cex.title = .cex, rotation.title = .rot
       )
@@ -482,6 +634,7 @@ plotHFGC <- function(
   if (is.numeric(.ylim)) lim <- lapply(.coverage, function(x) range(.ylim))
 
   ## If no limits are provided, return a list which matches .coverage
+  ## Each element will be a NULL which is then passed to ylim for auto-limits
   if (is.null(.ylim)) {
     lim <- vector("list", length(.coverage))
     names(lim) <- names(.coverage)
@@ -543,7 +696,8 @@ plotHFGC <- function(
 #' @importFrom GenomeInfoDb seqnames
 .checkHFGCArgs <- function(
   gr, zoom, shift, hic, features, genes, coverage, annotation, axistrack,
-  cytobands, max, hiccol, linecol, genecol, featurecol, annotcol, type, ylim
+  cytobands, max, hiccol, linecol, genecol, featcol, annotcol, type, ylim,
+  collapseTranscripts
 ) {
 
   msg <- c()
@@ -576,35 +730,14 @@ plotHFGC <- function(
       msg <- c(msg, "'features' must be provided as a GRangesList\n")
     if ("" %in% names(features))
       msg <- c(msg, "All elements of 'features' must be explicitly named\n")
-    if (!missing(featurecol)) {
-      if (!all(names(features) %in% names(featurecol)))
-        msg <- c(msg, "All elements of 'features' must be in 'featurecol'\n")
+    if (!missing(featcol)) {
+      if (!all(names(features) %in% names(featcol)))
+        msg <- c(msg, "All elements of 'features' must be in 'featcol'\n")
     }
 
   }
 
-  if (!missing(genes)) {
-    if (is(genes, "GRangesList")) {
-      if (!missing(genecol))
-        if (!all(names(genes) %in% names(genecol)))
-          msg <- c(
-            msg,
-            "All elements of 'genes' must have a colour named in 'genecol'\n"
-          )
-      genes <- unlist(genes)
-    }
-    if (!is(genes, "GRanges")) {
-      msg <- c(msg, "genes must be a 'GRanges' or GRangesList object\n")
-    } else {
-      gene_mcols <- c("gene", "exon", "transcript", "symbol")
-      if (!all(gene_mcols %in% colnames(mcols(genes))))
-        msg <- c(
-          msg, paste(
-            "'genes' must have an mcols component with the columns:",
-            paste(gene_mcols, collapse = ", "), "\n")
-        )
-    }
-  }
+ msg <- .checkGenes(msg, genes, genecol, collapseTranscripts)
 
   msg <- .checkCoverage(
     msg, coverage, linecol, type, annotation, annotcol, ylim
@@ -650,6 +783,7 @@ plotHFGC <- function(
     if (!is(coverage, "BigWigFileList"))
       msg <- c(msg, "'coverage' should be a BigWigFileList or a list\n")
   }
+
   if (!is.null(linecol) & type == "l") {
     ## If we have BigWigFileList, we need a vector or list of colours
     ## the same length. If named, names must match
@@ -719,6 +853,7 @@ plotHFGC <- function(
 
   all_annot <- c()
   ## We need to check that it's a GRangesList if coverage is a BigWigFileList
+  ## This would then be plotted as a single track above all coverage tracks
   if (is(coverage, "BigWigFileList")) {
     if (!is(annotation, "GRangesList")) {
       msg <- c(msg, "annotation must be a GRangesList\n")
@@ -743,7 +878,8 @@ plotHFGC <- function(
 
   if (missing(annotcol)) return(msg)
 
-  ## Also we need to check that colours match if specified
+  ## Also we need to check that colours match if specified. For a single BWFL
+  ## we need a simple vector of colours. For a list of BWFLs we need the same!
   if (!missing(annotcol)) {
     all_cols <- names(annotcol)
     miss <- setdiff(all_annot, all_cols)
@@ -755,3 +891,112 @@ plotHFGC <- function(
 
 }
 
+
+.checkGenes <- function(msg, genes, genecol, collapseTranscripts) {
+
+  if (missing(genes)) return(msg)
+
+  if (!is(genes, "GenomicRanges_OR_GRangesList"))
+    msg <- c(msg, "genes must be a 'GRanges' or 'GRangesList' object\n")
+
+  reqd_mcols <- c("gene", "exon", "transcript", "symbol")
+  trans_vals <- c(
+    "TRUE", "T", "FALSE", "F", "gene", "longest", "shortest", "meta"
+  )
+
+  if (is(genes, "GRangesList")) {
+
+    nm <- names(genes)
+    if (length(nm) != length(genes)) {
+      msg <- c(
+        msg, "All elements of the 'genes' GRangesList must be named \n"
+      )
+      return(msg)
+    }
+
+    chk_mcols <- vapply(
+      genes,
+      function(x) all(reqd_mcols %in% colnames(mcols(x))),
+      logical(1)
+    )
+    if (!all(chk_mcols))
+      msg <- c(
+        msg,
+        paste(
+          "All elements of the 'genes' GRangesList must have the columns",
+          collapseGenes(c("gene", "exon", "transcript", "symbol"), format = ""),
+          "\n"
+        )
+      )
+
+    ## The colours should be a single colour, or named vector/list
+    if (length(genecol) > 1) {
+      if (!all(nm %in% names(genecol)))
+        msg <- c(
+          msg,
+          paste(
+            "All elements of the 'genes' GRangesList should have a named",
+            "colour in 'genecol'\n"
+          )
+        )
+    }
+
+    ## collapseTranscripts can be a logical vector or list
+    ## An logical vector is fine & only alternatives need to be checked
+    if (!is.logical(collapseTranscripts)) {
+
+      if (length(collapseTranscripts) > 1) {
+        ## Check the names
+        if (!all(nm %in% names(collapseTranscripts)))
+          msg <- c(
+            msg,
+            paste(
+              "All elements of the 'genes' GRangesList must be named in",
+              "collapseTranscripts\n"
+            )
+          )
+      }
+
+      ## Check the values which aren't logical
+      is_log <- vapply(collapseTranscripts, is.logical, logical(1))
+      ct <- unlist(collapseTranscripts[!is_log])
+      if (!all(ct %in% trans_vals)){
+        msg <- c(
+          msg,
+          paste(
+            "collapseTranscripts can only be logical or one of",
+            "gene, longest, shortest or meta\n"
+          )
+        )
+      }
+    }
+
+  }
+
+  if (is(genes, "GRanges")) {
+    chk_cols <- all(reqd_mcols %in% colnames(mcols(genes)))
+    if (!chk_cols)
+      msg <- c(
+        msg,
+        paste(
+          "The 'genes' GRanges object must have the columns",
+          collapseGenes(c("gene", "exon", "transcript", "symbol"), format = ""),
+          "\n"
+        )
+      )
+    ## Check the values
+    if (!is.logical(collapseTranscripts)) {
+      if (!all(collapseTranscripts %in% trans_vals))
+        msg <- c(
+          msg,
+          paste(
+            "collapseTranscripts can only be logical or one of",
+            "gene, longest, shortest or meta\n"
+          )
+        )
+    }
+  }
+
+  msg
+
+}

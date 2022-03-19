@@ -13,7 +13,7 @@ cyto_df <- data.frame(
 )
 
 test_path <- system.file("tests", "test.bw", package = "rtracklayer")
-test_bw <- BigWigFileList(test_path)
+test_bw <- rtracklayer::BigWigFileList(test_path)
 names(test_bw) <- "a"
 
 
@@ -34,7 +34,7 @@ test_that("Correct plotting works", {
   p <- plotHFGC(
     gr, hic = hic, features = feat_gr, genes = genes,
     zoom = 2, cytobands = grch37.cytobands, rotation.title = 90,
-    featurecol = c(Promoter = "red", Enhancer = "yellow")
+    featcol = c(Promoter = "red", Enhancer = "yellow")
   )
   expect_true(is(p, "list"))
   expect_equal(length(p), 6)
@@ -88,7 +88,7 @@ test_that(".checkHFGCArgs catches GRanges issues", {
       gr = gr1, zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, type = "l",
       genes = c()
     ),
-    "genes must be a 'GRanges' or GRangesList object"
+    "genes must be a 'GRanges' or 'GRangesList' object"
   )
   expect_true(
     .checkHFGCArgs(
@@ -161,9 +161,9 @@ test_that("Malformed features are caught", {
   expect_message(
     .checkHFGCArgs(
       gr1, zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, type = "l",
-      features = GRangesList(a = GRanges()), featurecol = c(b = "blue")
+      features = GRangesList(a = GRanges()), featcol = c(b = "blue")
     ),
-    "All elements of 'features' must be in 'featurecol'"
+    "All elements of 'features' must be in 'featcol'"
   )
 })
 
@@ -171,22 +171,38 @@ test_that("Malformed genes are caught", {
   expect_true(
     .checkHFGCArgs(
       gr1, zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, type = "l",
-      genes = genes
+      genes = genes, collapseTranscripts = TRUE
     )
   )
   expect_message(
     .checkHFGCArgs(
       gr1, zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, type = "l",
-      genes = GRanges()
+      genes = GRanges(), collapseTranscripts = TRUE
     ),
-    "'genes' must have an mcols component with the columns"
+    "The 'genes' GRanges object must have the columns"
   )
   expect_message(
     .checkHFGCArgs(
       gr1, zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, type = "l",
-      genes = GRangesList(a = gr1), genecol = "blue"
+      genes = GRangesList(a = gr1), genecol = "blue",
+      collapseTranscripts = TRUE
     ),
-    "'genes' must have an mcols component with the columns"
+    "All elements of the 'genes' GRangesList must have the columns"
+  )
+  expect_message(
+    .checkHFGCArgs(
+      gr1, zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, type = "l",
+      genes = GRangesList(a = genes, b = genes), genecol = "blue",
+      collapseTranscripts = list(a = TRUE, c = TRUE)
+    ),
+    "All elements of the 'genes' GRangesList must be named in collapseTranscr"
+  )
+  expect_message(
+    .checkHFGCArgs(
+      gr1, zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, type = "l",
+      genes = genes, genecol = "blue", collapseTranscripts = ""
+    ),
+    "collapseTranscripts can only be logical or one of gene, longest, shortest"
   )
 })
 
@@ -320,9 +336,11 @@ test_that("Ideogram forms correctly", {
 
 test_that("HiC Track forms correctly", {
   hic_track <- .makeHiCTrack(
-    hic, gr1, .tracksize = 2, .fontsize = 10, .cex = 1, .rot = 90, .col = hiccol
+    hic, gr1, .tracksize = 2, .fontsize = 10, .cex = 1, .rot = 90,
+    .col = hiccol, .name = "HiC"
   )
   expect_true(is(hic_track, "InteractionTrack"))
+  expect_equal("HiC", hic_track@name)
   expect_equal(hic_track@dp@pars$col.anchors.line, hiccol$anchors)
   expect_equal(hic_track@dp@pars$col.anchors.fill, hiccol$anchors)
   expect_equal(hic_track@dp@pars$col.interactions, hiccol$interactions)
@@ -336,14 +354,15 @@ test_that("HiC Track forms correctly", {
 test_that("Feature Track forms correctly", {
   feat_track <- .makeFeatureTrack(
     feat, gr1, .fontsize = 12, list(a = "blue"), .cex = 1, .tracksize = 1,
-    .rot = 0
+    .rot = 0, .name = "Features", .stacking = "full"
   )
   expect_true(is(feat_track, "AnnotationTrack"))
   expect_equal(feat_track@dp@pars$fill, c(a = "blue"))
+  expect_equal("Features", feat_track@name)
   expect_null(
     .makeFeatureTrack(
       feat, gr2, .fontsize = 12, list(a = "blue"), .cex = 1, .tracksize = 1,
-      .rot = 0
+      .rot = 0, .name = "Features", .stacking = "full"
     )
   )
   expect_null(.makeFeatureTrack())

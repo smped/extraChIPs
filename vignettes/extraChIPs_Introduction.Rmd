@@ -28,3 +28,18 @@ There are essentially four sets of functions provided with this package:
 2. Functions for visualisation of ChIP-Seq and related data
 3. Functions for aiding the analysis during the workflow
 4. General coercion functions which may be more widely applicable
+
+# Range-based Operations
+
+The standard set operations implemented in the package `GenomicRanges` will
+always drop the `mcols` element by default.
+The `extraChIPs` functions `reduceMC()`, `setdiffMC()`, `intersectMC()` and 
+`unionMC()` all produce the same output as their similarly-named functions,
+however, the `mcols()` elements in the query object are also returned.
+Where required, columns are coerced into `CompressedList` columns.
+
+## `reduceMC()`
+
+
+
+

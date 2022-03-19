@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.15</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.16</span>
       </span>
     </div>
 
@@ -99,6 +99,16 @@
 <li>Functions for aiding the analysis during the workflow</li>
 <li>General coercion functions which may be more widely applicable</li>
 </ol>
+</div>
+<div class="section level2">
+<h2 id="range-based-operations">Range-based Operations<a class="anchor" aria-label="anchor" href="#range-based-operations"></a>
+</h2>
+<p>The standard set operations implemented in the package <code>GenomicRanges</code> will always drop the <code>mcols</code> element by default. The <code>extraChIPs</code> functions <code><a href="../reference/reduceMC-methods.html">reduceMC()</a></code>, <code><a href="../reference/setoptsMC-methods.html">setdiffMC()</a></code>, <code><a href="../reference/setoptsMC-methods.html">intersectMC()</a></code> and <code><a href="../reference/setoptsMC-methods.html">unionMC()</a></code> all produce the same output as their similarly-named functions, however, the <code>mcols()</code> elements in the query object are also returned. Where required, columns are coerced into <code>CompressedList</code> columns.</p>
+<div class="section level3">
+<h3 id="reducemc">
+<code>reduceMC()</code><a class="anchor" aria-label="anchor" href="#reducemc"></a>
+</h3>
+</div>
 </div>
   </div>
 
