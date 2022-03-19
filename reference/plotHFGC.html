@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.15</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.16</span>
       </span>
     </div>
 
@@ -25,6 +25,16 @@
       <ul class="nav navbar-nav"><li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Vignettes
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/extraChIPs_Introduction.html">Introduction to extraChIPs</a>
+    </li>
+  </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/steveped/extraChIPs/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
@@ -66,7 +76,7 @@
   linecol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,
   gradient <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">hcl.colors</a></span><span class="op">(</span><span class="fl">101</span>, <span class="st">"viridis"</span><span class="op">)</span>,
   hiccol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>anchors <span class="op">=</span> <span class="st">"lightblue"</span>, interactions <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span>,
-  <span class="va">featurecol</span>,
+  <span class="va">featcol</span>,
   <span class="va">genecol</span>,
   <span class="va">annotcol</span>,
   highlight <span class="op">=</span> <span class="st">"blue"</span>,
@@ -75,12 +85,16 @@
   genesize <span class="op">=</span> <span class="fl">1</span>,
   covsize <span class="op">=</span> <span class="fl">4</span>,
   annotsize <span class="op">=</span> <span class="fl">0.5</span>,
+  hicname <span class="op">=</span> <span class="st">"HiC"</span>,
+  featname <span class="op">=</span> <span class="st">"Features"</span>,
+  featstack <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"full"</span>, <span class="st">"hide"</span>, <span class="st">"dense"</span>, <span class="st">"squish"</span>, <span class="st">"pack"</span><span class="op">)</span>,
   ylim <span class="op">=</span> <span class="cn">NULL</span>,
   <span class="va">...</span>,
   fontsize <span class="op">=</span> <span class="fl">12</span>,
   cex.title <span class="op">=</span> <span class="fl">0.8</span>,
   rotation.title <span class="op">=</span> <span class="fl">0</span>,
-  collapseTranscripts <span class="op">=</span> <span class="st">"meta"</span>
+  collapseTranscripts <span class="op">=</span> <span class="st">"meta"</span>,
+  title.width <span class="op">=</span> <span class="cn">NULL</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -94,11 +108,11 @@ object. If not supplied, no HiC track will be drawn.</p></dd>
 <dt>features</dt>
 <dd><p>A named GRangesList object containing regulatory features in
 each list element. Features will be drawn on a single track with colours
-matching those provided in <code>featurecol</code>. If not included, no feature track
+matching those provided in <code>featcol</code>. If not included, no feature track
 will be drawn</p></dd>
 <dt>genes</dt>
 <dd><p>A GRanges object with exon structure for each transcript/gene.
-If not included, to track will be drawn for gene/transcript structure</p></dd>
+If not included, no track will be drawn for gene/transcript structure</p></dd>
 <dt>coverage</dt>
 <dd><p>A named list of BigWigFileList objects containing the
 primary tracks to show coverage for. Each list element will be drawn on a
@@ -140,7 +154,7 @@ BigWigFileList. Only used if coverage_type = "l".</p></dd>
 <dt>hiccol</dt>
 <dd><p>list with names <code>"anchors"</code> and <code>"interactions"</code>. Colours
 are passed to these elements</p></dd>
-<dt>featurecol</dt>
+<dt>featcol</dt>
 <dd><p>Named vector (or list) of colours for each feature</p></dd>
 <dt>genecol</dt>
 <dd><p>Named vector (or list) of colours for each gene category</p></dd>
@@ -151,6 +165,10 @@ are passed to these elements</p></dd>
 <code>NULL</code> will remove the highlight</p></dd>
 <dt>hicsize, featsize, genesize, covsize, annotsize</dt>
 <dd><p>Relative sizes for each track (hic, features, genes, coverage &amp; annotation)</p></dd>
+<dt>hicname, featname</dt>
+<dd><p>Names displayed in the LHS panel</p></dd>
+<dt>featstack</dt>
+<dd><p>Stacking for the fature track</p></dd>
 <dt>ylim</dt>
 <dd><p>If a numeric vector, this will be passed to all coverage tracks.
 Alternatively, a named list of y-limits for each coverage track with names
@@ -167,6 +185,11 @@ Useful arguments may be things like <code>legend</code></p></dd>
 <dt>collapseTranscripts</dt>
 <dd><p>Passed to <a href="https://rdrr.io/pkg/Gviz/man/GeneRegionTrack-class.html" class="external-link">GeneRegionTrack</a> for the
 genes track</p></dd>
+<dt>title.width</dt>
+<dd><p>Expansion factor passed to <a href="https://rdrr.io/pkg/Gviz/man/plotTracks.html" class="external-link">plotTracks</a>, and
+used to widen thepanels on the LHS of all tracks.
+Can have unpredictable effects on the font
+size of y-axis limits due to the algorithm applied by <code>plotTracks</code></p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -185,14 +208,17 @@ In descending order the tracks displayed will be:</p><ol><li><p>HiC Interactions
 <li><p>Regulatory features</p></li>
 <li><p>Genes/genes</p></li>
 <li><p>Coverage tracks as supplied</p></li>
-</ol><p>All tracks are optional and will simply be omitted if no data is supplied.</p>
+</ol><p>All tracks are optional and will simply be omitted if no data is supplied.
+See individual sections below for a more detailed explanation of each track</p>
 <p>If wanting a single track of genes, simply pass a GRanges object in the
 format specified for a <a href="https://rdrr.io/pkg/Gviz/man/GeneRegionTrack-class.html" class="external-link">GeneRegionTrack</a>. Passing a GRangesList
 with the same format will yield an individual track for each list element,
 with each track shown by default as a separate colour. This can be used for
 showing Up/Down-regulated genes, or Detected/Undetected genes.</p>
 <p>If passing a BigWigFileList for the coverage track, each file within the
-object will be drawn on a separate track. If passing a list of BigWigFileList
+object will be drawn on a separate track. If specified, the same y-limits
+will be applied to each track
+If passing a list of BigWigFileList
 objects, each list element will be drawn as a single track with the
 individual files within each BigWigFileList overlaid within each track.</p>
 <p>Cytogenetic band information must be in the structure required by
@@ -201,6 +227,176 @@ this package (<a href="grch37.cytobands.html">grch37.cytobands</a>, <a href="grc
 <p>A highlight overlay over the GRanges provided as the <code>gr</code> argument will be
 added if a colour is provided. If set to NULL, no highlight will be added.</p>
     </div>
+    <div id="displaying-hic-interactions">
+    <h2>Displaying HiC Interactions</h2>
+    
+
+
+<p>The available arguments for displaying HiC Interactions are defined below.
+If <code>hic</code> is supplied, a single <a href="https://rdrr.io/pkg/GenomicInteractions/man/InteractionTrack.html" class="external-link">InteractionTrack</a>
+will be added displaying
+all interactions with an anchor within the range specified by <code>gr</code>.
+Only interactions with an anchor explicitly overlapping <code>gr</code> will be shown.
+If no interactions are found within <code>gr</code>, the track will not be displayed.
+The <strong>plotting range will expand to incorporate these interactions</strong>, with
+the paramater <code>max</code> providing an upper limit on the displayed range.</p>
+<dl><dt>hic</dt>
+<dd><p>This is the <code>GInteractions</code> object required for inclusion of
+a HiC track in the final output. Will be ignored if not supplied</p></dd>
+
+<dt>hiccol</dt>
+<dd><p>Determines the colours used for display of anchors and
+interactions</p></dd>
+
+<dt>hicsize</dt>
+<dd><p>Relative size of the track compared to others</p></dd>
+
+<dt>hicname</dt>
+<dd><p>The name to display on the LHS panel</p></dd>
+
+<dt>max</dt>
+<dd><p>The maximum width of the plotted region. If multiple long-range
+interactions are identified, this provides an upper limit for the display.
+This defaults to <code>10Mb</code>.</p></dd>
+
+
+</dl></div>
+    <div id="displaying-features">
+    <h2>Displaying Features</h2>
+    
+
+
+<p>If wanting to add an <a href="https://rdrr.io/pkg/Gviz/man/AnnotationTrack-class.html" class="external-link">AnnotationTrack</a> with regions defined as
+'features', the following arguments are highly relevant.
+All are ignored if <code>features</code> is not provided.</p>
+<dl><dt>features</dt>
+<dd><p>A named <code>GRangesList</code>. Each element will be considered as
+a separate feature and drawn as a block in a distinct colour. Any <code>mcols</code>
+data will be ignored.</p></dd>
+
+<dt>featcol</dt>
+<dd><p>A <strong>named</strong> vector (or list) providing a colour for each
+element of <code>features</code></p></dd>
+
+<dt>featname</dt>
+<dd><p>The name to display on the LHS panel</p></dd>
+
+<dt>featstack</dt>
+<dd><p>Stacking to be applied to all supplied features</p></dd>
+
+<dt>featsize</dt>
+<dd><p>Relative size of the track compared to others</p></dd>
+
+
+</dl></div>
+    <div id="displaying-genes-and-transcripts">
+    <h2>Displaying Genes And Transcripts</h2>
+    
+
+
+<p>To display genes or transcripts, simply provide a single <code>GRanges</code> object if
+you wish to display all genes on a single track.
+The <code>mcols</code> element of this object should contain the columns <code>feature</code>,
+<code>gene</code>, <code>exon</code>, <code>transcript</code> and <code>symbol</code> as seen on the
+<a href="https://rdrr.io/pkg/Gviz/man/GeneRegionTrack-class.html" class="external-link">GeneRegionTrack</a> help page.</p>
+<p>Alternatively, a <code>GRangesList</code> can be provided to display genes on separate
+tracks based on their category.
+This can be useful for separating and colouring Up/Down regulated genes in a
+precise way.
+All elements should be as described above.
+Again, all parameters associated with this track-set will be ignored of no
+object is supplied to this argument.</p>
+<dl><dt>genes</dt>
+<dd><p>A <code>GRanges</code> or <code>GRangesList</code> object as described above</p></dd>
+
+<dt>genecol</dt>
+<dd><p>A single colour if supplying a <code>GRanges</code> object, or a
+<strong>named</strong> vector/list of colours matching the <code>GRangesList</code></p></dd>
+
+<dt>genesize</dt>
+<dd><p>Relative size of the track compared to others</p></dd>
+
+<dt>collapseTranscripts</dt>
+<dd><p>Passed to all tracks. See the GeneRegionTrack
+section in <a href="https://rdrr.io/pkg/Gviz/man/settings.html" class="external-link">settings</a> for detail regarding possible arguments.
+If genes is a <code>GRangesList</code>, can be a <strong>named</strong> vector/list with names
+matching the names of the <code>genes</code> object.</p></dd>
+
+
+</dl></div>
+    <div id="displaying-coverage-tracks">
+    <h2>Displaying Coverage Tracks</h2>
+    
+
+
+<p>This section contains the most flexibility and can take two types of input.
+The first option is a <code>BigWigFileList</code>, which will lead to each BigWig file
+being plotted on it's own track.
+An alternative is a list of <code>BigWigFileList</code> objects.
+In this case, each list element will be plotted as a separate track,
+with all individual <code>BigWig</code> files within each list element
+overlaid within the relevant track.</p>
+<p>In addition to the coverage tracks, annotations can be added to each
+<code>BigWigFileList</code> in the form of coloured ranges, indicating anything of the
+users choice. Common usage may be to indicate regions with binding of a
+ChIP target is found to be detected, unchanged, gained or lost.</p>
+<dl><dt>coverage</dt>
+<dd><p>A <code>BigWigFileList</code> or <code>list</code> of <code>BigWigFileList</code> objects.
+A single <code>BigWigFileList</code> will be displayed with each individual file on a
+separate track with independent y-axes. Each element of the
+<code>BigWigFileList</code> <strong>must be named</strong> and these names will be displayed on the
+LHS panels
+A list of <code>BigWigFileList</code> objects will be displayed with each list element
+as a separate track, with any <code>BigWig</code> files overlaid using the same
+y-axis. The list <strong>must be named</strong> with these names displayed on the LHS
+panel. Each internal <code>BigWig</code> within a <code>BigWigFileList</code> must also be named.</p></dd>
+
+<dt>coverage_type</dt>
+<dd><p>Currently only lines (<code>coverage_type = "l"</code>) and
+heatmaps (<code>coverage_type = "heatmap</code>) are supported. Colours can be
+specified using the arguments below</p></dd>
+
+<dt>linecol</dt>
+<dd><p>Can be a single colour applied to all tracks, or a <em>named</em>
+vector (or list) of colours. If <code>coverage</code> is a single <code>BigWigFileList</code>,
+these names should match the names of this object exactly.
+If <code>coverage</code> is a list of <code>BigWigFileList</code> objects, <code>linecol</code> should be
+a list with matching names. Each element of this list should also be a
+<strong>named</strong> vector with names that exactly match those of each corresponding
+<code>BigWigFileList</code>.</p></dd>
+
+<dt>gradient</dt>
+<dd><p>A colour gradient applied to all heatmap tracks. No
+specific structure is required beyond a vector of colours.</p></dd>
+
+<dt>covsize</dt>
+<dd><p>Relative size of the tracks compared to others</p></dd>
+
+<dt>ylim</dt>
+<dd><p>Can be a vector of length 2 applied to all coverage tracks.
+Alternatively, if passing a list of <code>BigWigFlieList</code> objects to the
+<code>coverage</code> argument, this can be a <strong>named</strong> list of numeric vectors with
+names matching <code>coverage</code></p></dd>
+
+<dt>annotation</dt>
+<dd><p>Each <code>BigWigFileList</code> needs annotations to be passed to
+this argument as a <strong>named</strong> <code>GRangesList</code>, with names being used to
+associate unique colours with that set of ranges. If <code>coverage</code> is a
+<code>BigWigFileList</code> a simple <code>GRangesList</code> would be supplied and a single
+'annotation' track will appear at the top of the set of coverage tracks.
+If <code>coverage</code> is a <code>list</code>, then a <strong>named</strong> list of <code>GRangesList</code> objects
+should be supplied, with each being displayed above the corresponding track
+from the <code>coverage</code> object.</p></dd>
+
+<dt>annotcol</dt>
+<dd><p>A vector of colours corresponding to all names within all
+<code>GRangesList</code> elements supplied as <code>annotation</code></p></dd>
+
+<dt>annotsize</dt>
+<dd><p>Relative size of the tracks compared to others</p></dd>
+
+
+</dl></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
@@ -220,7 +416,7 @@ added if a colour is provided. If set to NULL, no highlight will be added.</p>
 <span class="r-in"><span class="fu">plotHFGC</span><span class="op">(</span></span>
 <span class="r-in">  <span class="va">gr</span>, hic <span class="op">=</span> <span class="va">hic</span>, features <span class="op">=</span> <span class="va">feat_gr</span>, genes <span class="op">=</span> <span class="va">genes</span>,</span>
 <span class="r-in">  zoom <span class="op">=</span> <span class="fl">2</span>, cytobands <span class="op">=</span> <span class="va">grch37.cytobands</span>, rotation.title <span class="op">=</span> <span class="fl">90</span>,</span>
-<span class="r-in">  featurecol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Promoter <span class="op">=</span> <span class="st">"red"</span>, Enhancer <span class="op">=</span> <span class="st">"yellow"</span><span class="op">)</span></span>
+<span class="r-in">  featcol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Promoter <span class="op">=</span> <span class="st">"red"</span>, Enhancer <span class="op">=</span> <span class="st">"yellow"</span><span class="op">)</span></span>
 <span class="r-in"><span class="op">)</span></span>
 <span class="r-plt img"><img src="plotHFGC-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"></span>
