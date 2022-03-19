@@ -51,9 +51,13 @@ Imports:
   utils,
   vctrs
 Suggests: 
-    covr,
-    testthat (>= 3.0.0)
+  BiocStyle,
+  covr,
+  knitr,
+  rmarkdown,
+  testthat (>= 3.0.0)
 biocViews: ChIPSeq, Sequencing
+VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)  
 RoxygenNote: 7.1.2
 Config/testthat/edition: 3
