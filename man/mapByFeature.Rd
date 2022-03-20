@@ -76,12 +76,12 @@ framework. The following sequential strategy is used:
 
 \enumerate{
 \item Ranges overlapping a promoter are assigned to that gene
-\item Ranges overlapping an enhancer are assigned to all genes within
+\item Ranges overlapping an enhancer are assigned to \strong{all genes} within
 a specified distance
 \item Ranges overlapping a long-range interaction are assigned to all genes
 connected by the interaction
 \item Ranges with no gene assignment from the previous steps are assigned
-to \emph{all genes} within a specified distance
+to \emph{all overlapping genes} or the nearest gene within a specified distance
 }
 
 If information is missing for one of these steps, the algorithm will simply

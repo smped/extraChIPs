@@ -16,7 +16,7 @@ plotHFGC(
   max = 1e+07,
   axistrack = TRUE,
   cytobands,
-  coverage_type = c("l", "heatmap"),
+  covtype = c("l", "heatmap"),
   linecol = c(),
   gradient = hcl.colors(101, "viridis"),
   hiccol = list(anchors = "lightblue", interactions = "red"),
@@ -82,14 +82,14 @@ interactions are supplied.}
 
 \item{cytobands}{Cytogenetic bands to be displayed on each chromosome}
 
-\item{coverage_type}{The plot type for coverage. Currently only lines ("l")
+\item{covtype}{The plot type for coverage. Currently only lines ("l")
 and heatmaps ("heatmap") are supported}
 
 \item{linecol}{If passing a BigWigFileList to coverage, a vector of colours.
 If passing a list of BigWigFileList objects to coverage, a list of colours
 with structure that matches the object being passed to coverage, i.e. a
 named list of the same length, with elements who's length matches each
-BigWigFileList. Only used if coverage_type = "l".}
+BigWigFileList. Only used if covtype = "l".}
 
 \item{gradient}{Colour gradient for heatmaps}
 
@@ -280,8 +280,8 @@ as a separate track, with any \code{BigWig} files overlaid using the same
 y-axis. The list \strong{must be named} with these names displayed on the LHS
 panel. Each internal \code{BigWig} within a \code{BigWigFileList} must also be named.
 }
-\item{coverage_type}{Currently only lines (\code{coverage_type = "l"}) and
-heatmaps (\verb{coverage_type = "heatmap}) are supported. Colours can be
+\item{covtype}{Currently only lines (\code{covtype = "l"}) and
+heatmaps (\verb{covtype = "heatmap}) are supported. Colours can be
 specified using the arguments below}
 \item{linecol}{Can be a single colour applied to all tracks, or a \emph{named}
 vector (or list) of colours. If \code{coverage} is a single \code{BigWigFileList},

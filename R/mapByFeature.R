@@ -10,12 +10,12 @@
 #'
 #' \enumerate{
 #'   \item Ranges overlapping a promoter are assigned to that gene
-#'   \item Ranges overlapping an enhancer are assigned to all genes within
+#'   \item Ranges overlapping an enhancer are assigned to **all genes** within
 #'   a specified distance
 #'   \item Ranges overlapping a long-range interaction are assigned to all genes
 #'   connected by the interaction
 #'   \item Ranges with no gene assignment from the previous steps are assigned
-#'   to *all genes* within a specified distance
+#'   to *all overlapping genes* or the nearest gene within a specified distance
 #' }
 #'
 #' If information is missing for one of these steps, the algorithm will simply
@@ -318,12 +318,13 @@ mapByFeature <- function(
 #' @return A data.frame
 #' @importFrom S4Vectors mcols
 #' @importFrom vctrs vec_proxy
-#' @importFrom GenomicRanges findOverlaps
-#' @importFrom dplyr inner_join mutate_all
+#' @importFrom GenomicRanges findOverlaps distanceToNearest
+#' @importFrom dplyr inner_join mutate_all across distinct bind_rows
 #' @importFrom tidyr unnest
-#' @importFrom tidyselect everything
+#' @importFrom tidyselect everything ends_with
 #' @keywords internal
 .mapWithin <- function(.gr, .genes, .cols, .within, ...) {
+  distance <- c() ## R CMD error avoidance
   if (missing(.genes) | length(.gr) == 0) return(NULL)
   .cols <- intersect(.cols, names(mcols(.genes)))
   stopifnot(length(.cols) > 0)
@@ -332,11 +333,17 @@ mapByFeature <- function(
   mapped_df <- as.data.frame(mapped_df)
   mapped_df <- mutate_all(mapped_df, vec_proxy) # Remove AsIs attributes!!!
   mapped_df <- unnest(mapped_df, everything())
-  range_to_genes <- findOverlaps(.gr, .genes, maxgap = .within, ...)
-  range_to_genes <- as.data.frame(range_to_genes)
+
+  ## First find all direct overlaps
+  range_to_genes <- as.data.frame(findOverlaps(.gr, .genes, ...))
+  ## Now find the nearest within '.within' and collect all unique mappings
+  range_to_nearest <- as.data.frame(distanceToNearest(.gr, .genes, ...))
+  range_to_nearest <- subset(range_to_nearest, distance <= .within)
+  range_to_genes <- bind_rows(range_to_genes, range_to_nearest)
+  range_to_genes <- distinct(range_to_genes, across(ends_with("Hits")))
+
+  ## Now define the mappings back to the original set
   range_df <- data.frame(range = as.character(.gr), queryHits = seq_along(.gr))
-  ## This will drop any additional columns. They can be replaced in the
-  ## parent function
   range_df <- inner_join(range_df, range_to_genes, by = "queryHits")
   range_df <- inner_join(range_df, mapped_df, by = "subjectHits")
   range_df[c("range", .cols)]

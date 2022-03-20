@@ -138,8 +138,8 @@
 #'   y-axis. The list **must be named** with these names displayed on the LHS
 #'   panel. Each internal `BigWig` within a `BigWigFileList` must also be named.
 #'   }
-#'   \item{coverage_type}{Currently only lines (`coverage_type = "l"`) and
-#'   heatmaps (`coverage_type = "heatmap`) are supported. Colours can be
+#'   \item{covtype}{Currently only lines (`covtype = "l"`) and
+#'   heatmaps (`covtype = "heatmap`) are supported. Colours can be
 #'   specified using the arguments below}
 #'   \item{linecol}{Can be a single colour applied to all tracks, or a *named*
 #'   vector (or list) of colours. If `coverage` is a single `BigWigFileList`,
@@ -227,13 +227,13 @@
 #' @param featcol Named vector (or list) of colours for each feature
 #' @param genecol Named vector (or list) of colours for each gene category
 #' @param annotcol Colours matching the coverage annotations
-#' @param coverage_type The plot type for coverage. Currently only lines ("l")
+#' @param covtype The plot type for coverage. Currently only lines ("l")
 #' and heatmaps ("heatmap") are supported
 #' @param linecol If passing a BigWigFileList to coverage, a vector of colours.
 #' If passing a list of BigWigFileList objects to coverage, a list of colours
 #' with structure that matches the object being passed to coverage, i.e. a
 #' named list of the same length, with elements who's length matches each
-#' BigWigFileList. Only used if coverage_type = "l".
+#' BigWigFileList. Only used if covtype = "l".
 #' @param gradient Colour gradient for heatmaps
 #' @param highlight Outline colour for the highlight track. Setting this to
 #' `NULL` will remove the highlight
@@ -267,7 +267,7 @@
 plotHFGC <- function(
   gr, hic, features, genes, coverage, annotation,
   zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, cytobands,
-  coverage_type = c("l", "heatmap"),
+  covtype = c("l", "heatmap"),
   linecol = c(), gradient = hcl.colors(101, "viridis"),
   hiccol = list(anchors = "lightblue", interactions = "red"),
   featcol, genecol, annotcol, highlight = "blue",
@@ -281,13 +281,13 @@ plotHFGC <- function(
 ) {
 
   ## Argument checks
-  coverage_type <- match.arg(coverage_type)
+  covtype <- match.arg(covtype)
   checkArgs <- .checkHFGCArgs(
     gr = gr, zoom = zoom, shift = shift, hic = hic, features = features,
     genes = genes, coverage = coverage, annotation = annotation,
     axistrack = axistrack, cytobands = cytobands, max = max, hiccol = hiccol,
     linecol = linecol, genecol = genecol, featcol = featcol,
-    annotcol = annotcol, type = coverage_type, ylim = ylim,
+    annotcol = annotcol, type = covtype, ylim = ylim,
     collapseTranscripts = collapseTranscripts
   )
   stopifnot(checkArgs)
@@ -327,7 +327,7 @@ plotHFGC <- function(
 
   ## The coverage tracks NB: This will be list of tracks
   cov_tracks <- .makeCoverageTracks(
-    coverage, plot_range, fontsize, coverage_type, linecol, gradient, covsize,
+    coverage, plot_range, fontsize, covtype, linecol, gradient, covsize,
     cex.title, rotation.title, ylim, ...
   )
   cov_tracks <- .addAnnotations(

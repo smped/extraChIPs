@@ -29,7 +29,7 @@ A GRanges object
 Partition a set of Genomic Ranges by another
 }
 \details{
-The query set of ranges can be broken in regions which stricly overlap
+The query set of ranges can be broken in regions which strictly overlap
 a second set of ranges.
 The complete set of mcols from both initial objects will included in the
 set of partitioned ranges

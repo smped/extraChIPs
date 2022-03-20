@@ -71,17 +71,16 @@ test_that("mapGi returns NULL & errors where expected", {
 })
 
 test_that(".mapWithin produces the expected output", {
-  mapped_within <- .mapWithin(gr, genes, "gene_id", 0)
+  gr <- GRanges(c("chr1:5", "chr1:21-30", "chr1:30"))
+  genes <- GRanges(c("chr1:15-25", "chr1:29"))
+  genes$gene_id <- paste0("gene", 1:2)
+  mapped_within <- .mapWithin(gr, genes, "gene_id", 5)
   expect_true(is(mapped_within, "data.frame"))
   expect_equal(
-    table(mapped_within$range),
-    structure(
-      c(`chr1:10` = 1L, `chr1:30` = 2L, `chr1:40` = 1L), .Dim = 3L,
-      .Dimnames = structure(list(c("chr1:10", "chr1:30", "chr1:40")), .Names = ""),
-      class = "table"
-    )
+    mapped_within$range,
+    as.character(gr)[c(2, 2, 3)]
   )
-  expect_equal(mapped_within$gene_id, paste0("gene", c(1, 2, 3, 3)))
+  expect_equal(mapped_within$gene_id, paste0("gene", c(1, 2, 2)))
 })
 
 test_that(".mapWithin returns NULL & errors when expected", {
@@ -95,15 +94,15 @@ test_that("mapByFeature produces the correct output", {
   expected <- new(
     "CompressedCharacterList", elementType = "character",
     elementMetadata = NULL, metadata = list(),
-    unlistData = c("gene1", "gene2", "gene3", "gene3"),
+    unlistData = c("gene1", "gene2", "gene3"),
     partitioning = new(
-      "PartitioningByEnd", end = c(0L, 1L, 1L, 3L, 4L, 4L),
+      "PartitioningByEnd", end = c(0L, 1L, 1L, 2L, 3L, 3L),
       NAMES = NULL, elementType = "ANY", elementMetadata = NULL, metadata = list()
     )
   )
   expect_equal(ol_only, expected)
   ## Update promoter only mappings
-  expected[[1]] <- "gene1"
+  expected[[1]] <- "gene1"; expected[[4]] <- c("gene2", "gene3")
   expect_equal(
     mapByFeature(gr, genes, prom = prom, cols = "gene_id", gr2gene = 0)$gene_id,
     expected
