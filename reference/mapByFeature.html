@@ -132,12 +132,12 @@ interactions to enable better mapping of regions to genes. If provided, this
 essentially maps from ranges to genes using the regulatory features as a
 framework. The following sequential strategy is used:</p>
 <ol><li><p>Ranges overlapping a promoter are assigned to that gene</p></li>
-<li><p>Ranges overlapping an enhancer are assigned to all genes within
+<li><p>Ranges overlapping an enhancer are assigned to <strong>all genes</strong> within
 a specified distance</p></li>
 <li><p>Ranges overlapping a long-range interaction are assigned to all genes
 connected by the interaction</p></li>
 <li><p>Ranges with no gene assignment from the previous steps are assigned
-to <em>all genes</em> within a specified distance</p></li>
+to <em>all overlapping genes</em> or the nearest gene within a specified distance</p></li>
 </ol><p>If information is missing for one of these steps, the algorithm will simply
 proceed to the next step. If no promoter, enhancer or interaction data is
 provided, all ranges will be simply mapped by step 4.
@@ -194,13 +194,13 @@ obtained from the <code>genes</code> object.</p>
 <span class="r-in"><span class="co">## Map so that any gene within 25bp of the range is assigned</span></span>
 <span class="r-in"><span class="fu">mapByFeature</span><span class="op">(</span><span class="va">gr</span>, <span class="va">genes</span>, gr2gene <span class="op">=</span> <span class="fl">25</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 5 ranges and 1 metadata column:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand |           gene_id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; |   &lt;CharacterList&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1         0      * |       gene1,gene2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chr1        15      * | gene1,gene2,gene3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [3]     chr1        30      * | gene1,gene2,gene3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [4]     chr1        45      * |       gene2,gene3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [5]     chr1        60      * |             gene3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand |         gene_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;CharacterList&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1         0      * |           gene1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chr1        15      * |           gene1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [3]     chr1        30      * |           gene2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [4]     chr1        45      * |           gene3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [5]     chr1        60      * |           gene3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
 <span class="r-in"></span>
@@ -209,13 +209,13 @@ obtained from the <code>genes</code> object.</p>
 <span class="r-in"><span class="co">## more targetted approach. Similarly for the third range</span></span>
 <span class="r-in"><span class="fu">mapByFeature</span><span class="op">(</span><span class="va">gr</span>, <span class="va">genes</span>, <span class="va">prom</span>, gr2gene <span class="op">=</span> <span class="fl">25</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 5 ranges and 1 metadata column:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand |           gene_id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; |   &lt;CharacterList&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1         0      * |             gene1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chr1        15      * | gene1,gene2,gene3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [3]     chr1        30      * |       gene2,gene3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [4]     chr1        45      * |       gene2,gene3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [5]     chr1        60      * |             gene3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand |         gene_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;CharacterList&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1         0      * |           gene1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chr1        15      * |           gene1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [3]     chr1        30      * |     gene2,gene3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [4]     chr1        45      * |           gene3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [5]     chr1        60      * |           gene3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
 <span class="r-in"></span>
