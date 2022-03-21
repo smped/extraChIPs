@@ -14,6 +14,8 @@
 #' @param x,y GenomicRanges objects
 #' @param ignore.strand If set to TRUE, then the strand of x and y is set to
 #' "*" prior to any computation.
+#' @param simplify logical(1). Simplify any `CompressedList` columns as vectors
+#' where possible
 #' @param suffix Added to any shared column names in the provided objects
 #' @param ... Not used
 #'
@@ -26,14 +28,18 @@
 #' y
 #' partitionRanges(x, y)
 #'
-#' @importFrom S4Vectors mcols queryHits subjectHits
-#' @importFrom GenomicRanges findOverlaps pintersect setdiff sort
+#' @importFrom S4Vectors mcols queryHits subjectHits DataFrame
+#' @importFrom GenomicRanges findOverlaps sort psetdiff pintersect
 #'
 #' @export
 #' @rdname partitionRanges-methods
 setMethod(
   "partitionRanges", c("GRanges", "GRanges"),
-  function(x, y, ignore.strand = FALSE, suffix = c(".x", ".y"), ...) {
+  function(
+    x, y, ignore.strand = FALSE, simplify = TRUE, suffix = c(".x", ".y"), ...
+  ) {
+
+    if (length(y) == 0) return(x)
 
     ## First deal with an shared column names in the mcols elements
     cmn_names <- intersect(names(mcols(x)), names(mcols(y)))
@@ -44,20 +50,33 @@ setMethod(
       names(mcols(y))[i_y] <- paste0(names(mcols(y))[i_y], suffix[[2]])
     }
 
-    ## Now partition the ranges
-    hits <- findOverlaps(x, y, ignore.strand = ignore.strand)
-    gr <- pintersect(x[queryHits(hits)], y[subjectHits(hits)])
-    mcols(gr)[names(mcols(y))] <- mcols(y)[subjectHits(hits),]
-    mcols(gr) <- mcols(gr)[colnames(mcols(gr)) != "hit"]
+    ## If y has overlapping ranges, the partitioning problem doesn't make sense
+    ## First run a reduction on y, keeping mcols
+    red_y <- reduceMC(y, simplify = TRUE, ignore.strand = ignore.strand)
+    ol <- findOverlaps(x, red_y, ignore.strand = ignore.strand)
 
-    ## Now add any from x which didn't overlap y
-    non_ol <- GenomicRanges::setdiff(x, y, ignore.strand = ignore.strand)
-    non_hits <- findOverlaps(non_ol, x)
-    non_gr <- pintersect(non_ol[queryHits(non_hits)], x[subjectHits(non_hits)])
-    mcols(non_gr) <- mcols(x)[subjectHits(non_hits), ]
-    names(mcols(non_gr)) <- names(mcols(x))
-    gr <- c(gr, non_gr)
-    sort(gr, ignore.strand = ignore.strand)
+    ## Find the differences using parallel setdiff
+    sd <- psetdiff(
+      x[queryHits(ol)], red_y[subjectHits(ol)], ignore.strand = ignore.strand
+    )
+    sd_ol <- findOverlaps(sd, x, ignore.strand = ignore.strand)
+    sd <- sd[queryHits(sd_ol)]
+    mcols(sd) <- DataFrame(mcols(x)[subjectHits(sd_ol),])
+    colnames(mcols(sd)) <- colnames(mcols(x))
+
+    ## Find the intersection of each range using parallel intersect
+    int <- pintersect(
+      x[queryHits(ol)], red_y[subjectHits(ol)], ignore.strand = ignore.strand
+    )
+    mcols(int) <- mcols(int)[colnames(mcols(x))]
+
+    ## Join and map the columns from y
+    out <- GenomicRanges::sort(c(sd, int), ignore.strand = ignore.strand)
+    df_y <- mcols(.mapMcols2Ranges(out, red_y, ignore.strand, simplify))
+    mcols(out) <- cbind(mcols(out), df_y)
+
+    ## Now collapse any identical ranges
+    chopRanges(out, simplify = simplify)
 
   }
 )
@@ -66,3 +85,4 @@ setMethod(
 setMethod(
   "partitionRanges", c("ANY", "ANY"), function(x, y, ...) .errNotImp(x, y)
 )
+

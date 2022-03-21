@@ -6,17 +6,41 @@
 \alias{partitionRanges,ANY,ANY-method}
 \title{Partition a set of Genomic Ranges}
 \usage{
-partitionRanges(x, y, ignore.strand = FALSE, suffix = c(".x", ".y"), ...)
+partitionRanges(
+  x,
+  y,
+  ignore.strand = FALSE,
+  simplify = TRUE,
+  suffix = c(".x", ".y"),
+  ...
+)
 
-\S4method{partitionRanges}{GRanges,GRanges}(x, y, ignore.strand = FALSE, suffix = c(".x", ".y"), ...)
+\S4method{partitionRanges}{GRanges,GRanges}(
+  x,
+  y,
+  ignore.strand = FALSE,
+  simplify = TRUE,
+  suffix = c(".x", ".y"),
+  ...
+)
 
-\S4method{partitionRanges}{ANY,ANY}(x, y, ignore.strand = FALSE, suffix = c(".x", ".y"), ...)
+\S4method{partitionRanges}{ANY,ANY}(
+  x,
+  y,
+  ignore.strand = FALSE,
+  simplify = TRUE,
+  suffix = c(".x", ".y"),
+  ...
+)
 }
 \arguments{
 \item{x, y}{GenomicRanges objects}
 
 \item{ignore.strand}{If set to TRUE, then the strand of x and y is set to
 "*" prior to any computation.}
+
+\item{simplify}{logical(1). Simplify any \code{CompressedList} columns as vectors
+where possible}
 
 \item{suffix}{Added to any shared column names in the provided objects}
 

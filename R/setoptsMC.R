@@ -106,6 +106,7 @@ setMethod("unionMC", c("ANY", "ANY"), function(x, y, ...) .errNotImp(x, y))
 #' @importFrom IRanges overlapsAny
 #' @importFrom GenomicRanges findOverlaps
 #' @importFrom S4Vectors mcols queryHits subjectHits DataFrame
+#' @keywords internal
 .mapMcols2Ranges <- function(.gr, .x, .ignore.strand, .simplify) {
 
   if (ncol(mcols(.x)) == 0) return(.gr)

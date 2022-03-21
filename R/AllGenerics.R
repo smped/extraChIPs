@@ -1,8 +1,23 @@
 #' @export
+#' @name chopRanges
+#' @rdname chopRanges-methods
+setGeneric(
+  "chopRanges", function(x, simplify = TRUE, ...) standardGeneric("chopRanges")
+)
+
+#' @export
 #' @name colToRanges
 #' @rdname colToRanges-methods
 setGeneric(
   "colToRanges", function(x, var, ...) standardGeneric("colToRanges")
+)
+
+#' @export
+#' @name distinctRanges
+#' @rdname distinctRanges-methods
+setGeneric(
+  "distinctRanges",
+  function(x, .across = everything(), ...) standardGeneric("distinctRanges")
 )
 
 #' @export
@@ -60,7 +75,9 @@ setGeneric(
 #' @rdname partitionRanges-methods
 setGeneric(
   "partitionRanges",
-  function(x, y, ignore.strand = FALSE, suffix = c(".x", ".y"), ...) {
+  function(
+    x, y, ignore.strand = FALSE, simplify = TRUE, suffix = c(".x", ".y"), ...
+  ) {
     standardGeneric("partitionRanges")
   }
 )

@@ -23,25 +23,27 @@
 #'
 #' @param x A data-frame or GRanges object containing the column to coerce
 #' @param var The name of the column to coerce
+#' @param seqinfo A seginfo object to be applied to the GRanges object
 #' @param ... Not used
 #'
 #' @importFrom methods as
-#' @importFrom GenomicRanges 'mcols<-'
+#' @importFrom GenomicRanges 'mcols<-' GRanges
 #' @rdname colToRanges-methods
 #' @aliases colToRanges
 #' @export
 setMethod(
   "colToRanges",
   signature = signature(x = "DataFrame", var= "character"),
-  function(x, var, ...) {
+  function(x, var, seqinfo = NULL, ...) {
     stopifnot(var %in% colnames(x))
-    gr <- as(x[[var]], "GRanges")
+    gr <- GRanges(x[[var]], seqinfo = seqinfo)
     keep <- setdiff(colnames(x), var)
     mcols(gr) <- x[keep]
     gr
   }
 )
 #' @importFrom GenomicRanges mcols
+#' @importFrom GenomeInfoDb seqinfo
 #' @rdname colToRanges-methods
 #' @aliases colToRanges
 #' @export
@@ -50,19 +52,19 @@ setMethod(
   signature = signature(x = "GRanges", var= "character"),
   function(x, var, ...) {
     df <- mcols(x)
-    colToRanges(df, var, ...)
+    colToRanges(df, var, seqinfo = seqinfo(x), ...)
   }
 )
-#' @importFrom GenomicRanges mcols
+#' @importFrom GenomicRanges mcols GRanges
 #' @rdname colToRanges-methods
 #' @aliases colToRanges
 #' @export
 setMethod(
   "colToRanges",
   signature = signature(x = "data.frame", var= "character"),
-  function(x, var, ...) {
+  function(x, var, seqinfo = NULL, ...) {
     stopifnot(var %in% colnames(x))
-    gr <- as(x[[var]], "GRanges")
+    gr <- GRanges(x[[var]], seqinfo = seqinfo)
     keep <- setdiff(colnames(x), var)
     mcols(gr) <- x[keep]
     gr

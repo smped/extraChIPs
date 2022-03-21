@@ -10,11 +10,11 @@
 \usage{
 colToRanges(x, var, ...)
 
-\S4method{colToRanges}{DataFrame,character}(x, var, ...)
+\S4method{colToRanges}{DataFrame,character}(x, var, seqinfo = NULL, ...)
 
 \S4method{colToRanges}{GRanges,character}(x, var, ...)
 
-\S4method{colToRanges}{data.frame,character}(x, var, ...)
+\S4method{colToRanges}{data.frame,character}(x, var, seqinfo = NULL, ...)
 
 \S4method{colToRanges}{ANY,ANY}(x, var, ...)
 }
@@ -24,6 +24,8 @@ colToRanges(x, var, ...)
 \item{var}{The name of the column to coerce}
 
 \item{...}{Not used}
+
+\item{seqinfo}{A seginfo object to be applied to the GRanges object}
 }
 \value{
 A GenomicRanges object

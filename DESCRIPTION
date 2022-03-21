@@ -1,5 +1,5 @@
 Package: extraChIPs
-Version: 0.99.16
+Version: 0.99.17
 Date: 2022/03/19
 Title: Additional functions for working with ChIP-Seq data
 Authors@R: person("Stephen", "Pederson", 
@@ -54,8 +54,10 @@ Suggests:
   BiocStyle,
   covr,
   knitr,
+  plyranges,
   rmarkdown,
-  testthat (>= 3.0.0)
+  testthat (>= 3.0.0),
+  tidyverse
 biocViews: ChIPSeq, Sequencing
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)  

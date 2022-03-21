@@ -46,3 +46,4 @@ setMethod(
 #' @rdname reduceMC-methods
 #' @aliases reduceMC
 setMethod("reduceMC", "ANY", function(x, ...) .errNotImp(x))
+

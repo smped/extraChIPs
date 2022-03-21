@@ -6,10 +6,19 @@ y$id <- paste0("range", seq_along(y))
 test_that("Partitions are correct", {
   gr <- partitionRanges(x, y)
   expect_equal(
-    gr$id.x, paste0("range", c(1, 1, 1, 2, 2))
+    gr$id.x, paste0("range", c(1, 1,  2, 2))
   )
   expect_equal(
-    gr$id.y, c(NA, paste0("range", c(1, 2, 2)), NA)
+    gr$id.y,
+    new(
+      "CompressedCharacterList",
+      elementType = "character", elementMetadata = NULL, metadata = list(),
+      unlistData = c("range1", "range2", "range1", "range2"),
+      partitioning = new(
+        "PartitioningByEnd", end = c(0L, 2L, 4L, 4L), NAMES = NULL,
+        elementType = "ANY", elementMetadata = NULL, metadata = list()
+      )
+    )
   )
 })
 

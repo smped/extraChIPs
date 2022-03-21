@@ -1,0 +1,170 @@
+---
+title: "extraChIPs: Range-based operations"
+author:
+- name: Steve Pederson
+  affiliation: Dame Roma Mitchell Cancer Research Laboratories, Adelaide Medical School, University of Adelaide
+  email: stephen.pederson.au@gmail.com
+package: extraChIPs
+output:
+  BiocStyle::html_document
+vignette: >
+  %\VignetteIndexEntry{An Introduction To extraChIPs}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+```
+
+# Introduction
+
+This package is designed to enable the Gene Regulatory Analysis using Variable 
+IP ([GRAVI](https://github.com/steveped/GRAVI)) workflow, as a method for
+detecting differential binding in ChIP-Seq datasets.
+As a workflow focussed on data integration, most functions provided by the
+package `extraChIPs` are designed to enable comparison across datasets.
+This vignette looks primarily at functions which work with `GenomicRanges` 
+objects
+
+# Coercion
+
+The advent of the `tidyverse` has led to `tibble` objects becoming a common
+alternative to `data.frame` or `DataFrame` objects.
+Simple functions within `extraChIP` enable coercion from `GRanges`, 
+`GInteractions` and `DataFrame` objects to tibble objects, with list columns
+correctly handled.
+By default these coercion functions will coerce `GRanges` elements to a 
+character vector.
+Similarly, `GRanges` represented as a character column can be coerced to the 
+ranges element of a `GRanges` object.
+
+First let's coerce from a `tibble` (or S3 `data.frame`) to a `GRanges`
+
+```{r}
+library(tidyverse)
+library(extraChIPs)
+set.seed(73)
+df <- tibble(
+  range = c("chr1:1-10:+", "chr1:5-10:+", "chr1:5-6:+"),
+  gene_id = "gene1",
+  tx_id = paste0("transcript", 1:3),
+  score = runif(3)
+)
+df
+gr <- colToRanges(df, "range")
+gr
+```
+
+Coercion back to a `tibble` will place the ranges as a character column by 
+default.
+However, this can be turned off and the conventional coercion from 
+`as.data.frame` will instead be applied, internally wrapped in `as_tibble()`
+
+```{r}
+as_tibble(gr)
+as_tibble(gr, rangeAsChar = FALSE)
+```
+
+
+# Simple Operations Retaining `mcols()`
+
+The standard set operations implemented in the package `GenomicRanges` will
+always drop the `mcols` element by default.
+The `extraChIPs` functions `reduceMC()`, `setdiffMC()`, `intersectMC()` and 
+`unionMC()` all produce the same output as their similarly-named functions,
+however, the `mcols()` elements in the query object are also returned.
+Where required, columns are coerced into `CompressedList` columns.
+This can particularly useful when needed to propagate the information contained 
+in the initial ranges through to subsequent analytic steps
+
+## `reduceMC()`
+
+The classical approach to defining TSS regions for a set of transcripts would be
+to use the function `resize`()`, setting the width as 1.
+
+```{r}
+tss <- resize(gr, width = 1)
+tss
+```
+
+As we can see, two transcripts start at position 5, so we may choose to reduce 
+this, which would lose the `mcols` element.
+The alternative `reduceMC()` will retain all `mcols`.
+
+```{r}
+GenomicRanges::reduce(tss)
+reduceMC(tss)
+```
+
+By default, this function will attempt to coerce `mcols` to a new `mcol` of the 
+appropriate type, however, when multiple values are inevitable such as for the 
+`tx_id` column above, these will be coerced to a `CompressedList`.
+The simplification of the multiple values seen in the `gene_id` can also be 
+turned off if desired should repeated values be important for downstream 
+analysis.
+
+```{r}
+reduceMC(tss, simplify = FALSE) 
+```
+
+This allows for simple integration with `tidyverse` nesting strategies.
+
+```{r}
+reduceMC(tss, simplify = FALSE) %>% 
+  as_tibble() %>% 
+  unnest(everything())
+```
+
+## Set Operations
+
+Whilst `reduce/reduceMC` is applied to a single `GRanges` object, the set 
+operation functions `intersect`, `setdiff` and `union` are valuable approaches
+for comparing ranges.
+Using the `*MC()` functions will retain `mcols` elements from the *query range*.
+
+```{r}
+peaks <- GRanges("chr1:9-12:*")
+peaks$peak_id <- "peak1"
+GenomicRanges::intersect(gr, peaks, ignore.strand = TRUE)
+intersectMC(gr, peaks, ignore.strand = TRUE)
+setdiffMC(gr, peaks, ignore.strand = TRUE)
+unionMC(gr, peaks, ignore.strand = TRUE)
+```
+
+There is a performance overhead to preparation of mcols as `CompressedList` 
+objects and all `mcols` in the query object will be returned.
+If only wishing to retain a subset of `mcols`, these should be selected prior
+to passing to these functions.
+
+```{r}
+library(plyranges)
+gr %>% 
+  select(tx_id) %>% 
+  intersectMC(peaks, ignore.strand = TRUE)
+```
+
+## Range Paritioning
+
+This enables the identification of specific ranges from the query range (`x`) 
+which overlap ranges from the subject range (`y`)
+Under this approach, `mcols` from both `query` and `subject` ranges will be
+returned to enable the clear ranges which are common and distinct within the
+two sets of ranges.
+
+```{r}
+partitionRanges(gr, peaks)
+partitionRanges(gr, peaks, ignore.strand = TRUE)
+partitionRanges(peaks, gr, ignore.strand = TRUE)
+```
+
+Whilst this shares some similarity with `intersectMC()` the additional 
+capabilities provide greater flexibility.
+
+```{r}
+partitionRanges(gr, peaks) %>% 
+  subset(peak_id == "peak1")
+```
+
+
+
