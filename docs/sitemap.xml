@@ -13,6 +13,9 @@
     <loc>/articles/index.html</loc>
   </url>
   <url>
+    <loc>/articles/range_based_functions.html</loc>
+  </url>
+  <url>
     <loc>/authors.html</loc>
   </url>
   <url>
@@ -25,6 +28,9 @@
     <loc>/reference/as_tibble.html</loc>
   </url>
   <url>
+    <loc>/reference/chopRanges-methods.html</loc>
+  </url>
+  <url>
     <loc>/reference/colAsRanges-methods.html</loc>
   </url>
   <url>
@@ -35,6 +41,9 @@
   </url>
   <url>
     <loc>/reference/collapseGenes.html</loc>
+  </url>
+  <url>
+    <loc>/reference/distinctRanges-methods.html</loc>
   </url>
   <url>
     <loc>/reference/dot-makeFinalProfileHeatmap.html</loc>

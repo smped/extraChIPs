@@ -17,6 +17,8 @@ reference:
     - overlapsProp
     - partitionRanges
     - reduceMC
+    - chopRanges
+    - distinctRanges
     - stitchRanges
 
 - title: Set Operations
@@ -55,5 +57,5 @@ navbar:
     href: reference/index.html
   - text: Vignettes
     menu:
-    - text: Introduction to extraChIPs
-      href: articles/extraChIPs_Introduction.html
+    - text: Range-based Operations
+      href: articles/range_based_functions.html
