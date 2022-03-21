@@ -11,6 +11,7 @@ importPeaks(
   seqinfo,
   pruning.mode = c("coarse", "error"),
   sort = TRUE,
+  setNames = TRUE,
   ...
 )
 }
@@ -29,6 +30,8 @@ Defaults to \code{pruning.mode = "coarse"}. Only "coarse" and "error" are
 implemented. See \link[GenomeInfoDb]{seqinfo}.}
 
 \item{sort}{logical. Should the ranges be sorted during import}
+
+\item{setNames}{logical Set basename(x) as the name}
 
 \item{...}{passed to \code{sort}}
 }

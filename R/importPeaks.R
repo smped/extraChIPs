@@ -15,6 +15,7 @@
 #' Defaults to `pruning.mode = "coarse"`. Only "coarse" and "error" are
 #' implemented. See \link[GenomeInfoDb]{seqinfo}.
 #' @param sort logical. Should the ranges be sorted during import
+#' @param setNames logical Set basename(x) as the name
 #' @param ... passed to `sort`
 #'
 #' @return
@@ -33,14 +34,14 @@
 importPeaks <- function(
     x, type = c("narrow", "broad"), blacklist,
     seqinfo, pruning.mode = c("coarse", "error"),
-    sort = TRUE, ...
+    sort = TRUE, setNames = TRUE, ...
 ) {
 
     ## Argument checks
     stopifnot(file.exists(x))
     type <- match.arg(type)
     pruning.mode <- match.arg(pruning.mode)
-    stopifnot(is.logical(sort))
+    stopifnot(is.logical(sort) & is.logical(setNames))
     n <- length(x)
     out <- lapply(
         x,
@@ -51,6 +52,7 @@ importPeaks <- function(
 
     out <- GRangesList(out)
     if (sort) sort(out, ...)
+    if (setNames) names(out) <- basename(x)
     out
 
 }

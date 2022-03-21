@@ -94,10 +94,12 @@ setMethod(
       bam.files = bfl,
       spacing = bin_size, filter = 0, param = rp, BPPARAM = BPPARAM
     )
+    if (keep.totals) signal_counts$totals <- x[,names(bfl)]$totals
     bg_counts <- windowCounts(
       bam.files = bg_bfl,
       spacing = bin_size, filter = 0, param = rp, BPPARAM = BPPARAM
     )
+    if (keep.totals) bg_counts$totals <- bg[,names(bg_bfl)]$totals
     scf <- scaleControlFilter(signal_counts, bg_counts)
     control_filter <- filterWindowsControl(
       data = x, background = bg, scale.info = scf

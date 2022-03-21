@@ -59,10 +59,11 @@ setMethod(
     sd <- psetdiff(
       x[queryHits(ol)], red_y[subjectHits(ol)], ignore.strand = ignore.strand
     )
-    sd_ol <- findOverlaps(sd, x, ignore.strand = ignore.strand)
-    sd <- sd[queryHits(sd_ol)]
-    mcols(sd) <- DataFrame(mcols(x)[subjectHits(sd_ol),])
+    mcols(sd) <- DataFrame(mcols(x)[queryHits(ol),])
     colnames(mcols(sd)) <- colnames(mcols(x))
+    # sd_ol <- findOverlaps(sd, x, ignore.strand = ignore.strand)
+    # sd <- sd[queryHits(sd_ol)]
+    # mcols(sd) <- DataFrame(mcols(x)[subjectHits(sd_ol),])
 
     ## Find the intersection of each range using parallel intersect
     int <- pintersect(

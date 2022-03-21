@@ -131,15 +131,15 @@ test_that("blacklists behave correctly for broadPeak files",{
 test_that("Empty files parse empty GRanges", {
   fl <- file.path(tempdir(), "empty.txt")
   file.create(fl)
-  np1 <- importPeaks(fl, type = "narrow")
-  bp1 <- importPeaks(fl, type = "broad")
+  np1 <- importPeaks(fl, type = "narrow", setNames = FALSE)
+  bp1 <- importPeaks(fl, type = "broad", setNames = FALSE)
   expect_true(is(c(np1, bp1), "GRangesList"))
   expect_equal(vapply(c(np1, bp1), length, integer(1)), c(0, 0))
 
   # And with a seqinfo
   sq <- Seqinfo(seqnames = "chr1")
-  np2 <- importPeaks(fl, type = "narrow", seqinfo = sq)
-  bp2 <- importPeaks(fl, type = "broad", seqinfo = sq)
-  expect_true(is(c(np1, bp1), "GRangesList"))
+  np2 <- importPeaks(fl, type = "narrow", seqinfo = sq, setNames = FALSE)
+  bp2 <- importPeaks(fl, type = "broad", seqinfo = sq, setNames = FALSE)
+  expect_true(is(c(np2, bp2), "GRangesList"))
   expect_equal(vapply(c(np1, bp1), length, integer(1)), c(0, 0))
 })
