@@ -7,10 +7,10 @@
     <loc>/LICENSE-text.html</loc>
   </url>
   <url>
-    <loc>/articles/extraChIPs_Introduction.html</loc>
+    <loc>/articles/index.html</loc>
   </url>
   <url>
-    <loc>/articles/index.html</loc>
+    <loc>/articles/range_based_functions.html</loc>
   </url>
   <url>
     <loc>/authors.html</loc>
@@ -22,10 +22,16 @@
     <loc>/reference/as_tibble.html</loc>
   </url>
   <url>
+    <loc>/reference/chopRanges-methods.html</loc>
+  </url>
+  <url>
     <loc>/reference/colToRanges-methods.html</loc>
   </url>
   <url>
     <loc>/reference/collapseGenes.html</loc>
+  </url>
+  <url>
+    <loc>/reference/distinctRanges-methods.html</loc>
   </url>
   <url>
     <loc>/reference/dot-makeFinalProfileHeatmap.html</loc>

@@ -2,6 +2,6 @@ pandoc: 2.11.4
 pkgdown: 2.0.2
 pkgdown_sha: ~
 articles:
-  extraChIPs_Introduction: extraChIPs_Introduction.html
-last_built: 2022-03-20T13:54Z
+  range_based_functions: range_based_functions.html
+last_built: 2022-03-21T12:24Z
 
