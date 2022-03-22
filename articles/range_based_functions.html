@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.18</span>
       </span>
     </div>
 
@@ -217,9 +217,9 @@
 <span class="co">## <span style="color: #BCBCBC;">1</span> chr1:1:+ gene1   transcript1 0.442 </span>
 <span class="co">## <span style="color: #BCBCBC;">2</span> chr1:5:+ gene1   transcript2 0.083<span style="text-decoration: underline;">1</span></span>
 <span class="co">## <span style="color: #BCBCBC;">3</span> chr1:5:+ gene1   transcript3 0.615</span></code></pre>
-<p>Whilst <code>reduceMC</code> relies on the range-reduction as implemented in <code><a href="https://rdrr.io/pkg/GenomicRanges/man/inter-range-methods.html" class="external-link">GenomicRanges::reduce()</a></code>, some alternative approaches are included, such as <code><a href="../reference/chopRanges-methods.html">chopRanges()</a></code>, which finds identical ranges and nests the mcols element as <code>CompressedList</code> objects.</p>
+<p>Whilst <code>reduceMC</code> relies on the range-reduction as implemented in <code><a href="https://rdrr.io/pkg/GenomicRanges/man/inter-range-methods.html" class="external-link">GenomicRanges::reduce()</a></code>, some alternative approaches are included, such as <code><a href="../reference/chopMC-methods.html">chopMC()</a></code>, which finds identical ranges and nests the mcols element as <code>CompressedList</code> objects.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/chopRanges-methods.html">chopRanges</a></span><span class="op">(</span><span class="va">tss</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/chopMC-methods.html">chopMC</a></span><span class="op">(</span><span class="va">tss</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## GRanges object with 2 ranges and 3 metadata columns:</span>
 <span class="co">##       seqnames    ranges strand |     gene_id                   tx_id</span>
 <span class="co">##          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;         &lt;CharacterList&gt;</span>
@@ -232,9 +232,9 @@
 <span class="co">##   -------</span>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
 <p>In the case of the object <code>tss</code>, this output is identical to <code><a href="../reference/reduceMC-methods.html">reduceMC()</a></code>, however, given that there are no identical ranges in <code>gr</code> the two functions would behave very differently on that object.</p>
-<p>A final operation for simplifying <code>GRanges</code> objects would be <code><a href="../reference/distinctRanges-methods.html">distinctRanges()</a></code> which finds unique ranges, along with unique <code>mcols</code>. The columns to search can be called using <code>&lt;tidy-select&gt;</code> approaches,</p>
+<p>A final operation for simplifying <code>GRanges</code> objects would be <code><a href="../reference/distinctMC-methods.html">distinctMC()</a></code> which finds unique ranges, along with unique <code>mcols</code>. The columns to search can be called using <code>&lt;tidy-select&gt;</code> approaches,</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/distinctRanges-methods.html">distinctRanges</a></span><span class="op">(</span><span class="va">tss</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/distinctMC-methods.html">distinctMC</a></span><span class="op">(</span><span class="va">tss</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## GRanges object with 3 ranges and 3 metadata columns:</span>
 <span class="co">##       seqnames    ranges strand |     gene_id       tx_id     score</span>
 <span class="co">##          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;character&gt; &lt;numeric&gt;</span>
@@ -244,7 +244,7 @@
 <span class="co">##   -------</span>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/distinctRanges-methods.html">distinctRanges</a></span><span class="op">(</span><span class="va">tss</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="st">"gene_id"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/distinctMC-methods.html">distinctMC</a></span><span class="op">(</span><span class="va">tss</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="st">"gene_id"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## GRanges object with 2 ranges and 1 metadata column:</span>
 <span class="co">##       seqnames    ranges strand |     gene_id</span>
 <span class="co">##          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;</span>

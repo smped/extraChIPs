@@ -22,7 +22,7 @@
     <loc>/reference/as_tibble.html</loc>
   </url>
   <url>
-    <loc>/reference/chopRanges-methods.html</loc>
+    <loc>/reference/chopMC-methods.html</loc>
   </url>
   <url>
     <loc>/reference/colToRanges-methods.html</loc>
@@ -31,7 +31,7 @@
     <loc>/reference/collapseGenes.html</loc>
   </url>
   <url>
-    <loc>/reference/distinctRanges-methods.html</loc>
+    <loc>/reference/distinctMC-methods.html</loc>
   </url>
   <url>
     <loc>/reference/dot-makeFinalProfileHeatmap.html</loc>
