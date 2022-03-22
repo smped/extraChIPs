@@ -7,6 +7,9 @@
     <loc>/LICENSE-text.html</loc>
   </url>
   <url>
+    <loc>/articles/differential_binding.html</loc>
+  </url>
+  <url>
     <loc>/articles/extraChIPs_Introduction.html</loc>
   </url>
   <url>
@@ -68,6 +71,9 @@
   </url>
   <url>
     <loc>/reference/dualFilter.html</loc>
+  </url>
+  <url>
+    <loc>/reference/ex_genes.html</loc>
   </url>
   <url>
     <loc>/reference/getProfileData-methods.html</loc>

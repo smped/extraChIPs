@@ -1,4 +1,4 @@
-#' @title Keep unique ranges
+#' @title Keep unique ranges and collapse mcols
 #'
 #' @description Keep unique ranges by 'chopping' mcols
 #'

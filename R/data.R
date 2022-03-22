@@ -35,9 +35,34 @@
 #'  \item{gieStain}{Staining pattern}
 #' }
 #'
-#' #' @examples
+#' @examples
 #' data(grch38.cytobands)
 #' head(grch38.cytobands)
 #'
 #' @source \url{https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/cytoBand.txt.gz}
 "grch38.cytobands"
+
+#' @title Genes in an example region
+#'
+#' @description Genes in an example region formatted for Gviz
+#'
+#' @format Gene structure as a GRanges object, in the correct structure for
+#' plotting with plotHFGC.
+#' This is a GRangesList with two elements: 'Unchanged' and 'Up' representing
+#' genes that were considered as unchanged or upregulated in a separate RNA-seq
+#' analysis.
+#' Each element is pre-formatted for compatability with the package `Gviz` and
+#' has the columns
+#' \describe{
+#'   \item{type}{The type of feature. All here are exons}
+#'   \item{gene}{The Ensembl gene ID}
+#'   \item{exon}{An arbitrary exon ID}
+#'   \item{transcript}{The Ensembl transcript ID}
+#'   \item{symbol}{The gene nme (or symbol)}
+#'   }
+#'
+#' All annotations are from GRCh37
+#' @examples
+#' data(ex_genes)
+#' ex_genes
+"ex_genes"

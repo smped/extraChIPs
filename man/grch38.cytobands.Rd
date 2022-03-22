@@ -15,10 +15,6 @@ required by \link[Gviz]{IdeogramTrack}. A data.frame with 862 rows and
 \item{name}{Name for each band, e.g. p.36.33}
 \item{gieStain}{Staining pattern}
 }
-
-#' @examples
-data(grch38.cytobands)
-head(grch38.cytobands)
 }
 \source{
 \url{https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/cytoBand.txt.gz}
@@ -28,5 +24,10 @@ grch38.cytobands
 }
 \description{
 Cytogenetic bands from GRCh38/hg38
+}
+\examples{
+data(grch38.cytobands)
+head(grch38.cytobands)
+
 }
 \keyword{datasets}

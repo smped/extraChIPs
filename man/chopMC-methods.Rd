@@ -4,7 +4,7 @@
 \alias{chopMC}
 \alias{chopMC,GRanges-method}
 \alias{chopMC,ANY-method}
-\title{Keep unique ranges}
+\title{Keep unique ranges and collapse mcols}
 \usage{
 chopMC(x, simplify = TRUE, ...)
 

@@ -38,6 +38,7 @@ reference:
 - title: Data Objects
   contents:
     - contains("cytobands")
+    - ex_genes
 
 navbar:
   type: default
@@ -48,3 +49,5 @@ navbar:
     menu:
     - text: Range-based Operations
       href: articles/range_based_functions.html
+    - text: Differential Binding
+      href: articles/differential_binding.html

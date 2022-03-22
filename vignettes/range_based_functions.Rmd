@@ -13,7 +13,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, echo=FALSE}
+```{r setup, echo=FALSE}
 knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 ```
 
@@ -41,7 +41,7 @@ ranges element of a `GRanges` object.
 
 First let's coerce from a `tibble` (or S3 `data.frame`) to a `GRanges`
 
-```{r}
+```{r gr}
 library(tidyverse)
 library(extraChIPs)
 set.seed(73)
@@ -61,7 +61,7 @@ default.
 However, this can be turned off and the conventional coercion from 
 `as.data.frame` will instead be applied, internally wrapped in `as_tibble()`
 
-```{r}
+```{r as-tibble}
 as_tibble(gr)
 as_tibble(gr, rangeAsChar = FALSE)
 ```
@@ -71,7 +71,7 @@ is contained in `collapseGenes()`.
 Here a character vector of gene names is collapsed into a `glue` object of 
 length `, with gene names rendered in italics by default.
 
-```{r, results='asis'}
+```{r collapse-gene, results='asis'}
 gn <- c("Gene1", "Gene2", "Gene3")
 collapseGenes(gn)
 ```
@@ -93,7 +93,7 @@ in the initial ranges through to subsequent analytic steps
 The classical approach to defining TSS regions for a set of transcripts would be
 to use the function `resize`()`, setting the width as 1.
 
-```{r}
+```{r tss}
 tss <- resize(gr, width = 1)
 tss
 ```
@@ -102,7 +102,7 @@ As we can see, two transcripts start at position 5, so we may choose to reduce
 this, which would lose the `mcols` element.
 The alternative `reduceMC()` will retain all `mcols`.
 
-```{r}
+```{r reduce}
 GenomicRanges::reduce(tss)
 reduceMC(tss)
 ```
@@ -114,13 +114,13 @@ The simplification of the multiple values seen in the `gene_id` can also be
 turned off if desired should repeated values be important for downstream 
 analysis.
 
-```{r}
+```{r reduce-no-simplify}
 reduceMC(tss, simplify = FALSE) 
 ```
 
 This allows for simple integration with `tidyverse` nesting strategies.
 
-```{r}
+```{r reduce-unnest}
 reduceMC(tss, simplify = FALSE) %>% 
   as_tibble() %>% 
   unnest(everything())
@@ -131,7 +131,7 @@ Whilst `reduceMC` relies on the range-reduction as implemented in
 `chopMC()`, which finds identical ranges and nests the mcols element as 
 `CompressedList` objects.
 
-```{r}
+```{r chop}
 chopMC(tss)
 ```
 
@@ -143,7 +143,7 @@ A final operation for simplifying `GRanges` objects would be `distinctMC()`
 which finds unique ranges, along with unique `mcols`.
 The columns to search can be called using `<tidy-select>` approaches,
 
-```{r}
+```{r distinct}
 distinctMC(tss)
 distinctMC(tss, all_of("gene_id"))
 ```
@@ -156,7 +156,7 @@ operation functions `intersect`, `setdiff` and `union` are valuable approaches
 for comparing ranges.
 Using the `*MC()` functions will retain `mcols` elements from the *query range*.
 
-```{r}
+```{r setopts}
 peaks <- GRanges("chr1:9-12:*")
 peaks$peak_id <- "peak1"
 GenomicRanges::intersect(gr, peaks, ignore.strand = TRUE)
@@ -170,7 +170,7 @@ objects and all `mcols` in the query object will be returned.
 If only wishing to retain a subset of `mcols`, these should be selected prior
 to passing to these functions.
 
-```{r}
+```{r setopts-plyranges}
 library(plyranges)
 gr %>% 
   select(tx_id) %>% 
@@ -184,7 +184,7 @@ useful, the addition of `overlapsProp()` returns a numeric vector with
 the proportion of each query range (`x`) which overlaps any range in the
 subject range (`y`)
 
-```{r}
+```{r overlaps-prop}
 overlapsProp(gr, peaks)
 ```
 
@@ -206,7 +206,7 @@ Under this approach, `mcols` from both `query` and `subject` ranges will be
 returned to enable the clear ranges which are common and distinct within the
 two sets of ranges.
 
-```{r}
+```{r partition-ranges}
 partitionRanges(gr, peaks)
 partitionRanges(peaks, gr)
 ```
@@ -214,7 +214,7 @@ partitionRanges(peaks, gr)
 Whilst this shares some similarity with `intersectMC()` the additional 
 capabilities provide greater flexibility.
 
-```{r}
+```{r partition-ranges-subset}
 partitionRanges(gr, peaks) %>% 
   subset(is.na(peak_id))
 ```
@@ -227,7 +227,7 @@ which ranges cannot be joined.
 This may be useful if joining enhancers to form putative super-enhancers, but
 explicitly omitting defined promoter regions.
 
-```{r}
+```{r stitch-ranges}
 enh <- GRanges(c("chr1:1-10", "chr1:101-110", "chr1:181-200"))
 prom <- GRanges("chr1:150:+")
 se <- stitchRanges(enh, exclude = prom, maxgap = 100)
@@ -238,7 +238,7 @@ As a visualisation (below) ranges within 100bp were stitched together, however
 the region defined as a 'promoter' acted as a barrier and ranges were not 
 stitched together across this barrier.
 
-```{r, echo = FALSE, fig.height=3}
+```{r plot-stitched, echo = FALSE, fig.height=3}
 library(Gviz)
 plotTracks(
   list(
@@ -248,92 +248,4 @@ plotTracks(
   )
 )
 ```
-
-
-# ChIP-Seq Analysis
-
-## Data Integration
-
-The [GRAVI](www.github.com/steveped/GRAVI) workflow which this package is 
-designed for is based on sliding windows in a manner similar to the package
-`csaw`, but also incorporating `macs2` peaks.
-Analysis using `macs` commonly produces a set of files with identical structure 
-as either `broadPeak` or `narrowPeak` format.
-Given their identical structure, these can easily be imported as single 
-`GRangesList` object
-
-```{r}
-fl <- system.file(
-"extdata", "testFiles", "test.narrowPeak", package = "extraChIPs"
-)
-grl <- importPeaks(fl, "narrow")
-```
-
-For data integration, `GRangesList` objects can be coerced to 
-`RangedSummarizedExperiment` objects.
-A set of consensus peaks is obtained across all samples by taking the union of 
-overlapping regions.
-Representative values for each range are then selected by taking either the 
-`min()` or `max()` value from a selected column within each range on a 
-sample-specific basis.
-
-```{r}
-se <- grlToSE(
-  grl, 
-  assayCols = c("pValue", "qValue"), 
-  keyvals = "qValue", by = "max"
-)
-assays(se)
-dim(se)
-assay(se, "pValue")
-rowRanges(se)
-```
-
-```{r}
-knitr::opts_chunk$set(eval = FALSE)
-```
-
-
-```{r}
-library(Rsamtools)
-library(csaw)
-library(BiocParallel)
-library(rtracklayer)
-bfl <- system.file(
-  "extdata", "bam", c("ex1.bam", "input.bam"), package = "extraChIPs"
-) %>% 
-  BamFileList()
-names(bfl) <- c("ex1", "input")
-peaks <- import.bed(
-  system.file("extdata", "peaks.bed.gz", package = "extraChIPs")
-)
-peaks <- granges(peaks)
-rng <- GRanges("chr10:103865501-103900700")
-rp <- readParam(
-  pe = "none",
-  dedup = TRUE,
-  restrict = "chr10"
-)
-wincounts <- windowCounts(
-  bam.files = bfl,
-  spacing = 180,
-  width = 90,
-  ext = 180,
-  filter = 1,
-  param = rp,
-  BPPARAM = bpparam()
-)
-wincounts$totals <- c(964076L, 1172179L)
-filtcounts <- dualFilter(
-  wincounts[,1],
-  wincounts[,2], 
-  ref = peaks,
-  q = 0.5
-)
-rowRanges(filtcounts)$logCPM <- assay(filtcounts,"logCPM")[,1]
-rowRanges(filtcounts)$logFC <- rnorm(nrow(filtcounts))
-rowRanges(filtcounts)$PValue <- 1 - pchisq(rowRanges(filtcounts)$logFC^4, 1)
-res_gr <- mergeByCol(filtcounts, col = "logCPM", pval = "PValue")
-```
-
 

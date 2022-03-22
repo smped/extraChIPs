@@ -52,6 +52,9 @@
 <li>
       <a href="../articles/range_based_functions.html">Range-based Operations</a>
     </li>
+    <li>
+      <a href="../articles/differential_binding.html">Differential Binding</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -316,7 +319,7 @@
 <div class="section level3">
 <h3 id="overlapping-proportions">Overlapping proportions<a class="anchor" aria-label="anchor" href="#overlapping-proportions"></a>
 </h3>
-<p>Whilst the functions <code><a href="https://rdrr.io/pkg/GenomicRanges/man/findOverlaps-methods.html" class="external-link">findOverlaps()</a></code> and <code><a href="https://rdrr.io/pkg/GenomicRanges/man/findOverlaps-methods.html" class="external-link">overlapsAny()</a></code> are extremely useful, the addition of <code><a href="../reference/overlapsProp-methods.html">overlapsProp()</a></code> returns a numeric vector with the proportion of each query range (<code>x</code>) which overlaps any range in the subject range (<code>y</code>)</p>
+<p>Whilst the functions <code><a href="https://rdrr.io/pkg/IRanges/man/findOverlaps-methods.html" class="external-link">findOverlaps()</a></code> and <code><a href="https://rdrr.io/pkg/IRanges/man/findOverlaps-methods.html" class="external-link">overlapsAny()</a></code> are extremely useful, the addition of <code><a href="../reference/overlapsProp-methods.html">overlapsProp()</a></code> returns a numeric vector with the proportion of each query range (<code>x</code>) which overlaps any range in the subject range (<code>y</code>)</p>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/overlapsProp-methods.html">overlapsProp</a></span><span class="op">(</span><span class="va">gr</span>, <span class="va">peaks</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## [1] 0.2000000 0.3333333 0.0000000</span></code></pre>
@@ -391,90 +394,7 @@
 <span class="co">##   -------</span>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
 <p>As a visualisation (below) ranges within 100bp were stitched together, however the region defined as a ‘promoter’ acted as a barrier and ranges were not stitched together across this barrier.</p>
-<p><img src="range_based_functions_files/figure-html/unnamed-chunk-17-1.png" width="700"></p>
-</div>
-</div>
-<div class="section level2">
-<h2 id="chip-seq-analysis">ChIP-Seq Analysis<a class="anchor" aria-label="anchor" href="#chip-seq-analysis"></a>
-</h2>
-<div class="section level3">
-<h3 id="data-integration">Data Integration<a class="anchor" aria-label="anchor" href="#data-integration"></a>
-</h3>
-<p>The <a href="www.github.com/steveped/GRAVI">GRAVI</a> workflow which this package is designed for is based on sliding windows in a manner similar to the package <code>csaw</code>, but also incorporating <code>macs2</code> peaks. Analysis using <code>macs</code> commonly produces a set of files with identical structure as either <code>broadPeak</code> or <code>narrowPeak</code> format. Given their identical structure, these can easily be imported as single <code>GRangesList</code> object</p>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>
-<span class="st">"extdata"</span>, <span class="st">"testFiles"</span>, <span class="st">"test.narrowPeak"</span>, package <span class="op">=</span> <span class="st">"extraChIPs"</span>
-<span class="op">)</span>
-<span class="va">grl</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/importPeaks.html">importPeaks</a></span><span class="op">(</span><span class="va">fl</span>, <span class="st">"narrow"</span><span class="op">)</span></code></pre></div>
-<p>For data integration, <code>GRangesList</code> objects can be coerced to <code>RangedSummarizedExperiment</code> objects. A set of consensus peaks is obtained across all samples by taking the union of overlapping regions. Representative values for each range are then selected by taking either the <code><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min()</a></code> or <code><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max()</a></code> value from a selected column within each range on a sample-specific basis.</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grlToSE-methods.html">grlToSE</a></span><span class="op">(</span>
-  <span class="va">grl</span>, 
-  assayCols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pValue"</span>, <span class="st">"qValue"</span><span class="op">)</span>, 
-  keyvals <span class="op">=</span> <span class="st">"qValue"</span>, by <span class="op">=</span> <span class="st">"max"</span>
-<span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assays</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## List of length 2</span>
-<span class="co">## names(2): pValue qValue</span></code></pre>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] 2 1</span></code></pre>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">se</span>, <span class="st">"pValue"</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">##      test.narrowPeak</span>
-<span class="co">## [1,]         9.88778</span>
-<span class="co">## [2,]        20.36137</span></code></pre>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">rowRanges</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## GRanges object with 2 ranges and 0 metadata columns:</span>
-<span class="co">##       seqnames          ranges strand</span>
-<span class="co">##          &lt;Rle&gt;       &lt;IRanges&gt;  &lt;Rle&gt;</span>
-<span class="co">##   [1]     chr1 1299656-1299826      *</span>
-<span class="co">##   [2]     chr1 8031224-8031566      *</span>
-<span class="co">##   -------</span>
-<span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">knitr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/knitr/man/opts_chunk.html" class="external-link">opts_chunk</a></span><span class="op">$</span><span class="fu">set</span><span class="op">(</span>eval <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/Rsamtools" class="external-link">Rsamtools</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">csaw</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Bioconductor/BiocParallel" class="external-link">BiocParallel</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">rtracklayer</span><span class="op">)</span>
-<span class="va">bfl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>
-  <span class="st">"extdata"</span>, <span class="st">"bam"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ex1.bam"</span>, <span class="st">"input.bam"</span><span class="op">)</span>, package <span class="op">=</span> <span class="st">"extraChIPs"</span>
-<span class="op">)</span> <span class="op"><a href="https://rdrr.io/pkg/plyranges/man/tidyverse-reexports.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="https://rdrr.io/pkg/Rsamtools/man/BamFile-class.html" class="external-link">BamFileList</a></span><span class="op">(</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">bfl</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ex1"</span>, <span class="st">"input"</span><span class="op">)</span>
-<span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/BEDFile-class.html" class="external-link">import.bed</a></span><span class="op">(</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"peaks.bed.gz"</span>, package <span class="op">=</span> <span class="st">"extraChIPs"</span><span class="op">)</span>
-<span class="op">)</span>
-<span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/genomic-range-squeezers.html" class="external-link">granges</a></span><span class="op">(</span><span class="va">peaks</span><span class="op">)</span>
-<span class="va">rng</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="st">"chr10:103865501-103900700"</span><span class="op">)</span>
-<span class="va">rp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/csaw/man/readParam.html" class="external-link">readParam</a></span><span class="op">(</span>
-  pe <span class="op">=</span> <span class="st">"none"</span>,
-  dedup <span class="op">=</span> <span class="cn">TRUE</span>,
-  restrict <span class="op">=</span> <span class="st">"chr10"</span>
-<span class="op">)</span>
-<span class="va">wincounts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/csaw/man/windowCounts.html" class="external-link">windowCounts</a></span><span class="op">(</span>
-  bam.files <span class="op">=</span> <span class="va">bfl</span>,
-  spacing <span class="op">=</span> <span class="fl">180</span>,
-  width <span class="op">=</span> <span class="fl">90</span>,
-  ext <span class="op">=</span> <span class="fl">180</span>,
-  filter <span class="op">=</span> <span class="fl">1</span>,
-  param <span class="op">=</span> <span class="va">rp</span>,
-  BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span>
-<span class="op">)</span>
-<span class="va">wincounts</span><span class="op">$</span><span class="va">totals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">964076L</span>, <span class="fl">1172179L</span><span class="op">)</span>
-<span class="va">filtcounts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dualFilter-methods.html">dualFilter</a></span><span class="op">(</span>
-  <span class="va">wincounts</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>,
-  <span class="va">wincounts</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span>, 
-  ref <span class="op">=</span> <span class="va">peaks</span>,
-  q <span class="op">=</span> <span class="fl">0.5</span>
-<span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">rowRanges</a></span><span class="op">(</span><span class="va">filtcounts</span><span class="op">)</span><span class="op">$</span><span class="va">logCPM</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">filtcounts</span>,<span class="st">"logCPM"</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>
-<span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">rowRanges</a></span><span class="op">(</span><span class="va">filtcounts</span><span class="op">)</span><span class="op">$</span><span class="va">logFC</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">filtcounts</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">rowRanges</a></span><span class="op">(</span><span class="va">filtcounts</span><span class="op">)</span><span class="op">$</span><span class="va">PValue</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Chisquare.html" class="external-link">pchisq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">rowRanges</a></span><span class="op">(</span><span class="va">filtcounts</span><span class="op">)</span><span class="op">$</span><span class="va">logFC</span><span class="op">^</span><span class="fl">4</span>, <span class="fl">1</span><span class="op">)</span>
-<span class="va">res_gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mergeByCol-methods.html">mergeByCol</a></span><span class="op">(</span><span class="va">filtcounts</span>, col <span class="op">=</span> <span class="st">"logCPM"</span>, pval <span class="op">=</span> <span class="st">"PValue"</span><span class="op">)</span></code></pre></div>
+<p><img src="range_based_functions_files/figure-html/plot-stitched-1.png" width="700"></p>
 </div>
 </div>
   </div>
