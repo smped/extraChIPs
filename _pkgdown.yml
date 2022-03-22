@@ -8,43 +8,32 @@ authors:
 
 reference:
 
-- title: Range-Based Functions
+- title: Range-Based Operations
   contents:
-    - dualFilter
-    - getProfileData
-    - mapByFeature
-    - mergeByCol
+    - ends_with("MC")
     - overlapsProp
     - partitionRanges
-    - reduceMC
-    - chopRanges
-    - distinctRanges
     - stitchRanges
+    - colToRanges
 
-- title: Set Operations
+- title: Functions For Differential Binding Analysis
   contents:
-    - setdiffMC
-    - intersectMC
-    - unionMC
+    - dualFilter
+    - importPeaks
+    - getProfileData
+    - grlToSE
+    - mapByFeature
+    - mergeByCol
+    - voomWeightsFromCPM
 
 - title: Visualisation
   contents:
     - starts_with("plot")
 
-- title: Coercion
+- title: Coercion & Convenience Functions
   contents:
     - contains("as_tibble")
-    - colToRanges
-    - grlToSE
-
-- title: Convenience Functions
-  contents:
     - collapseGenes
-    - voomWeightsFromCPM
-
-- title: Data Import
-  contents:
-    - importPeaks
 
 - title: Data Objects
   contents:

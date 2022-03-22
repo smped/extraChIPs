@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.17</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.18</span>
       </span>
     </div>
 
@@ -54,25 +54,25 @@
     </div>
 
     <table class="ref-index"><colgroup><col class="alias"><col class="title"></colgroup><tbody><tr><th colspan="2">
-          <h2 id="range-based-functions">Range-Based Functions <a href="#range-based-functions" class="anchor" aria-hidden="true"></a></h2>
+          <h2 id="range-based-operations">Range-Based Operations <a href="#range-based-operations" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="dualFilter-methods.html">dualFilter()</a></code> </p>
+          <p><code><a href="chopMC-methods.html">chopMC()</a></code> </p>
         </td>
-        <td><p>Apply two filters to sliding windows</p></td>
+        <td><p>Keep unique ranges</p></td>
       </tr><tr><td>
-          <p><code><a href="getProfileData-methods.html">getProfileData()</a></code> </p>
+          <p><code><a href="distinctMC-methods.html">distinctMC()</a></code> </p>
         </td>
-        <td><p>Get Profile Data surrounding specified ranges</p></td>
+        <td><p>Keep distinct ranges and mcols</p></td>
       </tr><tr><td>
-          <p><code><a href="mapByFeature.html">mapByFeature()</a></code> </p>
+          <p><code><a href="reduceMC-methods.html">reduceMC()</a></code> </p>
         </td>
-        <td><p>Map Genomic Ranges to genes using defined features</p></td>
+        <td><p>Reduce ranges retaining mcols</p></td>
       </tr><tr><td>
-          <p><code><a href="mergeByCol-methods.html">mergeByCol()</a></code> </p>
+          <p><code><a href="setoptsMC-methods.html">setdiffMC()</a></code> <code><a href="setoptsMC-methods.html">intersectMC()</a></code> <code><a href="setoptsMC-methods.html">unionMC()</a></code> </p>
         </td>
-        <td><p>Merge sliding windows using a specified column</p></td>
+        <td><p>Perform set operations retaining mcols</p></td>
       </tr><tr><td>
           <p><code><a href="overlapsProp-methods.html">overlapsProp()</a></code> </p>
         </td>
@@ -82,29 +82,45 @@
         </td>
         <td><p>Partition a set of Genomic Ranges</p></td>
       </tr><tr><td>
-          <p><code><a href="reduceMC-methods.html">reduceMC()</a></code> </p>
-        </td>
-        <td><p>Reduce ranges retaining mcols</p></td>
-      </tr><tr><td>
-          <p><code><a href="chopRanges-methods.html">chopRanges()</a></code> </p>
-        </td>
-        <td><p>Keep unique ranges</p></td>
-      </tr><tr><td>
-          <p><code><a href="distinctRanges-methods.html">distinctRanges()</a></code> </p>
-        </td>
-        <td><p>Keep distinct ranges and mcols</p></td>
-      </tr><tr><td>
           <p><code><a href="stitchRanges.html">stitchRanges()</a></code> </p>
         </td>
         <td><p>Stitch Ranges within a given distance</p></td>
+      </tr><tr><td>
+          <p><code><a href="colToRanges-methods.html">colToRanges()</a></code> </p>
+        </td>
+        <td><p>Coerce a column to a GRanges object</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
-          <h2 id="set-operations">Set Operations <a href="#set-operations" class="anchor" aria-hidden="true"></a></h2>
+          <h2 id="differential-binding">Differential Binding <a href="#differential-binding" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="setoptsMC-methods.html">setdiffMC()</a></code> <code><a href="setoptsMC-methods.html">intersectMC()</a></code> <code><a href="setoptsMC-methods.html">unionMC()</a></code> </p>
+          <p><code><a href="dualFilter-methods.html">dualFilter()</a></code> </p>
         </td>
-        <td><p>Perform set operations retaining mcols</p></td>
+        <td><p>Apply two filters to sliding windows</p></td>
+      </tr><tr><td>
+          <p><code><a href="importPeaks.html">importPeaks()</a></code> </p>
+        </td>
+        <td><p>Import peaks</p></td>
+      </tr><tr><td>
+          <p><code><a href="getProfileData-methods.html">getProfileData()</a></code> </p>
+        </td>
+        <td><p>Get Profile Data surrounding specified ranges</p></td>
+      </tr><tr><td>
+          <p><code><a href="grlToSE-methods.html">grlToSE()</a></code> </p>
+        </td>
+        <td><p>Set columns from a GRangesList as Assays in a SummarizedExperiment</p></td>
+      </tr><tr><td>
+          <p><code><a href="mapByFeature.html">mapByFeature()</a></code> </p>
+        </td>
+        <td><p>Map Genomic Ranges to genes using defined features</p></td>
+      </tr><tr><td>
+          <p><code><a href="mergeByCol-methods.html">mergeByCol()</a></code> </p>
+        </td>
+        <td><p>Merge sliding windows using a specified column</p></td>
+      </tr><tr><td>
+          <p><code><a href="voomWeightsFromCPM.html">voomWeightsFromCPM()</a></code> </p>
+        </td>
+        <td><p>Estimate voom precision weights directly From CPM values</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="visualisation">Visualisation <a href="#visualisation" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p>
@@ -130,7 +146,7 @@
         </td>
         <td><p>Draw a coverage Profile Heatmap</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
-          <h2 id="coercion">Coercion <a href="#coercion" class="anchor" aria-hidden="true"></a></h2>
+          <h2 id="coercion-convenience-functions">Coercion &amp; Convenience Functions <a href="#coercion-convenience-functions" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
@@ -138,33 +154,9 @@
         </td>
         <td><p>Convert to a tibble</p></td>
       </tr><tr><td>
-          <p><code><a href="colToRanges-methods.html">colToRanges()</a></code> </p>
-        </td>
-        <td><p>Coerce a column to a GRanges object</p></td>
-      </tr><tr><td>
-          <p><code><a href="grlToSE-methods.html">grlToSE()</a></code> </p>
-        </td>
-        <td><p>Set columns from a GRangesList as Assays in a SummarizedExperiment</p></td>
-      </tr></tbody><tbody><tr><th colspan="2">
-          <h2 id="convenience-functions">Convenience Functions <a href="#convenience-functions" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr></tbody><tbody><tr><td>
           <p><code><a href="collapseGenes.html">collapseGenes()</a></code> </p>
         </td>
         <td><p>Collapse a vector of gene names</p></td>
-      </tr><tr><td>
-          <p><code><a href="voomWeightsFromCPM.html">voomWeightsFromCPM()</a></code> </p>
-        </td>
-        <td><p>Estimate voom precision weights directly From CPM values</p></td>
-      </tr></tbody><tbody><tr><th colspan="2">
-          <h2 id="data-import">Data Import <a href="#data-import" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr></tbody><tbody><tr><td>
-          <p><code><a href="importPeaks.html">importPeaks()</a></code> </p>
-        </td>
-        <td><p>Import peaks</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="data-objects">Data Objects <a href="#data-objects" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p>

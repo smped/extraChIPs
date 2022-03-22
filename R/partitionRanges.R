@@ -77,7 +77,7 @@ setMethod(
     mcols(out) <- cbind(mcols(out), df_y)
 
     ## Now collapse any identical ranges
-    chopRanges(out, simplify = simplify)
+    chopMC(out, simplify = simplify)
 
   }
 )

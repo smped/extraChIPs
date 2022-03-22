@@ -128,24 +128,24 @@ reduceMC(tss, simplify = FALSE) %>%
 
 Whilst `reduceMC` relies on the range-reduction as implemented in 
 `GenomicRanges::reduce()`, some alternative approaches are included, such as 
-`chopRanges()`, which finds identical ranges and nests the mcols element as 
+`chopMC()`, which finds identical ranges and nests the mcols element as 
 `CompressedList` objects.
 
 ```{r}
-chopRanges(tss)
+chopMC(tss)
 ```
 
 In the case of the object `tss`, this output is identical to `reduceMC()`, 
 however, given that there are no identical ranges in `gr` the two functions 
 would behave very differently on that object.
 
-A final operation for simplifying `GRanges` objects would be `distinctRanges()`
+A final operation for simplifying `GRanges` objects would be `distinctMC()`
 which finds unique ranges, along with unique `mcols`.
 The columns to search can be called using `<tidy-select>` approaches,
 
 ```{r}
-distinctRanges(tss)
-distinctRanges(tss, all_of("gene_id"))
+distinctMC(tss)
+distinctMC(tss, all_of("gene_id"))
 ```
 
 

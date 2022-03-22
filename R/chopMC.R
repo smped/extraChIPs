@@ -21,7 +21,7 @@
 #' gr$id <- paste0("range", seq_along(gr))
 #' gr$gene <- "gene1"
 #' gr
-#' chopRanges(gr)
+#' chopMC(gr)
 #'
 #'
 #' @importFrom tidyr chop all_of
@@ -29,10 +29,10 @@
 #' @importFrom GenomeInfoDb seqinfo
 #'
 #' @export
-#' @rdname chopRanges-methods
-#' @aliases chopRanges
+#' @rdname chopMC-methods
+#' @aliases chopMC
 setMethod(
-  "chopRanges", "GRanges",
+  "chopMC", "GRanges",
   function(x, simplify = TRUE, ...) {
 
     tbl <- as_tibble(x, name = "range")
@@ -55,7 +55,7 @@ setMethod(
   }
 )
 #' @export
-#' @rdname chopRanges-methods
-#' @aliases chopRanges
-setMethod("chopRanges", "ANY", function(x, ...) .errNotImp(x))
+#' @rdname chopMC-methods
+#' @aliases chopMC
+setMethod("chopMC", "ANY", function(x, ...) .errNotImp(x))
 

@@ -19,18 +19,18 @@
 #' gr$id <- paste0("range", seq_along(gr))
 #' gr$gene <- "gene1"
 #' gr
-#' distinctRanges(gr)
-#' distinctRanges(gr, all_of("gene"))
+#' distinctMC(gr)
+#' distinctMC(gr, all_of("gene"))
 #'
 #' @importFrom dplyr distinct across
 #' @importFrom tidyr everything all_of
 #' @importFrom GenomeInfoDb seqinfo
 #'
 #' @export
-#' @rdname distinctRanges-methods
-#' @aliases distinctRanges
+#' @rdname distinctMC-methods
+#' @aliases distinctMC
 setMethod(
-  "distinctRanges", "GRanges",
+  "distinctMC", "GRanges",
   function(x, .across = everything(), ...) {
 
     tbl <- as_tibble(x, name = "range")
@@ -41,6 +41,6 @@ setMethod(
   }
 )
 #' @export
-#' @rdname distinctRanges-methods
-#' @aliases distinctRanges
-setMethod("distinctRanges", "ANY", function(x, ...) .errNotImp(x))
+#' @rdname distinctMC-methods
+#' @aliases distinctMC
+setMethod("distinctMC", "ANY", function(x, ...) .errNotImp(x))

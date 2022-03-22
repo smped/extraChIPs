@@ -1,8 +1,8 @@
 #' @export
-#' @name chopRanges
-#' @rdname chopRanges-methods
+#' @name chopMC
+#' @rdname chopMC-methods
 setGeneric(
-  "chopRanges", function(x, simplify = TRUE, ...) standardGeneric("chopRanges")
+  "chopMC", function(x, simplify = TRUE, ...) standardGeneric("chopMC")
 )
 
 #' @export
@@ -13,11 +13,11 @@ setGeneric(
 )
 
 #' @export
-#' @name distinctRanges
-#' @rdname distinctRanges-methods
+#' @name distinctMC
+#' @rdname distinctMC-methods
 setGeneric(
-  "distinctRanges",
-  function(x, .across = everything(), ...) standardGeneric("distinctRanges")
+  "distinctMC",
+  function(x, .across = everything(), ...) standardGeneric("distinctMC")
 )
 
 #' @export
