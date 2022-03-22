@@ -1,5 +1,5 @@
 ---
-title: "extraChIPs: Range-based operations"
+title: "extraChIPs: Range-Based operations"
 author:
 - name: Steve Pederson
   affiliation: Dame Roma Mitchell Cancer Research Laboratories, Adelaide Medical School, University of Adelaide
@@ -8,7 +8,7 @@ package: extraChIPs
 output:
   BiocStyle::html_document
 vignette: >
-  %\VignetteIndexEntry{An Introduction To extraChIPs}
+  %\VignetteIndexEntry{Range-Based Operations}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
