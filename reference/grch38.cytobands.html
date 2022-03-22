@@ -34,6 +34,9 @@
   <ul class="dropdown-menu" role="menu"><li>
       <a href="../articles/range_based_functions.html">Range-based Operations</a>
     </li>
+    <li>
+      <a href="../articles/differential_binding.html">Differential Binding</a>
+    </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/steveped/extraChIPs/" class="external-link">
@@ -83,15 +86,26 @@ required by <a href="https://rdrr.io/pkg/Gviz/man/IdeogramTrack-class.html" clas
 <dd><p>Staining pattern</p></dd>
 
 
-</dl><p>#' @examples
-data(grch38.cytobands)
-head(grch38.cytobands)</p>
-    </div>
+</dl></div>
     <div id="source">
     <h2>Source</h2>
     <p><a href="https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/cytoBand.txt.gz" class="external-link">https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/cytoBand.txt.gz</a></p>
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">grch38.cytobands</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">grch38.cytobands</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   chrom chromStart chromEnd   name gieStain</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  chr1          0  2300000 p36.33     gneg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  chr1    2300000  5300000 p36.32   gpos25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  chr1    5300000  7100000 p36.31     gneg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  chr1    7100000  9100000 p36.23   gpos25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  chr1    9100000 12500000 p36.22     gneg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  chr1   12500000 15900000 p36.21   gpos50</span>
+<span class="r-in"></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
