@@ -1,4 +1,11 @@
 #' @export
+#' @name bestOverlap
+#' @rdname bestOverlap-methods
+setGeneric(
+  "bestOverlap", function(x, y, ...) standardGeneric("bestOverlap")
+)
+
+#' @export
 #' @name chopMC
 #' @rdname chopMC-methods
 setGeneric(
@@ -17,7 +24,7 @@ setGeneric(
 #' @rdname distinctMC-methods
 setGeneric(
   "distinctMC",
-  function(x, .across = everything(), ...) standardGeneric("distinctMC")
+  function(x, cols, ...) standardGeneric("distinctMC")
 )
 
 #' @export

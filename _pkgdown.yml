@@ -11,10 +11,10 @@ reference:
 - title: Range-Based Operations
   contents:
     - ends_with("MC")
-    - propOverlap
+    - ends_with("Overlap")
+    - colToRanges
     - partitionRanges
     - stitchRanges
-    - colToRanges
 
 - title: Functions For Differential Binding Analysis
   contents:

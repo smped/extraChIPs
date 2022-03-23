@@ -4,10 +4,10 @@
 #'
 #' @details
 #' This function finds unique ranges and mcols in combination and retains only
-#' the distinct combinations
+#' the distinct combinations. If no mcols are present defaults to `unique(x)`
 #'
 #' @param x A GenomicRanges object
-#' @param .across `<tidy-select>` Passed to \link[dplyr]{across}
+#' @param cols The mcols to be used to determining distinct ranges/mcols
 #' @param ... Not used
 #'
 #' @return
@@ -20,10 +20,10 @@
 #' gr$gene <- "gene1"
 #' gr
 #' distinctMC(gr)
-#' distinctMC(gr, all_of("gene"))
+#' distinctMC(gr, "gene")
 #'
 #' @importFrom dplyr distinct across
-#' @importFrom tidyr everything all_of
+#' @importFrom tidyr all_of
 #' @importFrom GenomeInfoDb seqinfo
 #'
 #' @export
@@ -31,10 +31,17 @@
 #' @aliases distinctMC
 setMethod(
   "distinctMC", "GRanges",
-  function(x, .across = everything(), ...) {
+  function(x, cols, ...) {
+
+    if (ncol(mcols(x)) == 0) return(unique(x))
+    mc_names <- colnames(mcols(x))
+    if (missing(cols)) cols <- mc_names
+    sd <- setdiff(cols, mc_names)
+    if (length(sd) > 0)
+      stop("Requested columns absent from data: ", paste(sd, sep = ", "))
 
     tbl <- as_tibble(x, name = "range")
-    tbl <- distinct(tbl, across(c(all_of("range"), .across)))
+    tbl <- distinct(tbl, across(all_of(c("range", cols))))
     gr <- colToRanges(tbl, "range", seqinfo = seqinfo(x))
     gr
 
