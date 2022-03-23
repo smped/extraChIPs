@@ -3,22 +3,9 @@
 \docType{data}
 \name{ex_genes}
 \alias{ex_genes}
-\title{Genes in an example region}
+\title{Basic GRanges containing four genes}
 \format{
-Gene structure as a GRanges object, in the correct structure for
-plotting with plotHFGC.
-This is a GRangesList with two elements: 'Unchanged' and 'Up' representing
-genes that were considered as unchanged or upregulated in a separate RNA-seq
-analysis.
-Each element is pre-formatted for compatability with the package \code{Gviz} and
-has the columns
-\describe{
-\item{type}{The type of feature. All here are exons}
-\item{gene}{The Ensembl gene ID}
-\item{exon}{An arbitrary exon ID}
-\item{transcript}{The Ensembl transcript ID}
-\item{symbol}{The gene nme (or symbol)}
-}
+Simple GRanges object to demonstrate mapping from ranges to genes
 
 All annotations are from GRCh37
 }
@@ -26,7 +13,7 @@ All annotations are from GRCh37
 ex_genes
 }
 \description{
-Genes in an example region formatted for Gviz
+Genes in an example region
 }
 \examples{
 data(ex_genes)

@@ -303,7 +303,8 @@ plotHFGC <- function(
   if (!is.null(hic_track)) {
     hic <- slot(hic_track, "giobject")
     anchors <- anchors(hic[calculateDistances(hic) < max])
-    plot_range <- range(unlist(GRangesList(anchors)))
+    anchors <- unlist(GRangesList(anchors))
+    plot_range <- range(c(anchors, gr))
   }
   ## Now resize/shift as required
   plot_range <- resize(plot_range, zoom*width(plot_range), fix = "center")
@@ -335,7 +336,7 @@ plotHFGC <- function(
   )
 
   ## Add the highlight track if wanted. Include features, genes & coverage
-  hl_track <- c(feature_track, gene_tracks, cov_tracks)
+  hl_track <- c(hic_track, feature_track, gene_tracks, cov_tracks)
   hl_track <- hl_track[!vapply(hl_track, is.null, logical(1))]
   if (!is.null(highlight))
     hl_track <- HighlightTrack(
@@ -347,7 +348,7 @@ plotHFGC <- function(
   if (axistrack)
     plot_list <- c(plot_list, GenomeAxisTrack(plot_range, fontsize = fontsize))
 
-  plot_list <- c(plot_list, hic_track, hl_track)
+  plot_list <- c(plot_list, hl_track)
   plotTracks(
     plot_list,
     from = start(plot_range), end(plot_range), title.width = title.width
@@ -432,6 +433,8 @@ plotHFGC <- function(
   .annotation, .gr, .cov_tracks, .coverage, .fill, .size
   ) {
   if (missing(.annotation) | is.null(.cov_tracks)) return(.cov_tracks)
+  ## Set everything grey if no colour is specified
+  if (missing(.fill)) .fill <- "grey"
 
   if (is(.coverage, "BigWigFileList")) {
     ## Here we just add another feature track. Input will be a single GRList
@@ -459,7 +462,7 @@ plotHFGC <- function(
         fontsize <- x@dp@pars$fontsize
         cex <- x@dp@pars$cex.title
         annot_track <- .makeFeatureTrack(
-          .annotation[[nm]], .gr, fontsize, .fill, .size, cex, 0
+          .annotation[[nm]], .gr, fontsize, .fill, .size, cex, 0, NULL, "full"
         )
         annot_track@name <- nm
         c(list(annot_track), x)
@@ -929,16 +932,18 @@ plotHFGC <- function(
         )
       )
 
-    ## The colours should be a single colour, or named vector/list
-    if (length(genecol) > 1) {
-      if (!all(nm %in% names(genecol)))
-        msg <- c(
-          msg,
-          paste(
-            "All elements of the 'genes' GRangesList should have a named",
-            "colour in 'genecol'\n"
+    if (!missing(genecol)) {
+      ## The colours should be a single colour, or named vector/list
+      if (length(genecol) > 1) {
+        if (!all(nm %in% names(genecol)))
+          msg <- c(
+            msg,
+            paste(
+              "All elements of the 'genes' GRangesList should have a named",
+              "colour in 'genecol'\n"
+            )
           )
-        )
+      }
     }
 
     ## collapseTranscripts can be a logical vector or list

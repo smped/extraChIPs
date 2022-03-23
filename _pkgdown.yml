@@ -38,7 +38,7 @@ reference:
 - title: Data Objects
   contents:
     - contains("cytobands")
-    - ex_genes
+    - starts_with("ex_")
 
 navbar:
   type: default

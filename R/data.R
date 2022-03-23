@@ -63,6 +63,44 @@
 #'
 #' All annotations are from GRCh37
 #' @examples
+#' data(ex_trans)
+#' ex_trans
+"ex_trans"
+
+#' @title Basic GRanges containing four genes
+#'
+#' @description Genes in an example region
+#'
+#' @format Simple GRanges object to demonstrate mapping from ranges to genes
+#'
+#' All annotations are from GRCh37
+#' @examples
 #' data(ex_genes)
 #' ex_genes
 "ex_genes"
+
+#' @title Basic GRanges containing promoters
+#'
+#' @description Promoters from an example region
+#'
+#' @format Simple GRanges object to demonstrate using features in various steps
+#' implemented in this package
+#'
+#' All annotations are from GRCh37
+#' @examples
+#' data(ex_prom)
+#' ex_prom
+"ex_prom"
+
+#' @title Basic GInteractions object
+#'
+#' @description Contains a single interaction fo demonstration purposes
+#'
+#' @format Simple GInteractions object to demonstrate using features in various
+#' steps implemented in this package
+#'
+#' All annotations are from GRCh37
+#' @examples
+#' data(ex_hic)
+#' ex_hic
+"ex_hic"
