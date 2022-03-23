@@ -319,9 +319,9 @@
 <div class="section level3">
 <h3 id="overlapping-proportions">Overlapping proportions<a class="anchor" aria-label="anchor" href="#overlapping-proportions"></a>
 </h3>
-<p>Whilst the functions <code><a href="https://rdrr.io/pkg/IRanges/man/findOverlaps-methods.html" class="external-link">findOverlaps()</a></code> and <code><a href="https://rdrr.io/pkg/IRanges/man/findOverlaps-methods.html" class="external-link">overlapsAny()</a></code> are extremely useful, the addition of <code><a href="../reference/overlapsProp-methods.html">overlapsProp()</a></code> returns a numeric vector with the proportion of each query range (<code>x</code>) which overlaps any range in the subject range (<code>y</code>)</p>
+<p>Whilst the functions <code><a href="https://rdrr.io/pkg/IRanges/man/findOverlaps-methods.html" class="external-link">findOverlaps()</a></code> and <code><a href="https://rdrr.io/pkg/IRanges/man/findOverlaps-methods.html" class="external-link">overlapsAny()</a></code> are extremely useful, the addition of <code><a href="../reference/propOverlap-methods.html">propOverlap()</a></code> returns a numeric vector with the proportion of each query range (<code>x</code>) which overlaps any range in the subject range (<code>y</code>)</p>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/overlapsProp-methods.html">overlapsProp</a></span><span class="op">(</span><span class="va">gr</span>, <span class="va">peaks</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/propOverlap-methods.html">propOverlap</a></span><span class="op">(</span><span class="va">gr</span>, <span class="va">peaks</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## [1] 0.2000000 0.3333333 0.0000000</span></code></pre>
 </div>
 </div>

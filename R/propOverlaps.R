@@ -18,15 +18,15 @@
 #' @examples
 #' x <- GRanges("chr1:1-10")
 #' y <- GRanges("chr1:1-5")
-#' overlapsProp(x, y)
-#' overlapsProp(y, x)
+#' propOverlap(x, y)
+#' propOverlap(y, x)
 #'
 #' @importFrom GenomicRanges intersect findOverlaps width pintersect reduce
 #' @importFrom S4Vectors queryHits subjectHits splitAsList
 #' @export
-#' @rdname overlapsProp-methods
+#' @rdname propOverlap-methods
 setMethod(
-  "overlapsProp", c("GRanges", "GRanges"),
+  "propOverlap", c("GRanges", "GRanges"),
   function(x, y, ignore.strand = FALSE, ...) {
 
     hits <- findOverlaps(x, y, ignore.strand = ignore.strand)
@@ -42,5 +42,5 @@ setMethod(
   }
 )
 #' @export
-#' @rdname overlapsProp-methods
-setMethod("overlapsProp", c("ANY", "ANY"), function(x, y, ...) .errNotImp(x, y))
+#' @rdname propOverlap-methods
+setMethod("propOverlap", c("ANY", "ANY"), function(x, y, ...) .errNotImp(x, y))

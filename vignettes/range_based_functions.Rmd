@@ -180,12 +180,12 @@ gr %>%
 ## Overlapping proportions
 
 Whilst the functions `findOverlaps()` and `overlapsAny()` are extremely 
-useful, the addition of `overlapsProp()` returns a numeric vector with
+useful, the addition of `propOverlap()` returns a numeric vector with
 the proportion of each query range (`x`) which overlaps any range in the
 subject range (`y`)
 
 ```{r overlaps-prop}
-overlapsProp(gr, peaks)
+propOverlap(gr, peaks)
 ```
 
 

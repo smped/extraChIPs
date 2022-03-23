@@ -11,7 +11,7 @@ reference:
 - title: Range-Based Operations
   contents:
     - ends_with("MC")
-    - overlapsProp
+    - propOverlap
     - partitionRanges
     - stitchRanges
     - colToRanges

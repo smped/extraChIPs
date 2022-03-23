@@ -63,11 +63,11 @@ setGeneric(
 )
 
 #' @export
-#' @name overlapsProp
-#' @rdname overlapsProp-methods
+#' @name propOverlap
+#' @rdname propOverlap-methods
 setGeneric(
-  "overlapsProp",
-  function(x, y, ignore.strand = FALSE, ...) standardGeneric("overlapsProp")
+  "propOverlap",
+  function(x, y, ignore.strand = FALSE, ...) standardGeneric("propOverlap")
 )
 
 #' @export

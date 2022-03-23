@@ -36,9 +36,9 @@ plotPie(
 \item{show_total}{logical(1) Show labels on each pie chart with the tally for
 that complete chart}
 
-\item{label_fill}{The backgrund colour for tally labels}
+\item{label_fill}{The background colour for tally labels}
 
-\item{label_alpha}{Transparency for taly labels}
+\item{label_alpha}{Transparency for tally labels}
 
 \item{label_size}{Size of the tally labels. Passed to
 \link[ggplot2]{geom_label}}
@@ -46,7 +46,7 @@ that complete chart}
 \item{min_p}{The minimum proportion of the total required for adding labels.
 Effectively removes labels from pie charts with few members. Alternatively
 when only one column is specified, categories below this will not be shown
-around the adge of the plot}
+around the edge of the plot}
 
 \item{show_category}{Show category labels around the edge of the plot if only
 one category/column is specified}
