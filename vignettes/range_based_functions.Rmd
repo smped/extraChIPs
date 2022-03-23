@@ -157,8 +157,8 @@ for comparing ranges.
 Using the `*MC()` functions will retain `mcols` elements from the *query range*.
 
 ```{r setopts}
-peaks <- GRanges("chr1:9-12:*")
-peaks$peak_id <- "peak1"
+peaks <- GRanges(c("chr1:1-5", "chr1:9-12:*"))
+peaks$peak_id <- c("peak1", "peak2")
 GenomicRanges::intersect(gr, peaks, ignore.strand = TRUE)
 intersectMC(gr, peaks, ignore.strand = TRUE)
 setdiffMC(gr, peaks, ignore.strand = TRUE)
@@ -184,8 +184,15 @@ useful, the addition of `propOverlap()` returns a numeric vector with
 the proportion of each query range (`x`) which overlaps any range in the
 subject range (`y`)
 
-```{r overlaps-prop}
+```{r prop-overlaps}
 propOverlap(gr, peaks)
+```
+
+This is also extended to enable comparison across multiple features and to 
+classify each peak by which features that it overlaps the most strongly.
+
+```{r best-overlap}
+bestOverlap(gr, peaks, var = "peak_id")
 ```
 
 
@@ -208,7 +215,6 @@ two sets of ranges.
 
 ```{r partition-ranges}
 partitionRanges(gr, peaks)
-partitionRanges(peaks, gr)
 ```
 
 Whilst this shares some similarity with `intersectMC()` the additional 

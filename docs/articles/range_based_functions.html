@@ -261,24 +261,27 @@
 </h3>
 <p>Whilst <code>reduce/reduceMC</code> is applied to a single <code>GRanges</code> object, the set operation functions <code>intersect</code>, <code>setdiff</code> and <code>union</code> are valuable approaches for comparing ranges. Using the <code>*MC()</code> functions will retain <code>mcols</code> elements from the <em>query range</em>.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="st">"chr1:9-12:*"</span><span class="op">)</span>
-<span class="va">peaks</span><span class="op">$</span><span class="va">peak_id</span> <span class="op">&lt;-</span> <span class="st">"peak1"</span>
+<code class="sourceCode R"><span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chr1:1-5"</span>, <span class="st">"chr1:9-12:*"</span><span class="op">)</span><span class="op">)</span>
+<span class="va">peaks</span><span class="op">$</span><span class="va">peak_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"peak1"</span>, <span class="st">"peak2"</span><span class="op">)</span>
 <span class="fu">GenomicRanges</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/setops-methods.html" class="external-link">intersect</a></span><span class="op">(</span><span class="va">gr</span>, <span class="va">peaks</span>, ignore.strand <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## GRanges object with 1 range and 0 metadata columns:</span>
+<pre><code><span class="co">## GRanges object with 2 ranges and 0 metadata columns:</span>
 <span class="co">##       seqnames    ranges strand</span>
 <span class="co">##          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt;</span>
-<span class="co">##   [1]     chr1      9-10      *</span>
+<span class="co">##   [1]     chr1       1-5      *</span>
+<span class="co">##   [2]     chr1      9-10      *</span>
 <span class="co">##   -------</span>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/setoptsMC-methods.html">intersectMC</a></span><span class="op">(</span><span class="va">gr</span>, <span class="va">peaks</span>, ignore.strand <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## GRanges object with 1 range and 3 metadata columns:</span>
-<span class="co">##       seqnames    ranges strand |     gene_id                   tx_id</span>
-<span class="co">##          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;         &lt;CharacterList&gt;</span>
-<span class="co">##   [1]     chr1      9-10      * |       gene1 transcript1,transcript2</span>
-<span class="co">##                     score</span>
-<span class="co">##             &lt;NumericList&gt;</span>
-<span class="co">##   [1] 0.4423369,0.0831099</span>
+<pre><code><span class="co">## GRanges object with 2 ranges and 3 metadata columns:</span>
+<span class="co">##       seqnames    ranges strand |     gene_id</span>
+<span class="co">##          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;</span>
+<span class="co">##   [1]     chr1       1-5      * |       gene1</span>
+<span class="co">##   [2]     chr1      9-10      * |       gene1</span>
+<span class="co">##                                     tx_id                         score</span>
+<span class="co">##                           &lt;CharacterList&gt;                 &lt;NumericList&gt;</span>
+<span class="co">##   [1] transcript1,transcript2,transcript3 0.4423369,0.0831099,0.6146112</span>
+<span class="co">##   [2]             transcript1,transcript2           0.4423369,0.0831099</span>
 <span class="co">##   -------</span>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
@@ -286,7 +289,7 @@
 <pre><code><span class="co">## GRanges object with 1 range and 3 metadata columns:</span>
 <span class="co">##       seqnames    ranges strand |     gene_id</span>
 <span class="co">##          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;</span>
-<span class="co">##   [1]     chr1       1-8      * |       gene1</span>
+<span class="co">##   [1]     chr1       6-8      * |       gene1</span>
 <span class="co">##                                     tx_id                         score</span>
 <span class="co">##                           &lt;CharacterList&gt;                 &lt;NumericList&gt;</span>
 <span class="co">##   [1] transcript1,transcript2,transcript3 0.4423369,0.0831099,0.6146112</span>
@@ -309,10 +312,11 @@
 <span class="va">gr</span> <span class="op"><a href="https://rdrr.io/pkg/plyranges/man/tidyverse-reexports.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="https://rdrr.io/pkg/plyranges/man/tidyverse-reexports.html" class="external-link">select</a></span><span class="op">(</span><span class="va">tx_id</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/pkg/plyranges/man/tidyverse-reexports.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="../reference/setoptsMC-methods.html">intersectMC</a></span><span class="op">(</span><span class="va">peaks</span>, ignore.strand <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## GRanges object with 1 range and 1 metadata column:</span>
-<span class="co">##       seqnames    ranges strand |                   tx_id</span>
-<span class="co">##          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; |         &lt;CharacterList&gt;</span>
-<span class="co">##   [1]     chr1      9-10      * | transcript1,transcript2</span>
+<pre><code><span class="co">## GRanges object with 2 ranges and 1 metadata column:</span>
+<span class="co">##       seqnames    ranges strand |                               tx_id</span>
+<span class="co">##          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; |                     &lt;CharacterList&gt;</span>
+<span class="co">##   [1]     chr1       1-5      * | transcript1,transcript2,transcript3</span>
+<span class="co">##   [2]     chr1      9-10      * |             transcript1,transcript2</span>
 <span class="co">##   -------</span>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
 </div>
@@ -322,7 +326,11 @@
 <p>Whilst the functions <code><a href="https://rdrr.io/pkg/IRanges/man/findOverlaps-methods.html" class="external-link">findOverlaps()</a></code> and <code><a href="https://rdrr.io/pkg/IRanges/man/findOverlaps-methods.html" class="external-link">overlapsAny()</a></code> are extremely useful, the addition of <code><a href="../reference/propOverlap-methods.html">propOverlap()</a></code> returns a numeric vector with the proportion of each query range (<code>x</code>) which overlaps any range in the subject range (<code>y</code>)</p>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/propOverlap-methods.html">propOverlap</a></span><span class="op">(</span><span class="va">gr</span>, <span class="va">peaks</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## [1] 0.2000000 0.3333333 0.0000000</span></code></pre>
+<pre><code><span class="co">## [1] 0.7 0.5 0.5</span></code></pre>
+<p>This is also extended to enable comparison across multiple features and to classify each peak by which features that it overlaps the most strongly.</p>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/bestOverlap-methods.html">bestOverlap</a></span><span class="op">(</span><span class="va">gr</span>, <span class="va">peaks</span>, var <span class="op">=</span> <span class="st">"peak_id"</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">## [1] "peak1" "peak2" "peak1"</span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -333,32 +341,23 @@
 </h3>
 <p>In addition to standard set operations, one set of ranges can be used to partition another set of ranges, returning <code>mcols</code> from both ranges. Ranges from the query range (<code>x</code>) are returned after being partitioned by the ranges in the subject range (<code>y</code>). Subject ranges used for partitioning <em>must be non-overlapping</em>, and if overlapping ranges are provided, these will be reduced prior to partitioning.</p>
 <p>This enables the identification of specific ranges from the query range (<code>x</code>) which overlap ranges from the subject range (<code>y</code>) Under this approach, <code>mcols</code> from both <code>query</code> and <code>subject</code> ranges will be returned to enable the clear ranges which are common and distinct within the two sets of ranges.</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/partitionRanges-methods.html">partitionRanges</a></span><span class="op">(</span><span class="va">gr</span>, <span class="va">peaks</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## GRanges object with 3 ranges and 4 metadata columns:</span>
-<span class="co">##       seqnames    ranges strand |     gene_id                   tx_id</span>
-<span class="co">##          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;         &lt;CharacterList&gt;</span>
-<span class="co">##   [1]     chr1       1-8      + |       gene1             transcript1</span>
-<span class="co">##   [2]     chr1       5-8      + |       gene1             transcript2</span>
-<span class="co">##   [3]     chr1      9-10      + |       gene1 transcript1,transcript2</span>
-<span class="co">##                     score     peak_id</span>
-<span class="co">##             &lt;NumericList&gt; &lt;character&gt;</span>
-<span class="co">##   [1]            0.442337        &lt;NA&gt;</span>
-<span class="co">##   [2]           0.0831099        &lt;NA&gt;</span>
-<span class="co">##   [3] 0.4423369,0.0831099       peak1</span>
-<span class="co">##   -------</span>
-<span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/partitionRanges-methods.html">partitionRanges</a></span><span class="op">(</span><span class="va">peaks</span>, <span class="va">gr</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## GRanges object with 2 ranges and 4 metadata columns:</span>
+<code class="sourceCode R"><span class="fu"><a href="../reference/partitionRanges-methods.html">partitionRanges</a></span><span class="op">(</span><span class="va">gr</span>, <span class="va">peaks</span><span class="op">)</span></code></pre></div>
+<pre><code><span class="co">## GRanges object with 5 ranges and 4 metadata columns:</span>
 <span class="co">##       seqnames    ranges strand |     peak_id     gene_id</span>
 <span class="co">##          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;character&gt;</span>
-<span class="co">##   [1]     chr1      9-10      + |       peak1       gene1</span>
-<span class="co">##   [2]     chr1     11-12      + |       peak1        &lt;NA&gt;</span>
-<span class="co">##                                     tx_id                         score</span>
-<span class="co">##                           &lt;CharacterList&gt;                 &lt;NumericList&gt;</span>
-<span class="co">##   [1] transcript1,transcript2,transcript3 0.4423369,0.0831099,0.6146112</span>
-<span class="co">##   [2]                                                                  </span>
+<span class="co">##   [1]     chr1       1-5      + |       peak1       gene1</span>
+<span class="co">##   [2]     chr1         5      + |       peak1       gene1</span>
+<span class="co">##   [3]     chr1         6      + |        &lt;NA&gt;       gene1</span>
+<span class="co">##   [4]     chr1       6-8      + |        &lt;NA&gt;       gene1</span>
+<span class="co">##   [5]     chr1      9-10      + |       peak2       gene1</span>
+<span class="co">##                         tx_id               score</span>
+<span class="co">##               &lt;CharacterList&gt;       &lt;NumericList&gt;</span>
+<span class="co">##   [1]             transcript1            0.442337</span>
+<span class="co">##   [2] transcript2,transcript3 0.0831099,0.6146112</span>
+<span class="co">##   [3]             transcript3            0.614611</span>
+<span class="co">##   [4] transcript1,transcript2 0.4423369,0.0831099</span>
+<span class="co">##   [5] transcript1,transcript2 0.4423369,0.0831099</span>
 <span class="co">##   -------</span>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
 <p>Whilst this shares some similarity with <code><a href="../reference/setoptsMC-methods.html">intersectMC()</a></code> the additional capabilities provide greater flexibility.</p>
@@ -366,14 +365,14 @@
 <code class="sourceCode R"><span class="fu"><a href="../reference/partitionRanges-methods.html">partitionRanges</a></span><span class="op">(</span><span class="va">gr</span>, <span class="va">peaks</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/pkg/plyranges/man/tidyverse-reexports.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">peak_id</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## GRanges object with 2 ranges and 4 metadata columns:</span>
-<span class="co">##       seqnames    ranges strand |     gene_id           tx_id         score</span>
-<span class="co">##          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;CharacterList&gt; &lt;NumericList&gt;</span>
-<span class="co">##   [1]     chr1       1-8      + |       gene1     transcript1      0.442337</span>
-<span class="co">##   [2]     chr1       5-8      + |       gene1     transcript2     0.0831099</span>
-<span class="co">##           peak_id</span>
-<span class="co">##       &lt;character&gt;</span>
-<span class="co">##   [1]        &lt;NA&gt;</span>
-<span class="co">##   [2]        &lt;NA&gt;</span>
+<span class="co">##       seqnames    ranges strand |     peak_id     gene_id</span>
+<span class="co">##          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;character&gt;</span>
+<span class="co">##   [1]     chr1         6      + |        &lt;NA&gt;       gene1</span>
+<span class="co">##   [2]     chr1       6-8      + |        &lt;NA&gt;       gene1</span>
+<span class="co">##                         tx_id               score</span>
+<span class="co">##               &lt;CharacterList&gt;       &lt;NumericList&gt;</span>
+<span class="co">##   [1]             transcript3            0.614611</span>
+<span class="co">##   [2] transcript1,transcript2 0.4423369,0.0831099</span>
 <span class="co">##   -------</span>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
 </div>

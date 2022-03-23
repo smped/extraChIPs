@@ -35,6 +35,8 @@ setMethod(
   "chopMC", "GRanges",
   function(x, simplify = TRUE, ...) {
 
+    if (ncol(mcols(x)) == 0) return(unique(x))
+
     tbl <- as_tibble(x, name = "range")
     tbl <- chop(tbl, -all_of("range"))
     gr <- colToRanges(tbl, "range", seqinfo = seqinfo(x))

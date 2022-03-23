@@ -9,6 +9,7 @@
 partitionRanges(
   x,
   y,
+  y_as_both = TRUE,
   ignore.strand = FALSE,
   simplify = TRUE,
   suffix = c(".x", ".y"),
@@ -18,6 +19,7 @@ partitionRanges(
 \S4method{partitionRanges}{GRanges,GRanges}(
   x,
   y,
+  y_as_both = TRUE,
   ignore.strand = FALSE,
   simplify = TRUE,
   suffix = c(".x", ".y"),
@@ -27,6 +29,7 @@ partitionRanges(
 \S4method{partitionRanges}{ANY,ANY}(
   x,
   y,
+  y_as_both = TRUE,
   ignore.strand = FALSE,
   simplify = TRUE,
   suffix = c(".x", ".y"),
@@ -36,11 +39,14 @@ partitionRanges(
 \arguments{
 \item{x, y}{GenomicRanges objects}
 
+\item{y_as_both}{logical(1) If there are any unstranded regions in y, should
+these be assigned to both strands. If TRUE unstranded regions can be used
+to partition stranded regions}
+
 \item{ignore.strand}{If set to TRUE, then the strand of x and y is set to
 "*" prior to any computation.}
 
-\item{simplify}{logical(1). Simplify any \code{CompressedList} columns as vectors
-where possible}
+\item{simplify}{Pass to chopMC and simplify mcols in the output}
 
 \item{suffix}{Added to any shared column names in the provided objects}
 
@@ -62,7 +68,7 @@ set of partitioned ranges
 x <- GRanges(c("chr1:1-10", "chr1:6-15"))
 x$id <- paste0("range", seq_along(x))
 x
-y <- GRanges(c("chr1:2-5", "chr1:5-12"))
+y <- GRanges(c("chr1:2-5", "chr1:6-12"))
 y$id <- paste0("range", seq_along(y))
 y
 partitionRanges(x, y)

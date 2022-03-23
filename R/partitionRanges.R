@@ -12,10 +12,12 @@
 #' A GRanges object
 #'
 #' @param x,y GenomicRanges objects
+#' @param y_as_both logical(1) If there are any unstranded regions in y, should
+#' these be assigned to both strands. If TRUE unstranded regions can be used
+#' to partition stranded regions
 #' @param ignore.strand If set to TRUE, then the strand of x and y is set to
 #' "*" prior to any computation.
-#' @param simplify logical(1). Simplify any `CompressedList` columns as vectors
-#' where possible
+#' @param simplify Pass to chopMC and simplify mcols in the output
 #' @param suffix Added to any shared column names in the provided objects
 #' @param ... Not used
 #'
@@ -23,20 +25,23 @@
 #' x <- GRanges(c("chr1:1-10", "chr1:6-15"))
 #' x$id <- paste0("range", seq_along(x))
 #' x
-#' y <- GRanges(c("chr1:2-5", "chr1:5-12"))
+#' y <- GRanges(c("chr1:2-5", "chr1:6-12"))
 #' y$id <- paste0("range", seq_along(y))
 #' y
 #' partitionRanges(x, y)
 #'
-#' @importFrom S4Vectors mcols queryHits subjectHits DataFrame
-#' @importFrom GenomicRanges findOverlaps sort psetdiff pintersect
+#' @importFrom S4Vectors mcols queryHits subjectHits DataFrame splitAsList
+#' @importFrom S4Vectors endoapply 'mcols<-'
+#' @importFrom GenomicRanges findOverlaps sort GRangesList 'strand<-' strand
+#' @importFrom GenomicRanges sort pintersect
 #'
 #' @export
 #' @rdname partitionRanges-methods
 setMethod(
   "partitionRanges", c("GRanges", "GRanges"),
   function(
-    x, y, ignore.strand = FALSE, simplify = TRUE, suffix = c(".x", ".y"), ...
+    x, y, y_as_both = TRUE, ignore.strand = FALSE, simplify = TRUE,
+    suffix = c(".x", ".y"), ...
   ) {
 
     if (length(y) == 0) return(x)
@@ -50,34 +55,57 @@ setMethod(
       names(mcols(y))[i_y] <- paste0(names(mcols(y))[i_y], suffix[[2]])
     }
 
+    if (all(strand(x) == "*")) ignore.strand = TRUE
+
     ## If y has overlapping ranges, the partitioning problem doesn't make sense
-    ## First run a reduction on y, keeping mcols
-    red_y <- reduceMC(y, simplify = TRUE, ignore.strand = ignore.strand)
-    ol <- findOverlaps(x, red_y, ignore.strand = ignore.strand)
+    ## Check for overlaps and exit if there are any
+    self_ol <- findOverlaps(y, y, ignore.strand = ignore.strand)
+    any_self <- any(queryHits(self_ol) != subjectHits(self_ol))
+    if (any_self) stop("'y' cannot have any overlapping ranges")
 
-    ## Find the differences using parallel setdiff
-    sd <- psetdiff(
-      x[queryHits(ol)], red_y[subjectHits(ol)], ignore.strand = ignore.strand
-    )
-    mcols(sd) <- DataFrame(mcols(x)[queryHits(ol),])
-    colnames(mcols(sd)) <- colnames(mcols(x))
-    # sd_ol <- findOverlaps(sd, x, ignore.strand = ignore.strand)
-    # sd <- sd[queryHits(sd_ol)]
-    # mcols(sd) <- DataFrame(mcols(x)[subjectHits(sd_ol),])
+    ## A key issue here is that setting ignore.strand = TRUE will unstrand
+    ## the query 'x'. If the subject 'y' is unstranded, but we need to retain
+    ## strand information for 'x', the simplest approach is to duplicate
+    ## any unstranded regions in 'y' assigning BOTH strands.
+    if (!ignore.strand & y_as_both) {
+      y_un <- strand(y) == "*"
+      y_pos <- y[y_un]
+      strand(y_pos) <- "+"
+      y_neg <- y[y_un]
+      strand(y_neg) <- "-"
+      y <- sort(c(y[!y_un], y_pos, y_neg))
+    }
 
-    ## Find the intersection of each range using parallel intersect
-    int <- pintersect(
-      x[queryHits(ol)], red_y[subjectHits(ol)], ignore.strand = ignore.strand
-    )
-    mcols(int) <- mcols(int)[colnames(mcols(x))]
+    ## First the regions with no overlap. Can't think of a way which doesn't
+    ## use lapply. This will be slow for big datasets. Maybe check bplapply?
+    grl_x <- splitAsList(x, seq_along(x))
+    names(grl_x) <- c()
+    sd <- endoapply(grl_x, setdiffMC, y = y, ignore.strand = ignore.strand)
+    sd <- unlist(sd)
 
-    ## Join and map the columns from y
-    out <- GenomicRanges::sort(c(sd, int), ignore.strand = ignore.strand)
-    df_y <- mcols(.mapMcols2Ranges(out, red_y, ignore.strand, simplify))
-    mcols(out) <- cbind(mcols(out), df_y)
+    ## Now find the regions with overlaps
+    ol <- endoapply(grl_x, setdiffMC, sd, ignore.strand = ignore.strand)
+    ol <- unlist(ol)
+    hits <- findOverlaps(ol, y, ignore.strand = ignore.strand)
 
-    ## Now collapse any identical ranges
-    chopMC(out, simplify = simplify)
+    ## Find the intersections using y as the viewpoint
+    out <- GRanges(seqinfo = seqinfo(x))
+    if (length(hits) > 0) {
+      out <- pintersect(
+        y[subjectHits(hits)], ol[queryHits(hits)], ignore.strand = ignore.strand
+      )
+      if (ncol(mcols(ol)) > 0) {
+        df_ol <- DataFrame(mcols(ol)[queryHits(hits),])
+        names(df_ol) <- names(mcols(ol))
+        mcols(out) <- cbind(mcols(out), df_ol)
+      }
+    }
+    out <- c(out, sd)
+    out <- sort(out, ignore.strand = ignore.strand)
+    keep <- names(mcols(out)) %in% c(names(mcols(x)), names(mcols(y)))
+    mcols(out) <- mcols(out)[keep]
+    if (simplify) out <- chopMC(out, simplify = TRUE)
+    out
 
   }
 )

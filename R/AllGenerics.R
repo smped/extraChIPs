@@ -83,7 +83,8 @@ setGeneric(
 setGeneric(
   "partitionRanges",
   function(
-    x, y, ignore.strand = FALSE, simplify = TRUE, suffix = c(".x", ".y"), ...
+    x, y, y_as_both = TRUE, ignore.strand = FALSE, simplify = TRUE,
+    suffix = c(".x", ".y"), ...
   ) {
     standardGeneric("partitionRanges")
   }

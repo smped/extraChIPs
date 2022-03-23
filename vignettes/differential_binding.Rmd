@@ -14,7 +14,9 @@ vignette: >
 ---
 
 ```{r, echo=FALSE}
-knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(
+  message = FALSE, warning = FALSE, fig.height = 8, fig.width = 10
+)
 ```
 
 
