@@ -337,7 +337,7 @@ test_that("Ideogram forms correctly", {
 test_that("HiC Track forms correctly", {
   hic_track <- .makeHiCTrack(
     hic, gr1, .tracksize = 2, .fontsize = 10, .cex = 1, .rot = 90,
-    .col = hiccol, .name = "HiC"
+    .col = hiccol, .name = "HiC", .col.title = "black", .bg.title = "white"
   )
   expect_true(is(hic_track, "InteractionTrack"))
   expect_equal("HiC", hic_track@name)
@@ -345,6 +345,8 @@ test_that("HiC Track forms correctly", {
   expect_equal(hic_track@dp@pars$col.anchors.fill, hiccol$anchors)
   expect_equal(hic_track@dp@pars$col.interactions, hiccol$interactions)
   expect_equal(hic_track@dp@pars$fontsize, 10)
+  expect_equal(hic_track@dp@pars$fontcolor.title, "black")
+  expect_equal(hic_track@dp@pars$background.title, "white")
   expect_equal(hic_track@dp@pars$size, 2)
   expect_equal(hic_track@dp@pars$rotation.title, 90)
   expect_null(.makeHiCTrack(hic, GRanges()))
@@ -354,10 +356,13 @@ test_that("HiC Track forms correctly", {
 test_that("Feature Track forms correctly", {
   feat_track <- .makeFeatureTrack(
     feat, gr1, .fontsize = 12, list(a = "blue"), .cex = 1, .tracksize = 1,
-    .rot = 0, .name = "Features", .stacking = "full"
+    .rot = 0, .name = "Features", .stacking = "full", .col.title = "black",
+    .bg.title = "white"
   )
   expect_true(is(feat_track, "AnnotationTrack"))
   expect_equal(feat_track@dp@pars$fill, c(a = "blue"))
+  expect_equal(feat_track@dp@pars$background.title, "white")
+  expect_equal(feat_track@dp@pars$fontcolor.title, "black")
   expect_equal("Features", feat_track@name)
   expect_null(
     .makeFeatureTrack(
@@ -371,12 +376,15 @@ test_that("Feature Track forms correctly", {
 test_that("Genes Track forms correctly", {
   expect_equal(.makeGeneTracks(), list(NULL))
   gene_track <- .makeGeneTracks(
-    genes, gr1, "meta", .tracksize = 1, .cex = 1, .rot = 0, .fontsize = 12
+    genes, gr1, "meta", .tracksize = 1, .cex = 1, .rot = 0, .fontsize = 12,
+    .col.title = "black", .bg.title = "white"
   )
   expect_true(is(gene_track, "GeneRegionTrack"))
   expect_equal(length(gene_track), 1)
   expect_equal(gene_track@dp@pars$fill, "#FFD58A")
   expect_equal(gene_track@dp@pars$fontsize, 12)
+  expect_equal(gene_track@dp@pars$fontcolor.title, "black")
+  expect_equal(gene_track@dp@pars$background.title, "white")
   expect_equal(gene_track@dp@pars$cex, 1)
   expect_equal(gene_track@dp@pars$collapseTranscripts, "meta")
   expect_equal(gene_track@dp@pars$rotation, 0)
@@ -387,11 +395,12 @@ test_that("Genes Track forms correctly", {
 
   gene_track <- .makeGeneTracks(
     GRangesList(a = genes),
-    gr1, "meta", .tracksize = 1, .cex = 1, .rot = 0, .fontsize = 12
+    gr1, "meta", .tracksize = 1, .cex = 1, .rot = 0, .fontsize = 12,
+    .col.title = "black", .bg.title = "white"
   )
   expect_true(is(gene_track, "list"))
   expect_true(is(gene_track[[1]], "GeneRegionTrack"))
-  expect_equal(names(gene_track[[1]]), "A")
+  expect_equal(names(gene_track[[1]]), str_pad("A", 5))
   expect_equal(gene_track[[1]]@dp@pars$fill, "#E41A1C")
 
 })
@@ -400,7 +409,8 @@ test_that("Coverage Track forms correctly", {
   cov_track <- .makeCoverageTracks(
     .coverage = test_bw, .gr = GRanges("chr2:1-10"),
     .fontsize = 12, .type = "l", .gradient = "blue", .tracksize = 1, .cex = 1,
-    .rot = 0, .linecol = c(a = "red"), .ylim = c(0, 1)
+    .rot = 0, .linecol = c(a = "red"), .ylim = c(0, 1),
+    .col.title = "black", .bg.title = "white"
   )
   expect_true(is(cov_track, "list"))
   expect_true(is(cov_track[[1]], "DataTrack"))
@@ -409,18 +419,22 @@ test_that("Coverage Track forms correctly", {
   expect_equal(cov_track[[1]]@dp@pars$size, 1)
   expect_equal(cov_track[[1]]@dp@pars$rotation, 0)
   expect_equal(cov_track[[1]]@dp@pars$col, "red")
+  expect_equal(cov_track[[1]]@dp@pars$fontcolor.title, "black")
+  expect_equal(cov_track[[1]]@dp@pars$background.title, "white")
   expect_equal(levels(cov_track[[1]]@dp@pars$groups), "a")
   expect_equal(
     suppressWarnings(
       .makeCoverageTracks(
-        .coverage = test_bw, .gr = gr1, .linecol = c(), .ylim = c()
+        .coverage = test_bw, .gr = gr1, .linecol = c(), .ylim = c(),
+        .col.title = "black", .bg.title = "white"
       )
     ),
     list(NULL)
   )
   expect_warning(
     .makeCoverageTracks(
-      .coverage = test_bw, .gr = gr1, .linecol = c(), .ylim = c()
+      .coverage = test_bw, .gr = gr1, .linecol = c(), .ylim = c(),
+      .col.title = "black", .bg.title = "white"
     ),
     "'which' contains seqnames not known to BigWig file: chr1"
   )
@@ -429,7 +443,7 @@ test_that("Coverage Track forms correctly", {
   cov_heat <- .makeCoverageTracks(
     .coverage = test_bw, .gr = GRanges("chr2:1-10"), .type = "heatmap",
     .fontsize = 12, .gradient = "blue", .tracksize = 1, .cex = 1, .rot = 0,
-    .linecol = c(), .ylim = c()
+    .linecol = c(), .ylim = c(), .col.title = "black", .bg.title = "white"
   )
   expect_null(cov_heat[[1]]@dp@pars$col)
 

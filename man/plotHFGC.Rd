@@ -32,13 +32,15 @@ plotHFGC(
   hicname = "HiC",
   featname = "Features",
   featstack = c("full", "hide", "dense", "squish", "pack"),
+  collapseTranscripts = "meta",
   ylim = NULL,
   ...,
   fontsize = 12,
   cex.title = 0.8,
   rotation.title = 0,
-  collapseTranscripts = "meta",
-  title.width = NULL
+  col.title = "white",
+  background.title = "lightgray",
+  title.width = 1.5
 )
 }
 \arguments{
@@ -111,6 +113,9 @@ are passed to these elements}
 
 \item{featstack}{Stacking for the fature track}
 
+\item{collapseTranscripts}{Passed to \link[Gviz]{GeneRegionTrack} for the
+genes track}
+
 \item{ylim}{If a numeric vector, this will be passed to all coverage tracks.
 Alternatively, a named list of y-limits for each coverage track with names
 that match those in each element of the coverage list.}
@@ -124,11 +129,12 @@ Useful arguments may be things like \code{legend}}
 
 \item{rotation.title}{Passed to all tracks}
 
-\item{collapseTranscripts}{Passed to \link[Gviz]{GeneRegionTrack} for the
-genes track}
+\item{col.title}{Passed to all tracks}
+
+\item{background.title}{Passed to all tracks}
 
 \item{title.width}{Expansion factor passed to \link[Gviz]{plotTracks}, and
-used to widen thepanels on the LHS of all tracks.
+used to widen the panels on the LHS of all tracks.
 Can have unpredictable effects on the font
 size of y-axis limits due to the algorithm applied by \code{plotTracks}}
 }
@@ -306,7 +312,11 @@ If \code{coverage} is a \code{list}, then a \strong{named} list of \code{GRanges
 should be supplied, with each being displayed above the corresponding track
 from the \code{coverage} object.}
 \item{annotcol}{A vector of colours corresponding to all names within all
-\code{GRangesList} elements supplied as \code{annotation}}
+\code{GRangesList} elements supplied as \code{annotation}. It is assumed that the
+same colour scheme will be applied to all annotation tracks and, as such,
+the colours should \strong{not} be provided as a list which matches the
+coverage tracks. Instead, every named element anywhere in the annotation
+GRanges, across all of the tracks must be included as a colour}
 \item{annotsize}{Relative size of the tracks compared to others}
 }
 }

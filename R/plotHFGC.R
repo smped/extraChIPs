@@ -164,7 +164,11 @@
 #'   should be supplied, with each being displayed above the corresponding track
 #'   from the `coverage` object.}
 #'   \item{annotcol}{A vector of colours corresponding to all names within all
-#'   `GRangesList` elements supplied as `annotation`}
+#'   `GRangesList` elements supplied as `annotation`. It is assumed that the
+#'   same colour scheme will be applied to all annotation tracks and, as such,
+#'   the colours should **not** be provided as a list which matches the
+#'   coverage tracks. Instead, every named element anywhere in the annotation
+#'   GRanges, across all of the tracks must be included as a colour}
 #'   \item{annotsize}{Relative size of the tracks compared to others}
 #' }
 #'
@@ -257,10 +261,12 @@
 #' Useful arguments may be things like `legend`
 #' @param cex.title Passed to all tracks
 #' @param rotation.title Passed to all tracks
+#' @param col.title Passed to all tracks
+#' @param background.title Passed to all tracks
 #' @param collapseTranscripts Passed to \link[Gviz]{GeneRegionTrack} for the
 #' genes track
 #' @param title.width Expansion factor passed to \link[Gviz]{plotTracks}, and
-#' used to widen thepanels on the LHS of all tracks.
+#' used to widen the panels on the LHS of all tracks.
 #' Can have unpredictable effects on the font
 #' size of y-axis limits due to the algorithm applied by `plotTracks`
 #'
@@ -283,10 +289,11 @@ plotHFGC <- function(
   hicsize = 1, featsize = 1, genesize = 1, covsize = 4, annotsize = 0.5,
   hicname = "HiC", featname = "Features",
   featstack = c("full", "hide", "dense", "squish", "pack"),
-  ylim = NULL, ...,
-  fontsize = 12, cex.title = 0.8, rotation.title = 0,
   collapseTranscripts = "meta",
-  title.width = NULL
+  ylim = NULL, ...,
+  fontsize = 12, cex.title = 0.8, rotation.title = 0, col.title = "white",
+  background.title = "lightgray",
+  title.width = 1.5
 ) {
 
   ## Argument checks
@@ -303,7 +310,8 @@ plotHFGC <- function(
 
   ## Form the HiC track, including all interactions beyond the max
   hic_track <- .makeHiCTrack(
-    hic, gr, fontsize, hicsize, cex.title, rotation.title, hiccol, hicname
+    hic, gr, fontsize, hicsize, cex.title, rotation.title, hiccol, hicname,
+    col.title, background.title
   )
 
   ## If interactions were found, reset the plot range. This should be the
@@ -326,22 +334,23 @@ plotHFGC <- function(
   featstack <- match.arg(featstack)
   feature_track <- .makeFeatureTrack(
     features, plot_range, fontsize, featcol, featsize, cex.title,
-    rotation.title, featname, featstack
+    rotation.title, featname, featstack, col.title, background.title
   )
 
   ## Form the genes tracks. NB: This will be a list of tracks
   gene_tracks <- .makeGeneTracks(
     genes, plot_range, collapseTranscripts, fontsize, genecol, genesize,
-    cex.title, rotation.title
+    cex.title, rotation.title, col.title, background.title
   )
 
   ## The coverage tracks NB: This will be list of tracks
   cov_tracks <- .makeCoverageTracks(
     coverage, plot_range, fontsize, covtype, linecol, gradient, covsize,
-    cex.title, rotation.title, ylim, ...
+    cex.title, rotation.title, ylim, col.title, background.title, ...
   )
   cov_tracks <- .addAnnotations(
-    annotation, plot_range, cov_tracks, coverage, annotcol, annotsize
+    annotation, plot_range, cov_tracks, coverage, annotcol, annotsize,
+    col.title, background.title
   )
 
   ## Add the highlight track if wanted. Include features, genes & coverage
@@ -407,7 +416,8 @@ plotHFGC <- function(
 #' @importFrom GenomeInfoDb seqnames
 #' @importFrom IRanges subsetByOverlaps
 .makeHiCTrack <- function(
-  .hic, .gr, .fontsize, .tracksize, .cex, .rot, .col, .name
+  .hic, .gr, .fontsize, .tracksize, .cex, .rot, .col, .name, .col.title,
+  .bg.title
 ) {
 
   if (missing(.hic)) return(NULL)
@@ -429,6 +439,8 @@ plotHFGC <- function(
   )
   track@dp@pars$size <- .tracksize
   track@dp@pars$fontsize <- .fontsize
+  track@dp@pars$fontcolor.title  <- .col.title
+  track@dp@pars$background.title  <- .bg.title
   track@dp@pars$cex.title <- .cex
   track@dp@pars$rotation.title <- .rot
   track@dp@pars$col.anchors.line <- .col[["anchors"]]
@@ -439,7 +451,7 @@ plotHFGC <- function(
 
 #' @importFrom methods is
 .addAnnotations <- function(
-  .annotation, .gr, .cov_tracks, .coverage, .fill, .size
+  .annotation, .gr, .cov_tracks, .coverage, .fill, .size, .col.title, .bg.title
   ) {
   if (missing(.annotation) | is.null(.cov_tracks)) return(.cov_tracks)
   ## Set everything grey if no colour is specified
@@ -451,7 +463,7 @@ plotHFGC <- function(
     cex <- .cov_tracks[[1]]@dp@pars$cex.title
     annot_track <- .makeFeatureTrack(
       .annotation, .gr, fontsize, .fill, .size, cex, 0, .name = c(),
-      .stacking = "full"
+      .stacking = "full", .col.title, .bg.title
     )
     annot_track@name <- ""
     tracks <- c(list(annot_track), .cov_tracks)
@@ -471,9 +483,10 @@ plotHFGC <- function(
         fontsize <- x@dp@pars$fontsize
         cex <- x@dp@pars$cex.title
         annot_track <- .makeFeatureTrack(
-          .annotation[[nm]], .gr, fontsize, .fill, .size, cex, 0, NULL, "full"
+          .annotation[[nm]], .gr, fontsize, .fill, .size, cex, 0, nm, "full",
+          .col.title, .bg.title
         )
-        annot_track@name <- nm
+        # annot_track@name <- nm
         c(list(annot_track), x)
       }
     )
@@ -487,7 +500,8 @@ plotHFGC <- function(
 #' @importFrom IRanges subsetByOverlaps
 #' @importFrom Gviz AnnotationTrack
 .makeFeatureTrack <- function(
-  .features, .gr, .fontsize, .fill, .tracksize, .cex, .rot, .name, .stacking
+  .features, .gr, .fontsize, .fill, .tracksize, .cex, .rot, .name, .stacking,
+  .col.title, .bg.title
 ) {
 
   if (missing(.features)) return(NULL)
@@ -510,20 +524,21 @@ plotHFGC <- function(
     feature = .features$feature,
     ## Tidy setting this up later & also tidy the colour setting
     ## These can likely go in the @dp@pars by just adding them as a list item
-    fontsize = .fontsize, cex.title = .cex,
-    size = .tracksize,
-    rotation.title = .rot
+    fontsize = .fontsize, cex.title = .cex, col.title = .col.title,
+    background.title = .bg.title, rotation.title = .rot,
+    size = .tracksize
   )
 
 }
 
 #' @importFrom IRanges subsetByOverlaps
 #' @importFrom Gviz GeneRegionTrack
-#' @importFrom stringr str_to_title
+#' @importFrom stringr str_to_title str_pad str_count
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom methods is
 .makeGeneTracks <- function(
-  .genes, .gr, .collapse, .fontsize, .col, .tracksize, .cex, .rot
+  .genes, .gr, .collapse, .fontsize, .col, .tracksize, .cex, .rot, .col.title,
+  .bg.title
 ) {
 
   if (missing(.genes)) return(list(NULL))
@@ -540,7 +555,8 @@ plotHFGC <- function(
       transcriptAnnotation = "symbol", collapseTranscripts = .collapse,
       size = .tracksize, fontsize = .fontsize,
       col = "transparent", fill = .col[[1]],
-      cex.title = .cex, rotation.title = .rot
+      cex.title = .cex, rotation.title = .rot, col.title = .col.title,
+      background.title = .bg.title
     )
     return(trackList)
   }
@@ -568,12 +584,16 @@ plotHFGC <- function(
 
   trackList <- lapply(names(.genes),
     function(x) {
+      nm <- x
+      ## This just helps the weird alignment algorithm
+      if (.rot == 0) nm <- str_pad(x, min(str_count(x) + 4, 12))
       GeneRegionTrack(
-        .genes[[x]], name = str_to_title(x),
+        .genes[[x]], name = str_to_title(nm),
         transcriptAnnotation = "symbol",
         collapseTranscripts = .collapse[[x]],
         size = .tracksize, fontsize = .fontsize, col = .col[[x]],
-        fill = .col[[x]], cex.title = .cex, rotation.title = .rot
+        fill = .col[[x]], cex.title = .cex, rotation.title = .rot,
+        col.title = .col.title, background.title = .bg.title
       )
     })
 
@@ -585,9 +605,10 @@ plotHFGC <- function(
 #' @importFrom rtracklayer import.bw
 #' @importFrom S4Vectors mcols
 #' @importFrom GenomicRanges GRangesList
+#' @importFrom stringr str_count str_pad
 .makeCoverageTracks <- function(
   .coverage, .gr, .fontsize, .type = c("l", "heatmap"), .linecol,
-  .gradient, .tracksize, .cex, .rot, .ylim,  ...
+  .gradient, .tracksize, .cex, .rot, .ylim, .col.title, .bg.title, ...
 ) {
 
   ## Always returns a list
@@ -620,13 +641,17 @@ plotHFGC <- function(
       })
       cov <- cov[vapply(cov, length, integer(1)) > 0]
       if (length(cov) == 0) return(NULL)
+      nm <- x
+      ## This just helps the weird alignment algorithm
+      if (.rot == 0) nm <- str_pad(x, min(str_count(x) + 4, 12))
       DataTrack(
         range = unlist(GRangesList(cov)),
-        name = x, groups = grp, type = .type,
+        name = nm, groups = grp, type = .type,
         fontsize = .fontsize, col = .linecol[[x]], gradient = .gradient,
         showSampleNames = .type == "heatmap", # Always set for heatmaps
         size = .tracksize, cex.title = .cex, rotation.title = .rot,
-        ylim = .ylim[[x]], ...
+        .cex.axis = 0.95 * .cex, ylim = .ylim[[x]], col.title = .col.title,
+        col.axis = .col.title, background.title = .bg.title, ...
       )
     }
   )
