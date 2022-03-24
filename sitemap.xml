@@ -37,6 +37,9 @@
     <loc>/reference/collapseGenes.html</loc>
   </url>
   <url>
+    <loc>/reference/cytobands.html</loc>
+  </url>
+  <url>
     <loc>/reference/distinctMC-methods.html</loc>
   </url>
   <url>
@@ -55,25 +58,10 @@
     <loc>/reference/dualFilter-methods.html</loc>
   </url>
   <url>
-    <loc>/reference/ex_genes.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ex_hic.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ex_prom.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ex_trans.html</loc>
+    <loc>/reference/ex_datasets.html</loc>
   </url>
   <url>
     <loc>/reference/getProfileData-methods.html</loc>
-  </url>
-  <url>
-    <loc>/reference/grch37.cytobands.html</loc>
-  </url>
-  <url>
-    <loc>/reference/grch38.cytobands.html</loc>
   </url>
   <url>
     <loc>/reference/grlToSE-methods.html</loc>

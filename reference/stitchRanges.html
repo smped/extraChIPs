@@ -18,7 +18,7 @@ barriers that cannot be crossed"><!-- mathjax --><script src="https://cdnjs.clou
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.21</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.22</span>
       </span>
     </div>
 
@@ -93,8 +93,8 @@ useful if wanting to stitch enhancers whilst excluding promoters.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">GRanges</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chr1:1-10"</span>, <span class="st">"chr1:101-110"</span>, <span class="st">"chr1:201-210"</span>, <span class="st">"chr2:1-10"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">GRanges</span><span class="op">(</span><span class="st">"chr1:200:+"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chr1:1-10"</span>, <span class="st">"chr1:101-110"</span>, <span class="st">"chr1:201-210"</span>, <span class="st">"chr2:1-10"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="st">"chr1:200:+"</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu">stitchRanges</span><span class="op">(</span><span class="va">x</span>, exclude <span class="op">=</span> <span class="va">y</span>, maxgap <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 3 ranges and 0 metadata columns:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand</span>
