@@ -7,6 +7,9 @@
     <loc>/LICENSE-text.html</loc>
   </url>
   <url>
+    <loc>/TODO.html</loc>
+  </url>
+  <url>
     <loc>/articles/differential_binding.html</loc>
   </url>
   <url>
@@ -52,6 +55,9 @@
     <loc>/reference/collapseGenes.html</loc>
   </url>
   <url>
+    <loc>/reference/cytobands.html</loc>
+  </url>
+  <url>
     <loc>/reference/distinctMC-methods.html</loc>
   </url>
   <url>
@@ -76,7 +82,13 @@
     <loc>/reference/dualFilter.html</loc>
   </url>
   <url>
+    <loc>/reference/ex_datasets.html</loc>
+  </url>
+  <url>
     <loc>/reference/ex_genes.html</loc>
+  </url>
+  <url>
+    <loc>/reference/ex_hic.html</loc>
   </url>
   <url>
     <loc>/reference/ex_prom.html</loc>

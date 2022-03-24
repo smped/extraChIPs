@@ -9,9 +9,24 @@
 \usage{
 bestOverlap(x, y, ...)
 
-\S4method{bestOverlap}{GRanges,GRanges}(x, y, var = NULL, missing = NA_character_, min_prop = 0.01, ...)
+\S4method{bestOverlap}{GRanges,GRanges}(
+  x,
+  y,
+  var = NULL,
+  ignore.strand = FALSE,
+  missing = NA_character_,
+  min_prop = 0.01,
+  ...
+)
 
-\S4method{bestOverlap}{GRanges,GRangesList}(x, y, missing = NA_character_, min_prop = 0.01, ...)
+\S4method{bestOverlap}{GRanges,GRangesList}(
+  x,
+  y,
+  ignore.strand = FALSE,
+  missing = NA_character_,
+  min_prop = 0.01,
+  ...
+)
 
 \S4method{bestOverlap}{ANY,ANY}(x, y, ...)
 }
@@ -25,6 +40,8 @@ category}
 
 \item{var}{The variable to use as the category. Not required if \code{y} is a
 GRangesList}
+
+\item{ignore.strand}{logical(1) Passed to \link[GenomicRanges]{findOverlaps}}
 
 \item{missing}{Value to assign to ranges with no overlap}
 

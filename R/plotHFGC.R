@@ -170,23 +170,32 @@
 #'
 #'
 #' @examples
-#' gr <- GRanges("chr1:11869-12227")
-#' feat_gr <- GRangesList(
-#'   Promoter = GRanges("chr1:11800-12000"),
-#'   Enhancer = GRanges("chr1:13000-13200")
-#' )
-#' hic <- InteractionSet::GInteractions(feat_gr$Promoter, feat_gr$Enhancer)
-#' genes <- c("chr1:11869-12227:+", "chr1:12613-12721:+", "chr1:13221-14409:+")
-#' genes <- GRanges(genes)
-#' mcols(genes) <- DataFrame(
-#'   feature = "exon", gene = "ENSG00000223972", exon = 1:3,
-#'   transcript = "ENST00000456328", symbol = "DDX11L1"
-#' )
+#' library(rtracklayer)
+#' ## Make sure we have the cytobands active
 #' data(grch37.cytobands)
+#'
+#' ## Prepare the HiC, promoter & transcript information
+#' data(ex_hic, ex_trans, ex_prom)
+#' ex_features <- GRangesList(Promoter = ex_prom)
+#' featcol <- c(Promoter = "red")
+#'
+#' ## Prepare the coverage
+#' fl <- system.file(
+#' "extdata", "bigwig", c("ex1.bw", "ex2.bw"), package = "extraChIPs"
+#' )
+#' bwfl <- BigWigFileList(fl)
+#' names(bwfl)  <- c("ex1", "ex2")
+#' bw_col <- c(ex1 = "#4B0055", ex2 = "#007094")
+#'
+#' ## Define the plotting range
+#' gr <- GRanges("chr10:103862000-103900000")
+#'
+#' ## Now create the basic plot
 #' plotHFGC(
-#'   gr, hic = hic, features = feat_gr, genes = genes,
-#'   zoom = 2, cytobands = grch37.cytobands, rotation.title = 90,
-#'   featcol = c(Promoter = "red", Enhancer = "yellow")
+#'   gr,
+#'   hic = ex_hic, features = ex_features, genes = ex_trans, coverage = bwfl,
+#'   featcol = featcol, linecol = bw_col,
+#'   collapseTranscripts = FALSE, cytobands = grch37.cytobands
 #' )
 #'
 #' @return

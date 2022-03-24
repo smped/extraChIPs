@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.21</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.22</span>
       </span>
     </div>
 
@@ -226,7 +226,7 @@ objects, each list element will be drawn as a single track with the
 individual files within each BigWigFileList overlaid within each track.</p>
 <p>Cytogenetic band information must be in the structure required by
 <a href="https://rdrr.io/pkg/Gviz/man/IdeogramTrack-class.html" class="external-link">IdeogramTrack</a>, with data for both GRCh37 and GRCh38 provided in
-this package (<a href="grch37.cytobands.html">grch37.cytobands</a>, <a href="grch38.cytobands.html">grch38.cytobands</a>).</p>
+this package (<a href="cytobands.html">grch37.cytobands</a>, <a href="cytobands.html">grch38.cytobands</a>).</p>
 <p>A highlight overlay over the GRanges provided as the <code>gr</code> argument will be
 added if a colour is provided. If set to NULL, no highlight will be added.</p>
     </div>
@@ -403,23 +403,32 @@ from the <code>coverage</code> object.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">gr</span> <span class="op">&lt;-</span> <span class="fu">GRanges</span><span class="op">(</span><span class="st">"chr1:11869-12227"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">feat_gr</span> <span class="op">&lt;-</span> <span class="fu">GRangesList</span><span class="op">(</span></span>
-<span class="r-in">  Promoter <span class="op">=</span> <span class="fu">GRanges</span><span class="op">(</span><span class="st">"chr1:11800-12000"</span><span class="op">)</span>,</span>
-<span class="r-in">  Enhancer <span class="op">=</span> <span class="fu">GRanges</span><span class="op">(</span><span class="st">"chr1:13000-13200"</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="va">hic</span> <span class="op">&lt;-</span> <span class="fu">InteractionSet</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/InteractionSet/man/GInteractions-class.html" class="external-link">GInteractions</a></span><span class="op">(</span><span class="va">feat_gr</span><span class="op">$</span><span class="va">Promoter</span>, <span class="va">feat_gr</span><span class="op">$</span><span class="va">Enhancer</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chr1:11869-12227:+"</span>, <span class="st">"chr1:12613-12721:+"</span>, <span class="st">"chr1:13221-14409:+"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">genes</span> <span class="op">&lt;-</span> <span class="fu">GRanges</span><span class="op">(</span><span class="va">genes</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">mcols</span><span class="op">(</span><span class="va">genes</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">DataFrame</span><span class="op">(</span></span>
-<span class="r-in">  feature <span class="op">=</span> <span class="st">"exon"</span>, gene <span class="op">=</span> <span class="st">"ENSG00000223972"</span>, exon <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,</span>
-<span class="r-in">  transcript <span class="op">=</span> <span class="st">"ENST00000456328"</span>, symbol <span class="op">=</span> <span class="st">"DDX11L1"</span></span>
-<span class="r-in"><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">rtracklayer</span><span class="op">)</span></span>
+<span class="r-in"><span class="co">## Make sure we have the cytobands active</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">grch37.cytobands</span><span class="op">)</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co">## Prepare the HiC, promoter &amp; transcript information</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">ex_hic</span>, <span class="va">ex_trans</span>, <span class="va">ex_prom</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">ex_features</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRangesList-class.html" class="external-link">GRangesList</a></span><span class="op">(</span>Promoter <span class="op">=</span> <span class="va">ex_prom</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">featcol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Promoter <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co">## Prepare the coverage</span></span>
+<span class="r-in"><span class="va">fl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
+<span class="r-in"><span class="st">"extdata"</span>, <span class="st">"bigwig"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ex1.bw"</span>, <span class="st">"ex2.bw"</span><span class="op">)</span>, package <span class="op">=</span> <span class="st">"extraChIPs"</span></span>
+<span class="r-in"><span class="op">)</span></span>
+<span class="r-in"><span class="va">bwfl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/BigWigFile.html" class="external-link">BigWigFileList</a></span><span class="op">(</span><span class="va">fl</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">bwfl</span><span class="op">)</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ex1"</span>, <span class="st">"ex2"</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">bw_col</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>ex1 <span class="op">=</span> <span class="st">"#4B0055"</span>, ex2 <span class="op">=</span> <span class="st">"#007094"</span><span class="op">)</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co">## Define the plotting range</span></span>
+<span class="r-in"><span class="va">gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="st">"chr10:103862000-103900000"</span><span class="op">)</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co">## Now create the basic plot</span></span>
 <span class="r-in"><span class="fu">plotHFGC</span><span class="op">(</span></span>
-<span class="r-in">  <span class="va">gr</span>, hic <span class="op">=</span> <span class="va">hic</span>, features <span class="op">=</span> <span class="va">feat_gr</span>, genes <span class="op">=</span> <span class="va">genes</span>,</span>
-<span class="r-in">  zoom <span class="op">=</span> <span class="fl">2</span>, cytobands <span class="op">=</span> <span class="va">grch37.cytobands</span>, rotation.title <span class="op">=</span> <span class="fl">90</span>,</span>
-<span class="r-in">  featcol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Promoter <span class="op">=</span> <span class="st">"red"</span>, Enhancer <span class="op">=</span> <span class="st">"yellow"</span><span class="op">)</span></span>
+<span class="r-in">  <span class="va">gr</span>,</span>
+<span class="r-in">  hic <span class="op">=</span> <span class="va">ex_hic</span>, features <span class="op">=</span> <span class="va">ex_features</span>, genes <span class="op">=</span> <span class="va">ex_trans</span>, coverage <span class="op">=</span> <span class="va">bwfl</span>,</span>
+<span class="r-in">  featcol <span class="op">=</span> <span class="va">featcol</span>, linecol <span class="op">=</span> <span class="va">bw_col</span>,</span>
+<span class="r-in">  collapseTranscripts <span class="op">=</span> <span class="cn">FALSE</span>, cytobands <span class="op">=</span> <span class="va">grch37.cytobands</span></span>
 <span class="r-in"><span class="op">)</span></span>
 <span class="r-plt img"><img src="plotHFGC-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"></span>

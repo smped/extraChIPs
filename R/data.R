@@ -1,10 +1,9 @@
-#' @title Cytobands for GRCh37/hg19
+#' @title Cytogenetic bands
 #'
-#' @description Cytogenetic bands from GRCh37/hg19
+#' @description Cytogenetic bands for GRCh37/hg19 and GRCh38/hg38
 #'
 #' @format Cytogenetic bands for standard chromosomes from GRCh37,in the format
-#' required by \link[Gviz]{IdeogramTrack}. A data.frame with 862 rows and
-#' 5 columns:
+#' required by \link[Gviz]{IdeogramTrack}. A data.frame with 5 columns:
 #' \describe{
 #'  \item{chrom}{Chromosome}
 #'  \item{chromStart}{Starting position for each cytogenetic band}
@@ -17,90 +16,47 @@
 #' data(grch37.cytobands)
 #' head(grch37.cytobands)
 #'
-#' @source \url{https://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/cytoBand.txt.gz}
-"grch37.cytobands"
-
-#' @title Cytobands for GRCh38/hg38
-#'
-#' @description Cytogenetic bands from GRCh38/hg38
-#'
-#' @format Cytogenetic bands for standard chromosomes from GRCh38,in the format
-#' required by \link[Gviz]{IdeogramTrack}. A data.frame with 862 rows and
-#' 5 columns:
-#' \describe{
-#'  \item{chrom}{Chromosome}
-#'  \item{chromStart}{Starting position for each cytogenetic band}
-#'  \item{chromEnd}{End position for each cytogenetic band}
-#'  \item{name}{Name for each band, e.g. p.36.33}
-#'  \item{gieStain}{Staining pattern}
-#' }
-#'
-#' @examples
 #' data(grch38.cytobands)
 #' head(grch38.cytobands)
 #'
+#' @source \url{https://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/cytoBand.txt.gz}
 #' @source \url{https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/cytoBand.txt.gz}
+#' @name cytobands
+#' @rdname cytobands
+"grch37.cytobands"
+
+#' @rdname cytobands
 "grch38.cytobands"
 
-#' @title Genes in an example region
+
+#' @title Datasets for an example region
 #'
-#' @description Genes in an example region formatted for Gviz
+#' @description Various example datasets for demonstrating visualisation
+#' strategies.
 #'
-#' @format Gene structure as a GRanges object, in the correct structure for
-#' plotting with plotHFGC.
-#' This is a GRangesList with two elements: 'Unchanged' and 'Up' representing
-#' genes that were considered as unchanged or upregulated in a separate RNA-seq
-#' analysis.
-#' Each element is pre-formatted for compatability with the package `Gviz` and
-#' has the columns
 #' \describe{
-#'   \item{type}{The type of feature. All here are exons}
-#'   \item{gene}{The Ensembl gene ID}
-#'   \item{exon}{An arbitrary exon ID}
-#'   \item{transcript}{The Ensembl transcript ID}
-#'   \item{symbol}{The gene nme (or symbol)}
-#'   }
+#'   \item{ex_genes}{Simple GRanges object with complete ranges for each gene}
+#'   \item{ex_trans}{Exon & transcript level information prepared for plotting
+#'   with `Gviz` or `plotHFGC()`}
+#'   \item{ex_prom}{Regions defined as promoters}
+#'   \item{ex_hic}{Example HiC interactions}
+#' }
+#'
+#' @format GRanges and GInteractions objects
 #'
 #' All annotations are from GRCh37
 #' @examples
 #' data(ex_trans)
 #' ex_trans
+#' @name ex_datasets
+#' @rdname ex_datasets
 "ex_trans"
 
-#' @title Basic GRanges containing four genes
-#'
-#' @description Genes in an example region
-#'
-#' @format Simple GRanges object to demonstrate mapping from ranges to genes
-#'
-#' All annotations are from GRCh37
-#' @examples
-#' data(ex_genes)
-#' ex_genes
+#' @rdname ex_datasets
 "ex_genes"
 
-#' @title Basic GRanges containing promoters
-#'
-#' @description Promoters from an example region
-#'
-#' @format Simple GRanges object to demonstrate using features in various steps
-#' implemented in this package
-#'
-#' All annotations are from GRCh37
-#' @examples
-#' data(ex_prom)
-#' ex_prom
+#' @rdname ex_datasets
 "ex_prom"
 
-#' @title Basic GInteractions object
-#'
-#' @description Contains a single interaction fo demonstration purposes
-#'
-#' @format Simple GInteractions object to demonstrate using features in various
-#' steps implemented in this package
-#'
-#' All annotations are from GRCh37
-#' @examples
-#' data(ex_hic)
-#' ex_hic
+#' @rdname ex_datasets
 "ex_hic"

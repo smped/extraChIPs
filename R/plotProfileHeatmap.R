@@ -48,16 +48,20 @@
 #' A `ggplot2` object, able to be customised using standard `ggplot2` syntax
 #'
 #' @examples
-#' bw <- system.file("tests", "test.bw", package = "rtracklayer")
-#' gr <- GRanges("chr2:500")
-#' pd <- getProfileData(bw, gr, upstream = 100, bins = 10)
+#' library(rtracklayer)
+#' fl <- system.file(
+#' "extdata", "bigwig", c("ex1.bw", "ex2.bw"), package = "extraChIPs"
+#' )
+#' bwfl <- BigWigFileList(fl)
+#' names(bwfl) <- c("ex1", "ex2")
+#'
+#' gr <- GRanges(
+#'   c("chr10:103880281-103880460", "chr10:103892581-103892760", "chr10:103877281-103877460")
+#' )
+#' pd <- getProfileData(bwfl, gr)
 #' plotProfileHeatmap(pd, "profile_data") +
 #'   scale_fill_viridis_c(option = "inferno", direction = -1) +
 #'   labs(fill = "Coverage")
-#'
-#' pd$group <- "group1"
-#' pdl <- GRangesList(a = pd, b = pd)
-#' plotProfileHeatmap(pdl, "profile_data", facetY = "group")
 #'
 #' @name plotProfileHeatmap
 #' @rdname plotProfileHeatmap-methods

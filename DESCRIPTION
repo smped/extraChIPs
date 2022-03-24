@@ -1,13 +1,16 @@
 Package: extraChIPs
-Version: 0.99.21
+Version: 0.99.22
 Date: 2022/03/24
 Title: Additional functions for working with ChIP-Seq data
 Authors@R: person("Stephen", "Pederson", 
   email = "stephen.pederson.au@gmail.com", role = c("aut", "cre"))
 Description: This package builds on existing tools and adds some simple but
    extremely useful capabilities for working with ChIP-Seq data. The focus is 
-   on detecting differential binding windows/regions. However, it's still in 
-   the very early stages of development.
+   on detecting differential binding windows/regions. 
+   One set of functions focusses on set-operations retaining mcols for GRanges
+   objects, whilst another group of functions are to aid visualisatino of 
+   results.
+   Coercion to tibble objects is also included.
 License: file LICENSE
 Encoding: UTF-8
 URL: https://github.com/steveped/extraChIPs

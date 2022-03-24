@@ -306,6 +306,39 @@ previously these windows were only mapped to *LDB1*.
 
 # Visualisation of Results
 
+## Association with Features
+
+The association of windows or peaks with defined features, such as histone 
+marks or regulatory elements can be important for describing the binding
+characteristics of any given transcription factor.
+We have already defined the association of the merged windows with consensus 
+peaks identified by `macs2`.
+We can easily visualise these using `plotPie()`
+
+```{r plot-pie}
+res_gr %>% 
+  as_tibble() %>% 
+  plotPie("overlaps_ref")
+```
+
+These distribution charts can be drawn across three separate categories.
+Let's include promoters.
+
+```{r plot-dual-pie}
+res_gr$Feature <- bestOverlap(
+  res_gr, GRangesList(Promoter = ex_prom), missing = "None"
+)
+res_gr %>% 
+  as_tibble() %>% 
+  plotPie(x = "Feature", fill = "overlaps_ref") 
+```
+
+In a real world context where we're dealing with thousands of ranges and 
+multiple features, this represents a quick an easy way to asses binding 
+characteristics.
+As these are all `ggplot2` objects, they can be easily customised using
+`theme` and `scale_fill_*` capabilities.
+
 ## Profile Heatmaps
 
 A very common approach to visualising the results of altered TF binding is to 
@@ -392,14 +425,15 @@ The function `plotHFGC()` provides a simple, standardised layout using the
 visualisation tools from `Gviz`.
 If supplied, tracks will be drawn in the order 1) HiC; 2) Features; 3) Genes, 
 and 4) Coverage.
-Whilst an intuitive function to use, it also provides a great deal of 
-flexibility for customisation.
+Whilst a simple and intuitive function to use, it also provides a great deal of 
+flexibility for advanced customisation.
 All plots require a `GRanges` object to define the plotting region, with all 
 other tracks being optional.
 
 ### Displaying Genes
 
-Let's start by plotting the entire region contained in `res_gr`
+Let's start by plotting the entire region contained in `res_gr` using the 
+minimal data possible, a `GRanges` object and some cytogenetic bands.
 
 ```{r plot-empty-hfgc}
 data("grch37.cytobands")
@@ -482,7 +516,7 @@ plotHFGC(
 Adding the HiC Interactions becomes very simple.
 All that we need is a GInteractions object.
 
-```{r}
+```{r plot-with-hic}
 plotHFGC(
   gr, 
   hic = ex_hic,
@@ -508,7 +542,7 @@ In this scenario, each individual file will be drawn on a separate track.
 Colours for lines are passed as a simple vector/list with names matching the
 names of the `BigWigFileList`.
 
-```{r}
+```{r plot-with-coverage}
 plotHFGC(
   gr, 
   hic = ex_hic,
@@ -528,7 +562,7 @@ In this way, unlimited coverage tracks can effectively be drawn.
 If choosing this option, colours must again be passed as a matching, *named* 
 list.
 
-```{r}
+```{r plot-with-tracks}
 cov_list <- list(TF1 = bwfl)
 plotHFGC(
   gr, 
@@ -556,7 +590,7 @@ tracks follow these same rules.
 For each coverage track being annotated, a `GRangesList` object can denote the
 ranges which can be assigned different colours.
 
-```{r}
+```{r cov-annot}
 cov_annot <- splitAsList(res_gr, res_gr$logFC < -1) %>% 
   setNames(c("Unchanged", "Decreased")) %>% 
   endoapply(granges)
@@ -567,7 +601,7 @@ In keeping with the approach of having a matching list element for every
 coverage track, we would need to pass this as a list which matched the 
 coverage track
 
-```{r}
+```{r plot-annot}
 plotHFGC(
   gr, 
   hic = ex_hic,

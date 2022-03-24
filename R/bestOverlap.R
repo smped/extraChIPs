@@ -20,6 +20,7 @@
 #' category
 #' @param var The variable to use as the category. Not required if `y` is a
 #' GRangesList
+#' @param ignore.strand logical(1) Passed to \link[GenomicRanges]{findOverlaps}
 #' @param missing Value to assign to ranges with no overlap
 #' @param min_prop Threshold below which overlaps are discarded
 #' @param ... Not used
@@ -42,11 +43,14 @@
 setMethod(
   "bestOverlap",
   signature = signature(x = "GRanges", y = "GRanges"),
-  function(x, y, var = NULL, missing = NA_character_, min_prop = 0.01, ...) {
+  function(
+    x, y, var = NULL, ignore.strand = FALSE, missing = NA_character_,
+    min_prop = 0.01, ...
+  ) {
     cols <- colnames(mcols(y))
     var <- match.arg(var, cols)
     grl <- splitAsList(y, f = mcols(y)[[var]])
-    bestOverlap(x, grl, missing = missing, min_prop = min_prop)
+    bestOverlap(x, grl, ignore.strand, missing = missing, min_prop = min_prop)
   }
 )
 #'
@@ -60,12 +64,15 @@ setMethod(
 setMethod(
   "bestOverlap",
   signature = signature(x = "GRanges", y = "GRangesList"),
-  function(x, y, missing = NA_character_, min_prop = 0.01, ...) {
+  function(
+    x, y, ignore.strand = FALSE, missing = NA_character_, min_prop = 0.01,
+    ...
+  ) {
 
     ## x is a GRanges, y is a GRangesList
     if (is.null(names(y))) stop("'y' must be a named GRangesList")
 
-    p <- lapply(y, function(.y) propOverlap(x, .y))
+    p <- lapply(y, function(.y) propOverlap(x, .y, ignore.strand))
     tbl <- as_tibble(p)
     tbl[["id"]] <- seq_along(x)
     tbl_long <- pivot_longer(
