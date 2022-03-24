@@ -191,7 +191,7 @@ plotPie <- function(
   )
   wide_df$x <- as.integer(wide_df[[x]])
 
-  p <- ggplot() +
+  p <- ggplot(data = wide_df) +
     geom_scatterpie(
       aes(x, 1, r = width * r),
       data = wide_df,
@@ -253,7 +253,7 @@ plotPie <- function(
   wide_df$x <- as.integer(wide_df[[x]])
   wide_df$y <- as.integer(wide_df[[y]])
 
-  p <- ggplot() +
+  p <- ggplot(data = wide_df) +
     geom_scatterpie(
       aes(x, y, r = width * r),
       data = wide_df,
