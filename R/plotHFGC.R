@@ -450,6 +450,7 @@ plotHFGC <- function(
 }
 
 #' @importFrom methods is
+#' @importFrom stringr str_trim
 .addAnnotations <- function(
   .annotation, .gr, .cov_tracks, .coverage, .fill, .size, .col.title, .bg.title
   ) {
@@ -472,13 +473,12 @@ plotHFGC <- function(
   if (is(.coverage, "list")) {
     ## Here we just add a feature track before any coverage tracks
     ## Find the common names
-    # browser()
     cov2add <- intersect(names(.annotation), names(.coverage))
     if (length(cov2add) == 0) return(.cov_tracks)
     tracks <- lapply(
       .cov_tracks,
       function(x) {
-        nm <- x@name
+        nm <- str_trim(x@name)
         if (!nm %in% cov2add) return(x)
         fontsize <- x@dp@pars$fontsize
         cex <- x@dp@pars$cex.title

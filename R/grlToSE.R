@@ -45,12 +45,6 @@
 #' assay(se, "p")
 #' rowRanges(se)
 #'
-#' @name grlToSE
-#' @rdname grlToSE-methods
-#' @export
-setGeneric("grlToSE", function(x, ...) {
-  standardGeneric("grlToSE")
-})
 #' @importFrom GenomicRanges reduce
 #' @importFrom S4Vectors mcols
 #' @importFrom SummarizedExperiment SummarizedExperiment

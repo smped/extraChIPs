@@ -35,6 +35,11 @@ setGeneric(
 )
 
 #' @export
+#' @name grlToSE
+#' @rdname grlToSE-methods
+setGeneric("grlToSE", function(x, ...) standardGeneric("grlToSE"))
+
+#' @export
 #' @name plotAssayRle
 #' @rdname plotAssayRle-methods
 setGeneric("plotAssayRle", function(x, ...) standardGeneric("plotAssayRle"))
