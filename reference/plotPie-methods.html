@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.22</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.23</span>
       </span>
     </div>
 
@@ -54,8 +54,8 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Draw Pie Graphs based on one or more columns</h1>
-    <small class="dont-index">Source: <a href="https://github.com/steveped/extraChIPs/blob/HEAD/R/plotPie.R" class="external-link"><code>R/plotPie.R</code></a></small>
-    <div class="hidden name"><code>plotPie.Rd</code></div>
+    <small class="dont-index">Source: <a href="https://github.com/steveped/extraChIPs/blob/HEAD/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/steveped/extraChIPs/blob/HEAD/R/plotPie.R" class="external-link"><code>R/plotPie.R</code></a></small>
+    <div class="hidden name"><code>plotPie-methods.Rd</code></div>
     </div>
 
     <div class="ref-description">
@@ -63,11 +63,21 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">plotPie</span><span class="op">(</span>
-  <span class="va">df</span>,
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">plotPie</span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span>
+
+<span class="co"># S4 method for GRanges</span>
+<span class="fu">plotPie</span><span class="op">(</span><span class="va">object</span>, scale_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"n"</span>, <span class="st">"width"</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span>
+
+<span class="co"># S4 method for DataFrame</span>
+<span class="fu">plotPie</span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span>
+
+<span class="co"># S4 method for data.frame</span>
+<span class="fu">plotPie</span><span class="op">(</span>
+  <span class="va">object</span>,
   <span class="va">fill</span>,
   <span class="va">x</span>,
   <span class="va">y</span>,
+  <span class="va">scale_by</span>,
   width <span class="op">=</span> <span class="fl">0.8</span>,
   show_total <span class="op">=</span> <span class="cn">TRUE</span>,
   label_fill <span class="op">=</span> <span class="st">"white"</span>,
@@ -84,8 +94,15 @@
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>df</dt>
-<dd><p>A <code>data.frame</code></p></dd>
+    <dl><dt>object</dt>
+<dd><p>An object (<code>data.frame</code>)</p></dd>
+<dt>...</dt>
+<dd><p>Not used</p></dd>
+<dt>scale_by</dt>
+<dd><p>Scale the counts by this column. In this case of a GRanges
+object this defaults to the count (scale_by = "n") but can also be specified
+as being width of each range (scale_by = "width"). If choosing width, width
+will be displayed in Kb</p></dd>
 <dt>fill</dt>
 <dd><p>The category/column used to fill the slices of the pie charts</p></dd>
 <dt>x</dt>
@@ -93,7 +110,7 @@
 <dt>y</dt>
 <dd><p>The final (optional) category/column to plce along the y-axis</p></dd>
 <dt>width</dt>
-<dd><p>Scale the width of all charts</p></dd>
+<dd><p>Scale the width of all pies</p></dd>
 <dt>show_total</dt>
 <dd><p>logical(1) Show labels on each pie chart with the tally for
 that complete chart</p></dd>
@@ -121,8 +138,6 @@ specified</p></dd>
 <dt>category_width</dt>
 <dd><p>Width at which category labels will wrap onto a new
 line</p></dd>
-<dt>...</dt>
-<dd><p>Not used</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -151,16 +166,29 @@ Parameters for these labels are customisable</p>
 <span class="r-in"><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span class="r-in">  feature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Promoter"</span>, <span class="st">"Enhancer"</span>, <span class="st">"Intergenic"</span><span class="op">)</span>, <span class="fl">200</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span class="r-in">  TF1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Up"</span>, <span class="st">"Down"</span>, <span class="st">"Unchanged"</span><span class="op">)</span>, <span class="fl">200</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span class="r-in">  TF2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Up"</span>, <span class="st">"Down"</span>, <span class="st">"Unchanged"</span><span class="op">)</span>, <span class="fl">200</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in">  TF2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Up"</span>, <span class="st">"Down"</span>, <span class="st">"Unchanged"</span><span class="op">)</span>, <span class="fl">200</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span class="r-in">  w <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Exponential.html" class="external-link">rexp</a></span><span class="op">(</span><span class="fl">200</span><span class="op">)</span></span>
 <span class="r-in"><span class="op">)</span></span>
 <span class="r-in"><span class="fu">plotPie</span><span class="op">(</span><span class="va">df</span>, fill <span class="op">=</span> <span class="st">"feature"</span><span class="op">)</span></span>
-<span class="r-plt img"><img src="plotPie-1.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plotPie-methods-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span class="fu">plotPie</span><span class="op">(</span><span class="va">df</span>, fill <span class="op">=</span> <span class="st">"feature"</span>, scale_by <span class="op">=</span> <span class="st">"w"</span><span class="op">)</span></span>
+<span class="r-plt img"><img src="plotPie-methods-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span class="fu">plotPie</span><span class="op">(</span><span class="va">df</span>, fill <span class="op">=</span> <span class="st">"feature"</span>, x <span class="op">=</span> <span class="st">"TF1"</span><span class="op">)</span></span>
-<span class="r-plt img"><img src="plotPie-2.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plotPie-methods-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span class="fu">plotPie</span><span class="op">(</span><span class="va">df</span>, fill <span class="op">=</span> <span class="st">"feature"</span>, x <span class="op">=</span> <span class="st">"TF1"</span>, y <span class="op">=</span> <span class="st">"TF2"</span><span class="op">)</span> <span class="op">+</span></span>
 <span class="r-in"> <span class="fu">scale_fill_viridis_d</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span class="r-in"> <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-plt img"><img src="plotPie-3.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plotPie-methods-4.png" alt="" width="700" height="433"></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co">## And using a GRanges object</span></span>
+<span class="r-in"><span class="va">gr</span> <span class="op">&lt;-</span> <span class="va">ex_prom</span></span>
+<span class="r-in"><span class="fu">mcols</span><span class="op">(</span><span class="va">gr</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">df</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">gr</span><span class="op">)</span>,<span class="op">]</span></span>
+<span class="r-in"><span class="co">## Show values by counts</span></span>
+<span class="r-in"><span class="fu">plotPie</span><span class="op">(</span><span class="va">gr</span>, fill <span class="op">=</span> <span class="st">"feature"</span><span class="op">)</span></span>
+<span class="r-plt img"><img src="plotPie-methods-5.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span class="co">## Show values scaled by width of each range</span></span>
+<span class="r-in"><span class="fu">plotPie</span><span class="op">(</span><span class="va">gr</span>, fill <span class="op">=</span> <span class="st">"feature"</span>, scale_by <span class="op">=</span> <span class="st">"width"</span><span class="op">)</span></span>
+<span class="r-plt img"><img src="plotPie-methods-6.png" alt="" width="700" height="433"></span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>

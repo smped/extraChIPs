@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.22</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.23</span>
       </span>
     </div>
 
@@ -357,11 +357,11 @@
 <div class="section level3">
 <h3 id="association-with-features">Association with Features<a class="anchor" aria-label="anchor" href="#association-with-features"></a>
 </h3>
-<p>The association of windows or peaks with defined features, such as histone marks or regulatory elements can be important for describing the binding characteristics of any given transcription factor. We have already defined the association of the merged windows with consensus peaks identified by <code>macs2</code>. We can easily visualise these using <code><a href="../reference/plotPie.html">plotPie()</a></code></p>
+<p>The association of windows or peaks with defined features, such as histone marks or regulatory elements can be important for describing the binding characteristics of any given transcription factor. We have already defined the association of the merged windows with consensus peaks identified by <code>macs2</code>. We can easily visualise these using <code><a href="../reference/plotPie-methods.html">plotPie()</a></code></p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">res_gr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="../reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="../reference/plotPie.html">plotPie</a></span><span class="op">(</span><span class="st">"overlaps_ref"</span><span class="op">)</span></code></pre></div>
+  <span class="fu"><a href="../reference/plotPie-methods.html">plotPie</a></span><span class="op">(</span><span class="st">"overlaps_ref"</span><span class="op">)</span></code></pre></div>
 <p><img src="differential_binding_files/figure-html/plot-pie-1.png" width="960"></p>
 <p>These distribution charts can be drawn across three separate categories. Let’s include promoters.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
@@ -370,7 +370,7 @@
 <span class="op">)</span>
 <span class="va">res_gr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="../reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="../reference/plotPie.html">plotPie</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Feature"</span>, fill <span class="op">=</span> <span class="st">"overlaps_ref"</span><span class="op">)</span> </code></pre></div>
+  <span class="fu"><a href="../reference/plotPie-methods.html">plotPie</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Feature"</span>, fill <span class="op">=</span> <span class="st">"overlaps_ref"</span><span class="op">)</span> </code></pre></div>
 <p><img src="differential_binding_files/figure-html/plot-dual-pie-1.png" width="960"></p>
 <p>In a real world context where we’re dealing with thousands of ranges and multiple features, this represents a quick an easy way to asses binding characteristics. As these are all <code>ggplot2</code> objects, they can be easily customised using <code>theme</code> and <code>scale_fill_*</code> capabilities.</p>
 </div>
