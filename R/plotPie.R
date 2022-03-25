@@ -151,6 +151,7 @@ setMethod(
 #' @importFrom scales comma percent
 #' @importFrom rlang '!!' sym
 #' @importFrom stringr str_wrap
+#' @importFrom tidyr complete
 .plotSinglePie <- function(
   df, fill, width , show_total, .lab_fill, .lab_alpha, .lab_size, .text_size,
   .text_col, .min_p, .show_cat, .text_width, .scale_by
@@ -168,6 +169,7 @@ setMethod(
   } else {
     summ_df <- summarise(grp_df, n = sum(!!sym(.scale_by)))
   }
+  summ_df <- complete(summ_df, !!sym(fill), fill = list(n = 0))
   summ_df <- mutate(summ_df, p = n / sum(n))
   summ_df <- arrange(summ_df, desc(!!sym(fill)))
   summ_df$y <- cumsum(summ_df$p)
@@ -211,7 +213,7 @@ setMethod(
 }
 
 #' @importFrom dplyr group_by summarise mutate filter ungroup
-#' @importFrom tidyr pivot_wider
+#' @importFrom tidyr pivot_wider complete
 #' @importFrom tidyselect all_of
 #' @importFrom ggplot2 ggplot aes geom_label scale_x_continuous
 #' @importFrom ggplot2 coord_equal labs
@@ -240,6 +242,9 @@ setMethod(
     )
   }
   summ_df <- ungroup(mutate(summ_df, N = sum(n)))
+  summ_df <- complete(
+    summ_df, !!sym(fill), !!sym(x), fill = list(n = 0, N = 0)
+  )
   summ_df$r <- summ_df$N / sum(summ_df$N)
   summ_df$r <- 0.5 * summ_df$r / max(summ_df$r) # Set the max as 0.5 always
   wide_df <- pivot_wider(
@@ -276,7 +281,7 @@ setMethod(
 }
 
 #' @importFrom dplyr group_by summarise mutate filter ungroup
-#' @importFrom tidyr pivot_wider
+#' @importFrom tidyr pivot_wider complete
 #' @importFrom tidyselect all_of
 #' @importFrom ggplot2 ggplot aes geom_label scale_x_continuous
 #' @importFrom ggplot2 coord_equal labs scale_y_continuous
@@ -308,6 +313,9 @@ setMethod(
     )
   }
   summ_df <- ungroup(mutate(summ_df, N = sum(n)))
+  summ_df <- complete(
+    summ_df, !!sym(fill), !!sym(x), !!sym(y), fill = list(n = 0, N = 0)
+  )
   summ_df$r <- summ_df$N / sum(summ_df$N)
   summ_df$r <- 0.5 * summ_df$r / max(summ_df$r) # Set the max as 0.5 always
 
