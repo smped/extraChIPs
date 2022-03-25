@@ -37,7 +37,12 @@ setGeneric(
 #' @export
 #' @name plotAssayRle
 #' @rdname plotAssayRle-methods
-setGeneric( "plotAssayRle", function(x, ...) standardGeneric("plotAssayRle"))
+setGeneric("plotAssayRle", function(x, ...) standardGeneric("plotAssayRle"))
+
+#' @export
+#' @name plotPie
+#' @rdname plotPie-methods
+setGeneric("plotPie", function(object, ...) standardGeneric("plotPie"))
 
 #' @export
 #' @name setoptsMC

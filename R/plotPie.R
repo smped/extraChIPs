@@ -22,11 +22,15 @@
 #' @return
 #' A ggplot2 object able to be customised with colour scales and themes
 #'
-#' @param df A `data.frame`
+#' @param object An object (`data.frame`)
 #' @param fill The category/column used to fill the slices of the pie charts
 #' @param x The second (optional) category/column to place along the x-axis
 #' @param y The final (optional) category/column to plce along the y-axis
-#' @param width Scale the width of all charts
+#' @param scale_by Scale the counts by this column. In this case of a GRanges
+#' object this defaults to the count (scale_by = "n") but can also be specified
+#' as being width of each range (scale_by = "width"). If choosing width, width
+#' will be displayed in Kb
+#' @param width Scale the width of all pies
 #' @param show_total logical(1) Show labels on each pie chart with the tally for
 #' that complete chart
 #' @param label_fill The background colour for tally labels
@@ -52,55 +56,94 @@
 #' df <- data.frame(
 #'   feature = sample(c("Promoter", "Enhancer", "Intergenic"), 200, replace = TRUE),
 #'   TF1 = sample(c("Up", "Down", "Unchanged"), 200, replace = TRUE),
-#'   TF2 = sample(c("Up", "Down", "Unchanged"), 200, replace = TRUE)
+#'   TF2 = sample(c("Up", "Down", "Unchanged"), 200, replace = TRUE),
+#'   w = rexp(200)
 #' )
 #' plotPie(df, fill = "feature")
+#' plotPie(df, fill = "feature", scale_by = "w")
 #' plotPie(df, fill = "feature", x = "TF1")
 #' plotPie(df, fill = "feature", x = "TF1", y = "TF2") +
 #'  scale_fill_viridis_d() +
 #'  theme_bw()
 #'
+#' ## And using a GRanges object
+#' gr <- ex_prom
+#' mcols(gr) <- df[seq_along(gr),]
+#' ## Show values by counts
+#' plotPie(gr, fill = "feature")
+#' ## Show values scaled by width of each range
+#' plotPie(gr, fill = "feature", scale_by = "width")
+#'
+#' @rdname plotPie-methods
 #' @export
-plotPie <- function(
-  df, fill, x, y, width = 0.8, show_total = TRUE,
-  label_fill = "white", label_alpha = 1, label_size = 3, min_p = 0.01,
-  show_category = TRUE, category_size = 3, category_colour = "black",
-  category_width = 15, ...
-) {
-
-  stopifnot(is.data.frame(df))
-  if (missing(fill)) stop("The initial category must be defined as 'fill'\n")
-
-  if (missing(x) & missing(y)) {
-    p <- .plotSinglePie(
-      df = df, fill = fill, width = width, show_total = show_total,
-      .lab_fill = label_fill, .lab_alpha = label_alpha, .lab_size = label_size,
-      .text_size = category_size, .text_col = category_colour, .min_p = min_p,
-      .show_cat = show_category, .text_width = category_width
-    )
+setMethod(
+  "plotPie",
+  signature = signature(object = "GRanges"),
+  function(object, scale_by = c("n", "width"), ...){
+    df <- as.data.frame(object)
+    scale_by <- match.arg(scale_by)
+    if (scale_by == "n") df[["n"]] <- 1
+    ## Set width to be in Kb by default
+    if (scale_by == "width") df[["width"]] <- width(object) / 1e3
+    plotPie(df, scale_by = scale_by, ...)
   }
+)
+#' @rdname plotPie-methods
+#' @export
+setMethod(
+  "plotPie",
+  signature = signature(object = "DataFrame"),
+  function(object, ...){
+    object <- as.data.frame(object)
+    plotPie(object, ...)
+  }
+)
+#'
+#' @rdname plotPie-methods
+#' @export
+setMethod(
+  "plotPie",
+  signature = signature(object = "data.frame"),
+  function(
+    object, fill, x, y, scale_by, width = 0.8, show_total = TRUE,
+    label_fill = "white", label_alpha = 1, label_size = 3, min_p = 0.01,
+    show_category = TRUE, category_size = 3, category_colour = "black",
+    category_width = 15, ...
+  ) {
 
-  if (missing(x) & !missing(y))
-    stop("Charts can only be drawn in rows when using two columns.\n")
+    if (missing(fill)) stop("The initial category must be defined as 'fill'\n")
 
-  if (!missing(x) & missing(y))
-    p <- .plotDoublePie(
-      df = df, x = x, fill = fill, width = width, show_total = show_total,
-      .lab_fill = label_fill, .lab_alpha = label_alpha, .lab_size = label_size,
-      .min_p = min_p
-    )
+    if (missing(x) & missing(y)) {
+      p <- .plotSinglePie(
+        df = object, fill = fill, width = width, show_total = show_total,
+        .lab_fill = label_fill, .lab_alpha = label_alpha, .lab_size = label_size,
+        .text_size = category_size, .text_col = category_colour, .min_p = min_p,
+        .show_cat = show_category, .text_width = category_width,
+        .scale_by = scale_by
+      )
+    }
 
-  if (!missing(x) & !missing(y))
-    p <- .plotTriplePie(
-      df = df, x = x, y = y, fill = fill, width = width,
-      show_total = show_total, .lab_fill = label_fill, .lab_alpha = label_alpha,
-      .lab_size = label_size, .min_p = min_p
-    )
+    if (missing(x) & !missing(y))
+      stop("Charts can only be drawn in rows when using two columns.\n")
 
-  p
+    if (!missing(x) & missing(y))
+      p <- .plotDoublePie(
+        df = object, x = x, fill = fill, width = width, show_total = show_total,
+        .lab_fill = label_fill, .lab_alpha = label_alpha, .lab_size = label_size,
+        .min_p = min_p, .scale_by = scale_by
+      )
 
-}
+    if (!missing(x) & !missing(y))
+      p <- .plotTriplePie(
+        df = object, x = x, y = y, fill = fill, width = width,
+        show_total = show_total, .lab_fill = label_fill, .lab_alpha = label_alpha,
+        .lab_size = label_size, .min_p = min_p, .scale_by = scale_by
+      )
 
+    p
+
+  }
+)
 
 #' @importFrom dplyr group_by summarise mutate arrange filter
 #' @importFrom ggplot2 ggplot aes geom_col geom_text geom_segment geom_label
@@ -110,16 +153,21 @@ plotPie <- function(
 #' @importFrom stringr str_wrap
 .plotSinglePie <- function(
   df, fill, width , show_total, .lab_fill, .lab_alpha, .lab_size, .text_size,
-  .text_col, .min_p, .show_cat, .text_width
+  .text_col, .min_p, .show_cat, .text_width, .scale_by
 ) {
 
   fill <- fill[[1]]
   stopifnot(fill %in% colnames(df))
   df[[fill]] <- as.factor(df[[fill]])
+  if (!missing(.scale_by)) stopifnot(is.numeric(df[[.scale_by]]))
   y <- lab <- c() # R CMD check error avoidance
 
   grp_df <- group_by(df, !!sym(fill))
-  summ_df <- summarise(grp_df, n = dplyr::n(), .groups = "drop")
+  if (missing(.scale_by)) {
+    summ_df <- summarise(grp_df, n = dplyr::n(), .groups = "drop")
+  } else {
+    summ_df <- summarise(grp_df, n = sum(!!sym(.scale_by)))
+  }
   summ_df <- mutate(summ_df, p = n / sum(n))
   summ_df <- arrange(summ_df, desc(!!sym(fill)))
   summ_df$y <- cumsum(summ_df$p)
@@ -153,7 +201,7 @@ plotPie <- function(
 
   if (show_total)
     p <- p + geom_label(
-      x = 1 - width / 2, y = 0, label = comma(nrow(df), 1),
+      x = 1 - width / 2, y = 0, label = comma(sum(summ_df$n), 1),
       alpha = 0.5, fill = "white", size = .lab_size
     )
 
@@ -171,7 +219,8 @@ plotPie <- function(
 #' @importFrom rlang '!!' sym
 #' @importFrom scatterpie geom_scatterpie
 .plotDoublePie <- function(
-  df, x, fill, width, show_total, .lab_fill, .lab_alpha, .lab_size, .min_p
+  df, x, fill, width, show_total, .lab_fill, .lab_alpha, .lab_size, .min_p,
+  .scale_by
 ) {
 
   fill <- fill[[1]]
@@ -179,10 +228,17 @@ plotPie <- function(
   stopifnot(all(c(x, fill) %in% colnames(df) ))
   df[[x]] <- as.factor(df[[x]])
   df[[fill]] <- as.factor(df[[fill]])
+  if (!missing(.scale_by)) stopifnot(is.numeric(df[[.scale_by]]))
   r <- N <- c() # R CMD check error avoidance
 
   grp_df <- group_by(df, !!sym(x), !!sym(fill))
-  summ_df <- summarise(grp_df, n = dplyr::n(), .groups = "drop_last")
+  if (missing(.scale_by)) {
+    summ_df <- summarise(grp_df, n = dplyr::n(), .groups = "drop_last")
+  } else {
+    summ_df <- summarise(
+      grp_df, n = sum(!!sym(.scale_by)), .groups = "drop_last"
+    )
+  }
   summ_df <- ungroup(mutate(summ_df, N = sum(n)))
   summ_df$r <- summ_df$N / sum(summ_df$N)
   summ_df$r <- 0.5 * summ_df$r / max(summ_df$r) # Set the max as 0.5 always
@@ -228,7 +284,8 @@ plotPie <- function(
 #' @importFrom rlang '!!' sym
 #' @importFrom scatterpie geom_scatterpie
 .plotTriplePie <- function(
-  df, x, y, fill, width, show_total, .lab_fill, .lab_alpha, .lab_size, .min_p
+  df, x, y, fill, width, show_total, .lab_fill, .lab_alpha, .lab_size, .min_p,
+  .scale_by
 ) {
 
   fill <- fill[[1]]
@@ -239,10 +296,17 @@ plotPie <- function(
   df[[x]] <- as.factor(df[[x]])
   df[[y]] <- as.factor(df[[y]])
   df[[fill]] <- as.factor(df[[fill]])
+  if (!missing(.scale_by)) stopifnot(is.numeric(df[[.scale_by]]))
   r <- N <- c() # R CMD check error avoidance
 
   grp_df <- group_by(df, !!sym(x), !!sym(y), !!sym(fill))
-  summ_df <- summarise(grp_df, n = dplyr::n(), .groups = "drop_last")
+  if (missing(.scale_by)) {
+    summ_df <- summarise(grp_df, n = dplyr::n(), .groups = "drop_last")
+  } else {
+    summ_df <- summarise(
+      grp_df, n = sum(!!sym(.scale_by)), .groups = "drop_last"
+    )
+  }
   summ_df <- ungroup(mutate(summ_df, N = sum(n)))
   summ_df$r <- summ_df$N / sum(summ_df$N)
   summ_df$r <- 0.5 * summ_df$r / max(summ_df$r) # Set the max as 0.5 always

@@ -13,6 +13,7 @@ test_that("plotPie Errors where expected", {
   expect_error(plotPie(df, fill = ""))
   expect_error(plotPie(df, fill = "feature", x = ""))
   expect_error(plotPie(df, fill = "feature", x = "TF1", y = ""))
+  expect_error(plotPie(df, fill = "feature", scale_by = ""))
 
 })
 
@@ -73,5 +74,16 @@ test_that(".plotDoublePie creates the expected data structures", {
 
   p <- plotPie(df, "feature", "TF1", "TF2", show_total = FALSE)
   expect_equal(sum(vapply(p$layers, is, TRUE, "LayerInstance")), 1)
+
+})
+
+test_that("Scaling by columns works as expected", {
+
+  gr <- ex_prom
+  mcols(gr) <- df[seq_along(gr),]
+  p <- plotPie(gr, fill = "feature")
+  expect_equal(sum(p$data$n), length(gr))
+  p <- plotPie(gr, fill = "feature", scale_by = "width")
+  expect_equal(sum(p$data$n), sum(width(gr) / 1e3))
 
 })
