@@ -75,10 +75,12 @@ setMethod(
     ## Check the BamFiles exist
     stopifnot("bam.files" %in% colnames(colData(x)))
     bfl <- BamFileList(colData(x)$bam.files)
+    names(bfl) <- colnames(x)
     stopifnot(all(file.exists(path(bfl))))
 
     stopifnot("bam.files" %in% colnames(colData(bg)))
     bg_bfl <- BamFileList(colData(bg)$bam.files)
+    names(bg_bfl) <- colnames(bg)
     stopifnot(all(file.exists(path(bg_bfl))))
 
     ## Find which ranges overlap the reference
