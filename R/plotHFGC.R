@@ -483,7 +483,7 @@ plotHFGC <- function(
         fontsize <- x@dp@pars$fontsize
         cex <- x@dp@pars$cex.title
         annot_track <- .makeFeatureTrack(
-          .annotation[[nm]], .gr, fontsize, .fill, .size, cex, 0, nm, "full",
+          .annotation[[nm]], .gr, fontsize, .fill, .size, cex, 0, "", "full",
           .col.title, .bg.title
         )
         # annot_track@name <- nm
@@ -816,6 +816,9 @@ plotHFGC <- function(
       msg <- c(msg, "All elements of 'coverage' must be a BigWigFileList\n")
     if ("" %in% names(coverage))
       msg <- c(msg, "'coverage' must a be a named list\n")
+    nm <- lapply(coverage, names)
+    if (any(vapply(nm, is.null, logical(1))))
+      msg <- c(msg, "All individual bigwig files must be named\n")
   } else {
     if (!is(coverage, "BigWigFileList"))
       msg <- c(msg, "'coverage' should be a BigWigFileList or a list\n")

@@ -53,6 +53,7 @@ test_that("Correct plotting works", {
   expect_equal(length(p), 4)
   expect_true(is(p[[2]], "AnnotationTrack"))
   expect_equal(p[[2]]@dp@pars$fill, c(up = "red"))
+  expect_equal(p[[2]]@name, "")
   expect_true(is(p[[3]], "DataTrack"))
   expect_equal(p[[3]]@dp@pars$ylim, c(-1, 5))
 
@@ -291,6 +292,16 @@ test_that("Malformed coverage parameters are caught", {
       ylim = 1, linecol = c()
     ),
     "ylim can be a named list or numeric vector of length >= 2"
+  )
+  expect_equal(
+    .checkCoverage(
+      msg = c(),
+      coverage = list(a = setNames(test_bw, c())),
+      linecol = list(a = c(a = "blue")), type = "l",
+      annotation = list(a = GRangesList()), annotcol = NULL,
+      ylim = c(0, 1)
+    ),
+    "All individual bigwig files must be named\n"
   )
 
 })
