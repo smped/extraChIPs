@@ -20,7 +20,13 @@
 #' Parameters for these labels are customisable
 #'
 #' @return
-#' A ggplot2 object able to be customised with colour scales and themes
+#' A ggplot2 object able to be customised with colour scales and themes.
+#'
+#' Also note that the $data element of the returned object will contain the
+#' data.frame used for plotting. The additional column `label_radians`
+#' represents the mid-point of each pie slice and can be used for manually
+#' adding labels to each pie.
+#' Only applies when plotting across the `x` or `y` axes
 #'
 #' @param object An object (`data.frame`)
 #' @param fill The category/column used to fill the slices of the pie charts
@@ -65,6 +71,17 @@
 #' plotPie(df, fill = "feature", x = "TF1", y = "TF2") +
 #'  scale_fill_viridis_d() +
 #'  theme_bw()
+#'
+#' ## Manually adding percentages
+#' plotPie(df, fill = "feature", x = "TF1", label_size = 5) +
+#'   geom_label(
+#'     aes(
+#'       x = x + 0.5*r*sin(label_radians),
+#'       y = 1 + 0.5*r*cos(label_radians),
+#'       label = scales::percent(p, 0.1)
+#'    ),
+#'    size = 3.5
+#'  )
 #'
 #' ## And using a GRanges object
 #' gr <- ex_prom
@@ -231,32 +248,35 @@ setMethod(
   df[[x]] <- as.factor(df[[x]])
   df[[fill]] <- as.factor(df[[fill]])
   if (!missing(.scale_by)) stopifnot(is.numeric(df[[.scale_by]]))
-  r <- N <- c() # R CMD check error avoidance
+  r <- N <- value <- p <- c() # R CMD check error avoidance
 
   grp_df <- group_by(df, !!sym(x), !!sym(fill))
   if (missing(.scale_by)) {
-    summ_df <- summarise(grp_df, n = dplyr::n(), .groups = "drop_last")
+    ## The column 'value' is hard-wired into geom_scatterpie for long format
+    summ_df <- summarise(grp_df, value = dplyr::n(), .groups = "drop_last")
   } else {
     summ_df <- summarise(
-      grp_df, n = sum(!!sym(.scale_by)), .groups = "drop_last"
+      grp_df, value = sum(!!sym(.scale_by)), .groups = "drop_last"
     )
   }
-  summ_df <- ungroup(mutate(summ_df, N = sum(n)))
+  summ_df <- mutate(
+    summ_df,
+    p = value / sum(value),
+    label_radians = 2 * pi * (cumsum(p) - 0.5 * p)
+  )
+  summ_df <- ungroup(mutate(summ_df, N = sum(value)))
   summ_df <- complete(
-    summ_df, !!sym(fill), !!sym(x), fill = list(n = 0, N = 0)
+    summ_df, !!sym(fill), !!sym(x), fill = list(value = 0, N = 0)
   )
   summ_df$r <- summ_df$N / sum(summ_df$N)
   summ_df$r <- 0.5 * summ_df$r / max(summ_df$r) # Set the max as 0.5 always
-  wide_df <- pivot_wider(
-    summ_df, names_from = all_of(fill), values_from = "n", values_fill = 0
-  )
-  wide_df$x <- as.integer(wide_df[[x]])
+  summ_df$x <- as.integer(summ_df[[x]])
 
-  p <- ggplot(data = wide_df) +
+  p <- ggplot(data = summ_df) +
     geom_scatterpie(
       aes(x, 1, r = width * r),
-      data = wide_df,
-      cols = levels(df[[fill]])
+      data = summ_df,
+      cols = fill, long_format = TRUE
     ) +
     coord_equal() +
     scale_x_continuous(
@@ -272,7 +292,7 @@ setMethod(
   if (show_total)
     p <- p + geom_label(
       aes(x, 1, label = comma(N, 1)),
-      data = dplyr::filter(wide_df, N > .min_p * sum(N)),
+      data = dplyr::filter(summ_df, N > .min_p * sum(N)),
       size = .lab_size, alpha = .lab_alpha, fill = .lab_fill
     )
 
@@ -302,34 +322,35 @@ setMethod(
   df[[y]] <- as.factor(df[[y]])
   df[[fill]] <- as.factor(df[[fill]])
   if (!missing(.scale_by)) stopifnot(is.numeric(df[[.scale_by]]))
-  r <- N <- c() # R CMD check error avoidance
+  r <- N <- p <- value <- c() # R CMD check error avoidance
 
   grp_df <- group_by(df, !!sym(x), !!sym(y), !!sym(fill))
   if (missing(.scale_by)) {
-    summ_df <- summarise(grp_df, n = dplyr::n(), .groups = "drop_last")
+    summ_df <- summarise(grp_df, value = dplyr::n(), .groups = "drop_last")
   } else {
     summ_df <- summarise(
-      grp_df, n = sum(!!sym(.scale_by)), .groups = "drop_last"
+      grp_df, value = sum(!!sym(.scale_by)), .groups = "drop_last"
     )
   }
-  summ_df <- ungroup(mutate(summ_df, N = sum(n)))
+  summ_df <- mutate(
+    summ_df,
+    p = value / sum(value),
+    label_radians = 2 * pi * (cumsum(p) - 0.5 * p)
+  )
+  summ_df <- ungroup(mutate(summ_df, N = sum(value)))
   summ_df <- complete(
-    summ_df, !!sym(fill), !!sym(x), !!sym(y), fill = list(n = 0, N = 0)
+    summ_df, !!sym(fill), !!sym(x), !!sym(y), fill = list(value = 0, N = 0)
   )
   summ_df$r <- summ_df$N / sum(summ_df$N)
   summ_df$r <- 0.5 * summ_df$r / max(summ_df$r) # Set the max as 0.5 always
+  summ_df$x <- as.integer(summ_df[[x]])
+  summ_df$y <- as.integer(summ_df[[y]])
 
-  wide_df <- pivot_wider(
-    summ_df, names_from = all_of(fill), values_from = "n", values_fill = 0
-  )
-  wide_df$x <- as.integer(wide_df[[x]])
-  wide_df$y <- as.integer(wide_df[[y]])
-
-  p <- ggplot(data = wide_df) +
+  p <- ggplot(data = summ_df) +
     geom_scatterpie(
       aes(x, y, r = width * r),
-      data = wide_df,
-      cols = levels(df[[fill]])
+      data = summ_df,
+      cols = fill, long_format = TRUE
     ) +
     coord_equal() +
     scale_x_continuous(
@@ -344,7 +365,7 @@ setMethod(
   if (show_total)
     p <- p + geom_label(
       aes(x, y, label = comma(N, 1)),
-      data = dplyr::filter(wide_df, N > .min_p * sum(N)),
+      data = dplyr::filter(summ_df, N > .min_p * sum(N)),
       size = .lab_size, alpha = .lab_alpha, fill = .lab_fill
     )
 

@@ -78,7 +78,13 @@ specified}
 line}
 }
 \value{
-A ggplot2 object able to be customised with colour scales and themes
+A ggplot2 object able to be customised with colour scales and themes.
+
+Also note that the $data element of the returned object will contain the
+data.frame used for plotting. The additional column \code{label_radians}
+represents the mid-point of each pie slice and can be used for manually
+adding labels to each pie.
+Only applies when plotting across the \code{x} or \code{y} axes
 }
 \description{
 Draw Pie Graphs based one or more data.frame columns
@@ -114,6 +120,17 @@ plotPie(df, fill = "feature", x = "TF1")
 plotPie(df, fill = "feature", x = "TF1", y = "TF2") +
  scale_fill_viridis_d() +
  theme_bw()
+
+## Manually adding percentages
+plotPie(df, fill = "feature", x = "TF1", label_size = 5) +
+  geom_label(
+    aes(
+      x = x + 0.5*r*sin(label_radians),
+      y = 1 + 0.5*r*cos(label_radians),
+      label = scales::percent(p, 0.1)
+   ),
+   size = 3.5
+ )
 
 ## And using a GRanges object
 gr <- ex_prom

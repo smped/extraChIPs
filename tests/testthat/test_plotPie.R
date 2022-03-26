@@ -36,10 +36,10 @@ test_that(".plotSinglePie creates expected data structures", {
 test_that(".plotDoublePie creates the expected data structures", {
 
   p <- plotPie(df, "feature", "TF1")
-  expect_equal(dim(p$data), c(3, 7))
+  expect_equal(dim(p$data), c(9, 8))
   expect_equal(
     colnames(p$data),
-    c("TF1", "N", "r", "Enhancer", "Intergenic", "Promoter", "x")
+    c("feature", "TF1", "value", "p", "label_radians", "N", "r", "x")
   )
   expect_equal(sum(vapply(p$layers, is, TRUE, "LayerInstance")), 2)
   expect_equal(
@@ -59,10 +59,12 @@ test_that(".plotDoublePie creates the expected data structures", {
 
   p <- plotPie(df, "feature", "TF1", "TF2")
   expect_equal(sum(vapply(p$layers, is, TRUE, "LayerInstance")), 2)
-  expect_equal(dim(p$data), c(9, 9))
+  expect_equal(dim(p$data), c(27, 10))
   expect_equal(
     colnames(p$data),
-    c("TF1", "TF2", "N", "r", "Enhancer", "Intergenic", "Promoter", "x", "y")
+    c(
+      "feature", "TF1", "TF2", "value", "p", "label_radians", "N", "r", "x", "y"
+    )
   )
   expect_equal(
     p$labels[c("x", "y", "fill", "r", "label")],
