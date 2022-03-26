@@ -124,11 +124,13 @@ plotPie(df, fill = "feature", x = "TF1", y = "TF2") +
 ## Manually adding percentages
 plotPie(df, fill = "feature", x = "TF1", label_size = 5) +
   geom_label(
-    aes(
-      x = x + 0.5*r*sin(label_radians),
-      y = 1 + 0.5*r*cos(label_radians),
-      label = scales::percent(p, 0.1)
-   ),
+   aes(x_lab, y_lab, label = lab),
+   data = . \%>\%
+     dplyr::mutate(
+       x_lab = x + 0.5*r*sin(label_radians),
+       y_lab = 1 + 0.5*r*cos(label_radians),
+       lab = scales::percent(p, 0.1)
+     ),
    size = 3.5
  )
 

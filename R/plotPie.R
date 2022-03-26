@@ -75,11 +75,13 @@
 #' ## Manually adding percentages
 #' plotPie(df, fill = "feature", x = "TF1", label_size = 5) +
 #'   geom_label(
-#'     aes(
-#'       x = x + 0.5*r*sin(label_radians),
-#'       y = 1 + 0.5*r*cos(label_radians),
-#'       label = scales::percent(p, 0.1)
-#'    ),
+#'    aes(x_lab, y_lab, label = lab),
+#'    data = . %>%
+#'      dplyr::mutate(
+#'        x_lab = x + 0.5*r*sin(label_radians),
+#'        y_lab = 1 + 0.5*r*cos(label_radians),
+#'        lab = scales::percent(p, 0.1)
+#'      ),
 #'    size = 3.5
 #'  )
 #'
@@ -266,7 +268,8 @@ setMethod(
   )
   summ_df <- ungroup(mutate(summ_df, N = sum(value)))
   summ_df <- complete(
-    summ_df, !!sym(fill), !!sym(x), fill = list(value = 0, N = 0)
+    summ_df, !!sym(fill), !!sym(x),
+    fill = list(value = 0, N = 0, p = 0, label_radians = 0)
   )
   summ_df$r <- summ_df$N / sum(summ_df$N)
   summ_df$r <- 0.5 * summ_df$r / max(summ_df$r) # Set the max as 0.5 always
@@ -339,7 +342,8 @@ setMethod(
   )
   summ_df <- ungroup(mutate(summ_df, N = sum(value)))
   summ_df <- complete(
-    summ_df, !!sym(fill), !!sym(x), !!sym(y), fill = list(value = 0, N = 0)
+    summ_df, !!sym(fill), !!sym(x), !!sym(y),
+    fill = list(value = 0, N = 0, p = 0, label_radians = 0)
   )
   summ_df$r <- summ_df$N / sum(summ_df$N)
   summ_df$r <- 0.5 * summ_df$r / max(summ_df$r) # Set the max as 0.5 always
