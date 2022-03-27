@@ -374,7 +374,7 @@ setMethod(
     lab_df <- distinct(lab_df, x, y, N, .keep_all = TRUE)
     p <- p + geom_label(
       aes(x, y, label = comma(N, 1)),
-      data = ,
+      data = lab_df,
       size = .lab_size, alpha = .lab_alpha, fill = .lab_fill
     )
   }
