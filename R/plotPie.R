@@ -231,7 +231,7 @@ setMethod(
     theme_void()
 }
 
-#' @importFrom dplyr group_by summarise mutate filter ungroup
+#' @importFrom dplyr group_by summarise mutate filter ungroup distinct
 #' @importFrom tidyr pivot_wider complete
 #' @importFrom tidyselect all_of
 #' @importFrom ggplot2 ggplot aes geom_label scale_x_continuous
@@ -292,18 +292,21 @@ setMethod(
       axis.title.y = element_blank(),
       axis.ticks.y = element_blank()
     )
-  if (show_total)
+  if (show_total) {
+    lab_df <- dplyr::filter(summ_df, N > .min_p * sum(N))
+    lab_df <- distinct(lab_df, x, N, .keep_all = TRUE)
     p <- p + geom_label(
       aes(x, 1, label = comma(N, 1)),
-      data = dplyr::filter(summ_df, N > .min_p * sum(N)),
+      data = lab_df,
       size = .lab_size, alpha = .lab_alpha, fill = .lab_fill
     )
+  }
 
   p
 
 }
 
-#' @importFrom dplyr group_by summarise mutate filter ungroup
+#' @importFrom dplyr group_by summarise mutate filter ungroup distinct
 #' @importFrom tidyr pivot_wider complete
 #' @importFrom tidyselect all_of
 #' @importFrom ggplot2 ggplot aes geom_label scale_x_continuous
@@ -366,12 +369,15 @@ setMethod(
       labels = levels(df[[y]])
     ) +
     labs(x = x, y = y, fill = fill)
-  if (show_total)
+  if (show_total) {
+    lab_df <- dplyr::filter(summ_df, N > .min_p * sum(N))
+    lab_df <- distinct(lab_df, x, y, N, .keep_all = TRUE)
     p <- p + geom_label(
       aes(x, y, label = comma(N, 1)),
-      data = dplyr::filter(summ_df, N > .min_p * sum(N)),
+      data = ,
       size = .lab_size, alpha = .lab_alpha, fill = .lab_fill
     )
+  }
 
   p
 
