@@ -38,9 +38,12 @@
       <a href="../articles/differential_binding.html">Differential Binding</a>
     </li>
   </ul></li>
+<li>
+  <a href="../news/index.html">News</a>
+</li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/steveped/extraChIPs/" class="external-link">
-    <span class="fab fa-github fa-lg"></span>
+  <a href="https://github.com/steveped/extraChIPs" class="external-link">
+    <span class="fa fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -166,34 +169,34 @@ the <code>rowRanges</code> element.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 2 ranges and 8 metadata columns:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand | n_windows      n_up    n_down keyval_range</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;    &lt;GRanges&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1      1-15      * |         2         0         1    chr1:6-15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1      1-15      * |         2         1         0    chr1:1-10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chr1     51-60      * |         1         1         0   chr1:51-60</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          logCPM       logFC           p       p_fdr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;numeric&gt;   &lt;numeric&gt;   &lt;numeric&gt;   &lt;numeric&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]   9.01476 -1.05020530 0.000353021 0.000706041</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]   6.40702  0.00508595 0.511807386 0.511807386</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          logCPM     logFC          p     p_fdr</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;numeric&gt; &lt;numeric&gt;  &lt;numeric&gt; &lt;numeric&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]   9.36716  0.980652 0.44740274 0.4474027</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]   8.54173  0.815044 0.00755677 0.0151135</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
 <span class="r-in"><span class="fu">mcols</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">df</span></span>
 <span class="r-in"><span class="va">x</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 3 ranges and 3 metadata columns:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand |       logFC    logCPM           p</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; |   &lt;numeric&gt; &lt;numeric&gt;   &lt;numeric&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1      1-10      * |  1.28293606   8.55575 0.335011800</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chr1      6-15      * | -1.05020530   9.01476 0.000353021</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [3]     chr1     51-60      * |  0.00508595   6.40702 0.511807386</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand |     logFC    logCPM          p</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;numeric&gt; &lt;numeric&gt;  &lt;numeric&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1      1-10      * |  0.980652   9.36716 0.44740274</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chr1      6-15      * |  0.335417   8.06574 0.70921188</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [3]     chr1     51-60      * |  0.815044   8.54173 0.00755677</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
 <span class="r-in"><span class="fu">mergeByCol</span><span class="op">(</span><span class="va">x</span>, col <span class="op">=</span> <span class="st">"logCPM"</span>, pval <span class="op">=</span> <span class="st">"p"</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 2 ranges and 8 metadata columns:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand | n_windows      n_up    n_down keyval_range</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;    &lt;GRanges&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1      1-15      * |         2         0         1    chr1:6-15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1      1-15      * |         2         1         0    chr1:1-10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chr1     51-60      * |         1         1         0   chr1:51-60</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          logCPM       logFC           p       p_fdr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;numeric&gt;   &lt;numeric&gt;   &lt;numeric&gt;   &lt;numeric&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]   9.01476 -1.05020530 0.000353021 0.000706041</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]   6.40702  0.00508595 0.511807386 0.511807386</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          logCPM     logFC          p     p_fdr</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;numeric&gt; &lt;numeric&gt;  &lt;numeric&gt; &lt;numeric&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]   9.36716  0.980652 0.44740274 0.4474027</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]   8.54173  0.815044 0.00755677 0.0151135</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
 <span class="r-in"></span>
