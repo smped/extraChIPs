@@ -20,19 +20,37 @@ knitr::opts_chunk$set(
 ```
 
 
-# Differential Binding and ChIP-Seq Analysis
+# Introduction
 
 The [GRAVI](https://github.com/steveped/GRAVI) workflow, for which this package 
 is designed, uses sliding windows for differential binding analysis in a manner 
 similar to the package `csaw`, but also incorporating `macs2` peaks.
-The workflow itself extends to integrating multiple IP targets and external data
-sources, and as such, this package introduces a handful of functions to enable
-these analyses.
+The workflow itself extends to integrating multiple ChIP targets and external 
+data sources, and as such, this package introduces a handful of functions to 
+enable these analyses.
 
 The majority of examples below use extremely simplified datasets to provide
 general guidance on using the functions.
 Some results may appear trivial as a result, but will hopefully prove far more
 useful in a true experimental context.
+
+# Installation
+
+In order to use the package `extraChIPs` and follow this vignette, we recommend 
+using the package `BiocManager` hosted on CRAN.
+Once this is installed, the additional packages required for this vignette 
+(`tidyverse`, `Rsamtools`, `csaw`, `BiocParallel` and `rtracklayer`) can also 
+be installed.
+
+```{r install, eval = FALSE}
+if (!"BiocManager" %in% rownames(installed.packages()))
+  install.packages("BiocManager")
+pkg <- c("tidyverse", "Rsamtools", "csaw", "BiocParallel", "rtracklayer")
+BiocManager::install()
+BiocManager::install("steveped/extraChIPs")
+```
+
+# Differential Binding and ChIP-Seq Analysis
 
 ## Sliding Windows
 
