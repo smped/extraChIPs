@@ -57,11 +57,14 @@
     </li>
   </ul>
 </li>
+<li>
+  <a href="../news/index.html">News</a>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/steveped/extraChIPs/" class="external-link">
-    <span class="fab fa-github fa-lg"></span>
+  <a href="https://github.com/steveped/extraChIPs" class="external-link">
+    <span class="fa fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -104,7 +107,21 @@ workflow, as a method for detecting differential binding in ChIP-Seq
 datasets. As a workflow focussed on data integration, most functions
 provided by the package <code>extraChIPs</code> are designed to enable
 comparison across datasets. This vignette looks primarily at functions
-which work with <code>GenomicRanges</code> objects</p>
+which work with <code>GenomicRanges</code> objects.</p>
+</div>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<p>In order to use the package <code>extraChIPs</code> and follow this
+vignette, we recommend using the package <code>BiocManager</code> hosted
+on CRAN. Once this is installed, the additional packages required for
+this vignette (<code>tidyverse</code>, <code>plyranges</code> and
+<code>Gviz</code>) can also be installed.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="st">"BiocManager"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html" class="external-link">installed.packages</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span>
+<span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tidyverse"</span>, <span class="st">"plyranges"</span>, <span class="st">"Gviz"</span><span class="op">)</span><span class="op">)</span>
+<span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"steveped/extraChIPs"</span><span class="op">)</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="coercion">Coercion<a class="anchor" aria-label="anchor" href="#coercion"></a>
@@ -121,7 +138,7 @@ correctly handled. By default these coercion functions will coerce
 the ranges element of a <code>GRanges</code> object.</p>
 <p>First let’s coerce from a <code>tibble</code> (or S3
 <code>data.frame</code>) to a <code>GRanges</code></p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/steveped/extraChIPs" class="external-link">extraChIPs</a></span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">73</span><span class="op">)</span>
@@ -138,7 +155,7 @@ the ranges element of a <code>GRanges</code> object.</p>
 <span class="co">## <span style="color: #BCBCBC;">1</span> chr1:1-10:+ gene1   transcript1 0.442 </span>
 <span class="co">## <span style="color: #BCBCBC;">2</span> chr1:5-10:+ gene1   transcript2 0.083<span style="text-decoration: underline;">1</span></span>
 <span class="co">## <span style="color: #BCBCBC;">3</span> chr1:5-6:+  gene1   transcript3 0.615</span></code></pre>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/colToRanges-methods.html">colToRanges</a></span><span class="op">(</span><span class="va">df</span>, <span class="st">"range"</span><span class="op">)</span>
 <span class="va">gr</span></code></pre></div>
 <pre><code><span class="co">## GRanges object with 3 ranges and 3 metadata columns:</span>
@@ -153,7 +170,7 @@ the ranges element of a <code>GRanges</code> object.</p>
 character column by default. However, this can be turned off and the
 conventional coercion from <code>as.data.frame</code> will instead be
 applied, internally wrapped in <code><a href="../reference/as_tibble.html">as_tibble()</a></code></p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="va">gr</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## <span style="color: #949494;"># A tibble: 3 × 4</span></span>
 <span class="co">##   range       gene_id tx_id        score</span>
@@ -161,7 +178,7 @@ applied, internally wrapped in <code><a href="../reference/as_tibble.html">as_ti
 <span class="co">## <span style="color: #BCBCBC;">1</span> chr1:1-10:+ gene1   transcript1 0.442 </span>
 <span class="co">## <span style="color: #BCBCBC;">2</span> chr1:5-10:+ gene1   transcript2 0.083<span style="text-decoration: underline;">1</span></span>
 <span class="co">## <span style="color: #BCBCBC;">3</span> chr1:5-6:+  gene1   transcript3 0.615</span></code></pre>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="va">gr</span>, rangeAsChar <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## <span style="color: #949494;"># A tibble: 3 × 8</span></span>
 <span class="co">##   seqnames start   end width strand gene_id tx_id        score</span>
@@ -174,7 +191,7 @@ applied, internally wrapped in <code><a href="../reference/as_tibble.html">as_ti
 Here a character vector of gene names is collapsed into a
 <code>glue</code> object of length `, with gene names rendered in
 italics by default.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">gn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Gene1"</span>, <span class="st">"Gene2"</span>, <span class="st">"Gene3"</span><span class="op">)</span>
 <span class="fu"><a href="../reference/collapseGenes.html">collapseGenes</a></span><span class="op">(</span><span class="va">gn</span><span class="op">)</span></code></pre></div>
 <p><em>Gene1</em>, <em>Gene2</em> and <em>Gene3</em></p>
@@ -199,7 +216,7 @@ analytic steps</p>
 <p>The classical approach to defining TSS regions for a set of
 transcripts would be to use the function <code>resize</code>()`, setting
 the width as 1.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tss</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/intra-range-methods.html" class="external-link">resize</a></span><span class="op">(</span><span class="va">gr</span>, width <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
 <span class="va">tss</span></code></pre></div>
 <pre><code><span class="co">## GRanges object with 3 ranges and 3 metadata columns:</span>
@@ -214,7 +231,7 @@ the width as 1.</p>
 to reduce this, which would lose the <code>mcols</code> element. The
 alternative <code><a href="../reference/reduceMC-methods.html">reduceMC()</a></code> will retain all
 <code>mcols</code>.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">GenomicRanges</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/inter-range-methods.html" class="external-link">reduce</a></span><span class="op">(</span><span class="va">tss</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## GRanges object with 2 ranges and 0 metadata columns:</span>
 <span class="co">##       seqnames    ranges strand</span>
@@ -223,7 +240,7 @@ alternative <code><a href="../reference/reduceMC-methods.html">reduceMC()</a></c
 <span class="co">##   [2]     chr1         5      +</span>
 <span class="co">##   -------</span>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/reduceMC-methods.html">reduceMC</a></span><span class="op">(</span><span class="va">tss</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## GRanges object with 2 ranges and 3 metadata columns:</span>
 <span class="co">##       seqnames    ranges strand |     gene_id                   tx_id</span>
@@ -243,7 +260,7 @@ above, these will be coerced to a <code>CompressedList</code>. The
 simplification of the multiple values seen in the <code>gene_id</code>
 can also be turned off if desired should repeated values be important
 for downstream analysis.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/reduceMC-methods.html">reduceMC</a></span><span class="op">(</span><span class="va">tss</span>, simplify <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> </code></pre></div>
 <pre><code><span class="co">## GRanges object with 2 ranges and 3 metadata columns:</span>
 <span class="co">##       seqnames    ranges strand |         gene_id                   tx_id</span>
@@ -258,7 +275,7 @@ for downstream analysis.</p>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
 <p>This allows for simple integration with <code>tidyverse</code>
 nesting strategies.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/reduceMC-methods.html">reduceMC</a></span><span class="op">(</span><span class="va">tss</span>, simplify <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="../reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
@@ -273,7 +290,7 @@ implemented in <code><a href="https://rdrr.io/pkg/GenomicRanges/man/inter-range-
 approaches are included, such as <code><a href="../reference/chopMC-methods.html">chopMC()</a></code>, which finds
 identical ranges and nests the mcols element as
 <code>CompressedList</code> objects.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/chopMC-methods.html">chopMC</a></span><span class="op">(</span><span class="va">tss</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## GRanges object with 2 ranges and 3 metadata columns:</span>
 <span class="co">##       seqnames    ranges strand |     gene_id                   tx_id</span>
@@ -294,7 +311,7 @@ differently on that object.</p>
 be <code><a href="../reference/distinctMC-methods.html">distinctMC()</a></code> which finds unique ranges, along with
 unique <code>mcols</code>. The columns to search can be called using
 <code>&lt;tidy-select&gt;</code> approaches,</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/distinctMC-methods.html">distinctMC</a></span><span class="op">(</span><span class="va">tss</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## GRanges object with 3 ranges and 3 metadata columns:</span>
 <span class="co">##       seqnames    ranges strand |     gene_id       tx_id     score</span>
@@ -304,7 +321,7 @@ unique <code>mcols</code>. The columns to search can be called using
 <span class="co">##   [3]     chr1         5      + |       gene1 transcript3 0.6146112</span>
 <span class="co">##   -------</span>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/distinctMC-methods.html">distinctMC</a></span><span class="op">(</span><span class="va">tss</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/all_of.html" class="external-link">all_of</a></span><span class="op">(</span><span class="st">"gene_id"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## GRanges object with 2 ranges and 1 metadata column:</span>
 <span class="co">##       seqnames    ranges strand |     gene_id</span>
@@ -323,7 +340,7 @@ unique <code>mcols</code>. The columns to search can be called using
 valuable approaches for comparing ranges. Using the <code>*MC()</code>
 functions will retain <code>mcols</code> elements from the <em>query
 range</em>.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chr1:1-5"</span>, <span class="st">"chr1:9-12:*"</span><span class="op">)</span><span class="op">)</span>
 <span class="va">peaks</span><span class="op">$</span><span class="va">peak_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"peak1"</span>, <span class="st">"peak2"</span><span class="op">)</span>
 <span class="fu">GenomicRanges</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/setops-methods.html" class="external-link">intersect</a></span><span class="op">(</span><span class="va">gr</span>, <span class="va">peaks</span>, ignore.strand <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
@@ -334,7 +351,7 @@ range</em>.</p>
 <span class="co">##   [2]     chr1      9-10      *</span>
 <span class="co">##   -------</span>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/setoptsMC-methods.html">intersectMC</a></span><span class="op">(</span><span class="va">gr</span>, <span class="va">peaks</span>, ignore.strand <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## GRanges object with 2 ranges and 3 metadata columns:</span>
 <span class="co">##       seqnames    ranges strand |     gene_id</span>
@@ -347,7 +364,7 @@ range</em>.</p>
 <span class="co">##   [2]             transcript1,transcript2           0.4423369,0.0831099</span>
 <span class="co">##   -------</span>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/setoptsMC-methods.html">setdiffMC</a></span><span class="op">(</span><span class="va">gr</span>, <span class="va">peaks</span>, ignore.strand <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## GRanges object with 1 range and 3 metadata columns:</span>
 <span class="co">##       seqnames    ranges strand |     gene_id</span>
@@ -358,7 +375,7 @@ range</em>.</p>
 <span class="co">##   [1] transcript1,transcript2,transcript3 0.4423369,0.0831099,0.6146112</span>
 <span class="co">##   -------</span>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/setoptsMC-methods.html">unionMC</a></span><span class="op">(</span><span class="va">gr</span>, <span class="va">peaks</span>, ignore.strand <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## GRanges object with 1 range and 3 metadata columns:</span>
 <span class="co">##       seqnames    ranges strand |     gene_id</span>
@@ -374,7 +391,7 @@ range</em>.</p>
 query object will be returned. If only wishing to retain a subset of
 <code>mcols</code>, these should be selected prior to passing to these
 functions.</p>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">plyranges</span><span class="op">)</span>
 <span class="va">gr</span> <span class="op"><a href="https://rdrr.io/pkg/plyranges/man/tidyverse-reexports.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="https://rdrr.io/pkg/plyranges/man/tidyverse-reexports.html" class="external-link">select</a></span><span class="op">(</span><span class="va">tx_id</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/pkg/plyranges/man/tidyverse-reexports.html" class="external-link">%&gt;%</a></span> 
@@ -395,13 +412,13 @@ functions.</p>
 <code><a href="../reference/propOverlap-methods.html">propOverlap()</a></code> returns a numeric vector with the proportion
 of each query range (<code>x</code>) which overlaps any range in the
 subject range (<code>y</code>)</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/propOverlap-methods.html">propOverlap</a></span><span class="op">(</span><span class="va">gr</span>, <span class="va">peaks</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## [1] 0.7 0.5 0.5</span></code></pre>
 <p>This is also extended to enable comparison across multiple features
 and to classify each peak by which features that it overlaps the most
 strongly.</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/bestOverlap-methods.html">bestOverlap</a></span><span class="op">(</span><span class="va">gr</span>, <span class="va">peaks</span>, var <span class="op">=</span> <span class="st">"peak_id"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## [1] "peak1" "peak2" "peak1"</span></code></pre>
 </div>
@@ -425,7 +442,7 @@ range (<code>x</code>) which overlap ranges from the subject range
 <code>query</code> and <code>subject</code> ranges will be returned to
 enable the clear ranges which are common and distinct within the two
 sets of ranges.</p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/partitionRanges-methods.html">partitionRanges</a></span><span class="op">(</span><span class="va">gr</span>, <span class="va">peaks</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## GRanges object with 5 ranges and 4 metadata columns:</span>
 <span class="co">##       seqnames    ranges strand |     peak_id     gene_id</span>
@@ -446,7 +463,7 @@ sets of ranges.</p>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
 <p>Whilst this shares some similarity with <code><a href="../reference/setoptsMC-methods.html">intersectMC()</a></code>
 the additional capabilities provide greater flexibility.</p>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/partitionRanges-methods.html">partitionRanges</a></span><span class="op">(</span><span class="va">gr</span>, <span class="va">peaks</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/pkg/plyranges/man/tidyverse-reexports.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">peak_id</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## GRanges object with 2 ranges and 4 metadata columns:</span>
@@ -469,7 +486,7 @@ together sets of nearby ranges, but with the option of placing clear
 barriers between ranges, across which ranges cannot be joined. This may
 be useful if joining enhancers to form putative super-enhancers, but
 explicitly omitting defined promoter regions.</p>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">enh</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chr1:1-10"</span>, <span class="st">"chr1:101-110"</span>, <span class="st">"chr1:181-200"</span><span class="op">)</span><span class="op">)</span>
 <span class="va">prom</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="st">"chr1:150:+"</span><span class="op">)</span>
 <span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/stitchRanges.html">stitchRanges</a></span><span class="op">(</span><span class="va">enh</span>, exclude <span class="op">=</span> <span class="va">prom</span>, maxgap <span class="op">=</span> <span class="fl">100</span><span class="op">)</span>
