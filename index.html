@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.24</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.0</span>
       </span>
     </div>
 
@@ -84,11 +84,37 @@
       </header><div class="row">
   <div class="contents col-md-9">
 <div class="section level1">
-<div class="page-header"><h1 id="extrachips-">extraChIPs <img id="extrachips_logo" src="figures/extraChIPs.png" align="right" width="125"><a class="anchor" aria-label="anchor" href="#extrachips-"></a>
+<div class="page-header"><h1 id="extrachips-">extraChIPs
+<img id="extrachips_logo" src="figures/extraChIPs.png" align="right" width="125"><a class="anchor" aria-label="anchor" href="#extrachips-"></a>
 </h1></div>
 <!-- badges: start -->
 
-<p>Currently under active development, this is be a small collection of functions aimed to simplify analysis and visualisation under a ChIP-Seq workflow, also in development.</p>
+<p><code>extraChIPs</code> is a package primarily designed to enable
+ChIP-Seq analysis, Whilst the package was built to enable the <a href="https://github.com/steveped/GRAVI" class="external-link">GRAVI: Gene Regulatory Analysis
+using Variable Inputs</a>, workflow, the functionality extends beyond
+this specific application. Functions focus primarily on</p>
+<ul>
+<li>Retaining <code>mcols()</code> when manipulating
+<code>GRanges</code> objects</li>
+<li>Common visualisation utilities for ChIP-Seq analysis</li>
+<li>Enabling sliding window analysis for differential ChIP-target
+binding</li>
+</ul>
+<p>It is intended that these functions will integrate seamlessly with
+other packages such as those provided in <code>csaw</code>,
+<code>plyranges</code> and <code>limma</code>.</p>
+<p>In addition to enabling workflows, simple coercion to
+<code>tibble</code> objects from <code>DataFrame</code>,
+<code>GRanges</code> and <code>GInteractions</code> objects is
+implemented.</p>
+<div class="section level2">
+<h2 id="installation-instructions">Installation Instructions<a class="anchor" aria-label="anchor" href="#installation-instructions"></a>
+</h2>
+<p>To install this package, please use <code>BiocManager</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span>
+<span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"steveped/extraChIPs"</span><span class="op">)</span></code></pre></div>
+</div>
 </div>
   </div>
 
@@ -121,7 +147,7 @@
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>
-<a href="https://github.com/steveped" class="external-link">Stephen Pederson</a> <br><small class="roles"> Author, maintainer </small>  </li>
+<a href="https://github.com/steveped" class="external-link">Stephen Pederson</a> <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0001-8197-3303" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 </ul>
 </div>
 
@@ -140,12 +166,14 @@
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by <a href="https://github.com/steveped" class="external-link">Stephen Pederson</a>.</p>
+<p>Developed by <a href="https://github.com/steveped" class="external-link">Stephen
+Pederson</a>.</p>
 </div>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
       </footer>

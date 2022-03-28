@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.24</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.0</span>
       </span>
     </div>
 
@@ -79,9 +79,12 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>extraChIPs: Range-Based operations</h1>
-                        <h4 data-toc-skip class="author">Steve Pederson</h4>
+                        <h4 data-toc-skip class="author">Steve
+Pederson</h4>
             <address class="author_afil">
-      Dame Roma Mitchell Cancer Research Laboratories, Adelaide Medical School, University of Adelaide<br><a class="author_email" href="mailto:#"></a><a href="mailto:stephen.pederson.au@gmail.com" class="email">stephen.pederson.au@gmail.com</a>
+      Dame Roma Mitchell Cancer Research Laboratories, Adelaide Medical
+School, University of
+Adelaide<br><a class="author_email" href="mailto:#"></a><a href="mailto:stephen.pederson.au@gmail.com" class="email">stephen.pederson.au@gmail.com</a>
       </address>
                   
       
@@ -95,13 +98,29 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>This package is designed to enable the Gene Regulatory Analysis using Variable IP (<a href="https://github.com/steveped/GRAVI" class="external-link">GRAVI</a>) workflow, as a method for detecting differential binding in ChIP-Seq datasets. As a workflow focussed on data integration, most functions provided by the package <code>extraChIPs</code> are designed to enable comparison across datasets. This vignette looks primarily at functions which work with <code>GenomicRanges</code> objects</p>
+<p>This package is designed to enable the Gene Regulatory Analysis using
+Variable IP (<a href="https://github.com/steveped/GRAVI" class="external-link">GRAVI</a>)
+workflow, as a method for detecting differential binding in ChIP-Seq
+datasets. As a workflow focussed on data integration, most functions
+provided by the package <code>extraChIPs</code> are designed to enable
+comparison across datasets. This vignette looks primarily at functions
+which work with <code>GenomicRanges</code> objects</p>
 </div>
 <div class="section level2">
 <h2 id="coercion">Coercion<a class="anchor" aria-label="anchor" href="#coercion"></a>
 </h2>
-<p>The advent of the <code>tidyverse</code> has led to <code>tibble</code> objects becoming a common alternative to <code>data.frame</code> or <code>DataFrame</code> objects. Simple functions within <code>extraChIP</code> enable coercion from <code>GRanges</code>, <code>GInteractions</code> and <code>DataFrame</code> objects to tibble objects, with list columns correctly handled. By default these coercion functions will coerce <code>GRanges</code> elements to a character vector. Similarly, <code>GRanges</code> represented as a character column can be coerced to the ranges element of a <code>GRanges</code> object.</p>
-<p>First let’s coerce from a <code>tibble</code> (or S3 <code>data.frame</code>) to a <code>GRanges</code></p>
+<p>The advent of the <code>tidyverse</code> has led to
+<code>tibble</code> objects becoming a common alternative to
+<code>data.frame</code> or <code>DataFrame</code> objects. Simple
+functions within <code>extraChIP</code> enable coercion from
+<code>GRanges</code>, <code>GInteractions</code> and
+<code>DataFrame</code> objects to tibble objects, with list columns
+correctly handled. By default these coercion functions will coerce
+<code>GRanges</code> elements to a character vector. Similarly,
+<code>GRanges</code> represented as a character column can be coerced to
+the ranges element of a <code>GRanges</code> object.</p>
+<p>First let’s coerce from a <code>tibble</code> (or S3
+<code>data.frame</code>) to a <code>GRanges</code></p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/steveped/extraChIPs" class="external-link">extraChIPs</a></span><span class="op">)</span>
@@ -130,7 +149,10 @@
 <span class="co">##   [3]     chr1       5-6      + |       gene1 transcript3 0.6146112</span>
 <span class="co">##   -------</span>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
-<p>Coercion back to a <code>tibble</code> will place the ranges as a character column by default. However, this can be turned off and the conventional coercion from <code>as.data.frame</code> will instead be applied, internally wrapped in <code><a href="../reference/as_tibble.html">as_tibble()</a></code></p>
+<p>Coercion back to a <code>tibble</code> will place the ranges as a
+character column by default. However, this can be turned off and the
+conventional coercion from <code>as.data.frame</code> will instead be
+applied, internally wrapped in <code><a href="../reference/as_tibble.html">as_tibble()</a></code></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="va">gr</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## <span style="color: #949494;"># A tibble: 3 × 4</span></span>
@@ -147,7 +169,11 @@
 <span class="co">## <span style="color: #BCBCBC;">1</span> chr1         1    10    10 +      gene1   transcript1 0.442 </span>
 <span class="co">## <span style="color: #BCBCBC;">2</span> chr1         5    10     6 +      gene1   transcript2 0.083<span style="text-decoration: underline;">1</span></span>
 <span class="co">## <span style="color: #BCBCBC;">3</span> chr1         5     6     2 +      gene1   transcript3 0.615</span></code></pre>
-<p>A simple feature which may be useful for printing gene names using <code>rmarkdown</code> is contained in <code><a href="../reference/collapseGenes.html">collapseGenes()</a></code>. Here a character vector of gene names is collapsed into a <code>glue</code> object of length `, with gene names rendered in italics by default.</p>
+<p>A simple feature which may be useful for printing gene names using
+<code>rmarkdown</code> is contained in <code><a href="../reference/collapseGenes.html">collapseGenes()</a></code>.
+Here a character vector of gene names is collapsed into a
+<code>glue</code> object of length `, with gene names rendered in
+italics by default.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">gn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Gene1"</span>, <span class="st">"Gene2"</span>, <span class="st">"Gene3"</span><span class="op">)</span>
 <span class="fu"><a href="../reference/collapseGenes.html">collapseGenes</a></span><span class="op">(</span><span class="va">gn</span><span class="op">)</span></code></pre></div>
@@ -156,11 +182,23 @@
 <div class="section level2">
 <h2 id="simple-operations-retaining-mcols">Simple Operations Retaining <code>mcols()</code><a class="anchor" aria-label="anchor" href="#simple-operations-retaining-mcols"></a>
 </h2>
-<p>The standard set operations implemented in the package <code>GenomicRanges</code> will always drop the <code>mcols</code> element by default. The <code>extraChIPs</code> functions <code><a href="../reference/reduceMC-methods.html">reduceMC()</a></code>, <code><a href="../reference/setoptsMC-methods.html">setdiffMC()</a></code>, <code><a href="../reference/setoptsMC-methods.html">intersectMC()</a></code> and <code><a href="../reference/setoptsMC-methods.html">unionMC()</a></code> all produce the same output as their similarly-named functions, however, the <code>mcols()</code> elements in the query object are also returned. Where required, columns are coerced into <code>CompressedList</code> columns. This can particularly useful when needed to propagate the information contained in the initial ranges through to subsequent analytic steps</p>
+<p>The standard set operations implemented in the package
+<code>GenomicRanges</code> will always drop the <code>mcols</code>
+element by default. The <code>extraChIPs</code> functions
+<code><a href="../reference/reduceMC-methods.html">reduceMC()</a></code>, <code><a href="../reference/setoptsMC-methods.html">setdiffMC()</a></code>,
+<code><a href="../reference/setoptsMC-methods.html">intersectMC()</a></code> and <code><a href="../reference/setoptsMC-methods.html">unionMC()</a></code> all produce the
+same output as their similarly-named functions, however, the
+<code>mcols()</code> elements in the query object are also returned.
+Where required, columns are coerced into <code>CompressedList</code>
+columns. This can particularly useful when needed to propagate the
+information contained in the initial ranges through to subsequent
+analytic steps</p>
 <div class="section level3">
 <h3 id="simplifying-single-granges-objects">Simplifying single <code>GRanges</code> objects<a class="anchor" aria-label="anchor" href="#simplifying-single-granges-objects"></a>
 </h3>
-<p>The classical approach to defining TSS regions for a set of transcripts would be to use the function <code>resize</code>()`, setting the width as 1.</p>
+<p>The classical approach to defining TSS regions for a set of
+transcripts would be to use the function <code>resize</code>()`, setting
+the width as 1.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tss</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/intra-range-methods.html" class="external-link">resize</a></span><span class="op">(</span><span class="va">gr</span>, width <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
 <span class="va">tss</span></code></pre></div>
@@ -172,7 +210,10 @@
 <span class="co">##   [3]     chr1         5      + |       gene1 transcript3 0.6146112</span>
 <span class="co">##   -------</span>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
-<p>As we can see, two transcripts start at position 5, so we may choose to reduce this, which would lose the <code>mcols</code> element. The alternative <code><a href="../reference/reduceMC-methods.html">reduceMC()</a></code> will retain all <code>mcols</code>.</p>
+<p>As we can see, two transcripts start at position 5, so we may choose
+to reduce this, which would lose the <code>mcols</code> element. The
+alternative <code><a href="../reference/reduceMC-methods.html">reduceMC()</a></code> will retain all
+<code>mcols</code>.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">GenomicRanges</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/inter-range-methods.html" class="external-link">reduce</a></span><span class="op">(</span><span class="va">tss</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## GRanges object with 2 ranges and 0 metadata columns:</span>
@@ -195,7 +236,13 @@
 <span class="co">##   [2] 0.0831099,0.6146112</span>
 <span class="co">##   -------</span>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
-<p>By default, this function will attempt to coerce <code>mcols</code> to a new <code>mcol</code> of the appropriate type, however, when multiple values are inevitable such as for the <code>tx_id</code> column above, these will be coerced to a <code>CompressedList</code>. The simplification of the multiple values seen in the <code>gene_id</code> can also be turned off if desired should repeated values be important for downstream analysis.</p>
+<p>By default, this function will attempt to coerce <code>mcols</code>
+to a new <code>mcol</code> of the appropriate type, however, when
+multiple values are inevitable such as for the <code>tx_id</code> column
+above, these will be coerced to a <code>CompressedList</code>. The
+simplification of the multiple values seen in the <code>gene_id</code>
+can also be turned off if desired should repeated values be important
+for downstream analysis.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/reduceMC-methods.html">reduceMC</a></span><span class="op">(</span><span class="va">tss</span>, simplify <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> </code></pre></div>
 <pre><code><span class="co">## GRanges object with 2 ranges and 3 metadata columns:</span>
@@ -209,7 +256,8 @@
 <span class="co">##   [2] 0.0831099,0.6146112</span>
 <span class="co">##   -------</span>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
-<p>This allows for simple integration with <code>tidyverse</code> nesting strategies.</p>
+<p>This allows for simple integration with <code>tidyverse</code>
+nesting strategies.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/reduceMC-methods.html">reduceMC</a></span><span class="op">(</span><span class="va">tss</span>, simplify <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="../reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
@@ -220,7 +268,11 @@
 <span class="co">## <span style="color: #BCBCBC;">1</span> chr1:1:+ gene1   transcript1 0.442 </span>
 <span class="co">## <span style="color: #BCBCBC;">2</span> chr1:5:+ gene1   transcript2 0.083<span style="text-decoration: underline;">1</span></span>
 <span class="co">## <span style="color: #BCBCBC;">3</span> chr1:5:+ gene1   transcript3 0.615</span></code></pre>
-<p>Whilst <code>reduceMC</code> relies on the range-reduction as implemented in <code><a href="https://rdrr.io/pkg/GenomicRanges/man/inter-range-methods.html" class="external-link">GenomicRanges::reduce()</a></code>, some alternative approaches are included, such as <code><a href="../reference/chopMC-methods.html">chopMC()</a></code>, which finds identical ranges and nests the mcols element as <code>CompressedList</code> objects.</p>
+<p>Whilst <code>reduceMC</code> relies on the range-reduction as
+implemented in <code><a href="https://rdrr.io/pkg/GenomicRanges/man/inter-range-methods.html" class="external-link">GenomicRanges::reduce()</a></code>, some alternative
+approaches are included, such as <code><a href="../reference/chopMC-methods.html">chopMC()</a></code>, which finds
+identical ranges and nests the mcols element as
+<code>CompressedList</code> objects.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/chopMC-methods.html">chopMC</a></span><span class="op">(</span><span class="va">tss</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## GRanges object with 2 ranges and 3 metadata columns:</span>
@@ -234,8 +286,14 @@
 <span class="co">##   [2] 0.0831099,0.6146112</span>
 <span class="co">##   -------</span>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
-<p>In the case of the object <code>tss</code>, this output is identical to <code><a href="../reference/reduceMC-methods.html">reduceMC()</a></code>, however, given that there are no identical ranges in <code>gr</code> the two functions would behave very differently on that object.</p>
-<p>A final operation for simplifying <code>GRanges</code> objects would be <code><a href="../reference/distinctMC-methods.html">distinctMC()</a></code> which finds unique ranges, along with unique <code>mcols</code>. The columns to search can be called using <code>&lt;tidy-select&gt;</code> approaches,</p>
+<p>In the case of the object <code>tss</code>, this output is identical
+to <code><a href="../reference/reduceMC-methods.html">reduceMC()</a></code>, however, given that there are no identical
+ranges in <code>gr</code> the two functions would behave very
+differently on that object.</p>
+<p>A final operation for simplifying <code>GRanges</code> objects would
+be <code><a href="../reference/distinctMC-methods.html">distinctMC()</a></code> which finds unique ranges, along with
+unique <code>mcols</code>. The columns to search can be called using
+<code>&lt;tidy-select&gt;</code> approaches,</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/distinctMC-methods.html">distinctMC</a></span><span class="op">(</span><span class="va">tss</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## GRanges object with 3 ranges and 3 metadata columns:</span>
@@ -259,7 +317,12 @@
 <div class="section level3">
 <h3 id="set-operations-with-two-granges-objects">Set Operations with Two <code>GRanges</code> Objects<a class="anchor" aria-label="anchor" href="#set-operations-with-two-granges-objects"></a>
 </h3>
-<p>Whilst <code>reduce/reduceMC</code> is applied to a single <code>GRanges</code> object, the set operation functions <code>intersect</code>, <code>setdiff</code> and <code>union</code> are valuable approaches for comparing ranges. Using the <code>*MC()</code> functions will retain <code>mcols</code> elements from the <em>query range</em>.</p>
+<p>Whilst <code>reduce/reduceMC</code> is applied to a single
+<code>GRanges</code> object, the set operation functions
+<code>intersect</code>, <code>setdiff</code> and <code>union</code> are
+valuable approaches for comparing ranges. Using the <code>*MC()</code>
+functions will retain <code>mcols</code> elements from the <em>query
+range</em>.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chr1:1-5"</span>, <span class="st">"chr1:9-12:*"</span><span class="op">)</span><span class="op">)</span>
 <span class="va">peaks</span><span class="op">$</span><span class="va">peak_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"peak1"</span>, <span class="st">"peak2"</span><span class="op">)</span>
@@ -306,7 +369,11 @@
 <span class="co">##   [1] transcript1,transcript2,transcript3 0.4423369,0.0831099,0.6146112</span>
 <span class="co">##   -------</span>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
-<p>There is a performance overhead to preparation of mcols as <code>CompressedList</code> objects and all <code>mcols</code> in the query object will be returned. If only wishing to retain a subset of <code>mcols</code>, these should be selected prior to passing to these functions.</p>
+<p>There is a performance overhead to preparation of mcols as
+<code>CompressedList</code> objects and all <code>mcols</code> in the
+query object will be returned. If only wishing to retain a subset of
+<code>mcols</code>, these should be selected prior to passing to these
+functions.</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">plyranges</span><span class="op">)</span>
 <span class="va">gr</span> <span class="op"><a href="https://rdrr.io/pkg/plyranges/man/tidyverse-reexports.html" class="external-link">%&gt;%</a></span> 
@@ -323,11 +390,17 @@
 <div class="section level3">
 <h3 id="overlapping-proportions">Overlapping proportions<a class="anchor" aria-label="anchor" href="#overlapping-proportions"></a>
 </h3>
-<p>Whilst the functions <code><a href="https://rdrr.io/pkg/IRanges/man/findOverlaps-methods.html" class="external-link">findOverlaps()</a></code> and <code><a href="https://rdrr.io/pkg/IRanges/man/findOverlaps-methods.html" class="external-link">overlapsAny()</a></code> are extremely useful, the addition of <code><a href="../reference/propOverlap-methods.html">propOverlap()</a></code> returns a numeric vector with the proportion of each query range (<code>x</code>) which overlaps any range in the subject range (<code>y</code>)</p>
+<p>Whilst the functions <code><a href="https://rdrr.io/pkg/IRanges/man/findOverlaps-methods.html" class="external-link">findOverlaps()</a></code> and
+<code><a href="https://rdrr.io/pkg/IRanges/man/findOverlaps-methods.html" class="external-link">overlapsAny()</a></code> are extremely useful, the addition of
+<code><a href="../reference/propOverlap-methods.html">propOverlap()</a></code> returns a numeric vector with the proportion
+of each query range (<code>x</code>) which overlaps any range in the
+subject range (<code>y</code>)</p>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/propOverlap-methods.html">propOverlap</a></span><span class="op">(</span><span class="va">gr</span>, <span class="va">peaks</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## [1] 0.7 0.5 0.5</span></code></pre>
-<p>This is also extended to enable comparison across multiple features and to classify each peak by which features that it overlaps the most strongly.</p>
+<p>This is also extended to enable comparison across multiple features
+and to classify each peak by which features that it overlaps the most
+strongly.</p>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/bestOverlap-methods.html">bestOverlap</a></span><span class="op">(</span><span class="va">gr</span>, <span class="va">peaks</span>, var <span class="op">=</span> <span class="st">"peak_id"</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## [1] "peak1" "peak2" "peak1"</span></code></pre>
@@ -339,8 +412,19 @@
 <div class="section level3">
 <h3 id="range-paritioning">Range Paritioning<a class="anchor" aria-label="anchor" href="#range-paritioning"></a>
 </h3>
-<p>In addition to standard set operations, one set of ranges can be used to partition another set of ranges, returning <code>mcols</code> from both ranges. Ranges from the query range (<code>x</code>) are returned after being partitioned by the ranges in the subject range (<code>y</code>). Subject ranges used for partitioning <em>must be non-overlapping</em>, and if overlapping ranges are provided, these will be reduced prior to partitioning.</p>
-<p>This enables the identification of specific ranges from the query range (<code>x</code>) which overlap ranges from the subject range (<code>y</code>) Under this approach, <code>mcols</code> from both <code>query</code> and <code>subject</code> ranges will be returned to enable the clear ranges which are common and distinct within the two sets of ranges.</p>
+<p>In addition to standard set operations, one set of ranges can be used
+to partition another set of ranges, returning <code>mcols</code> from
+both ranges. Ranges from the query range (<code>x</code>) are returned
+after being partitioned by the ranges in the subject range
+(<code>y</code>). Subject ranges used for partitioning <em>must be
+non-overlapping</em>, and if overlapping ranges are provided, these will
+be reduced prior to partitioning.</p>
+<p>This enables the identification of specific ranges from the query
+range (<code>x</code>) which overlap ranges from the subject range
+(<code>y</code>) Under this approach, <code>mcols</code> from both
+<code>query</code> and <code>subject</code> ranges will be returned to
+enable the clear ranges which are common and distinct within the two
+sets of ranges.</p>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/partitionRanges-methods.html">partitionRanges</a></span><span class="op">(</span><span class="va">gr</span>, <span class="va">peaks</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## GRanges object with 5 ranges and 4 metadata columns:</span>
@@ -360,7 +444,8 @@
 <span class="co">##   [5] transcript1,transcript2 0.4423369,0.0831099</span>
 <span class="co">##   -------</span>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
-<p>Whilst this shares some similarity with <code><a href="../reference/setoptsMC-methods.html">intersectMC()</a></code> the additional capabilities provide greater flexibility.</p>
+<p>Whilst this shares some similarity with <code><a href="../reference/setoptsMC-methods.html">intersectMC()</a></code>
+the additional capabilities provide greater flexibility.</p>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/partitionRanges-methods.html">partitionRanges</a></span><span class="op">(</span><span class="va">gr</span>, <span class="va">peaks</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/pkg/plyranges/man/tidyverse-reexports.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">peak_id</span><span class="op">)</span><span class="op">)</span></code></pre></div>
@@ -379,7 +464,11 @@
 <div class="section level3">
 <h3 id="stitching-ranges">Stitching Ranges<a class="anchor" aria-label="anchor" href="#stitching-ranges"></a>
 </h3>
-<p>Using the function <code><a href="../reference/stitchRanges.html">stitchRanges()</a></code> we are able to join together sets of nearby ranges, but with the option of placing clear barriers between ranges, across which ranges cannot be joined. This may be useful if joining enhancers to form putative super-enhancers, but explicitly omitting defined promoter regions.</p>
+<p>Using the function <code><a href="../reference/stitchRanges.html">stitchRanges()</a></code> we are able to join
+together sets of nearby ranges, but with the option of placing clear
+barriers between ranges, across which ranges cannot be joined. This may
+be useful if joining enhancers to form putative super-enhancers, but
+explicitly omitting defined promoter regions.</p>
 <div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">enh</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chr1:1-10"</span>, <span class="st">"chr1:101-110"</span>, <span class="st">"chr1:181-200"</span><span class="op">)</span><span class="op">)</span>
 <span class="va">prom</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="st">"chr1:150:+"</span><span class="op">)</span>
@@ -392,7 +481,9 @@
 <span class="co">##   [2]     chr1   181-200      *</span>
 <span class="co">##   -------</span>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
-<p>As a visualisation (below) ranges within 100bp were stitched together, however the region defined as a ‘promoter’ acted as a barrier and ranges were not stitched together across this barrier.</p>
+<p>As a visualisation (below) ranges within 100bp were stitched
+together, however the region defined as a ‘promoter’ acted as a barrier
+and ranges were not stitched together across this barrier.</p>
 <p><img src="range_based_functions_files/figure-html/plot-stitched-1.png" width="700"></p>
 </div>
 </div>
@@ -410,12 +501,14 @@
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by <a href="https://github.com/steveped" class="external-link">Stephen Pederson</a>.</p>
+<p>Developed by <a href="https://github.com/steveped" class="external-link">Stephen
+Pederson</a>.</p>
 </div>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
       </footer>

@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.24</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.0</span>
       </span>
     </div>
 
@@ -79,9 +79,12 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>extraChIPs: Differential Binding Analysis</h1>
-                        <h4 data-toc-skip class="author">Steve Pederson</h4>
+                        <h4 data-toc-skip class="author">Steve
+Pederson</h4>
             <address class="author_afil">
-      Dame Roma Mitchell Cancer Research Laboratories, Adelaide Medical School, University of Adelaide<br><a class="author_email" href="mailto:#"></a><a href="mailto:stephen.pederson.au@gmail.com" class="email">stephen.pederson.au@gmail.com</a>
+      Dame Roma Mitchell Cancer Research Laboratories, Adelaide Medical
+School, University of
+Adelaide<br><a class="author_email" href="mailto:#"></a><a href="mailto:stephen.pederson.au@gmail.com" class="email">stephen.pederson.au@gmail.com</a>
       </address>
                   
       
@@ -95,13 +98,32 @@
 <div class="section level2">
 <h2 id="differential-binding-and-chip-seq-analysis">Differential Binding and ChIP-Seq Analysis<a class="anchor" aria-label="anchor" href="#differential-binding-and-chip-seq-analysis"></a>
 </h2>
-<p>The <a href="https://github.com/steveped/GRAVI" class="external-link">GRAVI</a> workflow, for which this package is designed, uses sliding windows for differential binding analysis in a manner similar to the package <code>csaw</code>, but also incorporating <code>macs2</code> peaks. The workflow itself extends to integrating multiple IP targets and external data sources, and as such, this package introduces a handful of functions to enable these analyses.</p>
-<p>The majority of examples below use extremely simplified datasets to provide general guidance on using the functions. Some results may appear trivial as a result, but will hopefully prove far more useful in a true experimental context.</p>
+<p>The <a href="https://github.com/steveped/GRAVI" class="external-link">GRAVI</a> workflow,
+for which this package is designed, uses sliding windows for
+differential binding analysis in a manner similar to the package
+<code>csaw</code>, but also incorporating <code>macs2</code> peaks. The
+workflow itself extends to integrating multiple IP targets and external
+data sources, and as such, this package introduces a handful of
+functions to enable these analyses.</p>
+<p>The majority of examples below use extremely simplified datasets to
+provide general guidance on using the functions. Some results may appear
+trivial as a result, but will hopefully prove far more useful in a true
+experimental context.</p>
 <div class="section level3">
 <h3 id="sliding-windows">Sliding Windows<a class="anchor" aria-label="anchor" href="#sliding-windows"></a>
 </h3>
-<p>The starting point for differential binding analysis using sliding windows is to define windows, then count reads within each window using the bam files. Commonly one or IP input/control samples is also produced during a ChIP-Seq experiment. The example files provided here contain a small subset of reads from chromosome 10 across two experimental and one input sample.</p>
-<p>The approach taken below is to define a set of sliding windows, using the capabilities of <code>csaw</code>, but to then use <code>macs</code> peaks to define regions of most likely signal. First we can define our windows and count the alignments using existing tools. In the following, we’ll use a sliding window of 180bp and a step size of 60bp, meaning each nucleotide is covered by 3 windows.</p>
+<p>The starting point for differential binding analysis using sliding
+windows is to define windows, then count reads within each window using
+the bam files. Commonly one or IP input/control samples is also produced
+during a ChIP-Seq experiment. The example files provided here contain a
+small subset of reads from chromosome 10 across two experimental and one
+input sample.</p>
+<p>The approach taken below is to define a set of sliding windows, using
+the capabilities of <code>csaw</code>, but to then use <code>macs</code>
+peaks to define regions of most likely signal. First we can define our
+windows and count the alignments using existing tools. In the following,
+we’ll use a sliding window of 180bp and a step size of 60bp, meaning
+each nucleotide is covered by 3 windows.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/Rsamtools" class="external-link">Rsamtools</a></span><span class="op">)</span>
@@ -127,10 +149,18 @@
   param <span class="op">=</span> <span class="va">rp</span>,
   BPPARAM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/register.html" class="external-link">bpparam</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
-<p>This produces a <code>RangesSummarizedExperiment</code> with windows included which passed the minimum threshold of 1 total read. As we’ve only counted reads within a very small window, the complete library sizes will be highly inaccurate. The true library sizes can be added here noting that <em>this step is not normally</em> <em>required</em>, but given these values are essential for accurate CPM values, they will be added here.</p>
+<p>This produces a <code>RangesSummarizedExperiment</code> with windows
+included which passed the minimum threshold of 1 total read. As we’ve
+only counted reads within a very small window, the complete library
+sizes will be highly inaccurate. The true library sizes can be added
+here noting that <em>this step is not normally</em> <em>required</em>,
+but given these values are essential for accurate CPM values, they will
+be added here.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">wincounts</span><span class="op">$</span><span class="va">totals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">964076L</span>, <span class="fl">989543L</span>, <span class="fl">1172179L</span><span class="op">)</span></code></pre></div>
-<p>We can also add some key information to the <code>colData</code> element of this object, which will also be propagated to all downstream objects.</p>
+<p>We can also add some key information to the <code>colData</code>
+element of this object, which will also be propagated to all downstream
+objects.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">wincounts</span><span class="op">$</span><span class="va">sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">)</span>
 <span class="va">wincounts</span><span class="op">$</span><span class="va">treat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ctrl"</span>, <span class="st">"treat"</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span>
@@ -141,7 +171,12 @@
 <span class="co">## ex1   /__w/_temp/Library/e..    964076       200        73         ex1    ctrl </span>
 <span class="co">## ex2   /__w/_temp/Library/e..    989543       200        74         ex2    treat</span>
 <span class="co">## input /__w/_temp/Library/e..   1172179       200        74       input    NA</span></code></pre>
-<p>A density plot can be simply drawn of these counts, with the vast majority of windows receiving very low counts, due to the nature of transcription factor binding, where long stretches are unbound. The windows with higher counts tend to be associated with the samples targeting a transcription factor (TF), as seen in the two treatment group samples.</p>
+<p>A density plot can be simply drawn of these counts, with the vast
+majority of windows receiving very low counts, due to the nature of
+transcription factor binding, where long stretches are unbound. The
+windows with higher counts tend to be associated with the samples
+targeting a transcription factor (TF), as seen in the two treatment
+group samples.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/steveped/extraChIPs" class="external-link">extraChIPs</a></span><span class="op">)</span>
 <span class="fu"><a href="../reference/plotAssayDensities-methods.html">plotAssayDensities</a></span><span class="op">(</span><span class="va">wincounts</span>, colour <span class="op">=</span> <span class="st">"treat"</span>, trans <span class="op">=</span> <span class="st">"log1p"</span><span class="op">)</span></code></pre></div>
@@ -150,14 +185,30 @@
 <div class="section level3">
 <h3 id="filtering-of-sliding-windows">Filtering of Sliding Windows<a class="anchor" aria-label="anchor" href="#filtering-of-sliding-windows"></a>
 </h3>
-<p>After counting all reads in the sliding windows, the next step is to discard windows for which counts are unlikely to represent TF binding. The package <code>extraChIPs</code> uses a set of consensus peaks to automatically set a threshold based on 1) counts strongly above the counts from the input sample, and 2) the windows with the overall highest signal. Thresholds are determined such that <code>q = 0.5</code> of the retained windows overlap on of the supplied consensus peaks. Higher values for <code>q</code> will return more windows, however many of these will tend to only marginally overlap a peak. Experience has shown that values such as <code>q = 0.5</code> tend to return a considerable proportion of windows containing true TF binding signal.</p>
-<p>First we can load the peaks, supplied here as a simple <code>bed</code> file.</p>
+<p>After counting all reads in the sliding windows, the next step is to
+discard windows for which counts are unlikely to represent TF binding.
+The package <code>extraChIPs</code> uses a set of consensus peaks to
+automatically set a threshold based on 1) counts strongly above the
+counts from the input sample, and 2) the windows with the overall
+highest signal. Thresholds are determined such that <code>q = 0.5</code>
+of the retained windows overlap on of the supplied consensus peaks.
+Higher values for <code>q</code> will return more windows, however many
+of these will tend to only marginally overlap a peak. Experience has
+shown that values such as <code>q = 0.5</code> tend to return a
+considerable proportion of windows containing true TF binding
+signal.</p>
+<p>First we can load the peaks, supplied here as a simple
+<code>bed</code> file.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/BEDFile-class.html" class="external-link">import.bed</a></span><span class="op">(</span>
   <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"peaks.bed.gz"</span>, package <span class="op">=</span> <span class="st">"extraChIPs"</span><span class="op">)</span>
 <span class="op">)</span>
 <span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/genomic-range-squeezers.html" class="external-link">granges</a></span><span class="op">(</span><span class="va">peaks</span><span class="op">)</span></code></pre></div>
-<p>The we can pass these to the function <code><a href="../reference/dualFilter-methods.html">dualFilter()</a></code> which utilises the strategy described above. On large datasets, this can be quite time-consuming, as can the initial counting step. Due to the small example dataset, a more inclusive threshold for <code>q</code> will be used here.</p>
+<p>The we can pass these to the function <code><a href="../reference/dualFilter-methods.html">dualFilter()</a></code> which
+utilises the strategy described above. On large datasets, this can be
+quite time-consuming, as can the initial counting step. Due to the small
+example dataset, a more inclusive threshold for <code>q</code> will be
+used here.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">filtcounts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dualFilter-methods.html">dualFilter</a></span><span class="op">(</span>
   x <span class="op">=</span> <span class="va">wincounts</span><span class="op">[</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">$</span><span class="va">treat</span><span class="op">)</span><span class="op">]</span>,
@@ -165,21 +216,27 @@
   ref <span class="op">=</span> <span class="va">peaks</span>,
   q <span class="op">=</span> <span class="fl">0.8</span> <span class="co"># Better to use q = 0.5 on real data</span>
 <span class="op">)</span></code></pre></div>
-<p>The returned object will by default contain <code>counts</code> and <code>logCPM</code> assays, with the complete library sizes used for the calculation of <code>logCPM</code> values.</p>
+<p>The returned object will by default contain <code>counts</code> and
+<code>logCPM</code> assays, with the complete library sizes used for the
+calculation of <code>logCPM</code> values.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plotAssayDensities-methods.html">plotAssayDensities</a></span><span class="op">(</span><span class="va">filtcounts</span>, assay <span class="op">=</span> <span class="st">"logCPM"</span>, colour <span class="op">=</span> <span class="st">"treat"</span><span class="op">)</span></code></pre></div>
 <p><img src="differential_binding_files/figure-html/plotcpm-1.png" width="960"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plotAssayPCA-methods.html">plotAssayPCA</a></span><span class="op">(</span><span class="va">filtcounts</span>, assay <span class="op">=</span> <span class="st">"logCPM"</span>, colour <span class="op">=</span> <span class="st">"treat"</span>, label <span class="op">=</span> <span class="st">"sample"</span><span class="op">)</span></code></pre></div>
 <p><img src="differential_binding_files/figure-html/plotcpm-2.png" width="960"></p>
-<p>Whilst the initial set of counts contained 1007 windows, these have now been reduced to 108 windows. Similarly, the input sample is no longer included in the data object.</p>
+<p>Whilst the initial set of counts contained 1007 windows, these have
+now been reduced to 108 windows. Similarly, the input sample is no
+longer included in the data object.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## [1] 1007    3</span></code></pre>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">filtcounts</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## [1] 108   2</span></code></pre>
-<p>The <code>rowData</code> element of the returned object will contain a logical column indicating where each specific retained window overlapped one of the supplied consensus peaks.</p>
+<p>The <code>rowData</code> element of the returned object will contain
+a logical column indicating where each specific retained window
+overlapped one of the supplied consensus peaks.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">rowRanges</a></span><span class="op">(</span><span class="va">filtcounts</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## GRanges object with 108 ranges and 1 metadata column:</span>
@@ -205,7 +262,14 @@
 <div class="section level3">
 <h3 id="using-voom">Using Voom<a class="anchor" aria-label="anchor" href="#using-voom"></a>
 </h3>
-<p>Multiple approaches are available for analysis of differential binding, and given the small example dataset, only a brief example of conventional results will be used. <code>extraChIPs</code> does provide a simple coercion function to covert <code>logCPM</code> to a <code>voom</code> object, which requires the relationship between library sizes and <code>logCPM</code> values to be intact. Whist this will not be discussed further here should this be a viable approach for an analysis, the following code may prove helpful.</p>
+<p>Multiple approaches are available for analysis of differential
+binding, and given the small example dataset, only a brief example of
+conventional results will be used. <code>extraChIPs</code> does provide
+a simple coercion function to covert <code>logCPM</code> to a
+<code>voom</code> object, which requires the relationship between
+library sizes and <code>logCPM</code> values to be intact. Whist this
+will not be discussed further here should this be a viable approach for
+an analysis, the following code may prove helpful.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">v</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/voomWeightsFromCPM.html">voomWeightsFromCPM</a></span><span class="op">(</span>
   cpm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">filtcounts</span>, <span class="st">"logCPM"</span><span class="op">)</span>, 
@@ -216,49 +280,89 @@
 <div class="section level3">
 <h3 id="merging-windows">Merging Windows<a class="anchor" aria-label="anchor" href="#merging-windows"></a>
 </h3>
-<p>After an analysis has been performed, common values contained in the output may be estimated signal (<code>logCPM</code>), estimated change (<code>logFC</code>) with both raw and adjusted p-values. Given the dependency of neighbouring windows, any adjusted p-values will not be appropriate and a merging of overlapping windows will be performed.</p>
-<p>For our example dataset we’ll add these manually, however this is just for demonstration purposes for the eventual merging of windows.</p>
+<p>After an analysis has been performed, common values contained in the
+output may be estimated signal (<code>logCPM</code>), estimated change
+(<code>logFC</code>) with both raw and adjusted p-values. Given the
+dependency of neighbouring windows, any adjusted p-values will not be
+appropriate and a merging of overlapping windows will be performed.</p>
+<p>For our example dataset we’ll add these manually, however this is
+just for demonstration purposes for the eventual merging of windows.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">rowRanges</a></span><span class="op">(</span><span class="va">filtcounts</span><span class="op">)</span><span class="op">$</span><span class="va">logCPM</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">filtcounts</span>,<span class="st">"logCPM"</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">rowRanges</a></span><span class="op">(</span><span class="va">filtcounts</span><span class="op">)</span><span class="op">$</span><span class="va">logFC</span> <span class="op">&lt;-</span> <span class="fu">rowDiffs</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">filtcounts</span>,<span class="st">"logCPM"</span><span class="op">)</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>
 <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">rowRanges</a></span><span class="op">(</span><span class="va">filtcounts</span><span class="op">)</span><span class="op">$</span><span class="va">PValue</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Chisquare.html" class="external-link">pchisq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">rowRanges</a></span><span class="op">(</span><span class="va">filtcounts</span><span class="op">)</span><span class="op">$</span><span class="va">logFC</span><span class="op">^</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span></code></pre></div>
-<p>Now we have some example values, we can merge any overlapping windows using <code><a href="../reference/mergeByCol-methods.html">mergeByCol()</a></code>. During this process, overlapping ranges are merged into a single range with representative values taken from one of the initial sliding windows. The recommended approach for retaining statistical independence between windows is to choose the window with the largest signal as representative of the entire merged window.</p>
+<p>Now we have some example values, we can merge any overlapping windows
+using <code><a href="../reference/mergeByCol-methods.html">mergeByCol()</a></code>. During this process, overlapping ranges
+are merged into a single range with representative values taken from one
+of the initial sliding windows. The recommended approach for retaining
+statistical independence between windows is to choose the window with
+the largest signal as representative of the entire merged window.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">res_gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mergeByCol-methods.html">mergeByCol</a></span><span class="op">(</span><span class="va">filtcounts</span>, col <span class="op">=</span> <span class="st">"logCPM"</span>, pval <span class="op">=</span> <span class="st">"PValue"</span><span class="op">)</span>
 <span class="va">res_gr</span><span class="op">$</span><span class="va">overlaps_ref</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/findOverlaps-methods.html" class="external-link">overlapsAny</a></span><span class="op">(</span><span class="va">res_gr</span>, <span class="va">peaks</span><span class="op">)</span></code></pre></div>
-<p>A <code>GRanges</code> object is returned with representative values for each merged window. The <code>mcol</code> <code>keyval_range</code> provides the original range from which the representative values were taken. A column with adjusted p-values will also be added if <code>p_adj_method</code> is not set to “none”.</p>
+<p>A <code>GRanges</code> object is returned with representative values
+for each merged window. The <code>mcol</code> <code>keyval_range</code>
+provides the original range from which the representative values were
+taken. A column with adjusted p-values will also be added if
+<code>p_adj_method</code> is not set to “none”.</p>
 </div>
 <div class="section level3">
 <h3 id="mapping-of-windows-to-genes">Mapping of Windows To Genes<a class="anchor" aria-label="anchor" href="#mapping-of-windows-to-genes"></a>
 </h3>
-<p>Once the binding characteristics of a transcription factor have been characterised, a common next step is to assess which genes are likely to be under regulatory influence. Whilst no definitive, single methodology exists for this process, the function <code><a href="../reference/mapByFeature.html">mapByFeature()</a></code> offers an intuitive approach, taking into account any defined regulatory features. These regulatory features may be defined by simple proximity to TSS regions, by histone marks, downloaded from external repositories or any other possibility. Whilst these features can improve the precision of mapping, even without these this function can still enable a useful assignment of target gene to binding event.</p>
-<p>The process undertaken inside <code><a href="../reference/mapByFeature.html">mapByFeature()</a></code> is a sequential checking of each range’s association with regulatory features and the most likely target as a result. These steps are:</p>
+<p>Once the binding characteristics of a transcription factor have been
+characterised, a common next step is to assess which genes are likely to
+be under regulatory influence. Whilst no definitive, single methodology
+exists for this process, the function <code><a href="../reference/mapByFeature.html">mapByFeature()</a></code> offers
+an intuitive approach, taking into account any defined regulatory
+features. These regulatory features may be defined by simple proximity
+to TSS regions, by histone marks, downloaded from external repositories
+or any other possibility. Whilst these features can improve the
+precision of mapping, even without these this function can still enable
+a useful assignment of target gene to binding event.</p>
+<p>The process undertaken inside <code><a href="../reference/mapByFeature.html">mapByFeature()</a></code> is a
+sequential checking of each range’s association with regulatory features
+and the most likely target as a result. These steps are:</p>
 <ol style="list-style-type: decimal">
 <li><strong>Check for any HiC interactions</strong></li>
 </ol>
 <ul>
-<li>All genes which directly overlap an interaction anchor are considered part of the regulatory network for that interaction, and as such, all genes associated with both anchors are assigned to a peak which overlaps a HiC Interaction</li>
+<li>All genes which directly overlap an interaction anchor are
+considered part of the regulatory network for that interaction, and as
+such, all genes associated with both anchors are assigned to a peak
+which overlaps a HiC Interaction</li>
 </ul>
 <ol start="2" style="list-style-type: decimal">
 <li><strong>Check for any overlaps with a promoter</strong></li>
 </ol>
 <ul>
-<li>All genes regulated by that promoter are assigned as regulatory targets. By default, this is by direct promoter/gene overlap (<code>prom2gene = 0</code>)</li>
+<li>All genes regulated by that promoter are assigned as regulatory
+targets. By default, this is by direct promoter/gene overlap
+(<code>prom2gene = 0</code>)</li>
 </ul>
 <ol start="3" style="list-style-type: decimal">
 <li><strong>Check for any overlaps with an enhancer</strong></li>
 </ol>
 <ul>
-<li>Peaks which overlap an enhancer are assigned to <em>all</em> genes within the distance specified by <code>enh2gene</code> (default = 100kb)</li>
+<li>Peaks which overlap an enhancer are assigned to <em>all</em> genes
+within the distance specified by <code>enh2gene</code> (default =
+100kb)</li>
 </ul>
 <ol start="4" style="list-style-type: decimal">
 <li><strong>Check for genes with no previous mappings</strong></li>
 </ol>
 <ul>
-<li>Peaks <em>with no previous mappings</em> are assigned to all directly overlapping genes, or the nearest gene within a specified distance (default <code>gr2gene</code> = 100kb)</li>
+<li>Peaks <em>with no previous mappings</em> are assigned to all
+directly overlapping genes, or the nearest gene within a specified
+distance (default <code>gr2gene</code> = 100kb)</li>
 </ul>
-<p>As a result, if no promoters, enhancers or interactions are supplied, all genes will be mapped to peaks using step 4</p>
-<p>The two essential data objects to perform simple gene assignment are 1) a set of ranges representing binding events of interest, such as <code>res_gr</code> above, and 2) a set of ranges defining genes, as contained in the example dataset <code>ex_genes</code>. This contains the two <code>mcols</code> <em>gene</em> and <em>symbol</em>, and we can ask for both in the returned object.</p>
+<p>As a result, if no promoters, enhancers or interactions are supplied,
+all genes will be mapped to peaks using step 4</p>
+<p>The two essential data objects to perform simple gene assignment are
+1) a set of ranges representing binding events of interest, such as
+<code>res_gr</code> above, and 2) a set of ranges defining genes, as
+contained in the example dataset <code>ex_genes</code>. This contains
+the two <code>mcols</code> <em>gene</em> and <em>symbol</em>, and we can
+ask for both in the returned object.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"ex_genes"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"ex_prom"</span><span class="op">)</span>
@@ -301,7 +405,8 @@
 <span class="co">##   [9]        FALSE ENSG00000166197           NOLC1</span>
 <span class="co">##   -------</span>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome</span></code></pre>
-<p>For this dataset, we have an example HiC interaction, which we can now pass to the mapping process. (This time we’ll save the object)</p>
+<p>For this dataset, we have an example HiC interaction, which we can
+now pass to the mapping process. (This time we’ll save the object)</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"ex_hic"</span><span class="op">)</span>
 <span class="va">res_gr_mapped</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mapByFeature.html">mapByFeature</a></span><span class="op">(</span>
@@ -348,7 +453,9 @@
 <span class="co">##   [9]        FALSE                 ENSG00000166197           NOLC1</span>
 <span class="co">##   -------</span>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome</span></code></pre>
-<p>The 5<sup>th</sup> to 7<sup>th</sup> windows are now mapped to both <em>LDB1</em> and <em>PPRC1</em>, whereas previously these windows were only mapped to <em>LDB1</em>.</p>
+<p>The 5<sup>th</sup> to 7<sup>th</sup> windows are now mapped to both
+<em>LDB1</em> and <em>PPRC1</em>, whereas previously these windows were
+only mapped to <em>LDB1</em>.</p>
 </div>
 </div>
 <div class="section level2">
@@ -357,13 +464,19 @@
 <div class="section level3">
 <h3 id="association-with-features">Association with Features<a class="anchor" aria-label="anchor" href="#association-with-features"></a>
 </h3>
-<p>The association of windows or peaks with defined features, such as histone marks or regulatory elements can be important for describing the binding characteristics of any given transcription factor. We have already defined the association of the merged windows with consensus peaks identified by <code>macs2</code>. We can easily visualise these using <code><a href="../reference/plotPie-methods.html">plotPie()</a></code></p>
+<p>The association of windows or peaks with defined features, such as
+histone marks or regulatory elements can be important for describing the
+binding characteristics of any given transcription factor. We have
+already defined the association of the merged windows with consensus
+peaks identified by <code>macs2</code>. We can easily visualise these
+using <code><a href="../reference/plotPie-methods.html">plotPie()</a></code></p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">res_gr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="../reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="../reference/plotPie-methods.html">plotPie</a></span><span class="op">(</span><span class="st">"overlaps_ref"</span><span class="op">)</span></code></pre></div>
 <p><img src="differential_binding_files/figure-html/plot-pie-1.png" width="960"></p>
-<p>These distribution charts can be drawn across three separate categories. Let’s include promoters.</p>
+<p>These distribution charts can be drawn across three separate
+categories. Let’s include promoters.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">res_gr</span><span class="op">$</span><span class="va">Feature</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bestOverlap-methods.html">bestOverlap</a></span><span class="op">(</span>
   <span class="va">res_gr</span>, <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRangesList-class.html" class="external-link">GRangesList</a></span><span class="op">(</span>Promoter <span class="op">=</span> <span class="va">ex_prom</span><span class="op">)</span>, missing <span class="op">=</span> <span class="st">"None"</span>
@@ -372,20 +485,35 @@
   <span class="fu"><a href="../reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="../reference/plotPie-methods.html">plotPie</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Feature"</span>, fill <span class="op">=</span> <span class="st">"overlaps_ref"</span><span class="op">)</span> </code></pre></div>
 <p><img src="differential_binding_files/figure-html/plot-dual-pie-1.png" width="960"></p>
-<p>In a real world context where we’re dealing with thousands of ranges and multiple features, this represents a quick an easy way to asses binding characteristics. As these are all <code>ggplot2</code> objects, they can be easily customised using <code>theme</code> and <code>scale_fill_*</code> capabilities.</p>
+<p>In a real world context where we’re dealing with thousands of ranges
+and multiple features, this represents a quick an easy way to asses
+binding characteristics. As these are all <code>ggplot2</code> objects,
+they can be easily customised using <code>theme</code> and
+<code>scale_fill_*</code> capabilities.</p>
 </div>
 <div class="section level3">
 <h3 id="profile-heatmaps">Profile Heatmaps<a class="anchor" aria-label="anchor" href="#profile-heatmaps"></a>
 </h3>
-<p>A very common approach to visualising the results of altered TF binding is to plot <em>profile heatmaps</em> centred around the window (or peak), and extending out a given number of of bases. The data required for this is referred to in <code>extraChIPs</code> as profile data, and given that extracting this from a set of <code>BigWigFile</code>s can be time consuming, this step is performed prior to the actual plotting, so that ranges can be added or excluded as desired.</p>
-<p>First we need to define a <code>BigWigFileList</code> as these are conventionally very large files which shouldn’t be retained in memory, but are just accessed to import the key regions for a particular process.</p>
+<p>A very common approach to visualising the results of altered TF
+binding is to plot <em>profile heatmaps</em> centred around the window
+(or peak), and extending out a given number of of bases. The data
+required for this is referred to in <code>extraChIPs</code> as profile
+data, and given that extracting this from a set of
+<code>BigWigFile</code>s can be time consuming, this step is performed
+prior to the actual plotting, so that ranges can be added or excluded as
+desired.</p>
+<p>First we need to define a <code>BigWigFileList</code> as these are
+conventionally very large files which shouldn’t be retained in memory,
+but are just accessed to import the key regions for a particular
+process.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">bwfl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>
   <span class="st">"extdata"</span>, <span class="st">"bigwig"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ex1.bw"</span>, <span class="st">"ex2.bw"</span><span class="op">)</span>, package <span class="op">=</span> <span class="st">"extraChIPs"</span>
 <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/BigWigFile.html" class="external-link">BigWigFileList</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ex1"</span>, <span class="st">"ex2"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>Now we have our <code>BigWigFileList</code> we can define the profile data</p>
+<p>Now we have our <code>BigWigFileList</code> we can define the profile
+data</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">pd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getProfileData-methods.html">getProfileData</a></span><span class="op">(</span><span class="va">bwfl</span>, <span class="va">res_gr</span><span class="op">)</span>
 <span class="va">pd</span></code></pre></div>
@@ -487,14 +615,27 @@
 <span class="co">##   [9]    4.11542:u1:-2475,3.25119:u2:-2425,3.08657:u3:-2375</span>
 <span class="co">##   -------</span>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome</span></code></pre>
-<p>This produces a <code>GRangesList</code> with a <code>GRanges</code> element for every file in the <code>BigWigFileList</code>, which has the profile data stored in the final column. Each element of these columns is a <code>DataFrame</code> with the region broken into a defined number of bins, and an average coverage value calculated. We can then simply plot this data by specifying this column in the function <code><a href="../reference/plotProfileHeatmap-methods.html">plotProfileHeatmap()</a></code>, which produces a <code>ggplot2</code> object able to be customised in the conventional manner. Here, we’ll add a colour scale and <code><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw()</a></code></p>
+<p>This produces a <code>GRangesList</code> with a <code>GRanges</code>
+element for every file in the <code>BigWigFileList</code>, which has the
+profile data stored in the final column. Each element of these columns
+is a <code>DataFrame</code> with the region broken into a defined number
+of bins, and an average coverage value calculated. We can then simply
+plot this data by specifying this column in the function
+<code><a href="../reference/plotProfileHeatmap-methods.html">plotProfileHeatmap()</a></code>, which produces a <code>ggplot2</code>
+object able to be customised in the conventional manner. Here, we’ll add
+a colour scale and <code><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw()</a></code></p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plotProfileHeatmap-methods.html">plotProfileHeatmap</a></span><span class="op">(</span><span class="va">pd</span>, <span class="st">"profile_data"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_fill_viridis_c</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"CPM"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="differential_binding_files/figure-html/profile-heatmap-1.png" width="960"></p>
-<p>In our initial merging of sliding windows we chose our representative values to be from the sliding window with the highest signal. This may not be at the centre of the final merged window, but having retained this in the <code>keyval_range</code> column, we can use this range for generation of the profile data, ensuring we have our profile heatmaps centred at the point of the highest signal.</p>
+<p>In our initial merging of sliding windows we chose our representative
+values to be from the sliding window with the highest signal. This may
+not be at the centre of the final merged window, but having retained
+this in the <code>keyval_range</code> column, we can use this range for
+generation of the profile data, ensuring we have our profile heatmaps
+centred at the point of the highest signal.</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">pd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getProfileData-methods.html">getProfileData</a></span><span class="op">(</span><span class="va">bwfl</span>, <span class="fu"><a href="../reference/colToRanges-methods.html">colToRanges</a></span><span class="op">(</span><span class="va">res_gr</span>, <span class="st">"keyval_range"</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="../reference/plotProfileHeatmap-methods.html">plotProfileHeatmap</a></span><span class="op">(</span><span class="va">pd</span>, <span class="st">"profile_data"</span><span class="op">)</span>  <span class="op">+</span>
@@ -502,7 +643,12 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"CPM"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="differential_binding_files/figure-html/centred-heatmap-1.png" width="960"></p>
-<p>As we’re using <code>ggplot2</code> we can also separate peaks by any of the categorical columns in our initial ranges, such as the <code>overlaps_ref</code> column. This will not only create facets along the y-axis, but the traces for each panel are drawn separately for each facet, and these can be simply assigned colours or linetype using standard <code>ggplot2</code> syntax.</p>
+<p>As we’re using <code>ggplot2</code> we can also separate peaks by any
+of the categorical columns in our initial ranges, such as the
+<code>overlaps_ref</code> column. This will not only create facets along
+the y-axis, but the traces for each panel are drawn separately for each
+facet, and these can be simply assigned colours or linetype using
+standard <code>ggplot2</code> syntax.</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plotProfileHeatmap-methods.html">plotProfileHeatmap</a></span><span class="op">(</span>
   <span class="va">pd</span>, <span class="st">"profile_data"</span>, facetY <span class="op">=</span> <span class="st">"overlaps_ref"</span>, linetype <span class="op">=</span> <span class="st">"overlaps_ref"</span>
@@ -516,22 +662,39 @@
 <div class="section level3">
 <h3 id="inspection-of-ranges">Inspection of Ranges<a class="anchor" aria-label="anchor" href="#inspection-of-ranges"></a>
 </h3>
-<p>Another important step in the analysis of ChIP-Seq data is to look at the binding patterns using coverage, and inspect these in reference to genes and any other feature of interest. The function <code><a href="../reference/plotHFGC.html">plotHFGC()</a></code> provides a simple, standardised layout using the visualisation tools from <code>Gviz</code>. If supplied, tracks will be drawn in the order 1) HiC; 2) Features; 3) Genes, and 4) Coverage. Whilst a simple and intuitive function to use, it also provides a great deal of flexibility for advanced customisation. All plots require a <code>GRanges</code> object to define the plotting region, with all other tracks being optional.</p>
+<p>Another important step in the analysis of ChIP-Seq data is to look at
+the binding patterns using coverage, and inspect these in reference to
+genes and any other feature of interest. The function
+<code><a href="../reference/plotHFGC.html">plotHFGC()</a></code> provides a simple, standardised layout using the
+visualisation tools from <code>Gviz</code>. If supplied, tracks will be
+drawn in the order 1) HiC; 2) Features; 3) Genes, and 4) Coverage.
+Whilst a simple and intuitive function to use, it also provides a great
+deal of flexibility for advanced customisation. All plots require a
+<code>GRanges</code> object to define the plotting region, with all
+other tracks being optional.</p>
 <div class="section level4">
 <h4 id="displaying-genes">Displaying Genes<a class="anchor" aria-label="anchor" href="#displaying-genes"></a>
 </h4>
-<p>Let’s start by plotting the entire region contained in <code>res_gr</code> using the minimal data possible, a <code>GRanges</code> object and some cytogenetic bands.</p>
+<p>Let’s start by plotting the entire region contained in
+<code>res_gr</code> using the minimal data possible, a
+<code>GRanges</code> object and some cytogenetic bands.</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"grch37.cytobands"</span><span class="op">)</span>
 <span class="va">gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/inter-range-methods.html" class="external-link">range</a></span><span class="op">(</span><span class="va">res_gr</span><span class="op">)</span>
 <span class="fu"><a href="../reference/plotHFGC.html">plotHFGC</a></span><span class="op">(</span><span class="va">gr</span>, cytobands <span class="op">=</span> <span class="va">grch37.cytobands</span><span class="op">)</span></code></pre></div>
 <p><img src="differential_binding_files/figure-html/plot-empty-hfgc-1.png" width="960"></p>
-<p>This is clearly of minimal interest, so let’s add some transcript models. These are supplied here in the layout required by the defaults of the <code>GeneRegionTrack()</code> function, with all exons and transcripts annotated.</p>
+<p>This is clearly of minimal interest, so let’s add some transcript
+models. These are supplied here in the layout required by the defaults
+of the <code>GeneRegionTrack()</code> function, with all exons and
+transcripts annotated.</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"ex_trans"</span><span class="op">)</span>
 <span class="fu"><a href="../reference/plotHFGC.html">plotHFGC</a></span><span class="op">(</span><span class="va">gr</span>, genes <span class="op">=</span> <span class="va">ex_trans</span>, cytobands <span class="op">=</span> <span class="va">grch37.cytobands</span><span class="op">)</span></code></pre></div>
 <p><img src="differential_binding_files/figure-html/add-genes-1.png" width="960"></p>
-<p>As these are collapsed into <em>meta-transcripts</em> by default, let’s 1) add colour, 2) expand transcripts, and 3) zoom out a little. The initial range is highlighted by default, but this can also be turned off if preferred.</p>
+<p>As these are collapsed into <em>meta-transcripts</em> by default,
+let’s 1) add colour, 2) expand transcripts, and 3) zoom out a little.
+The initial range is highlighted by default, but this can also be turned
+off if preferred.</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plotHFGC.html">plotHFGC</a></span><span class="op">(</span>
   <span class="va">gr</span>, 
@@ -540,11 +703,19 @@
   cytobands <span class="op">=</span> <span class="va">grch37.cytobands</span>, zoom <span class="op">=</span> <span class="fl">1.2</span>
 <span class="op">)</span></code></pre></div>
 <p><img src="differential_binding_files/figure-html/plot-trans-1.png" width="960"></p>
-<p>The object <code>ex_trans</code> contains the column <code>status</code>, and we might like to use this to display these genes on separate tracks. In this case, we would pass a <code>GRangesList</code> to the <code>genes</code> argument, and each element within that list will be drawn as a separate track.</p>
+<p>The object <code>ex_trans</code> contains the column
+<code>status</code>, and we might like to use this to display these
+genes on separate tracks. In this case, we would pass a
+<code>GRangesList</code> to the <code>genes</code> argument, and each
+element within that list will be drawn as a separate track.</p>
 <ul>
-<li>Colours should be provided as a <em>named</em> list with on element for each element of the genes <code>GRangesList</code>, or as a single colour</li>
+<li>Colours should be provided as a <em>named</em> list with on element
+for each element of the genes <code>GRangesList</code>, or as a single
+colour</li>
 <li>
-<code>collapseTranscripts</code> can also be provided as a matching (`<em>named</em>) list with each element being applied to the respective track, or as a single value</li>
+<code>collapseTranscripts</code> can also be provided as a matching
+(`<em>named</em>) list with each element being applied to the respective
+track, or as a single value</li>
 </ul>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">status_trans</span> <span class="op">&lt;-</span> <span class="fu">splitAsList</span><span class="op">(</span><span class="va">ex_trans</span>, <span class="va">ex_trans</span><span class="op">$</span><span class="va">status</span><span class="op">)</span>
@@ -556,12 +727,18 @@
   cytobands <span class="op">=</span> <span class="va">grch37.cytobands</span>, zoom <span class="op">=</span> <span class="fl">1.2</span>
 <span class="op">)</span></code></pre></div>
 <p><img src="differential_binding_files/figure-html/split-trans-1.png" width="960"></p>
-<p>This idea of providing a matching <em>named</em> list is applied across the genes, features and coverage tracks in the sections below.</p>
+<p>This idea of providing a matching <em>named</em> list is applied
+across the genes, features and coverage tracks in the sections
+below.</p>
 </div>
 <div class="section level4">
 <h4 id="adding-features">Adding Features<a class="anchor" aria-label="anchor" href="#adding-features"></a>
 </h4>
-<p>Another useful track to add might be some key features such as promoters. Unlike the genes track, features must <strong>always</strong> be a <code>GRangesList</code>, with each element defining a different type of feature. Given that we only have promoters, we’ll still need to set this up as a <code>GRangesList</code></p>
+<p>Another useful track to add might be some key features such as
+promoters. Unlike the genes track, features must <strong>always</strong>
+be a <code>GRangesList</code>, with each element defining a different
+type of feature. Given that we only have promoters, we’ll still need to
+set this up as a <code>GRangesList</code></p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"ex_prom"</span><span class="op">)</span>
 <span class="va">feat_grl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRangesList-class.html" class="external-link">GRangesList</a></span><span class="op">(</span>Promoters <span class="op">=</span> <span class="va">ex_prom</span><span class="op">)</span>
@@ -578,7 +755,8 @@
 <div class="section level4">
 <h4 id="adding-hic-interactions">Adding HiC Interactions<a class="anchor" aria-label="anchor" href="#adding-hic-interactions"></a>
 </h4>
-<p>Adding the HiC Interactions becomes very simple. All that we need is a GInteractions object.</p>
+<p>Adding the HiC Interactions becomes very simple. All that we need is
+a GInteractions object.</p>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plotHFGC.html">plotHFGC</a></span><span class="op">(</span>
   <span class="va">gr</span>, 
@@ -590,12 +768,20 @@
   cytobands <span class="op">=</span> <span class="va">grch37.cytobands</span>, zoom <span class="op">=</span> <span class="fl">1.2</span>
 <span class="op">)</span></code></pre></div>
 <p><img src="differential_binding_files/figure-html/plot-with-hic-1.png" width="960"></p>
-<p>If interactions extend beyond the plot range (<code>gr</code>), the plotting range will be automatically extended to incorporate all interactions. Given these can extend to a very long distance, only interactions within 10Mb are included by default. This can be modified using the <code>max</code> argument.</p>
+<p>If interactions extend beyond the plot range (<code>gr</code>), the
+plotting range will be automatically extended to incorporate all
+interactions. Given these can extend to a very long distance, only
+interactions within 10Mb are included by default. This can be modified
+using the <code>max</code> argument.</p>
 </div>
 <div class="section level4">
 <h4 id="adding-peakscoverage">Adding Peaks/Coverage<a class="anchor" aria-label="anchor" href="#adding-peakscoverage"></a>
 </h4>
-<p>The simplest approach to adding coverage is to simply provide a single <code>BigWigFileList</code>. In this scenario, each individual file will be drawn on a separate track. Colours for lines are passed as a simple vector/list with names matching the names of the <code>BigWigFileList</code>.</p>
+<p>The simplest approach to adding coverage is to simply provide a
+single <code>BigWigFileList</code>. In this scenario, each individual
+file will be drawn on a separate track. Colours for lines are passed as
+a simple vector/list with names matching the names of the
+<code>BigWigFileList</code>.</p>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plotHFGC.html">plotHFGC</a></span><span class="op">(</span>
   <span class="va">gr</span>, 
@@ -608,8 +794,11 @@
   cytobands <span class="op">=</span> <span class="va">grch37.cytobands</span>, zoom <span class="op">=</span> <span class="fl">1.2</span>
 <span class="op">)</span></code></pre></div>
 <p><img src="differential_binding_files/figure-html/plot-with-coverage-1.png" width="960"></p>
-<p>Alternatively, by providing a list of <code>BigWigFileList</code> objects, each list element will be drawn as a single overlaid track. In this way, unlimited coverage tracks can effectively be drawn.</p>
-<p>If choosing this option, colours must again be passed as a matching, <em>named</em> list.</p>
+<p>Alternatively, by providing a list of <code>BigWigFileList</code>
+objects, each list element will be drawn as a single overlaid track. In
+this way, unlimited coverage tracks can effectively be drawn.</p>
+<p>If choosing this option, colours must again be passed as a matching,
+<em>named</em> list.</p>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cov_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TF1 <span class="op">=</span> <span class="va">bwfl</span><span class="op">)</span>
 <span class="fu"><a href="../reference/plotHFGC.html">plotHFGC</a></span><span class="op">(</span>
@@ -628,13 +817,25 @@
 <div class="section level4">
 <h4 id="adding-annotations-to-coverage">Adding Annotations To Coverage<a class="anchor" aria-label="anchor" href="#adding-annotations-to-coverage"></a>
 </h4>
-<p>An indication of which regions are associated with increased or decreased binding can also be a useful annotation to add to plots such as the above. Although we technically performed no statistical testing, let’s consider a window with logFC below -1 to be showing decreased binding.</p>
-<p>Similar to the features track, where the names of <code>GRangesList</code> elements denote the different feature types, able to then assigned a colour, coverage annotation tracks follow these same rules. For each coverage track being annotated, a <code>GRangesList</code> object can denote the ranges which can be assigned different colours.</p>
+<p>An indication of which regions are associated with increased or
+decreased binding can also be a useful annotation to add to plots such
+as the above. Although we technically performed no statistical testing,
+let’s consider a window with logFC below -1 to be showing decreased
+binding.</p>
+<p>Similar to the features track, where the names of
+<code>GRangesList</code> elements denote the different feature types,
+able to then assigned a colour, coverage annotation tracks follow these
+same rules. For each coverage track being annotated, a
+<code>GRangesList</code> object can denote the ranges which can be
+assigned different colours.</p>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cov_annot</span> <span class="op">&lt;-</span> <span class="fu">splitAsList</span><span class="op">(</span><span class="va">res_gr</span>, <span class="va">res_gr</span><span class="op">$</span><span class="va">logFC</span> <span class="op">&lt;</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Unchanged"</span>, <span class="st">"Decreased"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu">endoapply</span><span class="op">(</span><span class="va">granges</span><span class="op">)</span></code></pre></div>
-<p>In the above, we have Unchanged and Decreased binding denoted as annotations. In keeping with the approach of having a matching list element for every coverage track, we would need to pass this as a list which matched the coverage track</p>
+<p>In the above, we have Unchanged and Decreased binding denoted as
+annotations. In keeping with the approach of having a matching list
+element for every coverage track, we would need to pass this as a list
+which matched the coverage track</p>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plotHFGC.html">plotHFGC</a></span><span class="op">(</span>
   <span class="va">gr</span>, 
@@ -650,7 +851,11 @@
   cytobands <span class="op">=</span> <span class="va">grch37.cytobands</span>, zoom <span class="op">=</span> <span class="fl">1.2</span>
 <span class="op">)</span></code></pre></div>
 <p><img src="differential_binding_files/figure-html/plot-annot-1.png" width="960"></p>
-<p>Plots are able to be tweaked considerably further via multiple parameters, however these basic approaches cover the elemental functionality of <code>plotHFCG()</code> for enabling simple &amp; reproducible plotting across regions for multiple sites within a larger experiment.</p>
+<p>Plots are able to be tweaked considerably further via multiple
+parameters, however these basic approaches cover the elemental
+functionality of <code>plotHFCG()</code> for enabling simple &amp;
+reproducible plotting across regions for multiple sites within a larger
+experiment.</p>
 </div>
 </div>
 </div>
@@ -668,12 +873,14 @@
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by <a href="https://github.com/steveped" class="external-link">Stephen Pederson</a>.</p>
+<p>Developed by <a href="https://github.com/steveped" class="external-link">Stephen
+Pederson</a>.</p>
 </div>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
       </footer>
