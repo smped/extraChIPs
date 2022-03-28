@@ -13,7 +13,8 @@
 #' @param x A GenomicRanges object
 #' @param ignore.strand If set to TRUE, then the strand of x and y is set to
 #' "*" prior to any computation.
-#' @param simplify logical(1). Attempt to simplify returned columns where possible
+#' @param simplify logical(1). Attempt to simplify returned columns where
+#' possible
 #' @param ... Passed to \link[GenomicRanges]{reduce}
 #'
 #' @return

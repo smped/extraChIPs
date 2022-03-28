@@ -15,7 +15,8 @@ chopMC(x, simplify = TRUE, ...)
 \arguments{
 \item{x}{A GenomicRanges object}
 
-\item{simplify}{logical(1). Attempt to simplify returned columns where possible}
+\item{simplify}{logical(1). Attempt to simplify returned columns where
+possible}
 
 \item{...}{Not used}
 }

@@ -1,9 +1,12 @@
 Package: extraChIPs
-Version: 0.99.24
-Date: 2022/03/26
+Version: 0.99.0
+Date: 2022/03/28
 Title: Additional functions for working with ChIP-Seq data
 Authors@R: person("Stephen", "Pederson", 
-  email = "stephen.pederson.au@gmail.com", role = c("aut", "cre"))
+  email = "stephen.pederson.au@gmail.com", 
+  role = c("aut", "cre"),
+  comment = c(ORCID = "0000-0001-8197-3303")
+  )
 Description: This package builds on existing tools and adds some simple but
    extremely useful capabilities for working with ChIP-Seq data. The focus is 
    on detecting differential binding windows/regions. 
@@ -62,9 +65,8 @@ Suggests:
   rmarkdown,
   testthat (>= 3.0.0),
   tidyverse
-biocViews: ChIPSeq, Sequencing
+biocViews: ChIPSeq, HiC, Sequencing
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)  
 RoxygenNote: 7.1.2
 Config/testthat/edition: 3
-LazyData: true

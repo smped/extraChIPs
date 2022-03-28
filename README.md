@@ -6,5 +6,27 @@
 [![Repo Status](https://img.shields.io/badge/repo%20status-Active-green.svg)](https://shields.io/)
 <!-- badges: end -->
 
-Currently under active development, this is be a small collection of functions
-aimed to simplify analysis and visualisation under a ChIP-Seq workflow, also in development.
+`extraChIPs` is a package primarily designed to enable ChIP-Seq analysis,
+Whilst the package was built to enable the 
+[GRAVI: Gene Regulatory Analysis using Variable Inputs](https://github.com/steveped/GRAVI), 
+workflow, the functionality extends beyond this specific application.
+Functions focus primarily on
+
+- Retaining `mcols()` when manipulating `GRanges` objects
+- Common visualisation utilities for ChIP-Seq analysis
+- Enabling sliding window analysis for differential ChIP-target binding
+
+It is intended that these functions will integrate seamlessly with other 
+packages such as those provided in `csaw`, `plyranges` and `limma`.
+
+In addition to enabling workflows, simple coercion to `tibble` objects from 
+`DataFrame`, `GRanges` and `GInteractions` objects is implemented.
+
+## Installation Instructions
+
+To install this package, please use `BiocManager`.
+
+```r
+install.packages("BiocManager")
+BiocManager::install("steveped/extraChIPs")
+```

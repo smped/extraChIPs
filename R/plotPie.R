@@ -60,7 +60,9 @@
 #' @examples
 #' set.seed(200)
 #' df <- data.frame(
-#'   feature = sample(c("Promoter", "Enhancer", "Intergenic"), 200, replace = TRUE),
+#'   feature = sample(
+#'     c("Promoter", "Enhancer", "Intergenic"), 200, replace = TRUE
+#'   ),
 #'   TF1 = sample(c("Up", "Down", "Unchanged"), 200, replace = TRUE),
 #'   TF2 = sample(c("Up", "Down", "Unchanged"), 200, replace = TRUE),
 #'   w = rexp(200)
@@ -86,6 +88,7 @@
 #'  )
 #'
 #' ## And using a GRanges object
+#' data("ex_prom")
 #' gr <- ex_prom
 #' mcols(gr) <- df[seq_along(gr),]
 #' ## Show values by counts
@@ -135,8 +138,9 @@ setMethod(
     if (missing(x) & missing(y)) {
       p <- .plotSinglePie(
         df = object, fill = fill, width = width, show_total = show_total,
-        .lab_fill = label_fill, .lab_alpha = label_alpha, .lab_size = label_size,
-        .text_size = category_size, .text_col = category_colour, .min_p = min_p,
+        .lab_fill = label_fill, .lab_alpha = label_alpha,
+        .lab_size = label_size, .text_size = category_size,
+        .text_col = category_colour, .min_p = min_p,
         .show_cat = show_category, .text_width = category_width,
         .scale_by = scale_by
       )
@@ -148,15 +152,16 @@ setMethod(
     if (!missing(x) & missing(y))
       p <- .plotDoublePie(
         df = object, x = x, fill = fill, width = width, show_total = show_total,
-        .lab_fill = label_fill, .lab_alpha = label_alpha, .lab_size = label_size,
-        .min_p = min_p, .scale_by = scale_by
+        .lab_fill = label_fill, .lab_alpha = label_alpha,
+        .lab_size = label_size, .min_p = min_p, .scale_by = scale_by
       )
 
     if (!missing(x) & !missing(y))
       p <- .plotTriplePie(
         df = object, x = x, y = y, fill = fill, width = width,
-        show_total = show_total, .lab_fill = label_fill, .lab_alpha = label_alpha,
-        .lab_size = label_size, .min_p = min_p, .scale_by = scale_by
+        show_total = show_total, .lab_fill = label_fill,
+        .lab_alpha = label_alpha, .lab_size = label_size, .min_p = min_p,
+        .scale_by = scale_by
       )
 
     p

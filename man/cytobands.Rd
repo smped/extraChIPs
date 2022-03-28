@@ -25,9 +25,9 @@ An object of class \code{data.frame} with 862 rows and 5 columns.
 \url{https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/cytoBand.txt.gz}
 }
 \usage{
-grch37.cytobands
+data(grch37.cytobands)
 
-grch38.cytobands
+data(grch38.cytobands)
 }
 \description{
 Cytogenetic bands for GRCh37/hg19 and GRCh38/hg38

@@ -18,7 +18,8 @@ reduceMC(x, ignore.strand = FALSE, simplify = TRUE, ...)
 \item{ignore.strand}{If set to TRUE, then the strand of x and y is set to
 "*" prior to any computation.}
 
-\item{simplify}{logical(1). Attempt to simplify returned columns where possible}
+\item{simplify}{logical(1). Attempt to simplify returned columns where
+possible}
 
 \item{...}{Passed to \link[GenomicRanges]{reduce}}
 }

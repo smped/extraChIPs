@@ -10,7 +10,8 @@
 #' In this case, columns will be returned as vectors where possible.
 #'
 #' @param x A GenomicRanges object
-#' @param simplify logical(1). Attempt to simplify returned columns where possible
+#' @param simplify logical(1). Attempt to simplify returned columns where
+#' possible
 #' @param ... Not used
 #'
 #' @return

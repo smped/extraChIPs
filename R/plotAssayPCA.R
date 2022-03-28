@@ -101,7 +101,8 @@ setMethod(
     cols <- setNames(paste0("PC", comps), c("x", "y"))
 
     p <- ggplot(
-      pca_df, aes_string(cols[["x"]], cols[["y"]], colour = colour, shape = shape)
+      pca_df,
+      aes_string(cols[["x"]], cols[["y"]], colour = colour, shape = shape)
     )
     if (show_points) p <- p + geom_point()
     if (!is.null(label) & show_points)

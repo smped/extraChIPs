@@ -36,9 +36,9 @@ setMethod(
     if (ncol(mcols(x)) == 0) return(unique(x))
     mc_names <- colnames(mcols(x))
     if (missing(cols)) cols <- mc_names
-    sd <- setdiff(cols, mc_names)
+    sd <- paste(setdiff(cols, mc_names), sep = ", ")
     if (length(sd) > 0)
-      stop("Requested columns absent from data: ", paste(sd, sep = ", "))
+      stop("Requested columns absent from data: ", sd)
 
     tbl <- as_tibble(x, name = "range")
     tbl <- distinct(tbl, across(all_of(c("range", cols))))

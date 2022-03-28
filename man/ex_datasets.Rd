@@ -20,13 +20,13 @@ An object of class \code{GRanges} of length 9.
 An object of class \code{GInteractions} of length 1.
 }
 \usage{
-ex_trans
+data(ex_trans)
 
-ex_genes
+data(ex_genes)
 
-ex_prom
+data(ex_prom)
 
-ex_hic
+data(ex_hic)
 }
 \description{
 Various example datasets for demonstrating visualisation

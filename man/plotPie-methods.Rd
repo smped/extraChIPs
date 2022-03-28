@@ -109,7 +109,9 @@ Parameters for these labels are customisable
 \examples{
 set.seed(200)
 df <- data.frame(
-  feature = sample(c("Promoter", "Enhancer", "Intergenic"), 200, replace = TRUE),
+  feature = sample(
+    c("Promoter", "Enhancer", "Intergenic"), 200, replace = TRUE
+  ),
   TF1 = sample(c("Up", "Down", "Unchanged"), 200, replace = TRUE),
   TF2 = sample(c("Up", "Down", "Unchanged"), 200, replace = TRUE),
   w = rexp(200)
@@ -135,6 +137,7 @@ plotPie(df, fill = "feature", x = "TF1", label_size = 5) +
  )
 
 ## And using a GRanges object
+data("ex_prom")
 gr <- ex_prom
 mcols(gr) <- df[seq_along(gr),]
 ## Show values by counts

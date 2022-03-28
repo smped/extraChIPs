@@ -12,6 +12,8 @@
 #'  \item{gieStain}{Staining pattern}
 #' }
 #'
+#' @usage data(grch37.cytobands)
+#'
 #' @examples
 #' data(grch37.cytobands)
 #' head(grch37.cytobands)
@@ -25,6 +27,7 @@
 #' @rdname cytobands
 "grch37.cytobands"
 
+#' @usage data(grch38.cytobands)
 #' @rdname cytobands
 "grch38.cytobands"
 
@@ -50,13 +53,17 @@
 #' ex_trans
 #' @name ex_datasets
 #' @rdname ex_datasets
+#' @usage data(ex_trans)
 "ex_trans"
 
 #' @rdname ex_datasets
+#' @usage data(ex_genes)
 "ex_genes"
 
 #' @rdname ex_datasets
+#' @usage data(ex_prom)
 "ex_prom"
 
 #' @rdname ex_datasets
+#' @usage data(ex_hic)
 "ex_hic"

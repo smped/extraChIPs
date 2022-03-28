@@ -4,7 +4,7 @@ df <- data.frame(
   TF1 = sample(c("Up", "Down", "Unchanged"), 200, replace = TRUE),
   TF2 = sample(c("Up", "Down", "Unchanged"), 200, replace = TRUE)
 )
-
+data("ex_prom")
 
 test_that("plotPie Errors where expected", {
 
