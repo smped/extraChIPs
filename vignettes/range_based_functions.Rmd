@@ -5,6 +5,8 @@ author:
   affiliation: Dame Roma Mitchell Cancer Research Laboratories, Adelaide Medical School, University of Adelaide
   email: stephen.pederson.au@gmail.com
 package: extraChIPs
+resource_files:
+  - vignettes/stitched.png
 output:
   BiocStyle::html_document
 vignette: >
@@ -259,14 +261,7 @@ As a visualisation (below) ranges within 100bp were stitched together, however
 the region defined as a 'promoter' acted as a barrier and ranges were not 
 stitched together across this barrier.
 
-```{r plot-stitched, echo = FALSE, fig.height=3}
-library(Gviz)
-plotTracks(
-  list(
-    enh = AnnotationTrack(enh, name = "Enhancers", fill = "yellow1"),
-    prom = AnnotationTrack(prom, name = "Promoters", fill = "red"),
-    se = AnnotationTrack(se, name = "Stitched Ranges", fill = "yellow3")
-  )
-)
+```{r plot-stitched, echo = FALSE, fig.height=3, fig.width=8}
+knitr::include_graphics("stitched.png")
 ```
 
