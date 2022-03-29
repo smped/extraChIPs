@@ -279,33 +279,38 @@ mapByFeature <- function(
       .genes = .genes, .cols = .cols, .within = .gi2gene
     ) # This returns the anchor range, not .gr
     anchors_to_gene <- bind_rows(anchors_to_gene)
+    ## Handle any list columns in case they exist
     anchors_to_gene <- mutate_all(anchors_to_gene, vec_proxy)
     anchors_to_gene <- unnest(anchors_to_gene, everything())
+    ## Map back to the GInteractions object
     map <- findOverlaps(GRanges(anchors_to_gene$range), .gi)
+    anchors_to_gene <- anchors_to_gene[queryHits(map),]
     anchors_to_gene$which <- subjectHits(map)
-    df <- data.frame(which = seq_along(.gi))
-    df <- inner_join(df, anchors_to_gene, by = "which")[c("which", .cols)]
+    df <- anchors_to_gene[c("which", .cols)]
     df <- chop(df, all_of(.cols))
-    stopifnot(length(.gi) == nrow(df))
-    mapped_list <- lapply(df[.cols], function(x) as(as.list(x), "List"))
+    mapped_list <- lapply(
+      df[.cols], function(x) as(as.list(x), "CompressedList")
+    )
+    ## Now replicate the data as it would be passed WITH mappings
+    .gi <- .gi[df$which]
     mcols(.gi)[.cols] <- mapped_list
   }
 
-  ## If we have all of the mappings already, just use them
+  ## If .gi has mappings already (or has them from above)
   mapped_df <- mcols(.gi)[.cols]
   mapped_df[["subjectHits"]] <- seq_along(.gi)
   mapped_df <- as.data.frame(mapped_df)
   mapped_df <- mutate_all(mapped_df, vec_proxy) # Remove AsIs attributes!!!
   mapped_df <- unnest(mapped_df, everything())
-  range_to_gi <- as.data.frame(findOverlaps(.gr, .gi, maxgap = .gr2gi, ...))
+  ## Now map back to the original ranges
+  gr_to_gi <- as.data.frame(findOverlaps(.gr, .gi, maxgap = .gr2gi, ...))
   range_df <- data.frame(range = as.character(.gr), queryHits = seq_along(.gr))
   ## This will drop any additional columns. They can be replaced back in the
   ## parent function
-  range_df <- inner_join(range_df, range_to_gi, by = "queryHits")
+  range_df <- inner_join(range_df, gr_to_gi, by = "queryHits")
   range_df <- inner_join(range_df, mapped_df, by = "subjectHits")
   range_df <- range_df[c("range", .cols)]
   return(range_df)
-  ## Looks right. Needs more testing
 
 }
 

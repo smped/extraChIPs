@@ -96,6 +96,7 @@
 #' ## Show values scaled by width of each range
 #' plotPie(gr, fill = "feature", scale_by = "width")
 #'
+#' @importClassesFrom GenomicRanges GRanges
 #' @rdname plotPie-methods
 #' @export
 setMethod(
@@ -110,6 +111,7 @@ setMethod(
     plotPie(df, scale_by = scale_by, ...)
   }
 )
+#' @importClassesFrom S4Vectors DataFrame
 #' @rdname plotPie-methods
 #' @export
 setMethod(
