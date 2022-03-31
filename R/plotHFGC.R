@@ -321,7 +321,7 @@ plotHFGC <- function(
     hic <- slot(hic_track, "giobject")
     anchors <- anchors(hic[calculateDistances(hic) < max])
     anchors <- unlist(GRangesList(anchors))
-    plot_range <- range(c(anchors, gr))
+    plot_range <- range(c(anchors, gr), ignore.strand = TRUE)
   }
   ## Now resize/shift as required
   plot_range <- resize(plot_range, zoom*width(plot_range), fix = "center")
