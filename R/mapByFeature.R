@@ -83,12 +83,12 @@
 #' ## more targetted approach. Similarly for the third range
 #' mapByFeature(gr, genes, prom, gr2gene = 25)
 #'
-#' @importFrom S4Vectors mcols subjectHits
+#' @importFrom S4Vectors mcols subjectHits 'mcols<-'
 #' @importClassesFrom IRanges CompressedList
-#' @importFrom dplyr bind_rows distinct across
+#' @importFrom dplyr bind_rows distinct across left_join
 #' @importFrom tidyr chop
 #' @importFrom tidyselect all_of
-#' @importFrom GenomicRanges findOverlaps GRanges
+#' @importFrom GenomicRanges findOverlaps GRanges granges
 #' @importFrom methods as
 #' @importFrom stats setNames
 #'
@@ -136,26 +136,22 @@ mapByFeature <- function(
     mapped_tbl, across(all_of(c("range", cols))), .keep_all = TRUE
   )
   mapped_tbl <- chop(mapped_tbl, all_of(cols))
-  ## Prepare for returning as an addition to the original GRanges
-  index <- findOverlaps(gr, GRanges(mapped_tbl[["range"]]), ...)
-  mapped_tbl <- mapped_tbl[subjectHits(index),]
-  mapped_list <- as.list(mapped_tbl[cols])
-  list_cols <- vapply(mapped_list, is.list, logical(1))
-  mapped_list[list_cols] <- lapply(
+
+  ## Now map back onto the original object using tidy methods
+  gr_tbl <- tibble(range = as.character(gr))
+  gr_tbl <- left_join(gr_tbl, mapped_tbl, by = "range")
+  gr_list <- as.list(gr_tbl)
+  list_cols <- vapply(gr_tbl, is.list, logical(1))
+  gr_list[list_cols] <- lapply(
     ## The new vctrs-based types are problematic still. coerce via as.list()
-    mapped_list[list_cols], function(x) as(as.list(x), "CompressedList")
+    gr_list[list_cols], function(x) as(as.list(x), "CompressedList")
   )
-  grl <- as.list(split(gr, f = seq_along(gr) %in% queryHits(index)))
-  mcols(grl[["TRUE"]])[cols] <- mapped_list
-  if (!is.null(grl[["FALSE"]])) {
-    empty_list <- vector("list", length(grl[["FALSE"]]))
-    unmapped_list <- lapply(mapped_list, function(x) as(empty_list, is(x)[[1]]))
-    mcols(grl[["FALSE"]])[cols] <- unmapped_list
-  }
-  unsorted <- setNames(unlist(GRangesList(grl)), NULL)
-  o <- subjectHits(findOverlaps(gr, unsorted))
-  stopifnot(length(o) == length(gr))
-  unsorted[o,]
+
+  out <- granges(gr)
+  mcols(out) <-  cbind(
+    mcols(gr)[!colnames(mcols(gr)) %in% cols], gr_list[cols]
+  )
+  out
 
 }
 
