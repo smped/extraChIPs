@@ -822,7 +822,7 @@ plotHFGC <- function(
 
     if (missing(coverage)) return(msg)
 
-    if (!any(is(coverage, "list"), is(coverage("BigWigFileList"))))
+    if (!any(is(coverage, "list"), is(coverage, "BigWigFileList")))
       return(c(msg, "'coverage' should be a BigWigFileList or a list\n"))
 
     ## Add checks for coverage. This can be a list of BigWigFileLists, or a

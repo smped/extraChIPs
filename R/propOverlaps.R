@@ -41,6 +41,3 @@ setMethod(
 
   }
 )
-#' @export
-#' @rdname propOverlap-methods
-setMethod("propOverlap", c("ANY", "ANY"), function(x, y, ...) .errNotImp(x, y))

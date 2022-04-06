@@ -164,8 +164,3 @@ setMethod(
   }
 
 )
-#' @rdname mergeByCol-methods
-#' @export
-setMethod(
-  "mergeByCol", signature = signature(x = "ANY"), function(x, ...) .errNotImp(x)
-)

@@ -43,8 +43,4 @@ setMethod(
     .mapMcols2Ranges(gr, x, ignore.strand, simplify)
   }
 )
-#' @export
-#' @rdname reduceMC-methods
-#' @aliases reduceMC
-setMethod("reduceMC", "ANY", function(x, ...) .errNotImp(x))
 

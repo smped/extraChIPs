@@ -88,13 +88,6 @@ setMethod(
 
   }
 )
-#' @rdname grlToSE-methods
-#' @export
-setMethod(
-  "grlToSE",
-  signature = signature(x = "ANY"),
-  function(x, ...)  .errNotImp(x)
-)
 
 #' @importFrom S4Vectors SimpleList queryHits subjectHits 'mcols<-' mcols
 #' @importFrom GenomicRanges findOverlaps GRangesList

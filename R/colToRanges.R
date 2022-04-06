@@ -70,11 +70,3 @@ setMethod(
     gr
   }
 )
-#' @rdname colToRanges-methods
-#' @aliases colToRanges
-#' @export
-setMethod(
-  "colToRanges",
-  signature = signature(x = "ANY", var= "ANY"),
-  function(x, var, ...) .errNotImp(x, var)
-)

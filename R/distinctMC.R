@@ -47,7 +47,3 @@ setMethod(
 
   }
 )
-#' @export
-#' @rdname distinctMC-methods
-#' @aliases distinctMC
-setMethod("distinctMC", "ANY", function(x, ...) .errNotImp(x))

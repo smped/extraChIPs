@@ -133,10 +133,3 @@ setMethod(
 
   }
 )
-#' @export
-#' @rdname dualFilter-methods
-setMethod(
-  "dualFilter",
-  signature = signature(x = "ANY", bg = "ANY", ref = "ANY"),
-  function(x, bg, ref, ...) .errNotImp(x, bg, ref)
-)

@@ -156,10 +156,3 @@ setMethod(
     getProfileData(x, gr, upstream, downstream, bins, mean_mode, ...)
   }
 )
-#' @rdname getProfileData-methods
-#' @export
-setMethod(
-  "getProfileData",
-  signature = signature(x = "ANY", gr = "ANY"),
-  function(x, gr) .errNotImp(x, gr)
-)

@@ -109,9 +109,3 @@ setMethod(
 
   }
 )
-#' @export
-#' @rdname partitionRanges-methods
-setMethod(
-  "partitionRanges", c("ANY", "ANY"), function(x, y, ...) .errNotImp(x, y)
-)
-

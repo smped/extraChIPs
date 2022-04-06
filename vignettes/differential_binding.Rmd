@@ -90,8 +90,7 @@ wincounts <- windowCounts(
   width = 180,
   ext = 200,
   filter = 1,
-  param = rp,
-  BPPARAM = bpparam()
+  param = rp
 )
 ```
 

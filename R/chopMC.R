@@ -57,8 +57,3 @@ setMethod(
 
   }
 )
-#' @export
-#' @rdname chopMC-methods
-#' @aliases chopMC
-setMethod("chopMC", "ANY", function(x, ...) .errNotImp(x))
-

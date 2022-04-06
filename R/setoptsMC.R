@@ -92,15 +92,6 @@ setMethod(
 
   }
 )
-#' @export
-#' @rdname setoptsMC-methods
-setMethod("setdiffMC", c("ANY", "ANY"), function(x, y, ...) .errNotImp(x, y))
-#' @export
-#' @rdname setoptsMC-methods
-setMethod("intersectMC", c("ANY", "ANY"), function(x, y, ...) .errNotImp(x, y))
-#' @export
-#' @rdname setoptsMC-methods
-setMethod("unionMC", c("ANY", "ANY"), function(x, y, ...) .errNotImp(x, y))
 
 #' @importClassesFrom GenomicRanges GRangesList
 #' @importFrom IRanges overlapsAny

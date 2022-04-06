@@ -95,10 +95,3 @@ setMethod(
 
   }
 )
-#' @rdname bestOverlap-methods
-#' @aliases bestOverlap
-#' @export
-setMethod(
-  "bestOverlap", signature = signature(x = "ANY", y = "ANY"),
-  function(x, y, ...) .errNotImp(x, y)
-)

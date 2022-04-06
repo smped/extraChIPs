@@ -188,7 +188,7 @@ test_that("Malformed genes are caught", {
       genes = GRangesList(a = gr1), genecol = "blue",
       collapseTranscripts = TRUE
     ),
-    "All elements of the 'genes' GRangesList must have the columns"
+    "The 'genes' GRanges object must have the columns"
   )
   expect_message(
     .checkHFGCArgs(
