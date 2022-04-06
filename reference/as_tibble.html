@@ -116,44 +116,44 @@ additional mcols from these secondary ranges</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">gr</span> <span class="op">&lt;-</span> <span class="fu">GRanges</span><span class="op">(</span><span class="st">"chr1:1-10"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="st">"chr1:1-10"</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">gr</span><span class="op">$</span><span class="va">p_value</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">gr</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"range1"</span></span>
 <span class="r-in"><span class="va">gr</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 1 range and 1 metadata column:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          seqnames    ranges strand |   p_value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;numeric&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   range1     chr1      1-10      * |  0.813742</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   range1     chr1      1-10      * |  0.358657</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
 <span class="r-in"><span class="fu">as_tibble</span><span class="op">(</span><span class="va">gr</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   range     p_value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> chr1:1-10   0.814</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> chr1:1-10   0.359</span>
 <span class="r-in"><span class="fu">as_tibble</span><span class="op">(</span><span class="va">gr</span>, rownames <span class="op">=</span> <span class="st">"id"</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 3</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   range     id     p_value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> chr1:1-10 range1   0.814</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> chr1:1-10 range1   0.359</span>
 <span class="r-in"><span class="fu">as_tibble</span><span class="op">(</span><span class="fu">mcols</span><span class="op">(</span><span class="va">gr</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   p_value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>   0.814</span>
-<span class="r-in"><span class="fu">as_tibble</span><span class="op">(</span><span class="fu">seqinfo</span><span class="op">(</span><span class="va">gr</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>   0.359</span>
+<span class="r-in"><span class="fu">as_tibble</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqinfo</a></span><span class="op">(</span><span class="va">gr</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 4</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqnames seqlengths is_circular genome</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> chr1             <span style="color: #BB0000;">NA</span> <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>    </span>
 <span class="r-in"></span>
-<span class="r-in"><span class="va">hic</span> <span class="op">&lt;-</span> <span class="fu">InteractionSet</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/InteractionSet/man/GInteractions-class.html" class="external-link">GInteractions</a></span><span class="op">(</span><span class="va">gr</span>, <span class="fu">GRanges</span><span class="op">(</span><span class="st">"chr1:201-210"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">hic</span> <span class="op">&lt;-</span> <span class="fu">InteractionSet</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/InteractionSet/man/GInteractions-class.html" class="external-link">GInteractions</a></span><span class="op">(</span><span class="va">gr</span>, <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="st">"chr1:201-210"</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">hic</span><span class="op">$</span><span class="va">id</span> <span class="op">&lt;-</span> <span class="st">"interaction1"</span></span>
 <span class="r-in"><span class="fu">as_tibble</span><span class="op">(</span><span class="va">hic</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 4</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   anchor1   anchor2      anchor1.p_value id          </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> chr1:1-10 chr1:201-210           0.814 interaction1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> chr1:1-10 chr1:201-210           0.359 interaction1</span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>

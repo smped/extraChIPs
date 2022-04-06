@@ -114,12 +114,12 @@ assay</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">nrows</span> <span class="op">&lt;-</span> <span class="fl">200</span>; <span class="va">ncols</span> <span class="op">&lt;-</span> <span class="fl">4</span></span>
 <span class="r-in"><span class="va">counts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">nrows</span> <span class="op">*</span> <span class="va">ncols</span>, <span class="fl">1</span>, <span class="fl">1e4</span><span class="op">)</span>, <span class="va">nrows</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">DataFrame</span><span class="op">(</span>treat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"B"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu">SummarizedExperiment</span><span class="op">(</span></span>
+<span class="r-in"><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></span><span class="op">(</span></span>
 <span class="r-in">  assays <span class="op">=</span> <span class="fu">SimpleList</span><span class="op">(</span>counts <span class="op">=</span> <span class="va">counts</span><span class="op">)</span>,</span>
 <span class="r-in">  colData <span class="op">=</span> <span class="va">df</span></span>
 <span class="r-in"><span class="op">)</span></span>
 <span class="r-in"><span class="fu">plotAssayDensities</span><span class="op">(</span><span class="va">se</span>, colour <span class="op">=</span> <span class="st">"treat"</span><span class="op">)</span> <span class="op">+</span></span>
-<span class="r-in">  <span class="fu">labs</span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"Treat"</span><span class="op">)</span></span>
+<span class="r-in">  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"Treat"</span><span class="op">)</span></span>
 <span class="r-plt img"><img src="plotAssayDensities-methods-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"></span>
 </code></pre></div>
