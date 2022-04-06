@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.3</span>
       </span>
     </div>
 
@@ -75,10 +75,7 @@
 <span class="fu">colToRanges</span><span class="op">(</span><span class="va">x</span>, <span class="va">var</span>, <span class="va">...</span><span class="op">)</span>
 
 <span class="co"># S4 method for data.frame,character</span>
-<span class="fu">colToRanges</span><span class="op">(</span><span class="va">x</span>, <span class="va">var</span>, seqinfo <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for ANY,ANY</span>
-<span class="fu">colToRanges</span><span class="op">(</span><span class="va">x</span>, <span class="va">var</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+<span class="fu">colToRanges</span><span class="op">(</span><span class="va">x</span>, <span class="va">var</span>, seqinfo <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -116,12 +113,12 @@ In this case, no Seqinfo element will be applied to the GRanges element.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 2 ranges and 7 metadata columns:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand | n_windows      n_up    n_down    logCPM</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;integer&gt; &lt;integer&gt; &lt;numeric&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1      6-15      * |         2         2         0   8.38496</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chr1     51-60      * |         1         0         1   9.29142</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           logFC         p     p_fdr</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]  0.351175  0.643889  0.967184</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [2] -0.669132  0.967184  0.967184</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1      6-15      * |         2         1         1   8.98089</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chr1     51-60      * |         1         0         1   6.72871</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            logFC         p      p_fdr</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        &lt;numeric&gt; &lt;numeric&gt;  &lt;numeric&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1] -0.0794024 0.6948906 0.69489060</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [2] -0.1899308 0.0013502 0.00270039</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
 <span class="r-in"></span>
@@ -141,7 +138,7 @@ Pederson</a>.</p>
 
 <div class="pkgdown">
   <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.</p>
+2.0.2.9000.</p>
 </div>
 
       </footer></div>
