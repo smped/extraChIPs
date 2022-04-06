@@ -55,7 +55,7 @@ setMethod(
       names(mcols(y))[i_y] <- paste0(names(mcols(y))[i_y], suffix[[2]])
     }
 
-    if (all(strand(x) == "*")) ignore.strand = TRUE
+    if (all(strand(x) == "*")) ignore.strand <- TRUE
 
     ## If y has overlapping ranges, the partitioning problem doesn't make sense
     ## Check for overlaps and exit if there are any

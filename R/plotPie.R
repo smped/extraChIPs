@@ -200,16 +200,11 @@ setMethod(
   summ_df <- arrange(summ_df, desc(!!sym(fill)))
   summ_df$y <- cumsum(summ_df$p)
   summ_df$lab <- paste0(
-    summ_df[[fill]], " (",
-    percent(summ_df$p, 0.1),
-    ")"
+    summ_df[[fill]], " (", percent(summ_df$p, 0.1), ")"
   )
   summ_df$lab <- str_wrap(summ_df$lab, width = .text_width)
 
-  p <- ggplot(
-    data = summ_df,
-    aes(1, p, fill = !!sym(fill))
-  ) +
+  p <- ggplot(data = summ_df, aes(1, p, fill = !!sym(fill))) +
     geom_col(width = width)
 
   if (.show_cat) {
@@ -233,9 +228,7 @@ setMethod(
       alpha = 0.5, fill = "white", size = .lab_size
     )
 
-  p +
-    coord_polar("y", start = 0) +
-    theme_void()
+  p + coord_polar("y", start = 0) + theme_void()
 }
 
 #' @importFrom dplyr group_by summarise mutate filter ungroup distinct
@@ -253,7 +246,7 @@ setMethod(
 
   fill <- fill[[1]]
   x <- x[[1]]
-  stopifnot(all(c(x, fill) %in% colnames(df) ))
+  stopifnot(all(c(x, fill) %in% colnames(df)))
   df[[x]] <- as.factor(df[[x]])
   df[[fill]] <- as.factor(df[[fill]])
   if (!missing(.scale_by)) stopifnot(is.numeric(df[[.scale_by]]))
@@ -270,8 +263,7 @@ setMethod(
   }
   summ_df <- mutate(
     summ_df,
-    p = value / sum(value),
-    label_radians = 2 * pi * (cumsum(p) - 0.5 * p)
+    p = value / sum(value), label_radians = 2 * pi * (cumsum(p) - 0.5 * p)
   )
   summ_df <- ungroup(mutate(summ_df, N = sum(value)))
   summ_df <- complete(
@@ -284,32 +276,26 @@ setMethod(
 
   p <- ggplot(data = summ_df) +
     geom_scatterpie(
-      aes(x, 1, r = width * r),
-      data = summ_df,
-      cols = fill, long_format = TRUE
+      aes(x, 1, r = width * r), data = summ_df, cols = fill, long_format = TRUE
     ) +
     coord_equal() +
     scale_x_continuous(
-      breaks = seq_along(levels(df[[x]])),
-      labels = levels(df[[x]])
+      breaks = seq_along(levels(df[[x]])), labels = levels(df[[x]])
     ) +
-    labs(x = x, fill = fill) +
     theme(
-      axis.text.y = element_blank(),
-      axis.title.y = element_blank(),
+      axis.text.y = element_blank(), axis.title.y = element_blank(),
       axis.ticks.y = element_blank()
     )
   if (show_total) {
     lab_df <- dplyr::filter(summ_df, N > .min_p * sum(N))
     lab_df <- distinct(lab_df, x, N, .keep_all = TRUE)
     p <- p + geom_label(
-      aes(x, 1, label = comma(N, 1)),
-      data = lab_df,
+      aes(x, 1, label = comma(N, 1)), data = lab_df,
       size = .lab_size, alpha = .lab_alpha, fill = .lab_fill
     )
   }
 
-  p
+  p + labs(x = x, fill = fill)
 
 }
 
@@ -329,8 +315,8 @@ setMethod(
   fill <- fill[[1]]
   x <- x[[1]]
   y <- y[[1]]
+  stopifnot(all(c(x, y, fill) %in% colnames(df)))
 
-  stopifnot(all(c(x, y, fill) %in% colnames(df) ))
   df[[x]] <- as.factor(df[[x]])
   df[[y]] <- as.factor(df[[y]])
   df[[fill]] <- as.factor(df[[fill]])
@@ -347,8 +333,7 @@ setMethod(
   }
   summ_df <- mutate(
     summ_df,
-    p = value / sum(value),
-    label_radians = 2 * pi * (cumsum(p) - 0.5 * p)
+    p = value / sum(value), label_radians = 2 * pi * (cumsum(p) - 0.5 * p)
   )
   summ_df <- ungroup(mutate(summ_df, N = sum(value)))
   summ_df <- complete(
@@ -362,31 +347,25 @@ setMethod(
 
   p <- ggplot(data = summ_df) +
     geom_scatterpie(
-      aes(x, y, r = width * r),
-      data = summ_df,
-      cols = fill, long_format = TRUE
+      aes(x, y, r = width * r), data = summ_df, cols = fill, long_format = TRUE
     ) +
     coord_equal() +
     scale_x_continuous(
-      breaks = seq_along(levels(df[[x]])),
-      labels = levels(df[[x]])
+      breaks = seq_along(levels(df[[x]])), labels = levels(df[[x]])
     ) +
     scale_y_continuous(
-      breaks = seq_along(levels(df[[y]])),
-      labels = levels(df[[y]])
-    ) +
-    labs(x = x, y = y, fill = fill)
+      breaks = seq_along(levels(df[[y]])), labels = levels(df[[y]])
+    )
   if (show_total) {
     lab_df <- dplyr::filter(summ_df, N > .min_p * sum(N))
     lab_df <- distinct(lab_df, x, y, N, .keep_all = TRUE)
     p <- p + geom_label(
-      aes(x, y, label = comma(N, 1)),
-      data = lab_df,
+      aes(x, y, label = comma(N, 1)), data = lab_df,
       size = .lab_size, alpha = .lab_alpha, fill = .lab_fill
     )
   }
 
-  p
+  p + labs(x = x, y = y, fill = fill)
 
 }
 

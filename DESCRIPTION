@@ -1,5 +1,5 @@
 Package: extraChIPs
-Version: 0.99.1
+Version: 0.99.2
 Title: Additional functions for working with ChIP-Seq data
 Authors@R: person("Stephen", "Pederson", 
   email = "stephen.pederson.au@gmail.com", 
@@ -64,7 +64,7 @@ Suggests:
   rmarkdown,
   testthat (>= 3.0.0),
   tidyverse
-biocViews: ChIPSeq, HiC, Sequencing
+biocViews: ChIPSeq, HiC, Sequencing, Coverage
 BiocType: Software
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)  

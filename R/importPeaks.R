@@ -120,13 +120,12 @@ importPeaks <- function(
     r1 <- read.table(x, sep = "\t", nrows = 1)
     nCols <- ncol(r1) == 10
     if (!nCols) return(FALSE)
-    allNumerics <- suppressWarnings(
-        !anyNA(
-            vapply(r1[c(2, 3, 5, 7, 8, 9, 10)], as.numeric, numeric(1))
-        )
-    )
+    charCols <- c(1, 4)
+    allChars <- all(vapply(r1[charCols], is.character, logical(1)))
+    numericCols <- c(2, 3, 5, 7:10)
+    allNumerics <- all(vapply(r1[numericCols], is.numeric, logical(1)))
     strandOK <- r1[[6]] %in% c("+", "-", ".")
-    all(allNumerics, strandOK)
+    all(allChars, allNumerics, strandOK)
 }
 
 #' @importFrom utils read.table
@@ -134,11 +133,10 @@ importPeaks <- function(
     r1 <- read.table(x, sep = "\t", nrows = 1)
     nCols <- ncol(r1) == 9
     if (!nCols) return(FALSE)
-    allNumerics <- suppressWarnings(
-        !anyNA(
-            vapply(r1[c(2, 3, 5, 7, 8, 9)], as.numeric, numeric(1))
-        )
-    )
+    charCols <- c(1, 4)
+    allChars <- all(vapply(r1[charCols], is.character, logical(1)))
+    numericCols <- c(2, 3, 5, 7:9)
+    allNumerics <- all(vapply(r1[numericCols], is.numeric, logical(1)))
     strandOK <- r1[[6]] %in% c("+", "-", ".")
-    all(allNumerics, strandOK)
+    all(allChars, allNumerics, strandOK)
 }
