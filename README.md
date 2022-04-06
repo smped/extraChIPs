@@ -24,9 +24,16 @@ In addition to enabling workflows, simple coercion to `tibble` objects from
 
 ## Installation Instructions
 
-To install this package, please use `BiocManager`.
+To install this package from Bioconductor, please use `BiocManager`.
 
 ```r
 install.packages("BiocManager")
 BiocManager::install("extraChIPs")
+```
+
+To install the development version from github
+
+
+```r
+BiocManager::install("steveped/extraChIPs")
 ```
