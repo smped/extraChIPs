@@ -46,8 +46,8 @@ be installed.
 if (!"BiocManager" %in% rownames(installed.packages()))
   install.packages("BiocManager")
 pkg <- c("tidyverse", "Rsamtools", "csaw", "BiocParallel", "rtracklayer")
-BiocManager::install()
-BiocManager::install("steveped/extraChIPs")
+BiocManager::install(pkg)
+BiocManager::install("extraChIPs")
 ```
 
 # Differential Binding and ChIP-Seq Analysis
@@ -639,3 +639,10 @@ Plots are able to be tweaked considerably further via multiple parameters,
 however these basic approaches cover the elemental functionality of `plotHFCG()`
 for enabling simple & reproducible plotting across regions for multiple sites
 within a larger experiment.
+
+# Session Info
+
+```{r}
+sessionInfo()
+```
+

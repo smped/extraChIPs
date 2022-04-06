@@ -28,5 +28,5 @@ To install this package, please use `BiocManager`.
 
 ```r
 install.packages("BiocManager")
-BiocManager::install("steveped/extraChIPs")
+BiocManager::install("extraChIPs")
 ```

@@ -40,7 +40,7 @@ Once this is installed, the additional packages required for this vignette
 if (!"BiocManager" %in% rownames(installed.packages()))
   install.packages("BiocManager")
 BiocManager::install(c("tidyverse", "plyranges", "Gviz"))
-BiocManager::install("steveped/extraChIPs")
+BiocManager::install("extraChIPs")
 ```
 
 
@@ -265,3 +265,8 @@ stitched together across this barrier.
 knitr::include_graphics("stitched.png")
 ```
 
+# Session Info
+
+```{r}
+sessionInfo()
+```
