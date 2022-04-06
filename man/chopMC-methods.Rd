@@ -3,14 +3,11 @@
 \name{chopMC}
 \alias{chopMC}
 \alias{chopMC,GRanges-method}
-\alias{chopMC,ANY-method}
 \title{Keep unique ranges and collapse mcols}
 \usage{
 chopMC(x, simplify = TRUE, ...)
 
 \S4method{chopMC}{GRanges}(x, simplify = TRUE, ...)
-
-\S4method{chopMC}{ANY}(x, simplify = TRUE, ...)
 }
 \arguments{
 \item{x}{A GenomicRanges object}

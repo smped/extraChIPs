@@ -3,7 +3,6 @@
 \name{partitionRanges}
 \alias{partitionRanges}
 \alias{partitionRanges,GRanges,GRanges-method}
-\alias{partitionRanges,ANY,ANY-method}
 \title{Partition a set of Genomic Ranges}
 \usage{
 partitionRanges(
@@ -17,16 +16,6 @@ partitionRanges(
 )
 
 \S4method{partitionRanges}{GRanges,GRanges}(
-  x,
-  y,
-  y_as_both = TRUE,
-  ignore.strand = FALSE,
-  simplify = TRUE,
-  suffix = c(".x", ".y"),
-  ...
-)
-
-\S4method{partitionRanges}{ANY,ANY}(
   x,
   y,
   y_as_both = TRUE,

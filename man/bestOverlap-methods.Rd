@@ -4,7 +4,6 @@
 \alias{bestOverlap}
 \alias{bestOverlap,GRanges,GRanges-method}
 \alias{bestOverlap,GRanges,GRangesList-method}
-\alias{bestOverlap,ANY,ANY-method}
 \title{Find the best overlap between GRanges}
 \usage{
 bestOverlap(x, y, ...)
@@ -27,8 +26,6 @@ bestOverlap(x, y, ...)
   min_prop = 0.01,
   ...
 )
-
-\S4method{bestOverlap}{ANY,ANY}(x, y, ...)
 }
 \arguments{
 \item{x}{a GRanges object}

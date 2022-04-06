@@ -5,7 +5,6 @@
 \alias{colToRanges,DataFrame,character-method}
 \alias{colToRanges,GRanges,character-method}
 \alias{colToRanges,data.frame,character-method}
-\alias{colToRanges,ANY,ANY-method}
 \title{Coerce a column to a GRanges object}
 \usage{
 colToRanges(x, var, ...)
@@ -15,8 +14,6 @@ colToRanges(x, var, ...)
 \S4method{colToRanges}{GRanges,character}(x, var, ...)
 
 \S4method{colToRanges}{data.frame,character}(x, var, seqinfo = NULL, ...)
-
-\S4method{colToRanges}{ANY,ANY}(x, var, ...)
 }
 \arguments{
 \item{x}{A data-frame or GRanges object containing the column to coerce}

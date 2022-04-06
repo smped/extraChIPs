@@ -4,7 +4,6 @@
 \alias{mergeByCol}
 \alias{mergeByCol,GenomicRanges-method}
 \alias{mergeByCol,RangedSummarizedExperiment-method}
-\alias{mergeByCol,ANY-method}
 \title{Merge sliding windows using a specified column}
 \usage{
 mergeByCol(x, ...)
@@ -36,8 +35,6 @@ mergeByCol(x, ...)
   ignore_strand = FALSE,
   ...
 )
-
-\S4method{mergeByCol}{ANY}(x, ...)
 }
 \arguments{
 \item{x}{A GenomicRanges or SummarizedExperiment object}

@@ -3,14 +3,11 @@
 \name{propOverlap}
 \alias{propOverlap}
 \alias{propOverlap,GRanges,GRanges-method}
-\alias{propOverlap,ANY,ANY-method}
 \title{Find the proportions of an overlapping range}
 \usage{
 propOverlap(x, y, ignore.strand = FALSE, ...)
 
 \S4method{propOverlap}{GRanges,GRanges}(x, y, ignore.strand = FALSE, ...)
-
-\S4method{propOverlap}{ANY,ANY}(x, y, ignore.strand = FALSE, ...)
 }
 \arguments{
 \item{x, y}{A GenomicRanges object}

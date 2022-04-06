@@ -3,7 +3,6 @@
 \name{dualFilter}
 \alias{dualFilter}
 \alias{dualFilter,RangedSummarizedExperiment,RangedSummarizedExperiment,GRanges-method}
-\alias{dualFilter,ANY,ANY,ANY-method}
 \title{Apply two filters to sliding windows}
 \usage{
 dualFilter(x, bg, ref, ...)
@@ -17,8 +16,6 @@ dualFilter(x, bg, ref, ...)
   keep.totals = TRUE,
   BPPARAM = bpparam()
 )
-
-\S4method{dualFilter}{ANY,ANY,ANY}(x, bg, ref, ...)
 }
 \arguments{
 \item{x}{RangedSummarizedExperiment containing sample counts}

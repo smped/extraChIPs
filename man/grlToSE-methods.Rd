@@ -3,7 +3,6 @@
 \name{grlToSE}
 \alias{grlToSE}
 \alias{grlToSE,GRangesList-method}
-\alias{grlToSE,ANY-method}
 \title{Set columns from a GRangesList as Assays in a SummarizedExperiment}
 \usage{
 grlToSE(x, ...)
@@ -17,8 +16,6 @@ grlToSE(x, ...)
   ...,
   ignore.strand = FALSE
 )
-
-\S4method{grlToSE}{ANY}(x, ...)
 }
 \arguments{
 \item{x}{A GrangesList}

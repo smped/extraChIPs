@@ -8,9 +8,6 @@
 \alias{intersectMC}
 \alias{unionMC,GRanges,GRanges-method}
 \alias{unionMC}
-\alias{setdiffMC,ANY,ANY-method}
-\alias{intersectMC,ANY,ANY-method}
-\alias{unionMC,ANY,ANY-method}
 \title{Perform set operations retaining mcols}
 \usage{
 setdiffMC(x, y, ignore.strand = FALSE, simplify = TRUE, ...)
@@ -24,12 +21,6 @@ unionMC(x, y, ignore.strand = FALSE, simplify = TRUE, ...)
 \S4method{intersectMC}{GRanges,GRanges}(x, y, ignore.strand = FALSE, simplify = TRUE, ...)
 
 \S4method{unionMC}{GRanges,GRanges}(x, y, ignore.strand = FALSE, simplify = TRUE, ...)
-
-\S4method{setdiffMC}{ANY,ANY}(x, y, ignore.strand = FALSE, simplify = TRUE, ...)
-
-\S4method{intersectMC}{ANY,ANY}(x, y, ignore.strand = FALSE, simplify = TRUE, ...)
-
-\S4method{unionMC}{ANY,ANY}(x, y, ignore.strand = FALSE, simplify = TRUE, ...)
 }
 \arguments{
 \item{x, y}{GenomicRanges objects}

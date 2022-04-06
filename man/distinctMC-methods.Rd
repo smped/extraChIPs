@@ -3,14 +3,11 @@
 \name{distinctMC}
 \alias{distinctMC}
 \alias{distinctMC,GRanges-method}
-\alias{distinctMC,ANY-method}
 \title{Keep distinct ranges and mcols}
 \usage{
 distinctMC(x, cols, ...)
 
 \S4method{distinctMC}{GRanges}(x, cols, ...)
-
-\S4method{distinctMC}{ANY}(x, cols, ...)
 }
 \arguments{
 \item{x}{A GenomicRanges object}

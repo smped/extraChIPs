@@ -3,14 +3,11 @@
 \name{reduceMC}
 \alias{reduceMC}
 \alias{reduceMC,GRanges-method}
-\alias{reduceMC,ANY-method}
 \title{Reduce ranges retaining mcols}
 \usage{
 reduceMC(x, ignore.strand = FALSE, simplify = TRUE, ...)
 
 \S4method{reduceMC}{GRanges}(x, ignore.strand = FALSE, simplify = TRUE, ...)
-
-\S4method{reduceMC}{ANY}(x, ignore.strand = FALSE, simplify = TRUE, ...)
 }
 \arguments{
 \item{x}{A GenomicRanges object}
