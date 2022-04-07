@@ -11,7 +11,6 @@ dualFilter(
   q = 0.5,
   logCPM = TRUE,
   keep.totals = TRUE,
-  quick = TRUE,
   BPPARAM = bpparam()
 )
 }
@@ -29,12 +28,6 @@ when tuning the filtering criteria}
 
 \item{keep.totals}{logical(1) Keep the original library sizes or replace
 using only the retained windows}
-
-\item{quick}{logical(1) Filter relative to control using only provided
-windows. If \code{FALSE}, the \link[csaw]{scaleFilterControl} approach using
-large bins will be performed. As this will recount genomic windows using all
-bam files, this is a slower but more cautious approach. Final results do not
-diverge significantly between the two methods (~95\% common windows retained)}
 
 \item{BPPARAM}{Settings for running in parallel}
 }
@@ -64,6 +57,11 @@ Lower values will ensure that fewer windows, generally with the strongest
 signal, are retained.
 Cutoff values for both criteria are added to the metadata
 element of the returned object.
+
+\strong{Please note} that the any \code{.bam} files referred to in the supplied objects
+\strong{must} be accessible to this function. It will not run on a separate
+machine or file structure to that which the original sliding windows were
+prepared. Please see the example/vignette for runnable conde.
 }
 \examples{
 \donttest{

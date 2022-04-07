@@ -18,6 +18,7 @@ Encoding: UTF-8
 URL: https://github.com/steveped/extraChIPs
 BugReports: https://github.com/steveped/extraChIPs/issues
 Depends:
+  BiocParallel,
   R (>= 4.2.0),
   GenomicRanges,
   ggplot2,
@@ -25,7 +26,6 @@ Depends:
   tibble
 Imports:
   BiocIO,
-  BiocParallel,
   broom,
   csaw,
   dplyr,
