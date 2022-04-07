@@ -10,7 +10,7 @@
 #' @param x character vector representing gene names
 #' @param sort logical(1) Should the names be sorted alphabetically
 #' @param dedup logical(1) Should duplicate names be removed
-#' @param format character string for markdown formatting as italics/bold
+#' @param format character string for markdown formatting of each element
 #' @param sep separator between vector elements
 #' @param last character string to place before the last element
 #' @param numeric logical(1) sort digits numerically, instead of as strings

@@ -3,16 +3,14 @@
 #' @description Keep unique ranges by 'chopping' mcols
 #'
 #' @details
-#' This function finds unique ranges and chops all mcols in a manner similar
+#' This function finds unique ranges and chops **all** mcols in a manner similar
 #' to \link[tidyr]{chop}.
 #' Chopped columns will be returned as `CompressedList` columns, unless
 #' `simplify = TRUE` (the default).
 #' In this case, columns will be returned as vectors where possible.
 #'
 #' @param x A GenomicRanges object
-#' @param simplify logical(1). Attempt to simplify returned columns where
-#' possible
-#' @param ... Not used
+#' @param simplify logical(1)
 #'
 #' @return
 #' A GRanges object
@@ -33,27 +31,38 @@
 #' @rdname chopMC-methods
 #' @aliases chopMC
 setMethod(
-  "chopMC", "GRanges",
-  function(x, simplify = TRUE, ...) {
+    "chopMC", "GRanges",
+    function(x, simplify = TRUE) {
 
-    if (ncol(mcols(x)) == 0) return(unique(x))
+        if (ncol(mcols(x)) == 0) return(unique(x))
 
-    tbl <- as_tibble(x, name = "range")
-    tbl <- chop(tbl, -all_of("range"))
-    gr <- colToRanges(tbl, "range", seqinfo = seqinfo(x))
-    mc <- lapply(
-      mcols(gr),
-      function(x) {
-        un <- lapply(x, function(x) unique(unlist(x)))
-        un <- as(un, "CompressedList")
-        if (simplify & all(vapply(un, length, integer(1)) == 1)) {
-          un <- unlist(un)
+        tbl <- as_tibble(x, rangeAsChar = TRUE, name = "range")
+        tbl <- chop(tbl, -all_of("range"))
+        cols <- setdiff(colnames(tbl), "range")
+        tbl_list <- as.list(tbl)
+
+        if (simplify) {
+            can_simplify <- vapply(
+                tbl_list[cols],
+                function(x) {
+                    l <- vapply(x, function(y) length(unique(y)), integer(1))
+                    all(l == 1)
+                },
+                logical(1)
+            )
+            can_simplify <- names(which(can_simplify))
+            tbl_list[can_simplify] <- lapply(
+                tbl_list[can_simplify],
+                function(x) unlist(lapply(x, unique))
+            )
         }
-        un
-      }
-    )
-    mcols(gr) <- mc
-    gr
+
+        list_cols <- vapply(tbl_list, is, logical(1), class2 = "list")
+        tbl_list[list_cols] <- lapply(tbl_list[list_cols], as, "CompressedList")
+
+        gr <- GRanges(tbl_list[["range"]])
+        mcols(gr) <- tbl_list[cols]
+        gr
 
   }
 )

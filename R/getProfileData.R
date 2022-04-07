@@ -39,13 +39,6 @@
 #' pd
 #' pd$profile_data
 #'
-#' @name getProfileData
-#' @rdname getProfileData-methods
-#' @export
-setGeneric(
-  "getProfileData",
-  function(x, gr, ...) standardGeneric("getProfileData")
-)
 #' @importFrom GenomicRanges resize promoters
 #' @importFrom rtracklayer import.bw
 #' @importFrom rtracklayer BigWigFile BigWigFileList
@@ -59,12 +52,12 @@ setGeneric(
 #' @rdname getProfileData-methods
 #' @export
 setMethod(
-  "getProfileData",
-  signature = signature(x = "BigWigFile", gr = "GenomicRanges"),
-  function(
+    "getProfileData",
+    signature = signature(x = "BigWigFile", gr = "GenomicRanges"),
+    function(
     x, gr, upstream = 2500, downstream = upstream, bins = 100,
     mean_mode = "w0", ...
-  ) {
+    ) {
 
     stopifnot(upstream > 0 & downstream > 0 & bins > 0)
     ids <- as.character(gr)
@@ -74,21 +67,17 @@ setMethod(
     vals <- import.bw(x, which = gr_resize)
 
     mat <- normalizeToMatrix(
-      signal = vals,
-      target = resize(gr_resize, width = 1, fix = "center"),
-      extend = (upstream + downstream)/ 2,
-      w = bin_width,
-      mean_mode = mean_mode,
-      value_column = "score",
-      ...
+        signal = vals, target = resize(gr_resize, width = 1, fix = "center"),
+        extend = (upstream + downstream)/ 2, w = bin_width,
+        mean_mode = mean_mode, value_column = "score", ...
     )
     mat <- as.matrix(mat)
     rownames(mat) <- ids
 
     tbl <- as_tibble(mat, rownames = "range")
     tbl <- pivot_longer(
-      tbl, cols = all_of(colnames(mat)),
-      names_to = "position", values_to = "score"
+        tbl, cols = all_of(colnames(mat)), names_to = "position",
+        values_to = "score"
     )
     tbl[["position"]] <- factor(tbl[["position"]], levels = colnames(mat))
     tbl[["bp"]] <- seq(
@@ -105,54 +94,37 @@ setMethod(
 #' @rdname getProfileData-methods
 #' @export
 setMethod(
-  "getProfileData",
-  signature = signature(x = "BigWigFileList", gr = "GenomicRanges"),
-  function(
-    x, gr, upstream = 2500, downstream = upstream, bins = 100, mean_mode = "w0",
-    ...
-  ) {
+    "getProfileData",
+    signature = signature(x = "BigWigFileList", gr = "GenomicRanges"),
+    function(
+        x, gr, upstream = 2500, downstream = upstream, bins = 100,
+        mean_mode = "w0", ...
+    ) {
     out <- lapply(
-      x,
-      getProfileData,
-      gr = gr, upstream = upstream, downstream = downstream, bins = bins,
-      mean_mode = mean_mode, ...
+        x,
+        getProfileData,
+        gr = gr, upstream = upstream, downstream = downstream, bins = bins,
+        mean_mode = mean_mode, ...
     )
     as(out, "GRangesList")
-  }
+    }
 )
 #' @rdname getProfileData-methods
 #' @export
 setMethod(
-  "getProfileData",
-  signature = signature(x = "character", gr = "GenomicRanges"),
-  function(
-    x, gr, upstream = 2500, downstream = upstream, bins = 100, mean_mode = "w0",
-    ...
-  ) {
-    stopifnot(all(file.exists(x)))
-    if (length(x) == 1) {
-      x <- BigWigFile(x)
-    } else {
-      x <- BigWigFileList(x)
+    "getProfileData",
+    signature = signature(x = "character", gr = "GenomicRanges"),
+    function(
+        x, gr, upstream = 2500, downstream = upstream, bins = 100,
+        mean_mode = "w0", ...
+    ) {
+        stopifnot(all(file.exists(x)))
+        if (length(x) == 1) {
+            x <- BigWigFile(x)
+        } else {
+            x <- BigWigFileList(x)
+        }
+        getProfileData(x, gr, upstream, downstream, bins, mean_mode, ...)
     }
-    getProfileData(x, gr, upstream, downstream, bins, mean_mode, ...)
-  }
 )
-#' @rdname getProfileData-methods
-#' @export
-setMethod(
-  "getProfileData",
-  signature = signature(x = "character", gr = "GenomicRanges"),
-  function(
-    x, gr, upstream = 2500, downstream = upstream, bins = 100, mean_mode = "w0",
-    ...
-  ) {
-    stopifnot(all(file.exists(x)))
-    if (length(x) == 1) {
-      x <- BigWigFile(x)
-    } else {
-      x <- BigWigFileList(x)
-    }
-    getProfileData(x, gr, upstream, downstream, bins, mean_mode, ...)
-  }
-)
+

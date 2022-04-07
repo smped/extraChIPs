@@ -23,7 +23,7 @@ collapseGenes(
 
 \item{dedup}{logical(1) Should duplicate names be removed}
 
-\item{format}{character string for markdown formatting as italics/bold}
+\item{format}{character string for markdown formatting of each element}
 
 \item{sep}{separator between vector elements}
 

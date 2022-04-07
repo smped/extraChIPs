@@ -1,6 +1,6 @@
 #' @title Coerce a column to a GRanges object
 #'
-#' @description Coerce a column to a GRanges object
+#' @description Coerce a column to a GRanges object from a rectangular object
 #'
 #' @details
 #' Take a data.frame-like object and coerce one column to a GRanges object,
@@ -16,9 +16,11 @@
 #' A GenomicRanges object
 #'
 #' @examples
+#' set.seed(73)
 #' x <- GRanges(c("chr1:1-10", "chr1:6-15", "chr1:51-60"))
 #' df <- data.frame(logFC = rnorm(3), logCPM = rnorm(3,8), p = 10^-rexp(3))
-#' gr <- mergeByCol(x, df, col = "logCPM", pval = "p")
+#' mcols(x) <- df
+#' gr <- mergeByCol(x, col = "logCPM", pval = "p")
 #' colToRanges(gr, "keyval_range")
 #'
 #' @param x A data-frame or GRanges object containing the column to coerce
@@ -32,8 +34,7 @@
 #' @aliases colToRanges
 #' @export
 setMethod(
-  "colToRanges",
-  signature = signature(x = "DataFrame", var= "character"),
+  "colToRanges", signature = signature(x = "DataFrame"),
   function(x, var, seqinfo = NULL, ...) {
     stopifnot(var %in% colnames(x))
     gr <- GRanges(x[[var]], seqinfo = seqinfo)
@@ -48,8 +49,7 @@ setMethod(
 #' @aliases colToRanges
 #' @export
 setMethod(
-  "colToRanges",
-  signature = signature(x = "GRanges", var= "character"),
+  "colToRanges", signature = signature(x = "GRanges"),
   function(x, var, ...) {
     df <- mcols(x)
     colToRanges(df, var, seqinfo = seqinfo(x), ...)
@@ -60,8 +60,7 @@ setMethod(
 #' @aliases colToRanges
 #' @export
 setMethod(
-  "colToRanges",
-  signature = signature(x = "data.frame", var= "character"),
+  "colToRanges", signature = signature(x = "data.frame"),
   function(x, var, seqinfo = NULL, ...) {
     stopifnot(var %in% colnames(x))
     gr <- GRanges(x[[var]], seqinfo = seqinfo)

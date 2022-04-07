@@ -5,16 +5,17 @@
 \alias{distinctMC,GRanges-method}
 \title{Keep distinct ranges and mcols}
 \usage{
-distinctMC(x, cols, ...)
+distinctMC(x, ...)
 
-\S4method{distinctMC}{GRanges}(x, cols, ...)
+\S4method{distinctMC}{GRanges}(x, ..., .keep_all = FALSE)
 }
 \arguments{
 \item{x}{A GenomicRanges object}
 
-\item{cols}{The mcols to be used to determining distinct ranges/mcols}
+\item{...}{\code{\link[dplyr::dplyr_data_masking]{<data-masking>}} Passed to
+\link[dplyr]{distinct}}
 
-\item{...}{Not used}
+\item{.keep_all}{If \code{TRUE}, keep all columns in \code{x}}
 }
 \value{
 A GRanges object
@@ -23,11 +24,13 @@ A GRanges object
 Keep distinct ranges by including mcols
 }
 \details{
-This function finds unique ranges and mcols in combination and retains only
-the distinct combinations. If no mcols are present defaults to \code{unique(x)}
+Wrapper to \link[dplyr]{distinct} for \code{GRanges} object.
+Finds unique ranges and mcols in combination and retains only
+the distinct combinations, in keeping with the \code{dplyr} function.
+
+Will default to \code{unique(granges(x))} if no columns are provided
 }
 \examples{
-library(tidyselect)
 gr <- GRanges(rep(c("chr1:1-10"), 2))
 gr$id <- paste0("range", seq_along(gr))
 gr$gene <- "gene1"

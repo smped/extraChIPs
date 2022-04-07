@@ -15,16 +15,22 @@ setGeneric(
 #' @export
 #' @name colToRanges
 #' @rdname colToRanges-methods
-setGeneric(
-    "colToRanges", function(x, var, ...) standardGeneric("colToRanges")
-)
+setGeneric("colToRanges", function(x, ...) standardGeneric("colToRanges"))
 
 #' @export
 #' @name distinctMC
 #' @rdname distinctMC-methods
 setGeneric(
     "distinctMC",
-    function(x, cols, ...) standardGeneric("distinctMC")
+    function(x, ...) standardGeneric("distinctMC")
+)
+
+#' @export
+#' @name getProfileData
+#' @rdname getProfileData-methods
+setGeneric(
+    "getProfileData",
+    function(x, gr, ...) standardGeneric("getProfileData")
 )
 
 #' @export

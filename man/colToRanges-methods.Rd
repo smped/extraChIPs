@@ -2,25 +2,25 @@
 % Please edit documentation in R/AllGenerics.R, R/colToRanges.R
 \name{colToRanges}
 \alias{colToRanges}
-\alias{colToRanges,DataFrame,character-method}
-\alias{colToRanges,GRanges,character-method}
-\alias{colToRanges,data.frame,character-method}
+\alias{colToRanges,DataFrame-method}
+\alias{colToRanges,GRanges-method}
+\alias{colToRanges,data.frame-method}
 \title{Coerce a column to a GRanges object}
 \usage{
-colToRanges(x, var, ...)
+colToRanges(x, ...)
 
-\S4method{colToRanges}{DataFrame,character}(x, var, seqinfo = NULL, ...)
+\S4method{colToRanges}{DataFrame}(x, var, seqinfo = NULL, ...)
 
-\S4method{colToRanges}{GRanges,character}(x, var, ...)
+\S4method{colToRanges}{GRanges}(x, var, ...)
 
-\S4method{colToRanges}{data.frame,character}(x, var, seqinfo = NULL, ...)
+\S4method{colToRanges}{data.frame}(x, var, seqinfo = NULL, ...)
 }
 \arguments{
 \item{x}{A data-frame or GRanges object containing the column to coerce}
 
-\item{var}{The name of the column to coerce}
-
 \item{...}{Not used}
+
+\item{var}{The name of the column to coerce}
 
 \item{seqinfo}{A seginfo object to be applied to the GRanges object}
 }
@@ -28,7 +28,7 @@ colToRanges(x, var, ...)
 A GenomicRanges object
 }
 \description{
-Coerce a column to a GRanges object
+Coerce a column to a GRanges object from a rectangular object
 }
 \details{
 Take a data.frame-like object and coerce one column to a GRanges object,
@@ -41,9 +41,11 @@ character column, this provides a simple method of coercion.
 In this case, no Seqinfo element will be applied to the GRanges element.
 }
 \examples{
+set.seed(73)
 x <- GRanges(c("chr1:1-10", "chr1:6-15", "chr1:51-60"))
 df <- data.frame(logFC = rnorm(3), logCPM = rnorm(3,8), p = 10^-rexp(3))
-gr <- mergeByCol(x, df, col = "logCPM", pval = "p")
+mcols(x) <- df
+gr <- mergeByCol(x, col = "logCPM", pval = "p")
 colToRanges(gr, "keyval_range")
 
 }

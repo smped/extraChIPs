@@ -7,15 +7,12 @@
 \usage{
 chopMC(x, simplify = TRUE, ...)
 
-\S4method{chopMC}{GRanges}(x, simplify = TRUE, ...)
+\S4method{chopMC}{GRanges}(x, simplify = TRUE)
 }
 \arguments{
 \item{x}{A GenomicRanges object}
 
-\item{simplify}{logical(1). Attempt to simplify returned columns where
-possible}
-
-\item{...}{Not used}
+\item{simplify}{logical(1)}
 }
 \value{
 A GRanges object
@@ -24,7 +21,7 @@ A GRanges object
 Keep unique ranges by 'chopping' mcols
 }
 \details{
-This function finds unique ranges and chops all mcols in a manner similar
+This function finds unique ranges and chops \strong{all} mcols in a manner similar
 to \link[tidyr]{chop}.
 Chopped columns will be returned as \code{CompressedList} columns, unless
 \code{simplify = TRUE} (the default).

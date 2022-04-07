@@ -3,18 +3,22 @@
 #' @description Keep distinct ranges by including mcols
 #'
 #' @details
-#' This function finds unique ranges and mcols in combination and retains only
-#' the distinct combinations. If no mcols are present defaults to `unique(x)`
+#'
+#' Wrapper to \link[dplyr]{distinct} for `GRanges` object.
+#' Finds unique ranges and mcols in combination and retains only
+#' the distinct combinations, in keeping with the `dplyr` function.
+#'
+#' Will default to `unique(granges(x))` if no columns are provided
 #'
 #' @param x A GenomicRanges object
-#' @param cols The mcols to be used to determining distinct ranges/mcols
-#' @param ... Not used
+#' @param ... \code{\link[dplyr::dplyr_data_masking]{<data-masking>}} Passed to
+#' \link[dplyr]{distinct}
+#' @param .keep_all If `TRUE`, keep all columns in `x`
 #'
 #' @return
 #' A GRanges object
 #'
 #' @examples
-#' library(tidyselect)
 #' gr <- GRanges(rep(c("chr1:1-10"), 2))
 #' gr$id <- paste0("range", seq_along(gr))
 #' gr$gene <- "gene1"
@@ -22,28 +26,22 @@
 #' distinctMC(gr)
 #' distinctMC(gr, "gene")
 #'
-#' @importFrom dplyr distinct across
-#' @importFrom tidyr all_of
+#' @importFrom dplyr distinct
 #' @importFrom GenomeInfoDb seqinfo
+#' @importFrom rlang sym '!!'
 #'
 #' @export
 #' @rdname distinctMC-methods
 #' @aliases distinctMC
 setMethod(
-  "distinctMC", "GRanges",
-  function(x, cols, ...) {
+  "distinctMC", "GRanges", function(x, ..., .keep_all = FALSE) {
 
-    if (ncol(mcols(x)) == 0) return(unique(x))
-    mc_names <- colnames(mcols(x))
-    if (missing(cols)) cols <- mc_names
-    sd <- paste(setdiff(cols, mc_names), sep = ", ")
-    if (length(sd) > 0)
-      stop("Requested columns absent from data: ", sd)
+      if (length(x) == 0) return(x)
 
-    tbl <- as_tibble(x, name = "range")
-    tbl <- distinct(tbl, across(all_of(c("range", cols))))
-    gr <- colToRanges(tbl, "range", seqinfo = seqinfo(x))
-    gr
+      tbl <- as_tibble(x, rangeAsChar = TRUE)
+      tbl <- distinct(tbl, !!sym("range"), ..., .keep_all = .keep_all)
+      gr <- colToRanges(tbl, "range", seqinfo = seqinfo(x))
+      gr
 
   }
 )
