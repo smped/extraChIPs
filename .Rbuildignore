@@ -4,7 +4,6 @@
 ^codecov\.yml$
 ^data-raw$
 ^_pkgdown\.yml$
-^docs$
 ^pkgdown$
-^TODO.md$
+^.*TODO\.md$
 ^\.github$

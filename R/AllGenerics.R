@@ -28,13 +28,6 @@ setGeneric(
 )
 
 #' @export
-#' @name dualFilter
-#' @rdname dualFilter-methods
-setGeneric(
-    "dualFilter", function(x, bg, ref, ...) standardGeneric("dualFilter")
-)
-
-#' @export
 #' @name grlToSE
 #' @rdname grlToSE-methods
 setGeneric("grlToSE", function(x, ...) standardGeneric("grlToSE"))

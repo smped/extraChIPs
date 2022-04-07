@@ -29,8 +29,12 @@
 #' @param logCPM logical(1) Add a logCPM assay to the returned data
 #' @param keep.totals logical(1) Keep the original library sizes or replace
 #' using only the retained windows
+#' @param quick logical(1) Filter relative to control using only provided
+#' windows. If `FALSE`, the \link[csaw]{scaleFilterControl} approach using
+#' large bins will be performed. As this will recount genomic windows using all
+#' bam files, this is a slower but more cautious approach. Final results do not
+#' diverge significantly between the two methods (~95% common windows retained)
 #' @param BPPARAM Settings for running in parallel
-#' @param ... Not used
 #'
 #' @return
 #' A \link[SummarizedExperiment]{RangedSummarizedExperiment} which is a
@@ -52,19 +56,74 @@
 #' @importMethodsFrom SummarizedExperiment colData
 #' @importMethodsFrom SummarizedExperiment assay 'assay<-'
 #'
-#' @rdname dualFilter-methods
+#' @examples
+#' \donttest{
+#' ## Taken from the differential_binding vignette
+#' library(tidyverse)
+#' library(Rsamtools)
+#' library(csaw)
+#' library(BiocParallel)
+#' library(rtracklayer)
+#' ## For this function we need a set of counts using sliding windows and the
+#' ## original BamFiles from which they were taken
+#' ## First we'll set up the bam file list
+#' bfl <- system.file(
+#'     "extdata", "bam", c("ex1.bam", "ex2.bam", "input.bam"), package = "extraChIPs"
+#'     ) %>%
+#'     BamFileList() %>%
+#'     setNames(c("ex1", "ex2", "input"))
+#'
+#' ## Then define the readParam settings for csaw::readParam()
+#' rp <- readParam(
+#'     pe = "none",
+#'     dedup = TRUE,
+#'     restrict = "chr10"
+#' )
+#'
+#' ## Now we can form our sliding window object with the counts.
+#' wincounts <- windowCounts(
+#'     bam.files = bfl,
+#'     spacing = 60,
+#'     width = 180,
+#'     ext = 200,
+#'     filter = 1,
+#'     param = rp
+#' )
+#' ## As this is a subset of reads, add the initial library sizes for accuracy
+#' ## Note that this step is not normally required
+#' wincounts$totals <- c(964076L, 989543L, 1172179L)
+#'
+#' ## We should also update the metadata for our counts
+#' wincounts$sample <- colnames(wincounts)
+#' wincounts$treat <- as.factor(c("ctrl", "treat", NA))
+#' colData(wincounts)
+#'
+#' ## The function dualFilter requires a set of peaks which will guide the
+#' ## filtering step. This indicate where genuine signal is likely to be found
+#' ## and will perform the filtering based on a) signal above the input, and
+#' ## b) The overall signal level, using the guide set of peaks to inform the
+#' ## cutoff values for inclusion
+#' peaks <- import.bed(
+#'     system.file("extdata", "peaks.bed.gz", package = "extraChIPs")
+#' )
+#' filtcounts <- dualFilter(
+#'     x = wincounts[, !is.na(wincounts$treat)],
+#'     bg = wincounts[, is.na(wincounts$treat)],
+#'     ref = peaks,
+#'     q = 0.8 # Better to use q = 0.5 on real data
+#' )
+#'
+#' }
+#'
 #' @export
-setMethod(
-  "dualFilter",
-  signature = signature(
-    x = "RangedSummarizedExperiment",
-    bg = "RangedSummarizedExperiment",
-    ref = "GRanges"
-  ),
-  function(
-    x, bg, ref, q = 0.5, logCPM = TRUE,
-    keep.totals = TRUE, BPPARAM = bpparam()
-  ) {
+dualFilter <- function(
+        x, bg, ref, q = 0.5, logCPM = TRUE, keep.totals = TRUE, quick = TRUE,
+        BPPARAM = bpparam()
+) {
+
+    stopifnot(is(x, "RangedSummarizedExperiment"))
+    stopifnot(is(bg, "RangedSummarizedExperiment"))
+    stopifnot(is(ref, "GRanges"))
 
     ## Argument checks
     stopifnot(q <= 1, q > 0)
@@ -77,7 +136,7 @@ setMethod(
     bfl <- BamFileList(colData(x)$bam.files)
     names(bfl) <- colnames(x)
     stopifnot(all(file.exists(path(bfl))))
-
+    ## Repeat for the input samples
     stopifnot("bam.files" %in% colnames(colData(bg)))
     bg_bfl <- BamFileList(colData(bg)$bam.files)
     names(bg_bfl) <- colnames(bg)
@@ -90,46 +149,57 @@ setMethod(
     rp <- readParam()
     if (!is.null(metadata(x)$param)) rp <- metadata(x)$param
 
-    ## Apply the filter using control samples
-    bin_size <- 1e4
-    signal_counts <- windowCounts(
-      bam.files = bfl,
-      spacing = bin_size, filter = 0, param = rp, BPPARAM = BPPARAM
-    )
-    if (keep.totals) signal_counts$totals <- x[,names(bfl)]$totals
-    bg_counts <- windowCounts(
-      bam.files = bg_bfl,
-      spacing = bin_size, filter = 0, param = rp, BPPARAM = BPPARAM
-    )
-    if (keep.totals) bg_counts$totals <- bg[,names(bg_bfl)]$totals
-    scf <- scaleControlFilter(signal_counts, bg_counts)
-    control_filter <- filterWindowsControl(
-      data = x, background = bg, scale.info = scf
-    )$filter
+    ## TODO: Add a routine for when no Input sample is provided
     cuts <- list()
-    cuts$control <- quantile(control_filter[ol], probs = 1 - sqrt(q))
+    if (quick) {
+        ## Avoid using the bam files, and just compare the actual samples
+        ## This is quick & dirty but can yield very similar results to the more
+        ## formal approach taken using csaw
+        logFC <- log2(assay(x, "counts") / assay(bg, "counts"))
+        logFC_ave <- rowMedians(logFC, na.rm = TRUE)
+        cuts$control <- quantile(logFC_ave[ol], probs = 1-sqrt(q), na.rm = TRUE)
+        keep_control <- logFC_ave > cuts$control
+    } else {
+        ## Apply the filter using control samples using the csaw method
+        bin_size <- 1e4
+        signal_counts <- windowCounts(
+            bam.files = bfl,
+            spacing = bin_size, filter = 0, param = rp, BPPARAM = BPPARAM
+        )
+        if (keep.totals) signal_counts$totals <- x[,names(bfl)]$totals
+        bg_counts <- windowCounts(
+            bam.files = bg_bfl,
+            spacing = bin_size, filter = 0, param = rp, BPPARAM = BPPARAM
+        )
+        if (keep.totals) bg_counts$totals <- bg[,names(bg_bfl)]$totals
+        scf <- scaleControlFilter(signal_counts, bg_counts)
+        control_filter <- filterWindowsControl(
+            data = x, background = bg, scale.info = scf
+        )$filter
+        cuts$control <- quantile(control_filter[ol], probs = 1 - sqrt(q))
+        keep_control <- control_filter > cuts$control
+    }
 
-    ## Apply the filter using the expression percentile
+    ## Apply the filter using the expression percentile. This is quick already
     prop_filter <- filterWindowsProportion(x)$filter
     cuts$prop <- quantile(prop_filter[ol], probs = 1 - sqrt(q))
 
-    keep <- control_filter > cuts$control & prop_filter > cuts$prop
+    keep <- keep_control & prop_filter > cuts$prop
     out <- x[keep,]
     rowData(out)$overlaps_ref <- ol[keep]
     metadata(out)$cuts <- lapply(cuts, as.numeric)
 
     if (!keep.totals) {
-      gr <- rowRanges(out)
-      totals <- bplapply(bfl, countBam, param = ScanBamParam(which = gr))
-      out$totals <- vapply(totals, function(x) sum(x$records), numeric(1))
+        gr <- rowRanges(out)
+        totals <- bplapply(bfl, countBam, param = ScanBamParam(which = gr))
+        out$totals <- vapply(totals, function(x) sum(x$records), numeric(1))
     }
 
-    if (logCPM) {
-      assay(out, "logCPM") <- cpm(
-        assay(out, "counts"), log = TRUE, lib.size = out$totals
-      )
-    }
+    if (logCPM)
+        assay(out, "logCPM") <- cpm(
+            assay(out, "counts"), log = TRUE, lib.size = out$totals
+        )
+
     out
 
-  }
-)
+}
