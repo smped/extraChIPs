@@ -13,6 +13,8 @@ chopMC(x, simplify = TRUE, ...)
 \item{x}{A GenomicRanges object}
 
 \item{simplify}{logical(1)}
+
+\item{...}{Not used}
 }
 \value{
 A GRanges object

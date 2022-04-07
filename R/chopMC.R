@@ -11,6 +11,7 @@
 #'
 #' @param x A GenomicRanges object
 #' @param simplify logical(1)
+#' @param ... Not used
 #'
 #' @return
 #' A GRanges object
