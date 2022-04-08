@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.4</span>
       </span>
     </div>
 
@@ -123,7 +123,7 @@ this vignette (<code>tidyverse</code>, <code>Rsamtools</code>,
 <code>csaw</code>, <code>BiocParallel</code> and
 <code>rtracklayer</code>) can also be installed.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="st">"BiocManager"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html" class="external-link">installed.packages</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="st">"BiocManager"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html" class="external-link">installed.packages</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span>
 <span class="va">pkg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tidyverse"</span>, <span class="st">"Rsamtools"</span>, <span class="st">"csaw"</span>, <span class="st">"BiocParallel"</span>, <span class="st">"rtracklayer"</span><span class="op">)</span>
 <span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="va">pkg</span><span class="op">)</span>
@@ -226,13 +226,13 @@ signal.</p>
   <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"peaks.bed.gz"</span>, package <span class="op">=</span> <span class="st">"extraChIPs"</span><span class="op">)</span>
 <span class="op">)</span>
 <span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/genomic-range-squeezers.html" class="external-link">granges</a></span><span class="op">(</span><span class="va">peaks</span><span class="op">)</span></code></pre></div>
-<p>The we can pass these to the function <code><a href="../reference/dualFilter-methods.html">dualFilter()</a></code> which
+<p>The we can pass these to the function <code><a href="../reference/dualFilter.html">dualFilter()</a></code> which
 utilises the strategy described above. On large datasets, this can be
 quite time-consuming, as can the initial counting step. Due to the small
 example dataset, a more inclusive threshold for <code>q</code> will be
 used here.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">filtcounts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dualFilter-methods.html">dualFilter</a></span><span class="op">(</span>
+<code class="sourceCode R"><span class="va">filtcounts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dualFilter.html">dualFilter</a></span><span class="op">(</span>
   x <span class="op">=</span> <span class="va">wincounts</span><span class="op">[</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">$</span><span class="va">treat</span><span class="op">)</span><span class="op">]</span>,
   bg <span class="op">=</span> <span class="va">wincounts</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">$</span><span class="va">treat</span><span class="op">)</span><span class="op">]</span>, 
   ref <span class="op">=</span> <span class="va">peaks</span>,
@@ -906,14 +906,14 @@ experiment.</p>
 <span class="co">## [8] base     </span>
 <span class="co">## </span>
 <span class="co">## other attached packages:</span>
-<span class="co">##  [1] extraChIPs_0.99.3           rtracklayer_1.55.4         </span>
+<span class="co">##  [1] extraChIPs_0.99.4           rtracklayer_1.55.4         </span>
 <span class="co">##  [3] BiocParallel_1.29.20        csaw_1.29.1                </span>
 <span class="co">##  [5] SummarizedExperiment_1.25.3 Biobase_2.55.1             </span>
 <span class="co">##  [7] MatrixGenerics_1.7.0        matrixStats_0.61.0         </span>
 <span class="co">##  [9] Rsamtools_2.11.0            Biostrings_2.63.3          </span>
 <span class="co">## [11] XVector_0.35.0              GenomicRanges_1.47.6       </span>
 <span class="co">## [13] GenomeInfoDb_1.31.7         IRanges_2.29.1             </span>
-<span class="co">## [15] S4Vectors_0.33.16           BiocGenerics_0.41.2        </span>
+<span class="co">## [15] S4Vectors_0.33.17           BiocGenerics_0.41.2        </span>
 <span class="co">## [17] forcats_0.5.1               stringr_1.4.0              </span>
 <span class="co">## [19] dplyr_1.0.8                 purrr_0.3.4                </span>
 <span class="co">## [21] readr_2.1.2                 tidyr_1.2.0                </span>
@@ -985,7 +985,7 @@ experiment.</p>
 <span class="co">## [123] restfulr_0.0.13            curl_4.3.2                </span>
 <span class="co">## [125] rjson_0.2.21               lifecycle_1.0.1           </span>
 <span class="co">## [127] jsonlite_1.8.0             viridisLite_0.4.0         </span>
-<span class="co">## [129] desc_1.4.1                 limma_3.51.5              </span>
+<span class="co">## [129] desc_1.4.1                 limma_3.51.6              </span>
 <span class="co">## [131] BSgenome_1.63.6            fansi_1.0.3               </span>
 <span class="co">## [133] pillar_1.7.0               lattice_0.20-45           </span>
 <span class="co">## [135] KEGGREST_1.35.0            fastmap_1.1.0             </span>
