@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.5</span>
       </span>
     </div>
 
@@ -66,15 +66,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">partitionRanges</span><span class="op">(</span>
-  <span class="va">x</span>,
-  <span class="va">y</span>,
-  y_as_both <span class="op">=</span> <span class="cn">TRUE</span>,
-  ignore.strand <span class="op">=</span> <span class="cn">FALSE</span>,
-  simplify <span class="op">=</span> <span class="cn">TRUE</span>,
-  suffix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".x"</span>, <span class="st">".y"</span><span class="op">)</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">partitionRanges</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span>
 
 <span class="co"># S4 method for GRanges,GRanges</span>
 <span class="fu">partitionRanges</span><span class="op">(</span>
@@ -92,6 +84,8 @@
     <h2>Arguments</h2>
     <dl><dt>x, y</dt>
 <dd><p>GenomicRanges objects</p></dd>
+<dt>...</dt>
+<dd><p>Not used</p></dd>
 <dt>y_as_both</dt>
 <dd><p>logical(1) If there are any unstranded regions in y, should
 these be assigned to both strands. If TRUE unstranded regions can be used
@@ -103,8 +97,6 @@ to partition stranded regions</p></dd>
 <dd><p>Pass to chopMC and simplify mcols in the output</p></dd>
 <dt>suffix</dt>
 <dd><p>Added to any shared column names in the provided objects</p></dd>
-<dt>...</dt>
-<dd><p>Not used</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>

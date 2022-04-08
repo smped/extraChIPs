@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.5</span>
       </span>
     </div>
 
@@ -202,7 +202,7 @@ italics by default.</p>
 <p>The standard set operations implemented in the package
 <code>GenomicRanges</code> will always drop the <code>mcols</code>
 element by default. The <code>extraChIPs</code> functions
-<code><a href="../reference/reduceMC-methods.html">reduceMC()</a></code>, <code><a href="../reference/setoptsMC-methods.html">setdiffMC()</a></code>,
+<code><a href="../reference/reduceMC.html">reduceMC()</a></code>, <code><a href="../reference/setoptsMC-methods.html">setdiffMC()</a></code>,
 <code><a href="../reference/setoptsMC-methods.html">intersectMC()</a></code> and <code><a href="../reference/setoptsMC-methods.html">unionMC()</a></code> all produce the
 same output as their similarly-named functions, however, the
 <code>mcols()</code> elements in the query object are also returned.
@@ -229,7 +229,7 @@ the width as 1.</p>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
 <p>As we can see, two transcripts start at position 5, so we may choose
 to reduce this, which would lose the <code>mcols</code> element. The
-alternative <code><a href="../reference/reduceMC-methods.html">reduceMC()</a></code> will retain all
+alternative <code><a href="../reference/reduceMC.html">reduceMC()</a></code> will retain all
 <code>mcols</code>.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">GenomicRanges</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/inter-range-methods.html" class="external-link">reduce</a></span><span class="op">(</span><span class="va">tss</span><span class="op">)</span></code></pre></div>
@@ -241,7 +241,7 @@ alternative <code><a href="../reference/reduceMC-methods.html">reduceMC()</a></c
 <span class="co">##   -------</span>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/reduceMC-methods.html">reduceMC</a></span><span class="op">(</span><span class="va">tss</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/reduceMC.html">reduceMC</a></span><span class="op">(</span><span class="va">tss</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## GRanges object with 2 ranges and 3 metadata columns:</span>
 <span class="co">##       seqnames    ranges strand |     gene_id                   tx_id</span>
 <span class="co">##          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;         &lt;CharacterList&gt;</span>
@@ -261,7 +261,7 @@ simplification of the multiple values seen in the <code>gene_id</code>
 can also be turned off if desired should repeated values be important
 for downstream analysis.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/reduceMC-methods.html">reduceMC</a></span><span class="op">(</span><span class="va">tss</span>, simplify <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> </code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/reduceMC.html">reduceMC</a></span><span class="op">(</span><span class="va">tss</span>, simplify <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> </code></pre></div>
 <pre><code><span class="co">## GRanges object with 2 ranges and 3 metadata columns:</span>
 <span class="co">##       seqnames    ranges strand |         gene_id                   tx_id</span>
 <span class="co">##          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;CharacterList&gt;         &lt;CharacterList&gt;</span>
@@ -276,7 +276,7 @@ for downstream analysis.</p>
 <p>This allows for simple integration with <code>tidyverse</code>
 nesting strategies.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/reduceMC-methods.html">reduceMC</a></span><span class="op">(</span><span class="va">tss</span>, simplify <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+<code class="sourceCode R"><span class="fu"><a href="../reference/reduceMC.html">reduceMC</a></span><span class="op">(</span><span class="va">tss</span>, simplify <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="../reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## <span style="color: #949494;"># A tibble: 3 × 4</span></span>
@@ -287,11 +287,11 @@ nesting strategies.</p>
 <span class="co">## <span style="color: #BCBCBC;">3</span> chr1:5:+ gene1   transcript3 0.615</span></code></pre>
 <p>Whilst <code>reduceMC</code> relies on the range-reduction as
 implemented in <code><a href="https://rdrr.io/pkg/GenomicRanges/man/inter-range-methods.html" class="external-link">GenomicRanges::reduce()</a></code>, some alternative
-approaches are included, such as <code><a href="../reference/chopMC-methods.html">chopMC()</a></code>, which finds
+approaches are included, such as <code><a href="../reference/chopMC.html">chopMC()</a></code>, which finds
 identical ranges and nests the mcols element as
 <code>CompressedList</code> objects.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/chopMC-methods.html">chopMC</a></span><span class="op">(</span><span class="va">tss</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/chopMC.html">chopMC</a></span><span class="op">(</span><span class="va">tss</span><span class="op">)</span></code></pre></div>
 <pre><code><span class="co">## GRanges object with 2 ranges and 3 metadata columns:</span>
 <span class="co">##       seqnames    ranges strand |     gene_id                   tx_id</span>
 <span class="co">##          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;         &lt;CharacterList&gt;</span>
@@ -304,7 +304,7 @@ identical ranges and nests the mcols element as
 <span class="co">##   -------</span>
 <span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></code></pre>
 <p>In the case of the object <code>tss</code>, this output is identical
-to <code><a href="../reference/reduceMC-methods.html">reduceMC()</a></code>, however, given that there are no identical
+to <code><a href="../reference/reduceMC.html">reduceMC()</a></code>, however, given that there are no identical
 ranges in <code>gr</code> the two functions would behave very
 differently on that object.</p>
 <p>A final operation for simplifying <code>GRanges</code> objects would
@@ -428,7 +428,7 @@ strongly.</p>
 <h2 id="more-complex-operations">More Complex Operations<a class="anchor" aria-label="anchor" href="#more-complex-operations"></a>
 </h2>
 <div class="section level3">
-<h3 id="range-paritioning">Range Paritioning<a class="anchor" aria-label="anchor" href="#range-paritioning"></a>
+<h3 id="range-partitioning">Range Partitioning<a class="anchor" aria-label="anchor" href="#range-partitioning"></a>
 </h3>
 <p>In addition to standard set operations, one set of ranges can be used
 to partition another set of ranges, returning <code>mcols</code> from
@@ -530,8 +530,8 @@ and ranges were not stitched together across this barrier.</p>
 <span class="co">## [8] base     </span>
 <span class="co">## </span>
 <span class="co">## other attached packages:</span>
-<span class="co">##  [1] plyranges_1.15.0            extraChIPs_0.99.4          </span>
-<span class="co">##  [3] SummarizedExperiment_1.25.3 Biobase_2.55.1             </span>
+<span class="co">##  [1] plyranges_1.15.0            extraChIPs_0.99.5          </span>
+<span class="co">##  [3] SummarizedExperiment_1.25.3 Biobase_2.55.2             </span>
 <span class="co">##  [5] MatrixGenerics_1.7.0        matrixStats_0.61.0         </span>
 <span class="co">##  [7] GenomicRanges_1.47.6        GenomeInfoDb_1.31.7        </span>
 <span class="co">##  [9] IRanges_2.29.1              S4Vectors_0.33.17          </span>
@@ -595,7 +595,7 @@ and ranges were not stitched together across this barrier.</p>
 <span class="co">##  [99] ComplexHeatmap_2.11.0      MASS_7.3-56               </span>
 <span class="co">## [101] GenomicInteractions_1.29.3 rappdirs_0.3.3            </span>
 <span class="co">## [103] Matrix_1.4-1               cli_3.2.0                 </span>
-<span class="co">## [105] parallel_4.2.0             Gviz_1.39.5               </span>
+<span class="co">## [105] parallel_4.2.0             Gviz_1.39.6               </span>
 <span class="co">## [107] metapod_1.3.0              igraph_1.3.0              </span>
 <span class="co">## [109] pkgconfig_2.0.3            pkgdown_2.0.2.9000        </span>
 <span class="co">## [111] GenomicAlignments_1.31.2   foreign_0.8-82            </span>
