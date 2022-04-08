@@ -47,6 +47,7 @@ test_that("reduceMC returns a list when expected", {
 
   id <- reduceMC(x, ignore.strand = FALSE)$id
   expect_equal(id, c("range1", "range2"))
+  expect_error(reduceMC(""), "'x' must be a GenomicRanges object")
 
 })
 

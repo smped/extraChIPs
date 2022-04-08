@@ -339,9 +339,9 @@ test_that("Malformed cytobands are caught", {
 test_that("Ideogram forms correctly", {
   ideo <- .makeIdeoTrack(gr1, cyto_df, 12)
   expect_true(is(ideo, "IdeogramTrack"))
-  expect_message(
-    .makeIdeoTrack(gr1, .fontsize = 12),
-    "Could not find cytogenetic bands for genome NA"
+  expect_error(
+    .makeIdeoTrack(gr1, "", .fontsize = 12),
+    "'bands' must be an object of class 'data.frame'"
   )
 })
 

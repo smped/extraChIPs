@@ -3,7 +3,6 @@
 \name{plotAssayRle}
 \alias{plotAssayRle}
 \alias{plotAssayRle,SummarizedExperiment-method}
-\alias{plotAssayRle,ANY-method}
 \title{Plot RLE for a given assay within a SummarizedExperiment}
 \usage{
 plotAssayRle(x, ...)
@@ -19,8 +18,6 @@ plotAssayRle(x, ...)
   trans = c(),
   ...
 )
-
-\S4method{plotAssayRle}{ANY}(x, ...)
 }
 \arguments{
 \item{x}{A SummarizedExperiment object}

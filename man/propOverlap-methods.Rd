@@ -5,17 +5,17 @@
 \alias{propOverlap,GRanges,GRanges-method}
 \title{Find the proportions of an overlapping range}
 \usage{
-propOverlap(x, y, ignore.strand = FALSE, ...)
+propOverlap(x, y, ...)
 
 \S4method{propOverlap}{GRanges,GRanges}(x, y, ignore.strand = FALSE, ...)
 }
 \arguments{
 \item{x, y}{A GenomicRanges object}
 
+\item{...}{Not used}
+
 \item{ignore.strand}{If set to TRUE, then the strand of x and y is set to
 "*" prior to any computation.}
-
-\item{...}{Not used}
 }
 \value{
 Numeric vector the same length as x

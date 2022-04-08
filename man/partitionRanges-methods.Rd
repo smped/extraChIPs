@@ -5,15 +5,7 @@
 \alias{partitionRanges,GRanges,GRanges-method}
 \title{Partition a set of Genomic Ranges}
 \usage{
-partitionRanges(
-  x,
-  y,
-  y_as_both = TRUE,
-  ignore.strand = FALSE,
-  simplify = TRUE,
-  suffix = c(".x", ".y"),
-  ...
-)
+partitionRanges(x, y, ...)
 
 \S4method{partitionRanges}{GRanges,GRanges}(
   x,
@@ -28,6 +20,8 @@ partitionRanges(
 \arguments{
 \item{x, y}{GenomicRanges objects}
 
+\item{...}{Not used}
+
 \item{y_as_both}{logical(1) If there are any unstranded regions in y, should
 these be assigned to both strands. If TRUE unstranded regions can be used
 to partition stranded regions}
@@ -38,8 +32,6 @@ to partition stranded regions}
 \item{simplify}{Pass to chopMC and simplify mcols in the output}
 
 \item{suffix}{Added to any shared column names in the provided objects}
-
-\item{...}{Not used}
 }
 \value{
 A GRanges object

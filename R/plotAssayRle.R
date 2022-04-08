@@ -89,10 +89,3 @@ setMethod(
 
   }
 )
-#' @rdname plotAssayRle-methods
-#' @aliases plotAssayRle
-#' @export
-setMethod(
-  "plotAssayRle", signature = signature(x = "ANY"),
-  function(x, ...) .errNotImp(x)
-)

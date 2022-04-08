@@ -10,11 +10,11 @@
 \alias{unionMC}
 \title{Perform set operations retaining mcols}
 \usage{
-setdiffMC(x, y, ignore.strand = FALSE, simplify = TRUE, ...)
+setdiffMC(x, y, ...)
 
-intersectMC(x, y, ignore.strand = FALSE, simplify = TRUE, ...)
+intersectMC(x, y, ...)
 
-unionMC(x, y, ignore.strand = FALSE, simplify = TRUE, ...)
+unionMC(x, y, ...)
 
 \S4method{setdiffMC}{GRanges,GRanges}(x, y, ignore.strand = FALSE, simplify = TRUE, ...)
 
@@ -25,14 +25,14 @@ unionMC(x, y, ignore.strand = FALSE, simplify = TRUE, ...)
 \arguments{
 \item{x, y}{GenomicRanges objects}
 
+\item{...}{Not used}
+
 \item{ignore.strand}{If set to TRUE, then the strand of x and y is set to
 "*" prior to any computation.}
 
 \item{simplify}{logical(1) If TRUE, any List columns will be returned as
 vectors where possible. This can only occur if single, unique entries are
 present in all initial elements.}
-
-\item{...}{Not used}
 }
 \value{
 A GRanges object with all mcols returned form the original object.

@@ -217,7 +217,7 @@ bestOverlap(gr, peaks, var = "peak_id")
 
 # More Complex Operations 
 
-## Range Paritioning
+## Range Partitioning
 
 In addition to standard set operations, one set of ranges can be used to 
 partition another set of ranges, returning `mcols` from both ranges.

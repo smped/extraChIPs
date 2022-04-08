@@ -33,14 +33,9 @@
 #'
 #'
 #' @export
-#' @rdname reduceMC-methods
-#' @aliases reduceMC
-setMethod(
-  "reduceMC", "GRanges",
-  function(x, ignore.strand, simplify, ...) {
-
+reduceMC <- function(x, ignore.strand = FALSE, simplify = TRUE, ...) {
+    if (!is(x, "GenomicRanges"))
+        stop("'x' must be a GenomicRanges object")
     gr <- GenomicRanges::reduce(x, ignore.strand = ignore.strand, ...)
     .mapMcols2Ranges(gr, x, ignore.strand, simplify)
-  }
-)
-
+}

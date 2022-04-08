@@ -9,4 +9,5 @@ test_that("Default settings for chopMC work", {
   expect_equal(chop_gr$id[[1]], gr$id)
   chop_gr <- chopMC(gr, simplify = FALSE)
   expect_true(is(chop_gr$gene, "CharacterList"))
+  expect_error(chopMC(""), "'x' must be a GenomicRanges object")
 })
