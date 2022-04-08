@@ -24,6 +24,7 @@
 #' gr
 #' distinctMC(gr)
 #' distinctMC(gr, gene)
+#' distinctMC(gr, gene, .keep_all = TRUE)
 #'
 #' @importFrom dplyr distinct
 #' @importFrom GenomeInfoDb seqinfo

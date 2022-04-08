@@ -33,5 +33,6 @@ gr$gene <- "gene1"
 gr
 distinctMC(gr)
 distinctMC(gr, gene)
+distinctMC(gr, gene, .keep_all = TRUE)
 
 }
