@@ -157,12 +157,14 @@ however, given that there are no identical ranges in `gr` the two functions
 would behave very differently on that object.
 
 A final operation for simplifying `GRanges` objects would be `distinctMC()`
-which finds unique ranges, along with unique `mcols`.
-The columns to search can be called using `<tidy-select>` approaches,
+which is a wrapper to `dplyr]::distinct` incorporating both the range and 
+`mcols`.
+The columns to search can be called using `<data-masking>` approaches as detailed
+in the manual.
 
 ```{r distinct}
 distinctMC(tss)
-distinctMC(tss, all_of("gene_id"))
+distinctMC(tss, gene_id)
 ```
 
 
