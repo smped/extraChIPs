@@ -174,6 +174,7 @@
 #'
 #'
 #' @examples
+#' \donttest{
 #' library(rtracklayer)
 #' ## Make sure we have the cytobands active
 #' data(grch37.cytobands)
@@ -201,6 +202,7 @@
 #'   featcol = featcol, linecol = bw_col,
 #'   collapseTranscripts = FALSE, cytobands = grch37.cytobands
 #' )
+#' }
 #'
 #' @return
 #' A Gviz object

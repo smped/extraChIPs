@@ -322,6 +322,7 @@ GRanges, across all of the tracks must be included as a colour}
 }
 
 \examples{
+\donttest{
 library(rtracklayer)
 ## Make sure we have the cytobands active
 data(grch37.cytobands)
@@ -349,5 +350,6 @@ plotHFGC(
   featcol = featcol, linecol = bw_col,
   collapseTranscripts = FALSE, cytobands = grch37.cytobands
 )
+}
 
 }

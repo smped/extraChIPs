@@ -104,7 +104,9 @@ setMethod(
   if (length(.gr) == 0) return(GRanges())
 
   ## Treat the ranges differently if there is a match, or no match
-  grl <- as.list(split(.gr, f = overlapsAny(.gr, .x)))
+  grl <- as.list(
+      split(.gr, f = overlapsAny(.gr, .x, ignore.strand = .ignore.strand))
+  )
   hits <- findOverlaps(grl[["TRUE"]], .x, ignore.strand = .ignore.strand)
   i <- queryHits(hits)
   j <- subjectHits(hits)
@@ -144,7 +146,7 @@ setMethod(
   }
   gr <- unlist(GRangesList(grl))
   names(gr) <- c()
-  sort(gr)
+  sort(gr, ignore.strand = .ignore.strand)
 }
 
 #' @importFrom S4Vectors splitAsList endoapply

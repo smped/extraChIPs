@@ -6,9 +6,9 @@
 [![Repo Status](https://img.shields.io/badge/repo%20status-Active-green.svg)](https://shields.io/)
 <!-- badges: end -->
 
-`extraChIPs` is a package primarily designed to enable ChIP-Seq analysis,
-Whilst the package was built to enable the 
-[GRAVI: Gene Regulatory Analysis using Variable Inputs](https://github.com/steveped/GRAVI), 
+`extraChIPs` is a package primarily designed to enable ChIP-Seq analysis.
+Whilst the package was primarily built for the 
+[GRAVI: Gene Regulatory Analysis using Variable Inputs](https://github.com/steveped/GRAVI)  
 workflow, the functionality extends beyond this specific application.
 Functions focus primarily on
 
