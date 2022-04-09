@@ -101,6 +101,7 @@ original element names as the column "name" which can be seen in the $data
 element of any resultant ggplot object produced by this function.
 }
 \examples{
+\donttest{
 library(rtracklayer)
 fl <- system.file(
 "extdata", "bigwig", c("ex1.bw", "ex2.bw"), package = "extraChIPs"
@@ -118,5 +119,6 @@ pd <- getProfileData(bwfl, gr)
 plotProfileHeatmap(pd, "profile_data") +
   scale_fill_viridis_c(option = "inferno", direction = -1) +
   labs(fill = "Coverage")
+}
 
 }

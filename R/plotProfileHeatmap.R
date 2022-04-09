@@ -48,6 +48,7 @@
 #' A `ggplot2` object, able to be customised using standard `ggplot2` syntax
 #'
 #' @examples
+#' \donttest{
 #' library(rtracklayer)
 #' fl <- system.file(
 #' "extdata", "bigwig", c("ex1.bw", "ex2.bw"), package = "extraChIPs"
@@ -65,6 +66,7 @@
 #' plotProfileHeatmap(pd, "profile_data") +
 #'   scale_fill_viridis_c(option = "inferno", direction = -1) +
 #'   labs(fill = "Coverage")
+#' }
 #'
 #' @name plotProfileHeatmap
 #' @rdname plotProfileHeatmap-methods
