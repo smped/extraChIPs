@@ -73,3 +73,15 @@ test_that("unionMC works correctly", {
     CharacterList("range1", character())
   )
 })
+
+test_that("intersectMC works correctly", {
+    x <- GRanges("chr1:1-100:+")
+    x$id <- "range1"
+    y <- GRanges(c("chr1:51-60:+", "chr1:21-30:-"))
+    xy <- intersectMC(x, y)
+    expect_equal("chr1:51-60:+", as.character(xy))
+    expect_equal(xy$id, "range1")
+    xy <- intersectMC(x, y, ignore.strand = TRUE)
+    expect_equal(as.character(xy), c("chr1:21-30", "chr1:51-60"))
+    expect_equal(xy$id, rep("range1", 2))
+})
