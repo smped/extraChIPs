@@ -89,7 +89,7 @@ test_that(".mapWithin returns NULL & errors when expected", {
   expect_error(.mapWithin(gr, genes, ""))
 })
 
-## Try reducing build time
+## Moved to longtest
 # test_that("mapByFeature produces the correct output", {
 #   ol_only <- mapByFeature(gr, genes, cols = "gene_id", gr2gene = 0)$gene_id
 #   expected <- new(

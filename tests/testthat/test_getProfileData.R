@@ -13,7 +13,7 @@ test_that("Check structure of output", {
   expect_equal(dim(out$a$profile_data[[1]]), c(10, 3))
 })
 
-## Stop testing this to try get build below 10 mins
+## Moved to longtest
 # test_that("Paths behave correctly", {
 #   expect_s4_class(getProfileData(bw, gr, upstream = 10, bins = 10), "GRanges")
 #   expect_s4_class(getProfileData(c(bw, bw), gr, upstream = 10, bins = 10), "GRangesList")
