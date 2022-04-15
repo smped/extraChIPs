@@ -89,46 +89,6 @@ test_that(".mapWithin returns NULL & errors when expected", {
   expect_error(.mapWithin(gr, genes, ""))
 })
 
-## Moved to longtest
-# test_that("mapByFeature produces the correct output", {
-#   ol_only <- mapByFeature(gr, genes, cols = "gene_id", gr2gene = 0)$gene_id
-#   expected <- new(
-#     "CompressedCharacterList", elementType = "character",
-#     elementMetadata = NULL, metadata = list(),
-#     unlistData = c("gene1", "gene2", "gene3"),
-#     partitioning = new(
-#       "PartitioningByEnd", end = c(0L, 1L, 1L, 2L, 3L, 3L),
-#       NAMES = NULL, elementType = "ANY", elementMetadata = NULL, metadata = list()
-#     )
-#   )
-#   expect_equal(ol_only, expected)
-#   ## Update promoter only mappings
-#   expected[[1]] <- "gene1"; expected[[4]] <- c("gene2", "gene3")
-#   expect_equal(
-#     mapByFeature(gr, genes, prom = prom, cols = "gene_id", gr2gene = 0)$gene_id,
-#     expected
-#   )
-#   ## Update enhancer only mappings
-#   expected[[3]] <- "gene2"
-#   expect_equal(
-#     mapByFeature(
-#       gr, genes, prom = prom, enh = enh, cols = "gene_id",
-#       gr2gene = 0, enh2gene = 5
-#     )$gene_id,
-#     expected
-#   )
-#   ## Update interaction mappings
-#   expected[[6]] <- "gene1"
-#   expect_equal(
-#     mapByFeature(
-#       gr, genes, prom = prom, enh = enh, gi = gi,
-#       cols = "gene_id", gr2gene = 0, enh2gene = 5
-#     )$gene_id,
-#     expected
-#   )
-#
-# })
-
 test_that("mapByFeature errors correctly", {
   expect_error(mapByFeature(NULL))
   expect_error(suppressMessages(mapByFeature(gr, genes, cols = "")))

@@ -16,49 +16,6 @@ test_path <- system.file("tests", "test.bw", package = "rtracklayer")
 test_bw <- rtracklayer::BigWigFileList(test_path)
 names(test_bw) <- "a"
 
-## Try get build times down again
-# test_that("Correct plotting works", {
-#   data(grch37.cytobands)
-#   gr <- GRanges("chr1:11869-12227")
-#   feat_gr <- GRangesList(
-#     Promoter = GRanges("chr1:11800-12000"),
-#     Enhancer = GRanges("chr1:13000-13200")
-#   )
-#   hic <- InteractionSet::GInteractions(feat_gr$Promoter, feat_gr$Enhancer)
-#   genes <- c("chr1:11869-12227:+", "chr1:12613-12721:+", "chr1:13221-14409:+")
-#   genes <- GRanges(genes)
-#   mcols(genes) <- DataFrame(
-#     feature = "exon", gene = "ENSG00000223972", exon = 1:3,
-#     transcript = "ENST00000456328", symbol = "DDX11L1"
-#   )
-#   p <- plotHFGC(
-#     gr, hic = hic, features = feat_gr, genes = genes,
-#     zoom = 2, cytobands = grch37.cytobands, rotation.title = 90,
-#     featcol = c(Promoter = "red", Enhancer = "yellow")
-#   )
-#   expect_true(is(p, "list"))
-#   expect_equal(length(p), 6)
-#   expect_true(is(p[[1]], "IdeogramTrack"))
-#   expect_true(is(p[[2]], "GenomeAxisTrack"))
-#   expect_true(is(p[[3]], "InteractionTrack"))
-#   expect_true(is(p[[4]], "AnnotationTrack"))
-#   expect_true(is(p[[5]], "GeneRegionTrack"))
-#   expect_true(is(p[[6]], "ImageMap"))
-#
-#   p <- plotHFGC(
-#     GRanges("chr2:1-1000"), coverage = test_bw, cytobands = grch37.cytobands,
-#     axistrack = FALSE, annotation = GRangesList(up = GRanges("chr2:501-505")),
-#     annotcol = list(up = "red"), ylim = c(-1, 5)
-#   )
-#   expect_equal(length(p), 4)
-#   expect_true(is(p[[2]], "AnnotationTrack"))
-#   expect_equal(p[[2]]@dp@pars$fill, c(up = "red"))
-#   expect_equal(p[[2]]@name, "")
-#   expect_true(is(p[[3]], "DataTrack"))
-#   expect_equal(p[[3]]@dp@pars$ylim, c(-1, 5))
-#
-# })
-
 test_that(".checkHFGCArgs catches GRanges issues", {
   expect_error(suppressMessages(plotHFGC(gr = NULL)))
   expect_error(
