@@ -12,103 +12,121 @@ mcols(gi) <- c()
 ## Now define key ranges
 gr <- GRanges(paste0("chr1:", seq(0, 50, by = 10)))
 gr$via_ol <- CharacterList(
-  list(NULL, "gene1", NULL, c("gene2", "gene3"), "gene3", NULL)
+    list(NULL, "gene1", NULL, c("gene2", "gene3"), "gene3", NULL)
 )
 gr$via_prom <- CharacterList(
-  list("gene1", NULL, NULL, c("gene2", "gene3"), NULL, NULL)
-  )
+    list("gene1", NULL, NULL, c("gene2", "gene3"), NULL, NULL)
+)
 gr$via_enh_gap5 <- CharacterList(
-  list(NULL, NULL, "gene2", NULL, NULL, NULL)
+    list(NULL, NULL, "gene2", NULL, NULL, NULL)
 )
 gr$via_gi <- CharacterList(
-  list("gene1", NULL, NULL, NULL, NULL, "gene1")
+    list("gene1", NULL, NULL, NULL, NULL, "gene1")
 )
 
 test_that(".mapFeatures produces expected output from promoters", {
-  mapped_prom <- .mapFeatures(gr, prom, genes, "gene_id", 0, 0)
-  expect_true(is(mapped_prom, "data.frame"))
-  expect_equal(
-    table(mapped_prom$range),
-    structure(
-      1:2, .Dim = 2L,
-      .Dimnames = structure(list(c("chr1:0", "chr1:30")), .Names = ""),
-      class = "table"
+    mapped_prom <- .mapFeatures(gr, prom, genes, "gene_id", 0, 0)
+    expect_true(is(mapped_prom, "data.frame"))
+    expect_equal(
+        table(mapped_prom$range),
+        structure(
+            1:2, .Dim = 2L,
+            .Dimnames = structure(list(c("chr1:0", "chr1:30")), .Names = ""),
+            class = "table"
+        )
     )
-  )
-  expect_equal(mapped_prom$gene_id, c("gene1", "gene2", "gene3"))
+    expect_equal(mapped_prom$gene_id, c("gene1", "gene2", "gene3"))
 })
 
 test_that(".mapFeatures produces expected output from enhancers", {
-  expect_equal(.mapFeatures(gr, enh, genes, "gene_id", 0, 5)$gene_id, "gene2")
+    expect_equal(.mapFeatures(gr, enh, genes, "gene_id", 0, 5)$gene_id, "gene2")
 })
 
 test_that(".mapFeatures returns NULL & errors where expected", {
-  expect_null(.mapFeatures(gr, enh, genes, "gene_id", 0, 0))
-  expect_null(.mapFeatures(NULL))
-  expect_null(.mapFeatures(gr, NULL))
-  expect_null(.mapFeatures(gr))
-  expect_error(.mapFeatures(gr, prom, genes, "", 0, 0))
+    expect_null(.mapFeatures(gr, enh, genes, "gene_id", 0, 0))
+    expect_null(.mapFeatures(GRanges()))
+    expect_null(.mapFeatures(NULL))
+    expect_null(.mapFeatures(gr, GRanges("chr1:100"), .gr2feat = 0))
+    expect_null(.mapFeatures(gr))
+    expect_error(.mapFeatures(gr, prom, genes, "", 0, 0))
 })
 
 test_that(".mapGi produces the expected output",{
-  mapped_gi <- .mapGi(gr, gi, genes, "gene_id", 0, 0)
-  expect_true(is(mapped_gi, "data.frame"))
-  expect_equal(
-    table(mapped_gi$range),
-    structure(
-      c(`chr1:0` = 1L, `chr1:50` = 1L), .Dim = 2L,
-      .Dimnames = structure(list(c("chr1:0", "chr1:50")), .Names = ""),
-      class = "table"
+    mapped_gi <- .mapGi(gr, gi, genes, "gene_id", 0, 0)
+    expect_true(is(mapped_gi, "data.frame"))
+    expect_equal(
+        table(mapped_gi$range),
+        structure(
+            c(`chr1:0` = 1L, `chr1:50` = 1L), .Dim = 2L,
+            .Dimnames = structure(list(c("chr1:0", "chr1:50")), .Names = ""),
+            class = "table"
+        )
     )
-  )
-  expect_equal(mapped_gi$gene_id, c("gene1", "gene1"))
+    expect_equal(mapped_gi$gene_id, c("gene1", "gene1"))
 })
 
 test_that("mapGi returns NULL & errors where expected", {
-  expect_error(.mapGi(gr, gi, genes, "", 0, 0))
-  expect_null(.mapGi(gr[NULL], gi, genes, "gene_id", 0, 0))
-  expect_null(.mapGi(gr, gi[NULL], genes, "gene_id", 0, 0))
+    expect_error(.mapGi(gr, gi, genes, "", 0, 0))
+    expect_null(.mapGi(gr[NULL], gi, genes, "gene_id", 0, 0))
+    expect_null(.mapGi(gr, gi[NULL], genes, "gene_id", 0, 0))
+    expect_null(.mapGi(gr, NULL, genes, "gene_id", 0, 0))
 })
 
 test_that(".mapWithin produces the expected output", {
-  gr <- GRanges(c("chr1:5", "chr1:21-30", "chr1:30"))
-  genes <- GRanges(c("chr1:15-25", "chr1:29"))
-  genes$gene_id <- paste0("gene", 1:2)
-  mapped_within <- .mapWithin(gr, genes, "gene_id", 5)
-  expect_true(is(mapped_within, "data.frame"))
-  expect_equal(
-    mapped_within$range,
-    as.character(gr)[c(2, 2, 3)]
-  )
-  expect_equal(mapped_within$gene_id, paste0("gene", c(1, 2, 2)))
+    gr <- GRanges(c("chr1:5", "chr1:21-30", "chr1:30"))
+    genes <- GRanges(c("chr1:15-25", "chr1:29"))
+    genes$gene_id <- paste0("gene", 1:2)
+    mapped_within <- .mapWithin(gr, genes, "gene_id", 5)
+    expect_true(is(mapped_within, "data.frame"))
+    expect_equal(
+        mapped_within$range,
+        as.character(gr)[c(2, 2, 3)]
+    )
+    expect_equal(mapped_within$gene_id, paste0("gene", c(1, 2, 2)))
 })
 
 test_that(".mapWithin returns NULL & errors when expected", {
-  expect_null(.mapWithin(NULL))
-  expect_null(.mapWithin(gr))
-  expect_error(.mapWithin(gr, genes, ""))
+    expect_null(.mapWithin(NULL))
+    expect_null(.mapWithin(gr))
+    expect_error(.mapWithin(gr, genes, ""))
 })
 
 test_that("mapByFeature errors correctly", {
-  expect_error(mapByFeature(NULL))
-  expect_error(suppressMessages(mapByFeature(gr, genes, cols = "")))
+    expect_error(mapByFeature(NULL))
+    expect_error(suppressMessages(mapByFeature(gr, genes, cols = "")))
 })
 
 test_that("mappingArg Checks behave correctly", {
-  expect_error(.checkMappingArgs(), "query ranges must be provided")
-  expect_error(
-    .checkMappingArgs(NULL), "query object must be a GenomicRanges object"
-  )
-  expect_error(
-    .checkMappingArgs(GRanges(), .cols = NULL),
-    "At least one gene/ID column must be specified"
-  )
-  expect_message(
-    .checkMappingArgs(gr, genes, prom, enh, gi, "", 0),
-    "No requested columns were able to be found"
-  )
-  expect_message(
-    .checkMappingArgs(gr, genes, prom, enh, gi, "gene_id", ""),
-    "All distance arguments must be numeric"
-  )
+    expect_error(.checkMappingArgs(), "query ranges must be provided")
+    expect_error(
+        .checkMappingArgs(NULL), "query object must be a GenomicRanges object"
+    )
+    expect_error(
+        .checkMappingArgs(GRanges(), .cols = NULL),
+        "At least one gene/ID column must be specified"
+    )
+    expect_message(
+        .checkMappingArgs(gr, genes, prom, enh, gi, "", 0),
+        "No requested columns were able to be found"
+    )
+    expect_message(
+        .checkMappingArgs(gr, genes, prom, enh, gi, "gene_id", ""),
+        "All distance arguments must be numeric"
+    )
+    expect_message(
+        .checkMappingArgs(gr, "", prom, enh, gi, "gene_id", 0),
+        "Genes must be provided as"
+    )
+    expect_message(
+        .checkMappingArgs(gr, genes, "", enh, gi, "gene_id", 0),
+        "Promoters must be"
+    )
+    expect_message(
+        .checkMappingArgs(gr, genes, prom, "", gi, "gene_id", 0),
+        "Enhancers must be"
+    )
+    expect_message(
+        .checkMappingArgs(gr, genes, prom, enh, "", "gene_id", 0),
+        "Interactions must be"
+    )
 })

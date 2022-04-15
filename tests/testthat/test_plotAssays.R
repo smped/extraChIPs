@@ -25,6 +25,8 @@ test_that("Assay Density plots behave correctly", {
       group = "colnames"
     )
   )
+  p <- plotAssayPCA(se, n_max = 10)
+  expect_true(is(p, "gg"))
 
 })
 
@@ -33,6 +35,7 @@ test_that("Assay Density transformations error", {
   p <- plotAssayDensities(se, trans = "log2")
   expect_true(median(p$data$x) < log2(1e4))
   expect_equal(p$labels$x, "log2 counts")
+  expect_error(plotAssayDensities(se, trans = "max"), "This transformation")
 })
 
 
@@ -70,8 +73,9 @@ test_that("labels repel correctly", {
 })
 
 test_that("data is transformed correctly", {
-  expect_error(plotAssayPCA(se, trans = ""))
-  ## Still need to test this
+    expect_error(plotAssayPCA(se, trans = ""))
+    expect_error(plotAssayPCA(se, trans = "max"), "This transformation is not")
+    expect_true(is(plotAssayPCA(se, trans = "log2"), "gg"))
 })
 
 test_that("plotAssayRle errors correctly", {
