@@ -243,8 +243,13 @@ jobs:
       - name: Test coverage
         if: github.ref == 'refs/heads/main' && env.run_covr == 'true' && runner.os == 'Linux'
         run: |
-          covr::codecov(path = "tests")
-          covr::codecov(path = "longtests")
+          test1 <- covr::package_coverage(path = "tests")
+          test2 <- covr::package_coverage(type = "none", code = "testthat::test_dir('longtests')")
+          all_tests <- c(test1, test2)
+          attr(all_tests, "class") <- attr(test1, "class")
+          attr(all_tests, "package") <- attr(test1, "package")
+          attr(all_tests, "relative") <- attr(test1, "relative")
+          covr::codecov(coverage = all_tests)
         shell: Rscript {0}
 
       - name: Install package
