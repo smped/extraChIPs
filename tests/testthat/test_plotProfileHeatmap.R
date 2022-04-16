@@ -10,6 +10,8 @@ test_that("Correct plot is returned", {
   expect_null(p$labels$y)
   expect_equal(levels(p$data$range), "chr2:400-599")
   expect_equal(is(p$facet), "FacetSideNull")
+  pd$facet <- "a"
+  p <- plotProfileHeatmap(pd, profileCol = "profile_data", facetY = "facet")
 })
 
 test_that("Histogram is omitted when requested", {
@@ -24,6 +26,10 @@ test_that("Samples are facetted when provided as a list", {
   )
   expect_equal(is(p$facet), "FacetSideGrid")
   expect_equal(levels(p$data$name), c("a", "b"))
+  p <- plotProfileHeatmap(
+      GRangesList(pd, pd), profileCol = "profile_data"
+  )
+  expect_equal(levels(p$data$name), c("X.1", "X.2"))
 })
 
 test_that("checkProfileDataFrames behaves as expected", {
@@ -56,3 +62,4 @@ test_that("checkProfileDataFrames behaves as expected", {
   )
 
 })
+

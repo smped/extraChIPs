@@ -851,7 +851,7 @@ plotHFGC <- function(
             if (length(linecol) != length(coverage))
                 msg <- c(
                     msg,
-                    "linecol must be the same length os the coverage tracks\n"
+                    "linecol must be the same length as the coverage tracks\n"
                 )
 
             if (!is.null(names(linecol)) & !all(covnames %in% names(linecol)))
@@ -884,6 +884,14 @@ plotHFGC <- function(
                           )
                         )
                 }
+                match_names <- mapply(
+                    function(x, y) all(names(x) %in% names(y)),
+                    x = coverage, y = linecol
+                )
+                if (!all(match_names)) msg <- c(
+                    msg,
+                    "All elements within coverage must have a matching colour\n"
+                )
             }
         }
     }
@@ -918,7 +926,7 @@ plotHFGC <- function(
             if (length(ylim) < 2 | !is.numeric(ylim))
                 msg <- c(
                     msg,
-                    "ylim should be passed as a numeric vector of  length >= 2"
+                    "ylim should be passed as a numeric vector of length >= 2"
                 )
         }
     }
@@ -1007,17 +1015,18 @@ plotHFGC <- function(
             )
 
         if (!missing(genecol)) {
-            ## The colours should be a single colour, or named vector/list
-            if (length(genecol) > 1) {
-                if (!all(nm %in% names(genecol)))
-                    msg <- c(
-                      msg,
-                      paste(
-                        "The 'genes' GRangesList should have a",
-                        "named colour in 'genecol'\n"
-                      )
-                  )
-            }
+
+            chkColNames <- (
+                all(names(genes) %in% names(genecol)) | length(genecol) == 1
+            )
+            if (!chkColNames) msg <- c(
+                msg,
+                paste(
+                    "All elements of the 'genes' GRangesList should have a",
+                    "named colour in 'genecol'\n"
+                )
+            )
+
         }
 
         ## collapseTranscripts can be a logical vector or list
