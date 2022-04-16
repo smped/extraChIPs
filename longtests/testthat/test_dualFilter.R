@@ -103,4 +103,16 @@ test_that("dualFilter runs as expected", {
 
 })
 
+test_that("keep.totals performs correctly", {
+    filtcounts <- dualFilter(
+        x = wincounts[, !is.na(wincounts$treat)],
+        bg = wincounts[, is.na(wincounts$treat)],
+        ref = peaks,
+        q = 0.8,
+        keep.totals = FALSE
+    )
+    expect_equal(dim(filtcounts), c(112, 2))
+    expect_equal(sum(filtcounts$totals), 5538)
+})
+
 

@@ -169,6 +169,10 @@ dualFilter <- function(
     )
     if (keep.totals) bg_counts$totals <- bg[,names(bg_bfl)]$totals
     scf <- scaleControlFilter(signal_counts, bg_counts)
+    if (!keep.totals) {
+        x$totals <- signal_counts$totals
+        bg$totals <- bg_counts$totals
+    }
     control_filter <- filterWindowsControl(
         data = x, background = bg, scale.info = scf
     )$filter
