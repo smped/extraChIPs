@@ -31,6 +31,8 @@ data(ex_hic)
 \description{
 Various example datasets for demonstrating visualisation
 strategies.
+Generation of all datasets is documented in
+\code{system.file("script/ex_datasets.md", package = "extraChIPs")}
 
 \describe{
 \item{ex_genes}{Simple GRanges object with complete ranges for each gene}
