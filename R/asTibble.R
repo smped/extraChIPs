@@ -62,9 +62,15 @@ as_tibble.DataFrame <- function(x, rangeAsChar = TRUE, ...) {
         x[grCol] <- lapply(x[grCol], as.character)
     }
     df <- as.data.frame(x)
-    ## This step will handle any Compressed/SimpleList objects by converting
-    ## to a generic list. Build a check for this line in case mutate starts
-    ## dropping rownames and converting to a tibble by default
+
+    ## Ensure the original names are respected
+    orig_names <- names(x)
+    alt_names <- make.names(orig_names)
+    names(orig_names) <- alt_names
+    nm <- names(df)[names(df) %in% alt_names]
+    names(df)[names(df) %in% alt_names] <- orig_names[nm]
+
+    ## Handle any Compressed/SimpleList objects by converting to a generic list
     df <- dplyr::mutate(df, across(everything(), vec_proxy))
     as_tibble(df, ...)
 }
