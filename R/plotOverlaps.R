@@ -42,13 +42,10 @@ plotOverlaps <- function(data, col = hcl.colors(3, "Zissou")) {
     function(x) {
       i <- gsub("^([xyz])([xyz])", "\\1", x)
       j <- gsub("^([xyz])([xyz])", "\\2", x)
-      if (areas[[x]] > 0) {
-        .pairwiseDistance(r[[i]], r[[j]], areas[[x]])
-      }
+      .pairwiseDistance(r[[i]], r[[j]], amps[[x]])
     }
   )
   names(d) <- pairwise_grps
-  d <- d[vapply(d, length, integer(1)) > 0]
 
   ## Dist for horizontal plots
   d <- sapply(
@@ -62,9 +59,9 @@ plotOverlaps <- function(data, col = hcl.colors(3, "Zissou")) {
     simplify = FALSE
   )
 
-  browser()
 
   ## Angle calculations
+  x_a <- .arccos((.sq(d$xy) + .sq(d$xz) - .sq(d$yz)) / (2 * d$xy * d$xz))
 
   ## PPU
 
@@ -94,7 +91,7 @@ plotOverlaps(ex)
 #' @importFrom methods is
 .calculateAreas <- function(data) {
 
-  ## Limit this to 3way interactions. Anything biggeris better as an UpSet plot
+  ## Limit this to 3way interactions. Anything bigger is better as an UpSet plot
   stopifnot(is(data, "list"))
   stopifnot(length(data) <= 3)
   stopifnot(all(vapply(data, is.character, logical(1))))
@@ -147,7 +144,7 @@ ex <- list(
   while(
     thresh > .getVals(r1, r2, d)
   ) {
-    d <- d - min(r1, r2) * .err;
+    d <- d - min(r1, r2) * .err
   }
   d
 }
