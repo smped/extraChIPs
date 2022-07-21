@@ -99,54 +99,92 @@
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>An object (<code>data.frame</code>)</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Not used</p></dd>
+
+
 <dt>scale_by</dt>
 <dd><p>Scale the counts by this column. In this case of a GRanges
 object this defaults to the count (scale_by = "n") but can also be specified
 as being width of each range (scale_by = "width"). If choosing width, width
 will be displayed in Kb</p></dd>
+
+
 <dt>fill</dt>
 <dd><p>The category/column used to fill the slices of the pie charts</p></dd>
+
+
 <dt>x</dt>
 <dd><p>The second (optional) category/column to place along the x-axis</p></dd>
+
+
 <dt>y</dt>
 <dd><p>The final (optional) category/column to plce along the y-axis</p></dd>
+
+
 <dt>width</dt>
 <dd><p>Scale the width of all pies</p></dd>
+
+
 <dt>show_total</dt>
 <dd><p>logical(1) Show labels on each pie chart with the tally for
 that complete chart</p></dd>
+
+
 <dt>label_fill</dt>
 <dd><p>The background colour for tally labels</p></dd>
+
+
 <dt>label_alpha</dt>
 <dd><p>Transparency for tally labels</p></dd>
+
+
 <dt>label_size</dt>
 <dd><p>Size of the tally labels. Passed to
 <a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></p></dd>
+
+
 <dt>min_p</dt>
 <dd><p>The minimum proportion of the total required for adding labels.
 Effectively removes labels from pie charts with few members. Alternatively
 when only one column is specified, categories below this will not be shown
 around the edge of the plot</p></dd>
+
+
 <dt>show_category</dt>
 <dd><p>Show category labels around the edge of the plot if only
 one category/column is specified</p></dd>
+
+
 <dt>category_size</dt>
 <dd><p>The size of category labels if only one category/column
 is specified</p></dd>
+
+
 <dt>category_colour</dt>
 <dd><p>The colour of category labels if only one column is
 specified</p></dd>
+
+
 <dt>category_width</dt>
 <dd><p>Width at which category labels will wrap onto a new
 line</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A ggplot2 object able to be customised with colour scales and themes.
-Also note that the $data element of the returned object will contain the
-data.frame used for plotting. The additional column <code>label_radians</code>represents the mid-point of each pie slice and can be used for manually
+    
+
+<p>A ggplot2 object able to be customised with colour scales and themes.</p>
+
+
+<p>Also note that the $data element of the returned object will contain the
+data.frame used for plotting. The additional column <code>label_radians</code></p>
+
+
+<p>represents the mid-point of each pie slice and can be used for manually
 adding labels to each pie.
 Only applies when plotting across the <code>x</code> or <code>y</code> axes</p>
     </div>
@@ -228,7 +266,7 @@ Parameters for these labels are customisable</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>

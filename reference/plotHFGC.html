@@ -110,17 +110,25 @@
     <h2>Arguments</h2>
     <dl><dt>gr</dt>
 <dd><p>The range(s) of interest. Must be on a single chromosome</p></dd>
+
+
 <dt>hic</dt>
 <dd><p>Any HiC interactions to be included as a GenomicInteractions
 object. If not supplied, no HiC track will be drawn.</p></dd>
+
+
 <dt>features</dt>
 <dd><p>A named GRangesList object containing regulatory features in
 each list element. Features will be drawn on a single track with colours
 matching those provided in <code>featcol</code>. If not included, no feature track
 will be drawn</p></dd>
+
+
 <dt>genes</dt>
 <dd><p>A GRanges object with exon structure for each transcript/gene.
 If not included, no track will be drawn for gene/transcript structure</p></dd>
+
+
 <dt>coverage</dt>
 <dd><p>A named list of BigWigFileList objects containing the
 primary tracks to show coverage for. Each list element will be drawn on a
@@ -128,84 +136,139 @@ separate track, with elements within each BigWigFileList shown on the same
 track. List names will become track names. Alternatively, a single
 BigWigFileList will plot all individual files on separate tracks.
 If not included, no coverage tracks will be drawn.</p></dd>
+
+
 <dt>annotation</dt>
 <dd><p>Annotations for the coverage track(s).
 A single GRangesList if coverage is a BigWigListList.
 If coverage is supplied as a list of BigWigFileLists, a named list of
 GRangesList objects for each coverage track being annotatated. Names must
 match those given for coverage.</p></dd>
+
+
 <dt>zoom</dt>
 <dd><p>Multiplicative factor for zooming in and out</p></dd>
+
+
 <dt>shift</dt>
 <dd><p>Shift the plot. Applied after zooming</p></dd>
+
+
 <dt>max</dt>
 <dd><p>The maximum width of the plotting region. Given that the width of
 the final plotting window will be determined by any HiC interactions, this
 argument excludes any interactions beyond this distance. Plotting can be
 somewhat slow if any long range interactions are included. Ignored if no HiC
 interactions are supplied.</p></dd>
+
+
 <dt>axistrack</dt>
 <dd><p>logical. Add an AxisTrack()</p></dd>
+
+
 <dt>cytobands</dt>
 <dd><p>Cytogenetic bands to be displayed on each chromosome</p></dd>
+
+
 <dt>covtype</dt>
 <dd><p>The plot type for coverage. Currently only lines ("l")
 and heatmaps ("heatmap") are supported</p></dd>
+
+
 <dt>linecol</dt>
 <dd><p>If passing a BigWigFileList to coverage, a vector of colours.
 If passing a list of BigWigFileList objects to coverage, a list of colours
 with structure that matches the object being passed to coverage, i.e. a
 named list of the same length, with elements who's length matches each
 BigWigFileList. Only used if covtype = "l".</p></dd>
+
+
 <dt>gradient</dt>
 <dd><p>Colour gradient for heatmaps</p></dd>
+
+
 <dt>hiccol</dt>
 <dd><p>list with names <code>"anchors"</code> and <code>"interactions"</code>. Colours
 are passed to these elements</p></dd>
+
+
 <dt>featcol</dt>
 <dd><p>Named vector (or list) of colours for each feature</p></dd>
+
+
 <dt>genecol</dt>
 <dd><p>Named vector (or list) of colours for each gene category</p></dd>
+
+
 <dt>annotcol</dt>
 <dd><p>Colours matching the coverage annotations</p></dd>
+
+
 <dt>highlight</dt>
 <dd><p>Outline colour for the highlight track. Setting this to
 <code>NULL</code> will remove the highlight</p></dd>
+
+
 <dt>hicsize, featsize, genesize, covsize, annotsize</dt>
 <dd><p>Relative sizes for each track (hic, features, genes, coverage &amp; annotation)</p></dd>
+
+
 <dt>hicname, featname</dt>
 <dd><p>Names displayed in the LHS panel</p></dd>
+
+
 <dt>featstack</dt>
 <dd><p>Stacking for the fature track</p></dd>
+
+
 <dt>collapseTranscripts</dt>
 <dd><p>Passed to <a href="https://rdrr.io/pkg/Gviz/man/GeneRegionTrack-class.html" class="external-link">GeneRegionTrack</a> for the
 genes track</p></dd>
+
+
 <dt>ylim</dt>
 <dd><p>If a numeric vector, this will be passed to all coverage tracks.
 Alternatively, a named list of y-limits for each coverage track with names
 that match those in each element of the coverage list.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Passed to <a href="https://rdrr.io/pkg/Gviz/man/DataTrack-class.html" class="external-link">DataTrack</a> for the <strong>coverage tracks</strong> only.
 Useful arguments may be things like <code>legend</code></p></dd>
+
+
 <dt>fontsize</dt>
 <dd><p>Applied across all tracks</p></dd>
+
+
 <dt>cex.title</dt>
 <dd><p>Passed to all tracks</p></dd>
+
+
 <dt>rotation.title</dt>
 <dd><p>Passed to all tracks</p></dd>
+
+
 <dt>col.title</dt>
 <dd><p>Passed to all tracks</p></dd>
+
+
 <dt>background.title</dt>
 <dd><p>Passed to all tracks</p></dd>
+
+
 <dt>title.width</dt>
 <dd><p>Expansion factor passed to <a href="https://rdrr.io/pkg/Gviz/man/plotTracks.html" class="external-link">plotTracks</a>, and
 used to widen the panels on the LHS of all tracks.
 Can have unpredictable effects on the font
 size of y-axis limits due to the algorithm applied by <code>plotTracks</code></p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A Gviz object</p>
+    
+
+<p>A Gviz object</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -461,7 +524,7 @@ GRanges, across all of the tracks must be included as a colour</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>

@@ -81,36 +81,58 @@
     <h2>Arguments</h2>
     <dl><dt>cpm</dt>
 <dd><p>Matrix of CPM or logCPM values</p></dd>
+
+
 <dt>design</dt>
 <dd><p>The design matrix for the experiment</p></dd>
+
+
 <dt>w0</dt>
 <dd><p>Initial vector of sample weights. Should be calculated using
 <code>arrayWeights</code></p></dd>
+
+
 <dt>lib.size</dt>
 <dd><p>Initial library sizes. Must be provided as these are no
 estimable from CPM values</p></dd>
+
+
 <dt>isLogCPM</dt>
 <dd><p>logical(1). Indicates whether the data is log2 transformed
 already. Most commonly (e.g. if using the output of cqn) it will be,</p></dd>
+
+
 <dt>span</dt>
 <dd><p>Width of the smoothing window used for the lowess mean-variance
 trend. Expressed as a proportion between 0 and 1.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Passed to lmFit internally</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>An object of class <code>EList</code> as would be output by voom.
+    
+
+<p>An object of class <code>EList</code> as would be output by voom.
 Importantly, there will be no <code>genes</code> element, although this can be
 added later.
 Similarly, the returned <code>targets</code> element will only contain sample
 names and library sizes.
-This can be incorporated with any other metadata as required.
-Plotting data is always returned, noting the the value <code>sx</code> has
+This can be incorporated with any other metadata as required.</p>
+
+
+<p>Plotting data is always returned, noting the the value <code>sx</code> has
 been offset by the library sizes and will be simple logCPM values.
-As such, the fitted <code>Amean</code> is also returned in this list element.
-If initial sample weights were provided, modified weights will also be
-returned, as the initial function <code>voomWithQualityWeights</code>performs two rounds of estimation of sample weights.
+As such, the fitted <code>Amean</code> is also returned in this list element.</p>
+
+
+<p>If initial sample weights were provided, modified weights will also be
+returned, as the initial function <code>voomWithQualityWeights</code></p>
+
+
+<p>performs two rounds of estimation of sample weights.
 Here we would simply provide the initial weights a priori, with the
 second round performed within the function.
 Importantly, this second round of sample weight estimation uses the precision
@@ -162,7 +184,7 @@ weights.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>

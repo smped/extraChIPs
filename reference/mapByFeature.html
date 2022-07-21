@@ -88,48 +88,77 @@
     <h2>Arguments</h2>
     <dl><dt>gr</dt>
 <dd><p>GRanges object with query ranges to be mapped to genes</p></dd>
+
+
 <dt>genes</dt>
 <dd><p>GRanges object containing genes (or any other nominal feature)
 to be assigned</p></dd>
+
+
 <dt>prom</dt>
 <dd><p>GRanges object defining promoters</p></dd>
+
+
 <dt>enh</dt>
 <dd><p>GRanges object defining Enhancers</p></dd>
+
+
 <dt>gi</dt>
 <dd><p>GInteractions object defining interactions. Mappings from
 interactions to genes should be performed as a separate prior step.</p></dd>
+
+
 <dt>cols</dt>
 <dd><p>Column names to be assigned as mcols in the output. Columns
-must be minimally present in <code>genes</code>. If all requested colunms are found in
+must be minimally present in <code>genes</code>. If all requested columns are found in
 any of prom, enh or gi, these pre-existing mappings will be preferentially
 used. Any columns not found in utilised reference objects will be ignored.</p></dd>
+
+
 <dt>gr2prom</dt>
 <dd><p>The maximum permissible distance between a query range and
 any ranges defined as promoters</p></dd>
+
+
 <dt>gr2enh</dt>
 <dd><p>The maximum permissible distance between a query range and
 any ranges defined as enhancers</p></dd>
+
+
 <dt>gr2gi</dt>
 <dd><p>The maximum permissible distance between a query range and
 any ranges defined as GInteraction anchors</p></dd>
+
+
 <dt>gr2gene</dt>
 <dd><p>The maximum permissible distance between a query range and
 genes (for ranges not otherwise mapped)</p></dd>
+
+
 <dt>prom2gene</dt>
 <dd><p>The maximum permissible distance between a range provided
 in <code>prom</code> and a gene</p></dd>
+
+
 <dt>enh2gene</dt>
 <dd><p>The maximum permissible distance between a range provided
 in <code>enh</code> and a gene</p></dd>
+
+
 <dt>gi2gene</dt>
 <dd><p>The maximum permissible distance between a GInteractions
 anchor (provided in <code>gi</code>) and a gene</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Passed to findOverlaps nad overlapsAny internally</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A GRanges object with added mcols as specified</p>
+    
+
+<p>A GRanges object with added mcols as specified</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -239,7 +268,7 @@ obtained from the <code>genes</code> object.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>
