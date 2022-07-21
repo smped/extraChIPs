@@ -63,7 +63,9 @@ test_that("GInteractions are converted correctly", {
 
 test_that("Empty objects return empty tibble objects", {
     expect_equal(as_tibble(DataFrame()), tibble())
-    expect_equal(as_tibble(GRanges()), tibble())
-    expect_equal(as_tibble(InteractionSet::GInteractions()), tibble())
-
+    expect_equal(as_tibble(GRanges()), tibble(range = character()))
+    expect_equal(
+        as_tibble(InteractionSet::GInteractions()),
+        tibble(anchor1 = character(), anchor2 = character())
+    )
 })

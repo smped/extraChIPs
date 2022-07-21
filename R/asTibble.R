@@ -83,7 +83,6 @@ as_tibble.DataFrame <- function(x, rangeAsChar = TRUE, ...) {
 as_tibble.GenomicRanges <- function(
     x, rangeAsChar = TRUE, name = "range", ...
 ) {
-    if (length(x) == 0) return(tibble())
     if (!rangeAsChar) return(as_tibble(as.data.frame(x), ...))
     if (name %in% names(mcols(x)))
         stop("A column named ", name, " already exists. Please choose another.")
@@ -110,7 +109,6 @@ as_tibble.Seqinfo <- function(x, ...) {
 as_tibble.GInteractions <- function(
     x, rangeAsChar = TRUE, suffix = c(".x", ".y"), ...
 ) {
-    if (length(x) == 0) return(tibble())
     gi_list <- lapply(anchors(x), as_tibble, rangeAsChar = rangeAsChar, ...)
     if (rangeAsChar) {
         ## We will have two tibbles with single column character vectors 'range'
