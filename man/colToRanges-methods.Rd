@@ -43,6 +43,7 @@ In this case, no Seqinfo element will be applied to the GRanges element.
 \examples{
 set.seed(73)
 x <- GRanges(c("chr1:1-10", "chr1:6-15", "chr1:51-60"))
+seqinfo(x) <- Seqinfo("chr1", 60, FALSE, "Example")
 df <- data.frame(logFC = rnorm(3), logCPM = rnorm(3,8), p = 10^-rexp(3))
 mcols(x) <- df
 gr <- mergeByCol(x, col = "logCPM", pval = "p")
