@@ -44,7 +44,7 @@
 #' @param gi GInteractions object defining interactions. Mappings from
 #' interactions to genes should be performed as a separate prior step.
 #' @param cols Column names to be assigned as mcols in the output. Columns
-#' must be minimally present in `genes`. If all requested colunms are found in
+#' must be minimally present in `genes`. If all requested columns are found in
 #' any of prom, enh or gi, these pre-existing mappings will be preferentially
 #' used. Any columns not found in utilised reference objects will be ignored.
 #' @param gr2prom The maximum permissible distance between a query range and
