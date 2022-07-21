@@ -1,10 +1,11 @@
-x <- GRanges(c("chr1:1-10", "chr1:6-15", "chr1:51-60"))
+sq <- Seqinfo("chr1", 100, FALSE, "test")
+x <- GRanges(c("chr1:1-10", "chr1:6-15", "chr1:51-60"), seqinfo = sq)
 df <- data.frame(logFC = rnorm(3), logCPM = rnorm(3,8), p = 10^-rexp(3))
 
 test_that("Function behaves correctly for GRanges",{
-  expect_equal(
-    length(mergeByCol(x, df, col = "logCPM", pval = "p")), 2
-  )
+    new_gr <- mergeByCol(x, df, col = "logCPM", pval = "p")
+  expect_equal(length(new_gr), 2)
+  expect_equal(seqinfo(new_gr$keyval_range), sq)
   mcols(x) <- df
   expect_equal(
     length(mergeByCol(x, col = "logCPM", pval = "p")), 2

@@ -66,6 +66,7 @@ setGeneric(
 )
 #' @importClassesFrom S4Vectors HitsList
 #' @importFrom GenomicRanges findOverlaps reduce granges
+#' @importFrom GenomeInfoDb seqinfo "seqinfo<-"
 #' @importFrom S4Vectors subjectHits queryHits 'mcols<-' mcols
 #' @importFrom dplyr group_by summarise n across
 #' @importFrom rlang sym '!!'
@@ -136,6 +137,7 @@ setMethod(
     if (p_adj_method != "none")
       DF[[adj_col]] <- p.adjust(DF[[pval]], method = p_adj_method)
     DF[["keyval_range"]] <- granges(x)[DF[["keyval_range"]]]
+    seqinfo(DF[["keyval_range"]]) <- seqinfo(x)
     mcols(ranges_out) <- DF
     ranges_out
 
