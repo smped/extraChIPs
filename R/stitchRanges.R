@@ -37,6 +37,11 @@ stitchRanges <- function(x, exclude, maxgap = 12500L, ignore.strand = TRUE) {
   stopifnot(is.numeric(maxgap))
   stopifnot(is.logical(ignore.strand))
 
+  if (any(overlapsAny(x, exclude))) {
+      warning("Ranges provided in 'x' overlap barrier ranges")
+      x <- setdiff(x, exclude, ignore.strand = ignore.strand)
+  }
+
   ## Add point ranges to the end of the `exclude` object to ensure no NA values
   ## are returned by precede
   ## Although this should use seqinfo objects, this is more pragmatic and
