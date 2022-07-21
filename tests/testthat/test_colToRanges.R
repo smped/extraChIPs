@@ -21,3 +21,14 @@ test_that("Coercion fails where it should", {
   expect_error(colToRanges(x, ""))
   expect_error(colToRanges(df, "logFC"))
 })
+
+test_that("S3 list columns are coerced", {
+    tbl <- tibble(range = "chr1:1", list = list(1))
+    gr <- colToRanges(tbl, "range")
+    expect_true(is(gr$list, "NumericList"))
+    # Coercion chould conserve all information & be reversible
+    expect_equal(
+        tbl,
+        as_tibble(colToRanges(tbl, "range"))
+    )
+})
