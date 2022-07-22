@@ -30,6 +30,7 @@ getProfileData(x, gr, ...)
   mean_mode = "w0",
   log = TRUE,
   offset = 1,
+  BPPARAM = SerialParam(),
   ...
 )
 
@@ -66,6 +67,8 @@ See \link[EnrichedHeatmap]{normalizeToMatrix} for details}
 \item{log}{logical(1) Should the returned values be log2-transformed}
 
 \item{offset}{Value added to data if log-transforming. Ignored otherwise}
+
+\item{BPPARAM}{Passed internally to \link[BiocParallel]{bplapply}}
 }
 \value{
 GRanges or GrangesList with column profile_data, as described above
@@ -88,6 +91,10 @@ bin.
 The binned profiles are returned as a DataFrameList called \code{profile_data} as
 a column within the resized GRanges object.
 Column names in each DataFrame are \code{score}, \code{position} and \code{bp}.
+
+If passing a BigWigFileList, profiles will be obtained in series by
+default. To run in parallel pass a \link[BiocParallel]{MulticoreParam} object
+to the \code{BPPARAM} argument.
 }
 \examples{
 bw <- system.file("tests", "test.bw", package = "rtracklayer")
