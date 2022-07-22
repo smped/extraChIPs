@@ -139,7 +139,7 @@
 #'   panel. Each internal `BigWig` within a `BigWigFileList` must also be named.
 #'   }
 #'   \item{covtype}{Currently only lines (`covtype = "l"`) and
-#'   heatmaps (`covtype = "heatmap`) are supported. Colours can be
+#'   heatmaps (`covtype = "heatmap"`) are supported. Colours can be
 #'   specified using the arguments below}
 #'   \item{linecol}{Can be a single colour applied to all tracks, or a *named*
 #'   vector (or list) of colours. If `coverage` is a single `BigWigFileList`,
@@ -199,8 +199,14 @@
 #' plotHFGC(
 #'   gr,
 #'   hic = ex_hic, features = ex_features, genes = ex_trans, coverage = bwfl,
-#'   featcol = featcol, linecol = bw_col,
-#'   collapseTranscripts = FALSE, cytobands = grch37.cytobands
+#'   featcol = featcol, linecol = bw_col, cytobands = grch37.cytobands
+#' )
+#'
+#' plotHFGC(
+#'   gr,
+#'   hic = ex_hic, features = ex_features, genes = ex_trans, coverage = bwfl,
+#'   featcol = featcol, linecol = bw_col, cytobands = grch37.cytobands,
+#'   maxTrans = 1
 #' )
 #' }
 #'
@@ -266,7 +272,11 @@
 #' @param col.title Passed to all tracks
 #' @param background.title Passed to all tracks
 #' @param collapseTranscripts Passed to \link[Gviz]{GeneRegionTrack} for the
-#' genes track
+#' genes track. Defaults to `"auto"` for automatic setting. If the number of
+#' transcripts to be plotted is > `maxtrans`, the argument will be
+#' automatically set to `"meta"`, otherwise this will be passed as `FALSE` which
+#' will show all transcripts.
+#' @param maxTrans Only used if `collapseTranscripts` is set to "auto".
 #' @param title.width Expansion factor passed to \link[Gviz]{plotTracks}, and
 #' used to widen the panels on the LHS of all tracks.
 #' Can have unpredictable effects on the font
@@ -282,20 +292,20 @@
 #'
 #' @export
 plotHFGC <- function(
-    gr, hic, features, genes, coverage, annotation,
-    zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, cytobands,
-    covtype = c("l", "heatmap"),
-    linecol = c(), gradient = hcl.colors(101, "viridis"),
-    hiccol = list(anchors = "lightblue", interactions = "red"),
-    featcol, genecol, annotcol, highlight = "blue",
-    hicsize = 1, featsize = 1, genesize = 1, covsize = 4, annotsize = 0.5,
-    hicname = "HiC", featname = "Features",
-    featstack = c("full", "hide", "dense", "squish", "pack"),
-    collapseTranscripts = "meta",
-    ylim = NULL, ...,
-    fontsize = 12, cex.title = 0.8, rotation.title = 0, col.title = "white",
-    background.title = "lightgray",
-    title.width = 1.5
+        gr, hic, features, genes, coverage, annotation,
+        zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, cytobands,
+        covtype = c("l", "heatmap"),
+        linecol = c(), gradient = hcl.colors(101, "viridis"),
+        hiccol = list(anchors = "lightblue", interactions = "red"),
+        featcol, genecol, annotcol, highlight = "blue",
+        hicsize = 1, featsize = 1, genesize = 1, covsize = 4, annotsize = 0.5,
+        hicname = "HiC", featname = "Features",
+        featstack = c("full", "hide", "dense", "squish", "pack"),
+        collapseTranscripts = "auto", maxTrans = 12,
+        ylim = NULL, ...,
+        fontsize = 12, cex.title = 0.8, rotation.title = 0, col.title = "white",
+        background.title = "lightgray",
+        title.width = 1.5
 ) {
 
     ## Argument checks
@@ -306,7 +316,7 @@ plotHFGC <- function(
         axistrack = axistrack, cytobands = cytobands, max = max,
         hiccol = hiccol, linecol = linecol, genecol = genecol,
         featcol = featcol, annotcol = annotcol, type = covtype, ylim = ylim,
-        collapseTranscripts = collapseTranscripts
+        collapseTranscripts = collapseTranscripts, maxTrans = maxTrans
     )
     stopifnot(checkArgs)
 
@@ -342,7 +352,7 @@ plotHFGC <- function(
     ## Form the genes tracks. NB: This will be a list of tracks
     gene_tracks <- .makeGeneTracks(
         genes, plot_range, collapseTranscripts, fontsize, genecol, genesize,
-        cex.title, rotation.title, col.title, background.title
+        cex.title, rotation.title, col.title, background.title, maxTrans
     )
 
     ## The coverage tracks NB: This will be list of tracks
@@ -367,7 +377,7 @@ plotHFGC <- function(
     plot_list <- list(ideo_track)
     if (axistrack)
         plot_list <- c(
-          plot_list, GenomeAxisTrack(plot_range, fontsize = fontsize)
+            plot_list, GenomeAxisTrack(plot_range, fontsize = fontsize)
         )
 
     plot_list <- c(plot_list, hl_track)
@@ -421,8 +431,8 @@ plotHFGC <- function(
 #' @importFrom GenomeInfoDb seqnames
 #' @importFrom IRanges subsetByOverlaps
 .makeHiCTrack <- function(
-    .hic, .gr, .fontsize, .tracksize, .cex, .rot, .col, .name, .col.title,
-    .bg.title
+        .hic, .gr, .fontsize, .tracksize, .cex, .rot, .col, .name, .col.title,
+        .bg.title
 ) {
 
     if (missing(.hic)) return(NULL)
@@ -457,8 +467,8 @@ plotHFGC <- function(
 #' @importFrom methods is
 #' @importFrom stringr str_trim
 .addAnnotations <- function(
-  .annotation, .gr, .cov_tracks, .coverage, .fill, .size, .col.title, .bg.title
-  ) {
+        .annotation, .gr, .cov_tracks, .coverage, .fill, .size, .col.title, .bg.title
+) {
     if (missing(.annotation) | is.null(.cov_tracks)) return(.cov_tracks)
     ## Set everything grey if no colour is specified
     if (missing(.fill)) .fill <- "grey"
@@ -468,8 +478,8 @@ plotHFGC <- function(
         fontsize <- .cov_tracks[[1]]@dp@pars$fontsize
         cex <- .cov_tracks[[1]]@dp@pars$cex.title
         annot_track <- .makeFeatureTrack(
-          .annotation, .gr, fontsize, .fill, .size, cex, 0, .name = c(),
-          .stacking = "full", .col.title, .bg.title
+            .annotation, .gr, fontsize, .fill, .size, cex, 0, .name = c(),
+            .stacking = "full", .col.title, .bg.title
         )
         annot_track@name <- ""
         tracks <- c(list(annot_track), .cov_tracks)
@@ -488,8 +498,8 @@ plotHFGC <- function(
                 fontsize <- x@dp@pars$fontsize
                 cex <- x@dp@pars$cex.title
                 annot_track <- .makeFeatureTrack(
-                  .annotation[[nm]], .gr, fontsize, .fill, .size, cex, 0, "",
-                  "full",.col.title, .bg.title
+                    .annotation[[nm]], .gr, fontsize, .fill, .size, cex, 0, "",
+                    "full",.col.title, .bg.title
                 )
                 # annot_track@name <- nm
                 c(list(annot_track), x)
@@ -505,8 +515,8 @@ plotHFGC <- function(
 #' @importFrom IRanges subsetByOverlaps
 #' @importFrom Gviz AnnotationTrack
 .makeFeatureTrack <- function(
-    .features, .gr, .fontsize, .fill, .tracksize, .cex, .rot, .name, .stacking,
-    .col.title, .bg.title
+        .features, .gr, .fontsize, .fill, .tracksize, .cex, .rot, .name, .stacking,
+        .col.title, .bg.title
 ) {
 
     if (missing(.features)) return(NULL)
@@ -538,12 +548,13 @@ plotHFGC <- function(
 
 #' @importFrom IRanges subsetByOverlaps
 #' @importFrom Gviz GeneRegionTrack
+#' @importFrom GenomicRanges coverage
 #' @importFrom stringr str_to_title str_pad str_count
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom methods is
 .makeGeneTracks <- function(
-    .genes, .gr, .collapse, .fontsize, .col, .tracksize, .cex, .rot, .col.title,
-    .bg.title
+        .genes, .gr, .collapse, .fontsize, .col, .tracksize, .cex, .rot, .col.title,
+        .bg.title, .max_trans
 ) {
 
     if (missing(.genes)) return(list(NULL))
@@ -554,14 +565,25 @@ plotHFGC <- function(
         if (missing(.col)) .col <- "#FFD58A"
         ids <- subsetByOverlaps(.genes, .gr)$gene
         if (length(ids) == 0) return(list(NULL))
+        .genes <- subset(.genes, gene %in% ids)
+
+        if (.collapse == "auto") {
+            ## Check for the maximum at every genomic position to be plotted
+            n_trans <- max(max(coverage(.genes)))
+            if (n_trans > .max_trans) {
+                .collapse <- "meta"
+            } else {
+                .collapse = FALSE
+            }
+        }
 
         trackList <- GeneRegionTrack(
-          subset(.genes, gene %in% ids), name = "Genes",
-          transcriptAnnotation = "symbol", collapseTranscripts = .collapse,
-          size = .tracksize, fontsize = .fontsize,
-          col = "transparent", fill = .col[[1]],
-          cex.title = .cex, rotation.title = .rot, col.title = .col.title,
-          background.title = .bg.title
+            .genes, name = "Genes",
+            transcriptAnnotation = "symbol", collapseTranscripts = .collapse,
+            size = .tracksize, fontsize = .fontsize,
+            col = "transparent", fill = .col[[1]],
+            cex.title = .cex, rotation.title = .rot, col.title = .col.title,
+            background.title = .bg.title
         )
         return(trackList)
     }
@@ -581,21 +603,33 @@ plotHFGC <- function(
     }
     .col <- .col[names(.genes)]
 
-  ## Setup the collapseTranscripts argument if we just have a vector
+    ## Setup the collapseTranscripts argument if we just have a vector
     if (length(.collapse) == 1){
         .collapse <- rep(.collapse[[1]], length(.genes))
         names(.collapse) <- names(.genes)
     }
 
-    trackList <- lapply(names(.genes),
+    trackList <- lapply(
+        names(.genes),
         function(x) {
             nm <- x
+            ids <- subsetByOverlaps(.genes[[x]], .gr)$gene
+            gt <- subset(.genes[[x]], gene %in% ids)
+            cl <- .collapse[[x]]
+            if (cl == "auto") {
+                n_trans <- max(max(coverage(gt)))
+                if (n_trans > .max_trans) {
+                    cl <- "meta"
+                } else {
+                    cl <- FALSE
+                }
+            }
             ## This just helps the weird alignment algorithm
             if (.rot == 0) nm <- str_pad(x, min(str_count(x) + 4, 12))
             GeneRegionTrack(
-                .genes[[x]], name = str_to_title(nm),
+                gt, name = str_to_title(nm),
                 transcriptAnnotation = "symbol",
-                collapseTranscripts = .collapse[[x]],
+                collapseTranscripts = cl,
                 size = .tracksize, fontsize = .fontsize, col = .col[[x]],
                 fill = .col[[x]], cex.title = .cex, rotation.title = .rot,
                 col.title = .col.title, background.title = .bg.title
@@ -603,7 +637,7 @@ plotHFGC <- function(
         }
     )
 
-  return(trackList)
+    return(trackList)
 
 }
 
@@ -613,8 +647,8 @@ plotHFGC <- function(
 #' @importFrom GenomicRanges GRangesList
 #' @importFrom stringr str_count str_pad
 .makeCoverageTracks <- function(
-    .coverage, .gr, .fontsize, .type = c("l", "heatmap"), .linecol,
-    .gradient, .tracksize, .cex, .rot, .ylim, .col.title, .bg.title, ...
+        .coverage, .gr, .fontsize, .type = c("l", "heatmap"), .linecol,
+        .gradient, .tracksize, .cex, .rot, .ylim, .col.title, .bg.title, ...
 ) {
 
     ## Always returns a list
@@ -716,7 +750,7 @@ plotHFGC <- function(
                 # Use modulo for recursion if n > 6
                 ind <- ((seq_len(n) - 1) %% 6) + 1
                 defCols[ind]
-          })
+            })
         return(cols)
     }
     ## If the function has progressed this far, we are using the supplied colours
@@ -742,9 +776,9 @@ plotHFGC <- function(
 #' @importFrom S4Vectors mcols
 #' @importFrom GenomeInfoDb seqnames
 .checkHFGCArgs <- function(
-    gr, zoom, shift, hic, features, genes, coverage, annotation, axistrack,
-    cytobands, max, hiccol, linecol, genecol, featcol, annotcol, type, ylim,
-    collapseTranscripts
+        gr, zoom, shift, hic, features, genes, coverage, annotation, axistrack,
+        cytobands, max, hiccol, linecol, genecol, featcol, annotcol, type, ylim,
+        collapseTranscripts, maxTrans
 ) {
 
     msg <- c()
@@ -760,7 +794,7 @@ plotHFGC <- function(
     nums <- as.numeric(c(zoom, shift, max))
     if (any(is.na(nums)))
         msg <- c(
-          msg, "zoom/shift/max must be numeric or coercible to numeric\n"
+            msg, "zoom/shift/max must be numeric or coercible to numeric\n"
         )
 
     if (!missing(hic)) {
@@ -778,17 +812,17 @@ plotHFGC <- function(
             msg <- c(msg, "'features' must be provided as a GRangesList\n")
         if ("" %in% names(features))
             msg <- c(
-              msg, "All elements of 'features' must be explicitly named\n"
+                msg, "All elements of 'features' must be explicitly named\n"
             )
         if (!missing(featcol)) {
             if (!all(names(features) %in% names(featcol)))
                 msg <- c(
-                  msg, "All elements of 'features' must be in 'featcol'\n"
+                    msg, "All elements of 'features' must be in 'featcol'\n"
                 )
         }
     }
 
-    msg <- .checkGenes(msg, genes, genecol, collapseTranscripts)
+    msg <- .checkGenes(msg, genes, genecol, collapseTranscripts, maxTrans)
 
     msg <- .checkCoverage(
         msg, coverage, linecol, type, annotation, annotcol, ylim
@@ -819,13 +853,13 @@ plotHFGC <- function(
 }
 
 .checkCoverage <- function(
-    msg, coverage, linecol, type, annotation, annotcol, ylim
+        msg, coverage, linecol, type, annotation, annotcol, ylim
 ) {
 
     if (missing(coverage)) return(msg)
 
     if (!any(is(coverage, "list"), is(coverage, "BigWigFileList")))
-      return(c(msg, "'coverage' should be a BigWigFileList or a list\n"))
+        return(c(msg, "'coverage' should be a BigWigFileList or a list\n"))
 
     ## Add checks for coverage. This can be a list of BigWigFileLists, or a
     ## single BigWigFileList
@@ -867,21 +901,21 @@ plotHFGC <- function(
                 msg <- c(msg, "linecol must be a named list\n")
             } else {
                 if (!all(nm %in% names(linecol))) {
-                  msg <- c(
-                      msg,
-                      "All elements of coverage must be named in linecol\n"
-                  )
+                    msg <- c(
+                        msg,
+                        "All elements of coverage must be named in linecol\n"
+                    )
                 } else {
                     cov_len <- vapply(coverage, length, integer(1))
                     col_len <- vapply(linecol, length, integer(1))
                     cov_len <- cov_len[names(which(col_len > 0))]
                     if (!all(cov_len == col_len[names(cov_len)]))
                         msg <- c(
-                          msg,
-                          paste(
-                            "All elements of linecol must be NULL,",
-                            "or match coverage\n"
-                          )
+                            msg,
+                            paste(
+                                "All elements of linecol must be NULL,",
+                                "or match coverage\n"
+                            )
                         )
                 }
                 match_names <- mapply(
@@ -898,28 +932,28 @@ plotHFGC <- function(
 
     if (!is.null(ylim)) {
         if (is(coverage, "list")) {
-          # If coverage is a list, ylim can be a vector passed to all elements
-          # or a named list of numerics
-          if (!is(ylim, "list")) {
-              if (length(ylim) < 2 | !is.numeric(ylim))
-                  msg <- c(
-                    msg,
-                    paste(
-                      "ylim can be a named list or numeric vector of length",
-                      ">= 2\n"
+            # If coverage is a list, ylim can be a vector passed to all elements
+            # or a named list of numerics
+            if (!is(ylim, "list")) {
+                if (length(ylim) < 2 | !is.numeric(ylim))
+                    msg <- c(
+                        msg,
+                        paste(
+                            "ylim can be a named list or numeric vector of length",
+                            ">= 2\n"
+                        )
                     )
-                  )
-          } else {
-              if (!all(names(coverage) %in% names(ylim)))
-                  msg <- c(
-                      msg,
-                      "All elements of coverage must also be named in ylim\n"
-                  )
-              if (!all(vapply(ylim, length, integer(1)) >= 2))
-                  msg <- c(
-                    msg,
-                    "All supplied elements of ylim must be of length >= 2\n"
-                  )
+            } else {
+                if (!all(names(coverage) %in% names(ylim)))
+                    msg <- c(
+                        msg,
+                        "All elements of coverage must also be named in ylim\n"
+                    )
+                if (!all(vapply(ylim, length, integer(1)) >= 2))
+                    msg <- c(
+                        msg,
+                        "All supplied elements of ylim must be of length >= 2\n"
+                    )
             }
         }
         if (is(coverage, "BigWigFileList")) {
@@ -952,7 +986,7 @@ plotHFGC <- function(
             is_grl <- vapply(annotation, is, logical(1), class2 = "GRangesList")
             if (!all(is_grl)) {
                 msg <- c(
-                  msg, "annotation must be a list of GRangesList objects\n"
+                    msg, "annotation must be a list of GRangesList objects\n"
                 )
             } else {
                 all_annot <- unlist(lapply(annotation, names))
@@ -976,7 +1010,7 @@ plotHFGC <- function(
 }
 
 
-.checkGenes <- function(msg, genes, genecol, collapseTranscripts) {
+.checkGenes <- function(msg, genes, genecol, collapseTranscripts, maxTrans) {
 
     if (missing(genes)) return(msg)
 
@@ -985,7 +1019,7 @@ plotHFGC <- function(
 
     reqd_mcols <- c("gene", "exon", "transcript", "symbol")
     trans_vals <- c(
-        "TRUE", "T", "FALSE", "F", "gene", "longest", "shortest", "meta"
+        "TRUE", "T", "FALSE", "F", "gene", "longest", "shortest", "meta", "auto"
     )
 
     if (is(genes, "GRangesList")) {
@@ -1004,13 +1038,13 @@ plotHFGC <- function(
         )
         if (!all(chk_mcols))
             msg <- c(
-              msg,
-              paste(
-                  "The 'genes' GRangesList must have the columns",
-                  collapseGenes(
-                    c("gene", "exon", "transcript", "symbol"), format = ""
-                  ),
-                  "\n"
+                msg,
+                paste(
+                    "The 'genes' GRangesList must have the columns",
+                    collapseGenes(
+                        c("gene", "exon", "transcript", "symbol"), format = ""
+                    ),
+                    "\n"
                 )
             )
 
@@ -1052,10 +1086,13 @@ plotHFGC <- function(
                 msg <- c(
                     msg,
                     paste(
-                      "collapseTranscripts can only be logical or one of",
-                      "gene, longest, shortest or meta\n"
+                        "collapseTranscripts can only be logical or one of",
+                        "gene, longest, shortest or meta\n"
                     )
                 )
+            }
+            if (any(ct == "auto") & !is.numeric(maxTrans)) {
+                msg <- c(msg, "'maxTrans' must be numeric")
             }
         }
 
@@ -1069,7 +1106,7 @@ plotHFGC <- function(
                 paste(
                     "The 'genes' GRanges object must have the columns",
                     collapseGenes(
-                      c("gene", "exon", "transcript", "symbol"), format = ""
+                        c("gene", "exon", "transcript", "symbol"), format = ""
                     ),
                     "\n"
                 )
@@ -1087,6 +1124,6 @@ plotHFGC <- function(
         }
     }
 
-  msg
+    msg
 
 }

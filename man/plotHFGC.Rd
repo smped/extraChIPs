@@ -32,7 +32,8 @@ plotHFGC(
   hicname = "HiC",
   featname = "Features",
   featstack = c("full", "hide", "dense", "squish", "pack"),
-  collapseTranscripts = "meta",
+  collapseTranscripts = "auto",
+  maxTrans = 12,
   ylim = NULL,
   ...,
   fontsize = 12,
@@ -114,7 +115,12 @@ are passed to these elements}
 \item{featstack}{Stacking for the fature track}
 
 \item{collapseTranscripts}{Passed to \link[Gviz]{GeneRegionTrack} for the
-genes track}
+genes track. Defaults to \code{"auto"} for automatic setting. If the number of
+transcripts to be plotted is > \code{maxtrans}, the argument will be
+automatically set to \code{"meta"}, otherwise this will be passed as \code{FALSE} which
+will show all transcripts.}
+
+\item{maxTrans}{Only used if \code{collapseTranscripts} is set to "auto".}
 
 \item{ylim}{If a numeric vector, this will be passed to all coverage tracks.
 Alternatively, a named list of y-limits for each coverage track with names
@@ -287,7 +293,7 @@ y-axis. The list \strong{must be named} with these names displayed on the LHS
 panel. Each internal \code{BigWig} within a \code{BigWigFileList} must also be named.
 }
 \item{covtype}{Currently only lines (\code{covtype = "l"}) and
-heatmaps (\verb{covtype = "heatmap}) are supported. Colours can be
+heatmaps (\code{covtype = "heatmap"}) are supported. Colours can be
 specified using the arguments below}
 \item{linecol}{Can be a single colour applied to all tracks, or a \emph{named}
 vector (or list) of colours. If \code{coverage} is a single \code{BigWigFileList},
@@ -347,8 +353,14 @@ gr <- GRanges("chr10:103862000-103900000")
 plotHFGC(
   gr,
   hic = ex_hic, features = ex_features, genes = ex_trans, coverage = bwfl,
-  featcol = featcol, linecol = bw_col,
-  collapseTranscripts = FALSE, cytobands = grch37.cytobands
+  featcol = featcol, linecol = bw_col, cytobands = grch37.cytobands
+)
+
+plotHFGC(
+  gr,
+  hic = ex_hic, features = ex_features, genes = ex_trans, coverage = bwfl,
+  featcol = featcol, linecol = bw_col, cytobands = grch37.cytobands,
+  maxTrans = 1
 )
 }
 
