@@ -16,6 +16,8 @@ getProfileData(x, gr, ...)
   downstream = upstream,
   bins = 100,
   mean_mode = "w0",
+  log = TRUE,
+  offset = 1,
   ...
 )
 
@@ -26,6 +28,8 @@ getProfileData(x, gr, ...)
   downstream = upstream,
   bins = 100,
   mean_mode = "w0",
+  log = TRUE,
+  offset = 1,
   ...
 )
 
@@ -36,6 +40,8 @@ getProfileData(x, gr, ...)
   downstream = upstream,
   bins = 100,
   mean_mode = "w0",
+  log = TRUE,
+  offset = 1,
   ...
 )
 }
@@ -56,6 +62,10 @@ range within \code{gr}}
 
 \item{mean_mode}{The method used for calculating the score for each bin.
 See \link[EnrichedHeatmap]{normalizeToMatrix} for details}
+
+\item{log}{logical(1) Should the returned values be log2-transformed}
+
+\item{offset}{Value added to data if log-transforming. Ignored otherwise}
 }
 \value{
 GRanges or GrangesList with column profile_data, as described above
@@ -81,8 +91,8 @@ Column names in each DataFrame are \code{score}, \code{position} and \code{bp}.
 }
 \examples{
 bw <- system.file("tests", "test.bw", package = "rtracklayer")
-gr <- GRanges("chr2:500")
-pd <- getProfileData(bw, gr, upstream = 100, bins = 10)
+gr <- GRanges("chr2:1000")
+pd <- getProfileData(bw, gr, upstream = 500, bins = 10)
 pd
 pd$profile_data
 
