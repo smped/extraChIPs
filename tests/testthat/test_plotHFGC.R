@@ -151,7 +151,7 @@ test_that("Malformed genes are caught", {
         .checkHFGCArgs(
             gr1, zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, type = "l",
             genes = GRangesList(a = genes, b = genes), genecol = "blue",
-            collapseTranscripts = list(a = TRUE, c = TRUE)
+            collapseTranscripts = list(a = TRUE, c = TRUE), maxTrans = 12
         ),
         "All elements of the 'genes' GRangesList must be named in collapseTranscr"
     )

@@ -66,3 +66,12 @@ test_that(".makeIdeoTrack behaves as expected", {
     expect_equal(dim(tr@bandTable), c(1136, 5))
     expect_equal(tr@dp@pars$fontsize, 12)
 })
+
+test_that("collapseTranscripts & maxTrans work",{
+    data(ex_trans)
+    gr <- GRanges("chr10:103862000-103900000")
+    p <- plotHFGC(gr, genes = ex_trans, cytobands = grch37.cytobands)
+    expect_equal(p$Genes@dp@pars$collapseTranscripts, FALSE)
+    p <- plotHFGC(gr, genes = ex_trans, cytobands = grch37.cytobands, maxTrans = 1)
+    expect_equal(p$Genes@dp@pars$collapseTranscripts, "meta")
+})
