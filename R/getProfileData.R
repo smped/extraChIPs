@@ -27,6 +27,8 @@
 #' @param bins The total number of bins to break the extended ranges into
 #' @param mean_mode The method used for calculating the score for each bin.
 #' See \link[EnrichedHeatmap]{normalizeToMatrix} for details
+#' @param log logical(1) Should the returned values be log2-transformed
+#' @param offset Value added to data if log-transforming. Ignored otherwise
 #' @param ... Passed to \link[EnrichedHeatmap]{normalizeToMatrix}
 #'
 #' @return
@@ -34,8 +36,8 @@
 #'
 #' @examples
 #' bw <- system.file("tests", "test.bw", package = "rtracklayer")
-#' gr <- GRanges("chr2:500")
-#' pd <- getProfileData(bw, gr, upstream = 100, bins = 10)
+#' gr <- GRanges("chr2:1000")
+#' pd <- getProfileData(bw, gr, upstream = 500, bins = 10)
 #' pd
 #' pd$profile_data
 #'
@@ -56,7 +58,7 @@ setMethod(
     signature = signature(x = "BigWigFile", gr = "GenomicRanges"),
     function(
     x, gr, upstream = 2500, downstream = upstream, bins = 100,
-    mean_mode = "w0", ...
+    mean_mode = "w0", log = TRUE, offset = 1, ...
     ) {
 
     stopifnot(upstream > 0 & downstream > 0 & bins > 0)
@@ -65,6 +67,9 @@ setMethod(
     gr_resize <- resize(gr, width = 1, fix = "center")
     gr_resize <- promoters(gr_resize, upstream, downstream)
     vals <- import.bw(x, which = gr_resize)
+    stopifnot("score" %in% colnames(mcols(vals)))
+    stopifnot(is.logical(log) & is.numeric(offset))
+    if (log) vals$score <- log2(vals$score + offset)
 
     mat <- normalizeToMatrix(
         signal = vals, target = resize(gr_resize, width = 1, fix = "center"),
@@ -98,13 +103,13 @@ setMethod(
     signature = signature(x = "BigWigFileList", gr = "GenomicRanges"),
     function(
         x, gr, upstream = 2500, downstream = upstream, bins = 100,
-        mean_mode = "w0", ...
+        mean_mode = "w0", log = TRUE, offset = 1, ...
     ) {
     out <- lapply(
         x,
         getProfileData,
         gr = gr, upstream = upstream, downstream = downstream, bins = bins,
-        mean_mode = mean_mode, ...
+        mean_mode = mean_mode, log = log, offset = offset, ...
     )
     as(out, "GRangesList")
     }
@@ -116,7 +121,7 @@ setMethod(
     signature = signature(x = "character", gr = "GenomicRanges"),
     function(
         x, gr, upstream = 2500, downstream = upstream, bins = 100,
-        mean_mode = "w0", ...
+        mean_mode = "w0", log = TRUE, offset = 1, ...
     ) {
         stopifnot(all(file.exists(x)))
         if (length(x) == 1) {
@@ -124,7 +129,9 @@ setMethod(
         } else {
             x <- BigWigFileList(x)
         }
-        getProfileData(x, gr, upstream, downstream, bins, mean_mode, ...)
+        getProfileData(
+            x, gr, upstream, downstream, bins, mean_mode, log, offset, ...
+        )
     }
 )
 
