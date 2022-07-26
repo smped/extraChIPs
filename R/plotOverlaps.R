@@ -15,12 +15,15 @@
 #' @importFrom ComplexUpset upset upset_set_size upset_default_themes
 #' @importFrom ggplot2 geom_text aes element_blank
 #' @importFrom scales comma
+#' @importFrom grid grid.newpage
 f <- function(x, type = c("auto", "venn", "upset"), ...) {
 
     stopifnot(is(x, "list"))
+    stopifnot(length(names(x)) == length(x))
     n <- length(x)
     type <- match.arg(type)
     if (type == "auto") type <- ifelse(n > 3, "upset", "venn")
+    x <- lapply(x, unique)
 
     if (type == "upset") {
         if (n == 1)
@@ -41,18 +44,68 @@ f <- function(x, type = c("auto", "venn", "upset"), ...) {
         if (!'themes' %in% dotArgs) {
             dotArgs$themes <- upset_default_themes(panel.grid = element_blank())
         }
-        do.call("upset", c(ip, dotArgs))
+        p <- do.call("upset", c(ip, dotArgs))
+        return(p)
     }
 
     if (type == "venn") {
-        stop("Not done yet")
-        if (n == 1) .plotSingleVenn(x, ...)
-        if (n == 2) .plotDoubleVenn(x, ...)
-        if (n == 3) .plotTripleVenn(x, ...)
+        if (n == 1) p <- .plotSingleVenn(x, ...)
+        if (n == 2) p <- .plotDoubleVenn(x, ...)
+        if (n == 3) p <- .plotTripleVenn(x, ...)
     }
+    p
 
 }
+ex <- list(
+    x = letters[1:5],
+    y = letters[c(6:15, 26)],
+    z = letters[c(2, 10:25)]
+)
 f(ex, type = "upset")
+
+#' @importFrom VennDiagram draw.single.venn
+.plotSingleVenn <- function(x, ...) {
+    stopifnot(length(x) == 1)
+    draw.single.venn(area = length(x[[1]]), category = names(x)[[1]], ...)
+}
+f(ex[1], fill = "grey")
+
+#' @importFrom VennDiagram draw.pairwise.venn
+.plotDoubleVenn <- function(x, ...) {
+    stopifnot(length(x) == 2)
+    plotArgs <- setNames(lapply(x, length), c("area1", "area2"))
+    plotArgs$cross.area <- sum(duplicated(unlist(x)))
+    plotArgs$category <- names(x)
+    allowed <- c("gList1", "margin", names(formals(draw.pairwise.venn)))
+    dotArgs <- list(...)
+    dotArgs <- dotArgs[names(dotArgs) %in% allowed]
+    do.call("draw.pairwise.venn", c(plotArgs, dotArgs))
+
+}
+f(ex[2:3])
+
+#' @importFrom VennDiagram draw.triple.venn
+.plotTripleVenn <- function(x, ...) {
+    stopifnot(length(x) == 3)
+    plotArgs <- setNames(lapply(x, length), paste0("area", 1:3))
+    plotArgs$n12 <- sum(duplicated(unlist(x[1:2])))
+    plotArgs$n13 <- sum(duplicated(unlist(x[c(1, 3)])))
+    plotArgs$n23 <- sum(duplicated(unlist(x[c(2, 3)])))
+    plotArgs$n123 <- sum(table(unlist(x)) == 3)
+    plotArgs$category <- names(x)
+    plotArgs$overrideTriple <- TRUE
+    allowed <- c("gList1", "margin", names(formals(draw.triple.venn)))
+    dotArgs <- list(...)
+    dotArgs <- dotArgs[names(dotArgs) %in% allowed]
+    do.call("draw.triple.venn", c(plotArgs, dotArgs))
+}
+# ex <- list(
+#     a = sample(letters, 5),
+#     b = sample(letters, 7),
+#     c = sample(letters, 10)
+# )
+f(ex[1:3])
+
 
 #' @importFrom methods is
 #' @importFrom tibble as_tibble

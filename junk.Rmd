@@ -1,0 +1,35 @@
+---
+title: "Untitled"
+output: html_document
+date: '2022-07-26'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+```
+
+```{r}
+library(reticulate)
+use_python("/usr/bin/python3")
+```
+
+
+```{python, results = 'hide', fig.cap = "Check it"}
+# Import the library
+import matplotlib.pyplot as plt
+from matplotlib_venn import venn3
+ 
+# Make the diagram
+v = venn3(subsets = (400, 500, 100, 300,200,50,50), set_labels = ("X", "Y", "Z"))
+v.get_patch_by_id('100').set_color('orange')
+v.get_patch_by_id('010').set_color('blue')
+v.get_patch_by_id('001').set_color('#ff0099')
+plt.show()
+```
+
+```{python, fig.height = 10, fig.width = 10}
+from matplotlib_venn import venn2
+v = venn2(subsets = (10, 10, 900), set_labels = ('X', 'Y'))
+plt.show()
+```
+
