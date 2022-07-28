@@ -56,3 +56,10 @@ setGeneric("propOverlap", function(x, y, ...) standardGeneric("propOverlap"))
 setGeneric(
     "partitionRanges", function(x, y, ...) standardGeneric("partitionRanges")
 )
+
+#' @export
+#' @name plotOverlaps
+#' @rdname plotOverlaps-methods
+setGeneric(
+    'plotOverlaps', function(x, ...) standardGeneric('plotOverlaps')
+)
