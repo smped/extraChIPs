@@ -96,8 +96,26 @@ test_that("plotOverlaps adds annotations as expected", {
     )
     expect_equal(bp$labels$y, "score")
     expect_true(is(bp$layers[[1]]$geom, "GeomBoxplot"))
+    p <- plotOverlaps(grl, type = 'upset', var = 'width', set_col = 'red')
+    bp <- p$patches$plots[[2]]
+    expect_equal(bp$labels$y, "width")
+    expect_equal(p$patches$plots[[5]]$geom[[1]]$geom_params$fill, "red")
+
 })
 
 test_that("GRL Input is handled as expect without var", {
     expect_true(is(plotOverlaps(grl), "gList"))
+})
+
+test_that("Simple errors are caught", {
+    expect_error(
+        plotOverlaps(grl, type = "upset", var = "x"), "Couldn't find column x"
+    )
+    grl2 <- GRangesList(
+        lapply(grl, function(x) {x$letters <- c("a", "b", "c"); x})
+    )
+    expect_error(
+        plotOverlaps(grl2, type = "upset", var = "letters"),
+        "letters must contain numeric values"
+    )
 })

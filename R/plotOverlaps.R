@@ -98,7 +98,8 @@ setMethod(
 
             if (!var %in% c(colnames(mcols(x[[1]])), "width"))
                 stop("Couldn't find column ", var)
-            if (!is.numeric(mcols(x[[1]])[[var]]))
+
+            if (var != "width" & !is.numeric(mcols(x[[1]])[[var]]))
                 stop(var, " must contain numeric values")
 
 
