@@ -44,48 +44,53 @@
 #' @aliases plotAssayRle
 #' @export
 setMethod(
-  "plotAssayRle",
-  signature = signature(x = "SummarizedExperiment"),
-  function(
-    x, assay = "counts", colour = c(), fill = c(), rle_group = c(),
-    x_col = "sample", n_max = Inf, trans = c(), ...
-  ) {
+    "plotAssayRle",
+    signature = signature(x = "SummarizedExperiment"),
+    function(
+        x, assay = "counts", colour = c(), fill = c(), rle_group = c(),
+        x_col = "sample", n_max = Inf, trans = c(), ...
+    ) {
 
-    if (is.null(colnames(x))) colnames(x) <- as.character(seq_len(ncol(x)))
-    df <- as.data.frame(colData(x))
-    df <- rownames_to_column(df, "sample")
-    x_col <- match.arg(x_col, colnames(df))
-    if (!is.null(colour)) colour <- match.arg(colour, colnames(df))
-    if (!is.null(fill)) fill <- match.arg(fill, colnames(df))
-    if (!is.null(rle_group)) rle_group <- match.arg(rle_group, colnames(df))
-    grps <- c("ind", rle_group)
+        if (is.null(colnames(x)))
+            colnames(x) <- as.character(seq_len(ncol(x)))
+        df <- as.data.frame(colData(x))
+        df <- rownames_to_column(df, "sample")
+        x_col <- match.arg(x_col, colnames(df))
+        if (!is.null(colour)) colour <- match.arg(colour, colnames(df))
+        if (!is.null(fill)) fill <- match.arg(fill, colnames(df))
+        if (!is.null(rle_group))
+            rle_group <- match.arg(rle_group, colnames(df))
+        grps <- c("ind", rle_group)
 
-    n_max <- min(nrow(x), n_max)
-    ind <- seq_len(n_max)
-    if (n_max < nrow(x)) ind <- sample.int(nrow(x), n_max, replace = FALSE)
+        n_max <- min(nrow(x), n_max)
+        ind <- seq_len(n_max)
+        if (n_max < nrow(x)) ind <- sample.int(nrow(x), n_max, replace = FALSE)
 
-    mat <- assay(x, assay)[ind,]
-    if (!is.null(trans)) {
-      mat <- match.fun(trans)(mat)
-      trans_ok <- all(
-        is.matrix(mat), nrow(mat) == length(ind), colnames(mat) == colnames(x)
-      )
-      if (!trans_ok) stop("This transformation is not applicable")
+        mat <- assay(x, assay)[ind,]
+        if (!is.null(trans)) {
+            mat <- match.fun(trans)(mat)
+            trans_ok <- all(
+                is.matrix(mat), nrow(mat) == length(ind),
+                colnames(mat) == colnames(x)
+            )
+            if (!trans_ok) stop("This transformation is not applicable")
+        }
+
+        mat_df <- as.data.frame(mat)
+        mat_df$ind <- ind
+        mat_df <- pivot_longer(
+            mat_df,
+            all_of(colnames(x)), names_to = "sample", values_to = "assay"
+        )
+        mat_df <- left_join(mat_df, df, by = "sample")
+        mat_df <- group_by(mat_df, !!!syms(grps))
+        mat_df <- mutate(mat_df, rle = assay - median(assay))
+
+        ggplot(
+            mat_df, aes_string(x_col, "rle", fill = fill, colour = colour)
+        ) +
+            geom_boxplot() +
+            labs(y = "RLE")
+
     }
-
-    mat_df <- as.data.frame(mat)
-    mat_df$ind <- ind
-    mat_df <- pivot_longer(
-      mat_df,
-      all_of(colnames(x)), names_to = "sample", values_to = "assay"
-    )
-    mat_df <- left_join(mat_df, df, by = "sample")
-    mat_df <- group_by(mat_df, !!!syms(grps))
-    mat_df <- mutate(mat_df, rle = assay - median(assay))
-
-    ggplot(mat_df, aes_string(x_col, "rle", fill = fill, colour = colour)) +
-      geom_boxplot() +
-      labs(y = "RLE")
-
-  }
 )

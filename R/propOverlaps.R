@@ -26,18 +26,18 @@
 #' @export
 #' @rdname propOverlap-methods
 setMethod(
-  "propOverlap", c("GRanges", "GRanges"),
-  function(x, y, ignore.strand = FALSE, ...) {
+    "propOverlap", c("GRanges", "GRanges"),
+    function(x, y, ignore.strand = FALSE, ...) {
 
-    hits <- findOverlaps(x, y, ignore.strand = ignore.strand)
-    gr <- pintersect(
-      x[queryHits(hits)], y[subjectHits(hits)]
-    )
-    w <- width(reduce(splitAsList(gr, queryHits(hits))))
-    w <- vapply(w, sum, integer(1))
-    out <- rep(0, length(x))
-    out[unique(queryHits(hits))] <- w
-    out / width(x)
+        hits <- findOverlaps(x, y, ignore.strand = ignore.strand)
+        gr <- pintersect(
+            x[queryHits(hits)], y[subjectHits(hits)]
+        )
+        w <- width(reduce(splitAsList(gr, queryHits(hits))))
+        w <- vapply(w, sum, integer(1))
+        out <- rep(0, length(x))
+        out[unique(queryHits(hits))] <- w
+        out / width(x)
 
-  }
+    }
 )

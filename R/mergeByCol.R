@@ -61,8 +61,8 @@
 #' @export
 #'
 setGeneric(
-  "mergeByCol",
-  function(x, ...){standardGeneric("mergeByCol")}
+    "mergeByCol",
+    function(x, ...){standardGeneric("mergeByCol")}
 )
 #' @importClassesFrom S4Vectors HitsList
 #' @importFrom GenomicRanges findOverlaps reduce granges
@@ -75,94 +75,97 @@ setGeneric(
 #' @rdname mergeByCol-methods
 #' @export
 setMethod(
-  "mergeByCol",
-  signature = signature(x = "GenomicRanges"),
-  function(
-    x, df = NULL, col,
-    by = c("max", "median", "mean", "min"),
-    logfc = "logFC", pval = "P", inc_cols, p_adj_method = "fdr",
-    merge_within = 1L, ignore_strand = FALSE,
-    ...
-  ) {
+    "mergeByCol",
+    signature = signature(x = "GenomicRanges"),
+    function(
+        x, df = NULL, col,
+        by = c("max", "median", "mean", "min"),
+        logfc = "logFC", pval = "P", inc_cols, p_adj_method = "fdr",
+        merge_within = 1L, ignore_strand = FALSE,
+        ...
+    ) {
 
-    ## Checks & defining the key columns
-    if (is.null(df)) df <- mcols(x)
-    stopifnot(nrow(df) == length(x))
-    df_cols <- colnames(df)
-    if(missing(col)) stop("The column containing signal must be specified")
-    col <- match.arg(col, df_cols)
-    logfc <- match.arg(logfc, df_cols)
-    pval <- match.arg(pval, df_cols)
-    p_adj_method <- match.arg(p_adj_method, p.adjust.methods)
-    f <- match.fun(match.arg(by))
-    if (col == logfc | col == pval) stop(
-      "Merging not implemented for ", col,
-      ". Please specify the column containing signal (e.g. logCPM or AveExpr)."
-    )
+        ## Checks & defining the key columns
+        if (is.null(df)) df <- mcols(x)
+        stopifnot(nrow(df) == length(x))
+        df_cols <- colnames(df)
+        if(missing(col)) stop("The column containing signal must be specified")
+        col <- match.arg(col, df_cols)
+        logfc <- match.arg(logfc, df_cols)
+        pval <- match.arg(pval, df_cols)
+        p_adj_method <- match.arg(p_adj_method, p.adjust.methods)
+        f <- match.fun(match.arg(by))
+        if (col == logfc | col == pval) stop(
+            "Merging not implemented for ", col,
+            ". ",
+            "Please specify the column containing signal (e.g. logCPM/AveExpr)."
+        )
 
-    ## Define the columns to return
-    ret_cols <- c("keyval_range", col, logfc, pval)
-    ## Can this be rewritten for tidyeval?
-    if (!missing(inc_cols)) {
-      inc_cols <- vapply(inc_cols, match.arg, character(1), choices = df_cols)
-      ret_cols <- unique(c(ret_cols, inc_cols))
+        ## Define the columns to return
+        ret_cols <- c("keyval_range", col, logfc, pval)
+        ## Can this be rewritten for tidyeval?
+        if (!missing(inc_cols)) {
+            inc_cols <- vapply(
+                inc_cols, match.arg, character(1), choices = df_cols
+            )
+            ret_cols <- unique(c(ret_cols, inc_cols))
+        }
+        ## Always return the columns counting the total, up & down windows
+        n_cols <- c("n_windows", "n_up", "n_down")
+
+        ## Merge the ranges and get the map back to the original windows
+        ranges_out <- GenomicRanges::reduce(
+            x, min.gapwidth = merge_within, ignore.strand = ignore_strand
+        )
+        ol <- findOverlaps(x, ranges_out, ignore.strand = ignore_strand)
+
+        ## Merged the data.frame rows
+        i <- NULL # Avoid R CMD check issues
+        grp_df <- as.data.frame(ol)
+        grp_df[["keyval_range"]] <- queryHits(ol)
+        grp_df <- cbind(grp_df, df[queryHits(ol),])
+        grp_df <- group_by(grp_df, subjectHits)
+        merged_df <- summarise(
+            grp_df,
+            i = which.min(abs(!!sym(col) - f(!!sym(col))))[[1]],
+            n_windows = dplyr::n(),
+            n_up = sum(!!sym(pval) <= (!!sym(pval))[i] & !!sym(logfc) > 0),
+            n_down = sum(!!sym(pval) <= (!!sym(pval))[i] & !!sym(logfc) < 0),
+            across(all_of(ret_cols), function(x) x[i]),
+            .groups = "drop"
+        )
+
+        DF <- DataFrame(merged_df[c(n_cols, ret_cols)])
+        adj_col <- paste0(pval, "_", p_adj_method)
+        if (p_adj_method != "none")
+            DF[[adj_col]] <- p.adjust(DF[[pval]], method = p_adj_method)
+        DF[["keyval_range"]] <- granges(x)[DF[["keyval_range"]]]
+        seqinfo(DF[["keyval_range"]]) <- seqinfo(x)
+        mcols(ranges_out) <- DF
+        ranges_out
+
     }
-    ## Always return the columns counting the total, up & down windows
-    n_cols <- c("n_windows", "n_up", "n_down")
-
-    ## Merge the ranges and get the map back to the original windows
-    ranges_out <- GenomicRanges::reduce(
-      x, min.gapwidth = merge_within, ignore.strand = ignore_strand
-    )
-    ol <- findOverlaps(x, ranges_out, ignore.strand = ignore_strand)
-
-    ## Merged the data.frame rows
-    i <- NULL # Avoid R CMD check issues
-    grp_df <- as.data.frame(ol)
-    grp_df[["keyval_range"]] <- queryHits(ol)
-    grp_df <- cbind(grp_df, df[queryHits(ol),])
-    grp_df <- group_by(grp_df, subjectHits)
-    merged_df <- summarise(
-      grp_df,
-      i = which.min(abs(!!sym(col) - f(!!sym(col))))[[1]],
-      n_windows = dplyr::n(),
-      n_up = sum(!!sym(pval) <= (!!sym(pval))[i] & !!sym(logfc) > 0),
-      n_down = sum(!!sym(pval) <= (!!sym(pval))[i] & !!sym(logfc) < 0),
-      across(all_of(ret_cols), function(x) x[i]),
-      .groups = "drop"
-    )
-
-    DF <- DataFrame(merged_df[c(n_cols, ret_cols)])
-    adj_col <- paste0(pval, "_", p_adj_method)
-    if (p_adj_method != "none")
-      DF[[adj_col]] <- p.adjust(DF[[pval]], method = p_adj_method)
-    DF[["keyval_range"]] <- granges(x)[DF[["keyval_range"]]]
-    seqinfo(DF[["keyval_range"]]) <- seqinfo(x)
-    mcols(ranges_out) <- DF
-    ranges_out
-
-  }
 
 )
 #' @rdname mergeByCol-methods
 #' @export
 setMethod(
-  "mergeByCol",
-  signature = signature(x = "RangedSummarizedExperiment"),
-  function(
-    x, df = NULL, col,
-    by = c("max", "median", "mean", "min"),
-    logfc = "logFC", pval = "P", inc_cols, p_adj_method = "fdr",
-    merge_within = 1L, ignore_strand = FALSE,
-    ...
-  ) {
+    "mergeByCol",
+    signature = signature(x = "RangedSummarizedExperiment"),
+    function(
+        x, df = NULL, col,
+        by = c("max", "median", "mean", "min"),
+        logfc = "logFC", pval = "P", inc_cols, p_adj_method = "fdr",
+        merge_within = 1L, ignore_strand = FALSE,
+        ...
+    ) {
 
-    gr <- rowRanges(x)
-    mergeByCol(
-      gr, df, col, by, logfc, pval, inc_cols, p_adj_method, merge_within,
-      ignore_strand, ...
-    )
+        gr <- rowRanges(x)
+        mergeByCol(
+            gr, df, col, by, logfc, pval, inc_cols, p_adj_method, merge_within,
+            ignore_strand, ...
+        )
 
-  }
+    }
 
 )

@@ -53,39 +53,39 @@ setMethod(
     "grlToSE",
     signature = signature(x = "GRangesList"),
     function(
-    x, assayCols = c(), metaCols = c(), keyvals = c(), by = c("min", "max"),
-    ..., ignore.strand = FALSE
-  ) {
+        x, assayCols = c(), metaCols = c(), keyvals = c(), by = c("min", "max"),
+        ..., ignore.strand = FALSE
+    ) {
 
-    ## Return an empty object retaining any seqinfo
-    if (length(x) == 0) return(.emptySE(x))
-    all_mcols <- colnames(mcols(unlist(x)))
-    stopifnot(.checkArgsGrlToSe(x, assayCols, metaCols, keyvals, all_mcols))
+        ## Return an empty object retaining any seqinfo
+        if (length(x) == 0) return(.emptySE(x))
+        all_mcols <- colnames(mcols(unlist(x)))
+        stopifnot(.checkArgsGrlToSe(x, assayCols, metaCols, keyvals, all_mcols))
 
-    by <- match.arg(by)
-    assayCols <- intersect(assayCols, all_mcols)
-    metaCols <- intersect(metaCols, all_mcols)
-    keyvals <- intersect(keyvals, all_mcols)
+        by <- match.arg(by)
+        assayCols <- intersect(assayCols, all_mcols)
+        metaCols <- intersect(metaCols, all_mcols)
+        keyvals <- intersect(keyvals, all_mcols)
 
-    nm <- names(x)
-    fix_id <- paste0("X", seq_along(x))
-    if (is.null(nm)) nm <- fix_id
-    if (any(nm == "")) nm[nm == ""] <- fix_id[nm == ""]
-    names(x) <- nm
+        nm <- names(x)
+        fix_id <- paste0("X", seq_along(x))
+        if (is.null(nm)) nm <- fix_id
+        if (any(nm == "")) nm[nm == ""] <- fix_id[nm == ""]
+        names(x) <- nm
 
-    ## By now we have a named GRL, so get the backbone consensus ranges & sort
-    merged_ranges <- reduce(unlist(x), ..., ignore.strand = ignore.strand)
-    merged_ranges <- sort(merged_ranges, ignore.strand = ignore.strand)
+        ## Now we have a named GRL, so get the backbone consensus ranges & sort
+        merged_ranges <- reduce(unlist(x), ..., ignore.strand = ignore.strand)
+        merged_ranges <- sort(merged_ranges, ignore.strand = ignore.strand)
 
-    assays <- .cols2Assays(
-        .merged = merged_ranges, .grl = x, .assayCols = assayCols,
-        .keyvals = keyvals, .by = by, .ignore.strand = ignore.strand
-    )
-    merged_ranges <- .addMcols(merged_ranges, metaCols, x, ignore.strand)
+        assays <- .cols2Assays(
+            .merged = merged_ranges, .grl = x, .assayCols = assayCols,
+            .keyvals = keyvals, .by = by, .ignore.strand = ignore.strand
+        )
+        merged_ranges <- .addMcols(merged_ranges, metaCols, x, ignore.strand)
 
-    SummarizedExperiment(assays = assays, rowRanges = merged_ranges)
+        SummarizedExperiment(assays = assays, rowRanges = merged_ranges)
 
-  }
+    }
 )
 
 #' @importFrom S4Vectors SimpleList queryHits subjectHits 'mcols<-' mcols
@@ -95,7 +95,7 @@ setMethod(
 #' @importFrom tidyr pivot_wider
 #' @importFrom tidyselect all_of
 .cols2Assays <- function(
-    .merged, .grl, .assayCols, .keyvals, .by, .ignore.strand
+        .merged, .grl, .assayCols, .keyvals, .by, .ignore.strand
 ) {
 
     ## This needs to be performed for all assayCols together given that values
@@ -106,44 +106,48 @@ setMethod(
     all_cols <- unique(c(.assayCols, .keyvals))
     ## Return a list with just the values we need
     merged_list <- lapply(
-    nm,
-    function(i) {
-        ## Map each element of the GRList onto the merged backbone in a way that
-        ## will return nothing if there's no match
-        hits <- findOverlaps(.merged, .grl[[i]], ignore.strand = .ignore.strand)
-        gr <- .merged[queryHits(hits)]
-        mcols(gr) <- mcols(.grl[[i]][subjectHits(hits)])[all_cols]
-        gr$source_in_grl <- i
-        gr
-    }
+        nm,
+        function(i) {
+            ## Map each element of the GRList onto the merged backbone in a way
+            ## that will return nothing if there's no match
+            hits <- findOverlaps(
+                .merged, .grl[[i]], ignore.strand = .ignore.strand
+            )
+            gr <- .merged[queryHits(hits)]
+            mcols(gr) <- mcols(.grl[[i]][subjectHits(hits)])[all_cols]
+            gr$source_in_grl <- i
+            gr
+        }
     )
     merged_list <- GRangesList(merged_list)
     merged_df <- as_tibble(sort(unlist(merged_list)))
 
-        ## If no key values are given, this will only sort by range
-        merged_df <- arrange(merged_df, !!!syms(c("range", .keyvals)))
-        # Multiple columns can't be passed to desc so simply reverse here
-        if (.by == "max")
+    ## If no key values are given, this will only sort by range
+    merged_df <- arrange(merged_df, !!!syms(c("range", .keyvals)))
+    # Multiple columns can't be passed to desc so simply reverse here
+    if (.by == "max")
         merged_df <- merged_df[seq(nrow(merged_df), 1, by = -1),]
-        ## Now by using distinct, we'll effectively have selected the key values
-        merged_df <- distinct(
-            merged_df,
-            across(all_of(c("range", "source_in_grl"))), .keep_all = TRUE
-        )
+    ## Now by using distinct, we'll effectively have selected the key values
+    merged_df <- distinct(
+        merged_df,
+        across(all_of(c("range", "source_in_grl"))), .keep_all = TRUE
+    )
 
     mats <- lapply(
-    .assayCols,
-    function(x) {
-        df <- pivot_wider(
-        merged_df, id_cols = all_of("range"),
-        names_from = all_of("source_in_grl"), values_from = all_of(x),
-        values_fill = NA
-        )
-        df <- left_join(tibble(range = as.character(.merged)), df, by = "range")
-        df <- dplyr::select(df, all_of(nm))
-        stopifnot(length(.merged) == nrow(df)) # Make sure of dims
-        stopifnot(length(nm) == ncol(df)) # Make sure of dims
-        as.matrix(df)
+        .assayCols,
+        function(x) {
+            df <- pivot_wider(
+                merged_df, id_cols = all_of("range"),
+                names_from = all_of("source_in_grl"), values_from = all_of(x),
+                values_fill = NA
+            )
+            df <- left_join(
+                tibble(range = as.character(.merged)), df, by = "range"
+            )
+            df <- dplyr::select(df, all_of(nm))
+            stopifnot(length(.merged) == nrow(df)) # Make sure of dims
+            stopifnot(length(nm) == ncol(df)) # Make sure of dims
+            as.matrix(df)
         }
     )
     names(mats) <- .assayCols
@@ -167,14 +171,16 @@ setMethod(
     ## Given that unnesting may behave differently for each required column
     ## unnest within an lapply, then return the vars
     vars <- lapply(
-    .metaCols,
-    function(x) {
-        var_df <- unnest(df[c("range", x)], all_of(x), keep_empty = TRUE)
-        var_df <- group_by(var_df, !!sym("range"))
-        var <- summarise(var_df, var = list(sort(unique(!!sym(x)))))[["var"]]
-        var <- as(var, "CompressedList")
-        if (all(vapply(var, length, integer(1)) == 1)) var <- unlist(var)
-        var
+        .metaCols,
+        function(x) {
+            var_df <- unnest(df[c("range", x)], all_of(x), keep_empty = TRUE)
+            var_df <- group_by(var_df, !!sym("range"))
+            var <- summarise(
+                var_df, var = list(sort(unique(!!sym(x))))
+            )[["var"]]
+            var <- as(var, "CompressedList")
+            if (all(vapply(var, length, integer(1)) == 1)) var <- unlist(var)
+            var
         }
     )
     names(vars) <- .metaCols
@@ -196,7 +202,9 @@ setMethod(
     msg <- NULL
 
     if (length(names(.x)) != length(.x))
-    msg <- c(msg, "All elements of the x should be given informative names\n")
+        msg <- c(
+            msg, "All elements of the x should be given informative names\n"
+        )
 
     if (length(.assayCols) > 0) {
         if (!all(.assayCols %in% .all_mcols)) {

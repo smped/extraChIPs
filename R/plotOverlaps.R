@@ -282,8 +282,8 @@ setMethod(
 #' @importFrom VennDiagram draw.triple.venn
 .plotTripleVenn <- function(x, ...) {
     stopifnot(length(x) == 3)
-    plotArgs <- setNames(lapply(x, length), paste0("area", 1:3))
-    plotArgs$n12 <- sum(duplicated(unlist(x[1:2])))
+    plotArgs <- setNames(lapply(x, length), paste0("area", seq_len(3)))
+    plotArgs$n12 <- sum(duplicated(unlist(x[c(1, 2)])))
     plotArgs$n13 <- sum(duplicated(unlist(x[c(1, 3)])))
     plotArgs$n23 <- sum(duplicated(unlist(x[c(2, 3)])))
     plotArgs$n123 <- sum(table(unlist(x)) == 3)

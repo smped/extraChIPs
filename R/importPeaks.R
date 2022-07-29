@@ -32,9 +32,9 @@
 #' @importFrom GenomicRanges GRangesList
 #' @export
 importPeaks <- function(
-    x, type = c("narrow", "broad"), blacklist,
-    seqinfo, pruning.mode = c("coarse", "error"),
-    sort = TRUE, setNames = TRUE, ...
+        x, type = c("narrow", "broad"), blacklist,
+        seqinfo, pruning.mode = c("coarse", "error"),
+        sort = TRUE, setNames = TRUE, ...
 ) {
 
     ## Argument checks

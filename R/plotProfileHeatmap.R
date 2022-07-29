@@ -73,43 +73,45 @@
 #' @import methods
 #' @export
 setGeneric(
-  "plotProfileHeatmap",
-  function(object, ...) standardGeneric("plotProfileHeatmap")
+    "plotProfileHeatmap",
+    function(object, ...) standardGeneric("plotProfileHeatmap")
 )
 #' @rdname plotProfileHeatmap-methods
 #' @import methods
 #' @importFrom forcats fct_inorder
 #' @export
 setMethod(
-  "plotProfileHeatmap",
-  signature = signature(object = "GenomicRangesList"),
-  function(
-    object,
-    profileCol, xValue = "bp", fillValue = "score",
-    facetX = NULL, facetY = NULL, colour = facetY, linetype = NULL,
-    summariseBy = c("mean", "median", "min", "max", "none"),
-    xLab = xValue, yLab = NULL, fillLab = fillValue, relHeight = 0.3, ...
-  ) {
+    "plotProfileHeatmap",
+    signature = signature(object = "GenomicRangesList"),
+    function(
+        object,
+        profileCol, xValue = "bp", fillValue = "score",
+        facetX = NULL, facetY = NULL, colour = facetY, linetype = NULL,
+        summariseBy = c("mean", "median", "min", "max", "none"),
+        xLab = xValue, yLab = NULL, fillLab = fillValue, relHeight = 0.3, ...
+    ) {
 
-    ## All elements of the list should usually have identical ranges, however,
-    ## this is not enforced given that scenarios can exist where this is not
-    ## required
+        ## All elements of the list should usually have identical ranges,
+        ## however, this is not enforced given that scenarios can exist where
+        ## this is not required
 
-    ## Set the List element names as a column, then use these as the default
-    ## for facetting along the x-axis
-    if (is.null(names(object))) names(object) <- paste0("X.", seq_along(object))
-    gr <- unlist(object)
-    stopifnot(is(gr, "GRanges"))
-    gr$name <- fct_inorder(names(gr))
-    names(gr) <- NULL
-    if (is.null(facetX)) facetX <- "name"
-    plotProfileHeatmap(
-      object = gr, profileCol = profileCol, xValue = xValue,
-      fillValue = fillValue, facetX = facetX, facetY = facetY, colour = colour,
-      linetype = linetype, summariseBy = summariseBy, xLab = xLab, yLab = yLab,
-      fillLab = fillLab, relHeight = relHeight, ...
-    )
-  }
+        ## Set the List element names as a column, then use these as the default
+        ## for facetting along the x-axis
+        if (is.null(names(object)))
+            names(object) <- paste0("X.", seq_along(object))
+        gr <- unlist(object)
+        stopifnot(is(gr, "GRanges"))
+        gr$name <- fct_inorder(names(gr))
+        names(gr) <- NULL
+        if (is.null(facetX)) facetX <- "name"
+        plotProfileHeatmap(
+            object = gr, profileCol = profileCol, xValue = xValue,
+            fillValue = fillValue, facetX = facetX, facetY = facetY,
+            colour = colour, linetype = linetype, summariseBy = summariseBy,
+            xLab = xLab, yLab = yLab, fillLab = fillLab, relHeight = relHeight,
+            ...
+        )
+    }
 )
 #' @import methods
 #' @importFrom S4Vectors mcols
@@ -120,47 +122,49 @@ setMethod(
 #' @rdname plotProfileHeatmap-methods
 #' @export
 setMethod(
-  "plotProfileHeatmap",
-  signature = signature(object = "GenomicRanges"),
-  function(
-    object,
-    profileCol, xValue = "bp", fillValue = "score",
-    facetX = NULL, facetY = NULL, colour = facetY, linetype = NULL,
-    summariseBy = c("mean", "median", "min", "max", "none"),
-    xLab = xValue, yLab = NULL, fillLab = fillValue, relHeight = 0.3, ...
-  ) {
+    "plotProfileHeatmap",
+    signature = signature(object = "GenomicRanges"),
+    function(
+        object,
+        profileCol, xValue = "bp", fillValue = "score",
+        facetX = NULL, facetY = NULL, colour = facetY, linetype = NULL,
+        summariseBy = c("mean", "median", "min", "max", "none"),
+        xLab = xValue, yLab = NULL, fillLab = fillValue, relHeight = 0.3, ...
+    ) {
 
-    ## Check the profile data.frames for identical dimensions & required cols
-    df <- mcols(object)
-    stopifnot(profileCol %in% colnames(df))
-    stopifnot(.checkProfileDataFrames(df[[profileCol]], xValue, fillValue))
+        ## Check the profile data.frames for identical dims & required cols
+        df <- mcols(object)
+        stopifnot(profileCol %in% colnames(df))
+        stopifnot(.checkProfileDataFrames(df[[profileCol]], xValue, fillValue))
 
-    ## Check the other columns exist
-    keepCols <- setdiff(colnames(df), profileCol)
-    specCols <- unique(c(facetX, facetY, colour, linetype))
-    if (!is.null(specCols)) stopifnot(all(specCols %in% keepCols))
+        ## Check the other columns exist
+        keepCols <- setdiff(colnames(df), profileCol)
+        specCols <- unique(c(facetX, facetY, colour, linetype))
+        if (!is.null(specCols)) stopifnot(all(specCols %in% keepCols))
 
-    ## Tidy the data
-    profiles <- c() # Avoiding incorrect R CMD check errors
-    tbl <- as_tibble(granges(object))
-    if (length(keepCols) > 0) tbl <- bind_cols(tbl, as_tibble(df[keepCols]))
-    tbl$profiles <- lapply(df[[profileCol]], as_tibble)
-    tbl <- unnest(tbl, profiles)
-    tbl <- arrange(tbl, desc(!!sym(fillValue)))
-    ## Ensure the ranges are shown with the strongest signal at the top
-    tbl$range <- fct_rev(fct_inorder(tbl$range))
-    if (!is.null(facetY))
-      tbl[[facetY]] <- fct_inorder(as.character(tbl[[facetY]]))
+        ## Tidy the data
+        profiles <- c() # Avoiding incorrect R CMD check errors
+        tbl <- as_tibble(granges(object))
+        if (length(keepCols) > 0)
+            tbl <- bind_cols(tbl, as_tibble(df[keepCols]))
+        tbl$profiles <- lapply(df[[profileCol]], as_tibble)
+        tbl <- unnest(tbl, profiles)
+        tbl <- arrange(tbl, desc(!!sym(fillValue)))
+        ## Ensure the ranges are shown with the strongest signal at the top
+        tbl$range <- fct_rev(fct_inorder(tbl$range))
+        if (!is.null(facetY))
+            tbl[[facetY]] <- fct_inorder(as.character(tbl[[facetY]]))
 
-    ## Pass to the private function
-    summariseBy <- match.arg(summariseBy)
-    .makeFinalProfileHeatmap(
-      data = tbl, x = xValue, y = "range", fill = fillValue, colour = colour,
-      linetype = linetype, facet_x = facetX, facet_y = facetY,
-      summary_fun = summariseBy, rel_height = relHeight, x_lab = xLab,
-      y_lab = yLab, fill_lab = fillLab, ...
-    )
-  }
+        ## Pass to the private function
+        summariseBy <- match.arg(summariseBy)
+        .makeFinalProfileHeatmap(
+            data = tbl, x = xValue, y = "range", fill = fillValue,
+            colour = colour, linetype = linetype, facet_x = facetX,
+            facet_y = facetY, summary_fun = summariseBy,
+            rel_height = relHeight, x_lab = xLab, y_lab = yLab,
+            fill_lab = fillLab, ...
+        )
+    }
 )
 
 
@@ -188,61 +192,70 @@ setMethod(
 #' @importFrom stats as.formula
 #' @keywords internal
 .makeFinalProfileHeatmap <- function(
-  data, x = NULL, y = NULL, fill = NULL, colour = NULL, linetype = NULL,
-  facet_x = NULL, facet_y = NULL,
-  summary_fun = c("mean", "median", "min", "max", "none"),
-  rel_height = 0.3, x_lab = NULL, y_lab = NULL, fill_lab = NULL, ...
+        data, x = NULL, y = NULL, fill = NULL, colour = NULL, linetype = NULL,
+        facet_x = NULL, facet_y = NULL,
+        summary_fun = c("mean", "median", "min", "max", "none"),
+        rel_height = 0.3, x_lab = NULL, y_lab = NULL, fill_lab = NULL, ...
 ) {
 
-  ## data should be a simple data.frame or tibble used to make the final plot
-  all_vars <- c(x, y, fill, colour, linetype, facet_x, facet_y)
-  stopifnot(is(data, "data.frame"))
-  stopifnot(all(all_vars %in% colnames(data)))
-  summary_fun <- match.arg(summary_fun)
+    ## data should be a simple data.frame or tibble used to make the final plot
+    all_vars <- c(x, y, fill, colour, linetype, facet_x, facet_y)
+    stopifnot(is(data, "data.frame"))
+    stopifnot(all(all_vars %in% colnames(data)))
+    summary_fun <- match.arg(summary_fun)
 
-  ## The basic plot
-  x_axis <- scale_x_discrete(expand = rep(0, 4))
-  if (is.numeric(data[[x]])) x_axis <-  scale_x_continuous(expand = rep(0, 4))
-  p <- ggplot(
-    data,
-    aes_string(x = x, y = y, fill = fill, colour = colour, linetype = linetype)
-  ) +
-    geom_raster() + x_axis +
-    scale_y_discrete(breaks = NULL, expand = expansion(c(0, 0))) +
-    labs(x = x_lab, y = y_lab, fill = fill_lab)
+    ## The basic plot
+    x_axis <- scale_x_discrete(expand = rep(0, 4))
+    if (is.numeric(data[[x]]))
+        x_axis <-  scale_x_continuous(expand = rep(0, 4))
+    p <- ggplot(
+        data,
+        aes_string(
+            x = x, y = y, fill = fill, colour = colour, linetype = linetype
+        )
+    ) +
+        geom_raster() + x_axis +
+        scale_y_discrete(breaks = NULL, expand = expansion(c(0, 0))) +
+        labs(x = x_lab, y = y_lab, fill = fill_lab)
 
-  ## Given that ggside does not currently create a legend for parameters only
-  ## used in these side panels, add some dummy lines here in the main panel.
-  ## This will ensure a legend appears for colour or linetype
-  if (!is.null(colour) | !is.null(linetype))
-    p <- p + geom_segment(
-      aes_string(
-        x = x, y = y, xend = x, yend = y, colour = colour, linetype = linetype
-      ), data = data[1,], inherit.aes = FALSE
-    )
-  ## Only add the top summary if this is called
-  if (summary_fun != "none") {
-    f <- match.fun(summary_fun)
-    grp_vars <- unique(c(x, facet_x, facet_y, colour, linetype))
-    grp_df <- group_by(data, !!!syms(grp_vars))
-    summ_df <- summarise(grp_df, y = f(!!sym(fill)), .groups = "drop")
-    p <- p + geom_xsideline(
-      aes_string(x = x, y = "y", colour = colour, linetype = linetype),
-      data = summ_df, inherit.aes = FALSE
-    ) + ggside(collapse = "x") +
-      scale_xsidey_continuous(expand = c(0.1, 0, 0.1, 0), position = "right") +
-      theme(
-        panel.grid.minor = element_blank(), ggside.panel.scale = rel_height[[1]]
-      )
-  }
-  ## Add the faceting information
-  if (!is.null(facet_x) | !is.null(facet_y)) {
-    facet_x <- ifelse(is.null(facet_x), ".", facet_x)
-    facet_y <- ifelse(is.null(facet_y), ".", facet_y)
-    fm <- as.formula(paste(facet_y, facet_x, sep = "~"))
-    p <- p + facet_grid(fm, scales = "free_y", space = "free_y", ...)
-  }
-  p
+    ## Given that ggside does not currently create a legend for parameters only
+    ## used in these side panels, add some dummy lines here in the main panel.
+    ## This will ensure a legend appears for colour or linetype
+    if (!is.null(colour) | !is.null(linetype))
+        p <- p + geom_segment(
+            aes_string(
+                x = x, y = y, xend = x, yend = y, colour = colour,
+                linetype = linetype
+            ),
+            data = data[1,], inherit.aes = FALSE
+        )
+    ## Only add the top summary if this is called
+    if (summary_fun != "none") {
+        f <- match.fun(summary_fun)
+        grp_vars <- unique(c(x, facet_x, facet_y, colour, linetype))
+        grp_df <- group_by(data, !!!syms(grp_vars))
+        summ_df <- summarise(grp_df, y = f(!!sym(fill)), .groups = "drop")
+        p <- p + geom_xsideline(
+            aes_string(x = x, y = "y", colour = colour, linetype = linetype),
+            data = summ_df, inherit.aes = FALSE
+        ) +
+            ggside(collapse = "x") +
+            scale_xsidey_continuous(
+                expand = c(0.1, 0, 0.1, 0), position = "right"
+            ) +
+            theme(
+                panel.grid.minor = element_blank(),
+                ggside.panel.scale = rel_height[[1]]
+            )
+    }
+    ## Add the faceting information
+    if (!is.null(facet_x) | !is.null(facet_y)) {
+        facet_x <- ifelse(is.null(facet_x), ".", facet_x)
+        facet_y <- ifelse(is.null(facet_y), ".", facet_y)
+        fm <- as.formula(paste(facet_y, facet_x, sep = "~"))
+        p <- p + facet_grid(fm, scales = "free_y", space = "free_y", ...)
+    }
+    p
 
 }
 
@@ -250,54 +263,63 @@ setMethod(
 #' @importFrom IRanges commonColnames
 .checkProfileDataFrames <- function(df, x, fill) {
 
-  msg <- c()
+    msg <- c()
 
-  ## Expects a SplitDataFrameList, or similar
-  ## Needs to check all have the same dimensions & the same column names
-  if (is(df, "CompressedSplitDataFrameList")) {
-    ## CompressedSplitDataFrameList objects already have the colnames &
-    ## DataFrame stuff checked. Check these first for speed
-    nr <- vapply(df, nrow, integer(1))
-    if (length(unique(nr)) != 1)
-      msg <- c(msg, "All elements must have the same number of rows\n")
-    if (!all(c(x, fill) %in% commonColnames(df)))
-      msg <- c(
-        msg,
-        paste("Column", setdiff(c(x, fill), commonColnames(df)), "is missing")
-      )
-    if (!is.null(msg)) {
-      message(msg)
-      return(FALSE)
+    ## Expects a SplitDataFrameList, or similar
+    ## Needs to check all have the same dimensions & the same column names
+    if (is(df, "CompressedSplitDataFrameList")) {
+        ## CompressedSplitDataFrameList objects already have the colnames &
+        ## DataFrame stuff checked. Check these first for speed
+        nr <- vapply(df, nrow, integer(1))
+        if (length(unique(nr)) != 1)
+            msg <- c(msg, "All elements must have the same number of rows\n")
+        if (!all(c(x, fill) %in% commonColnames(df)))
+            msg <- c(
+                msg,
+                paste(
+                    "Column", setdiff(c(x, fill), commonColnames(df)),
+                    "is missing"
+                )
+            )
+        if (!is.null(msg)) {
+            message(msg)
+            return(FALSE)
+        }
+        return(TRUE)
     }
-    return(TRUE)
-  }
 
-  if (!is(df, "list_OR_List")) msg <- c(msg, "Object must be a list_OR_List\n")
-  isDF <- vapply(df, is, logical(1), class2 = "DataFrame")
-  is_df <- vapply(df, is, logical(1), class2 = "data.frame")
-  if (!all(isDF | is_df))
-    msg <- c(msg, "Each list element must contain DataFrame or data.frame\n")
-  if (!is.null(msg)) {
-    message(msg)
-    return(FALSE)
-  }
-  ## Now check the actual data frames
-  dims <- vapply(df, dim, integer(2))
-  if (length(unique(dims[1, ])) > 1)
-    msg <- c(msg, "Each data element must have the same number of rows\n")
-  if (length(unique(dims[2, ])) > 1)
-    msg <- c(msg, "Each data element must have the same number of columns\n")
-  all_names <- vapply(df, colnames, character(dims[2, 1]))
-  same_cols <- apply(all_names, 1, function(df) length(unique(df)) == 1)
-  if (!x %in% all_names[,1]) msg <- c(msg, paste("Column", x, "is missing\n"))
-  if (!fill %in% all_names[,1])
-    msg <- c(msg, paste("Column", fill, "is missing"))
-  if (!all(same_cols))
-    msg <- c(msg, "All elements must have the same column names\n")
-  if (!is.null(msg)) {
-    message(msg)
-    return(FALSE)
-  }
-  TRUE
+    if (!is(df, "list_OR_List"))
+        msg <- c(msg, "Object must be a list_OR_List\n")
+    isDF <- vapply(df, is, logical(1), class2 = "DataFrame")
+    is_df <- vapply(df, is, logical(1), class2 = "data.frame")
+    if (!all(isDF | is_df))
+        msg <- c(
+            msg, "Each list element must contain DataFrame or data.frame\n"
+        )
+    if (!is.null(msg)) {
+        message(msg)
+        return(FALSE)
+    }
+    ## Now check the actual data frames
+    dims <- vapply(df, dim, integer(2))
+    if (length(unique(dims[1, ])) > 1)
+        msg <- c(msg, "Each data element must have the same number of rows\n")
+    if (length(unique(dims[2, ])) > 1)
+        msg <- c(
+            msg, "Each data element must have the same number of columns\n"
+        )
+    all_names <- vapply(df, colnames, character(dims[2, 1]))
+    same_cols <- apply(all_names, 1, function(df) length(unique(df)) == 1)
+    if (!x %in% all_names[,1])
+        msg <- c(msg, paste("Column", x, "is missing\n"))
+    if (!fill %in% all_names[,1])
+        msg <- c(msg, paste("Column", fill, "is missing"))
+    if (!all(same_cols))
+        msg <- c(msg, "All elements must have the same column names\n")
+    if (!is.null(msg)) {
+        message(msg)
+        return(FALSE)
+    }
+    TRUE
 
 }

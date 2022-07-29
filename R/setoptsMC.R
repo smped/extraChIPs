@@ -59,38 +59,38 @@
 #' @rdname setoptsMC-methods
 #' @aliases setdiffMC
 setMethod(
-  "setdiffMC", c("GRanges", "GRanges"),
-  function(x, y, ignore.strand = FALSE, simplify = TRUE, ...) {
+    "setdiffMC", c("GRanges", "GRanges"),
+    function(x, y, ignore.strand = FALSE, simplify = TRUE, ...) {
 
-    gr <- GenomicRanges::setdiff(x, y, ignore.strand)
-    .mapMcols2Ranges(gr, x, ignore.strand, simplify)
+        gr <- GenomicRanges::setdiff(x, y, ignore.strand)
+        .mapMcols2Ranges(gr, x, ignore.strand, simplify)
 
-  }
+    }
 )
 #' @export
 #' @rdname setoptsMC-methods
 #' @aliases intersectMC
 setMethod(
-  "intersectMC", c("GRanges", "GRanges"),
-  function(x, y, ignore.strand = FALSE, simplify = TRUE, ...) {
+    "intersectMC", c("GRanges", "GRanges"),
+    function(x, y, ignore.strand = FALSE, simplify = TRUE, ...) {
 
-    gr <- GenomicRanges::intersect(x, y, ignore.strand)
-    .mapMcols2Ranges(gr, x, ignore.strand, simplify)
+        gr <- GenomicRanges::intersect(x, y, ignore.strand)
+        .mapMcols2Ranges(gr, x, ignore.strand, simplify)
 
-  }
+    }
 )
 #' @importClassesFrom GenomicRanges GRangesList
 #' @export
 #' @rdname setoptsMC-methods
 #' @aliases unionMC
 setMethod(
-  "unionMC", c("GRanges", "GRanges"),
-  function(x, y, ignore.strand = FALSE, simplify = TRUE, ...) {
+    "unionMC", c("GRanges", "GRanges"),
+    function(x, y, ignore.strand = FALSE, simplify = TRUE, ...) {
 
-    gr <- GenomicRanges::union(x, y, ignore.strand)
-    .mapMcols2Ranges(gr, x, ignore.strand, simplify)
+        gr <- GenomicRanges::union(x, y, ignore.strand)
+        .mapMcols2Ranges(gr, x, ignore.strand, simplify)
 
-  }
+    }
 )
 
 #' @importClassesFrom GenomicRanges GRangesList
@@ -100,82 +100,82 @@ setMethod(
 #' @keywords internal
 .mapMcols2Ranges <- function(.gr, .x, .ignore.strand, .simplify) {
 
-  if (ncol(mcols(.x)) == 0) return(.gr)
-  if (length(.gr) == 0) return(GRanges())
+    if (ncol(mcols(.x)) == 0) return(.gr)
+    if (length(.gr) == 0) return(GRanges())
 
-  ## Treat the ranges differently if there is a match, or no match
-  grl <- as.list(
-      split(.gr, f = overlapsAny(.gr, .x, ignore.strand = .ignore.strand))
-  )
-  hits <- findOverlaps(grl[["TRUE"]], .x, ignore.strand = .ignore.strand)
-  i <- queryHits(hits)
-  j <- subjectHits(hits)
-
-  ## If mcols only has one column, a vector will be returned so this handles
-  ## the multi-column and single-column case
-  DF <- DataFrame(mcols(.x)[j,])
-  DF <- setNames(DF, names(mcols(.x)))
-
-  ## Return columns as CompressedList objects if the new ranges map
-  ## to multiple ranges in the original object
-  if (any(duplicated(i))) {
-    DF <- lapply(
-      DF,
-      .returnListColumn, i = i, .simplify = .simplify
+    ## Treat the ranges differently if there is a match, or no match
+    grl <- as.list(
+        split(.gr, f = overlapsAny(.gr, .x, ignore.strand = .ignore.strand))
     )
+    hits <- findOverlaps(grl[["TRUE"]], .x, ignore.strand = .ignore.strand)
+    i <- queryHits(hits)
+    j <- subjectHits(hits)
 
-  }
-  mcols(grl[["TRUE"]]) <- DF
+    ## If mcols only has one column, a vector will be returned so this handles
+    ## the multi-column and single-column case
+    DF <- DataFrame(mcols(.x)[j,])
+    DF <- setNames(DF, names(mcols(.x)))
 
-  ## Now replicate the structure of DF exactly for the ranges from y
-  n <- length(grl[["FALSE"]])
-  col_names <- colnames(DF)
-  if (n > 0) {
-    DF2 <- list()
-    for (i in seq_along(col_names)){
-      vec <- DF[[i]]
-      nm <- col_names[[i]]
-      type <- is(vec)[[1]]
-      if (is(vec, "list_OR_List"))   {
-        DF2[[nm]] <- as(vector("list", n), type)
-      } else {
-        DF2[[nm]] <- as(rep(NA, n), type)
-      }
+    ## Return columns as CompressedList objects if the new ranges map
+    ## to multiple ranges in the original object
+    if (any(duplicated(i))) {
+        DF <- lapply(
+            DF,
+            .returnListColumn, i = i, .simplify = .simplify
+        )
+
     }
-    mcols(grl[["FALSE"]]) <- DF2
-  }
-  gr <- unlist(GRangesList(grl))
-  names(gr) <- c()
-  sort(gr, ignore.strand = .ignore.strand)
+    mcols(grl[["TRUE"]]) <- DF
+
+    ## Now replicate the structure of DF exactly for the ranges from y
+    n <- length(grl[["FALSE"]])
+    col_names <- colnames(DF)
+    if (n > 0) {
+        DF2 <- list()
+        for (i in seq_along(col_names)){
+            vec <- DF[[i]]
+            nm <- col_names[[i]]
+            type <- is(vec)[[1]]
+            if (is(vec, "list_OR_List"))   {
+                DF2[[nm]] <- as(vector("list", n), type)
+            } else {
+                DF2[[nm]] <- as(rep(NA, n), type)
+            }
+        }
+        mcols(grl[["FALSE"]]) <- DF2
+    }
+    gr <- unlist(GRangesList(grl))
+    names(gr) <- c()
+    sort(gr, ignore.strand = .ignore.strand)
 }
 
 #' @importFrom S4Vectors splitAsList endoapply
 #' @importFrom stats na.omit
 .returnListColumn <- function(x, i, .simplify) {
 
-  ## x is a vector of any type
-  ## i is an integer denoting vector positions (from queryHits etc)
+    ## x is a vector of any type
+    ## i is an integer denoting vector positions (from queryHits etc)
 
-  out <- splitAsList(x, f = as.factor(i))
-  names(out) <- c()
-  if (is(x, "list_OR_List")) {
-    ## Restructure so we have a merged list of the same type as the input
-    out <- lapply(out, setNames, nm = c())
-    out <- lapply(out, unlist)
-    ## Remove explicit NA values as these prevent simplifying later
-    out <- lapply(out, na.omit)
-    out <- as(out, is(x)[[1]])
-  }
+    out <- splitAsList(x, f = as.factor(i))
+    names(out) <- c()
+    if (is(x, "list_OR_List")) {
+        ## Restructure so we have a merged list of the same type as the input
+        out <- lapply(out, setNames, nm = c())
+        out <- lapply(out, unlist)
+        ## Remove explicit NA values as these prevent simplifying later
+        out <- lapply(out, na.omit)
+        out <- as(out, is(x)[[1]])
+    }
 
-  if (.simplify) {
-    ## Now make sure only unique entries are returned, and unlist if possible
-    ## Also remove NA values
-    out <- endoapply(out, unique)
-    all_unique <- all(vapply(out, function(x) length(x) == 1, logical(1)))
-    if (all_unique) out <- unlist(out)
-  }
+    if (.simplify) {
+        ## Now make sure only unique entries are returned, and unlist if
+        ## possible. Also remove NA values
+        out <- endoapply(out, unique)
+        all_unique <- all(vapply(out, function(x) length(x) == 1, logical(1)))
+        if (all_unique) out <- unlist(out)
+    }
 
-  out
+    out
 
 }
 

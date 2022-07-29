@@ -35,8 +35,8 @@
 #' @export
 #'
 setGeneric(
-  "plotAssayDensities",
-  function(x, ...){standardGeneric("plotAssayDensities")}
+    "plotAssayDensities",
+    function(x, ...){standardGeneric("plotAssayDensities")}
 )
 #' @importFrom SummarizedExperiment assayNames colData
 #' @importFrom stats density
@@ -50,52 +50,55 @@ setGeneric(
 #' @rdname plotAssayDensities-methods
 #' @export
 setMethod(
-  "plotAssayDensities",
-  signature = signature(x = "SummarizedExperiment"),
-  function(
-    x, assay = "counts",
-    colour = NULL, linetype = NULL, trans = NULL, n_max = Inf, ...
-  ) {
+    "plotAssayDensities",
+    signature = signature(x = "SummarizedExperiment"),
+    function(
+        x, assay = "counts",
+        colour = NULL, linetype = NULL, trans = NULL, n_max = Inf, ...
+    ) {
 
-    ## Checks
-    if (is.null(colnames(x))) colnames(x) <- as.character(seq_len(ncol(x)))
+        ## Checks
+        if (is.null(colnames(x))) colnames(x) <- as.character(seq_len(ncol(x)))
 
-    col_data <- as.data.frame(colData(x))
-    if (!is.null(colour)) colour <- match.arg(colour, colnames(col_data))
-    if (!is.null(linetype)) linetype <- match.arg(linetype, colnames(col_data))
+        col_data <- as.data.frame(colData(x))
+        if (!is.null(colour)) colour <- match.arg(colour, colnames(col_data))
+        if (!is.null(linetype))
+            linetype <- match.arg(linetype, colnames(col_data))
 
-    n_max <- min(nrow(x), n_max)
-    ind <- seq_len(n_max)
-    if (n_max < nrow(x)) ind <- sample.int(nrow(x), n_max, replace = FALSE)
+        n_max <- min(nrow(x), n_max)
+        ind <- seq_len(n_max)
+        if (n_max < nrow(x)) ind <- sample.int(nrow(x), n_max, replace = FALSE)
 
-    mat <- assay(x[ind,], assay)
-    if (!is.null(trans)) {
-      mat <- match.fun(trans)(mat)
-      trans_ok <- all(
-        is.matrix(mat), nrow(mat) == length(ind), colnames(mat) == colnames(x)
-      )
-      if (!trans_ok) stop("This transformation is not applicable")
+        mat <- assay(x[ind,], assay)
+        if (!is.null(trans)) {
+            mat <- match.fun(trans)(mat)
+            trans_ok <- all(
+                is.matrix(mat), nrow(mat) == length(ind),
+                colnames(mat) == colnames(x)
+            )
+            if (!trans_ok) stop("This transformation is not applicable")
+        }
+
+        dens <- apply(mat, MARGIN = 2, density)
+        dens <- lapply(dens, function(d){list(tibble(x = d$x, y = d$y))})
+        df <- as_tibble(dens)
+        df <- pivot_longer(
+            df, cols = everything(), names_to = "colnames", values_to = "dens"
+        )
+        df <- bind_cols(df, col_data)
+        df <- unnest(df, dens)
+
+        ggplot(
+            df,
+            aes_string(
+                "x", "y",
+                group = "colnames", colour = colour, linetype = linetype
+            )
+        ) +
+            geom_line() +
+            labs(
+                x = ifelse(is.null(trans), assay, paste(trans, assay)),
+                y = "Density", colour = colour, linetype = linetype
+            )
     }
-
-    dens <- apply(mat, MARGIN = 2, density)
-    dens <- lapply(dens, function(d){list(tibble(x = d$x, y = d$y))})
-    df <- as_tibble(dens)
-    df <- pivot_longer(
-      df, cols = everything(), names_to = "colnames", values_to = "dens"
-    )
-    df <- bind_cols(df, col_data)
-    df <- unnest(df, dens)
-
-    ggplot(
-      df,
-      aes_string(
-        "x", "y", group = "colnames", colour = colour, linetype = linetype
-      )
-    ) +
-      geom_line() +
-      labs(
-        x = ifelse(is.null(trans), assay, paste(trans, assay)),
-        y = "Density", colour = colour, linetype = linetype
-      )
-  }
 )

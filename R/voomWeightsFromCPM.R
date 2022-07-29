@@ -72,100 +72,100 @@
 #'
 #' @export
 voomWeightsFromCPM <- function(
-  cpm, design = NULL, w0 = NULL, lib.size = NULL, isLogCPM = TRUE,
-  span = 0.5, ...
+        cpm, design = NULL, w0 = NULL, lib.size = NULL, isLogCPM = TRUE,
+        span = 0.5, ...
 ){
 
-  ## Most checks taken from voom internals
-  stopifnot(.voomChecks(cpm, w0, lib.size, isLogCPM))
+    ## Most checks taken from voom internals
+    stopifnot(.voomChecks(cpm, w0, lib.size, isLogCPM))
 
-  ## Make sure we are on the log scale
-  if (!isLogCPM) cpm <- log2(cpm)
+    ## Make sure we are on the log scale
+    if (!isLogCPM) cpm <- log2(cpm)
 
-  ## Sort out the design matrix
-  i <- ncol(cpm)
-  nm <- colnames(cpm)
-  if (is.null(nm)) nm <- seq_len(i)
-  if (is.null(design))
-    design <- matrix(1, i, 1, dimnames = list(nm, "GrandMean"))
+    ## Sort out the design matrix
+    i <- ncol(cpm)
+    nm <- colnames(cpm)
+    if (is.null(nm)) nm <- seq_len(i)
+    if (is.null(design))
+        design <- matrix(1, i, 1, dimnames = list(nm, "GrandMean"))
 
-  ## Run the voom steps
-  v <- .calculateVoomWeights(cpm, design, w0, lib.size, span, ...)
+    ## Run the voom steps
+    v <- .calculateVoomWeights(cpm, design, w0, lib.size, span, ...)
 
-  ## Initialise output
-  targets <- data.frame(sample = nm, lib.size = lib.size)
-  if (!is.null(v$aw)) targets$sample.weights <- v$aw
-  out <- list(E = cpm, weights = v$w, design = design, targets = targets)
-  out$voom.xy <- list(
-    x = v$sx, y = v$sy, Amean = v$fit$Amean,
-    xlab = "log2( count size + 0.5 )", ylab = "Sqrt ( standard deviation )"
-  )
-  out$voom.line <- v$l
+    ## Initialise output
+    targets <- data.frame(sample = nm, lib.size = lib.size)
+    if (!is.null(v$aw)) targets$sample.weights <- v$aw
+    out <- list(E = cpm, weights = v$w, design = design, targets = targets)
+    out$voom.xy <- list(
+        x = v$sx, y = v$sy, Amean = v$fit$Amean,
+        xlab = "log2( count size + 0.5 )", ylab = "Sqrt ( standard deviation )"
+    )
+    out$voom.line <- v$l
 
-  ## Return an EList
-  new("EList", out)
+    ## Return an EList
+    new("EList", out)
 
 }
 
 .calculateVoomWeights <- function(cpm, design, w0, lib.size, span, ...) {
-  ## Taken from the main body of voom
-  fit <- lmFit(cpm, design, weights = w0, ...)
-  if (is.null(fit$Amean)) fit$Amean <- rowMeans(cpm, na.rm = TRUE)
-  sx <- fit$Amean + mean(log2(lib.size + 1)) - log2(1e+06)
-  sy <- sqrt(fit$sigma)
-  l <- lowess(sx, sy, f = span)
-  f <- approxfun(l, rule = 2, ties = list("ordered", mean))
-  if (fit$rank < ncol(design)) {
-    j <- fit$pivot[seq_len(fit$rank)]
-    fitted.values <- fit$coefficients[, j, drop = FALSE] %*%
-      t(fit$design[, j, drop = FALSE])
-  }
-  else {
-    fitted.values <- fit$coefficients %*% t(fit$design)
-  }
-  fitted.cpm <- 2^fitted.values
-  fitted.count <- 1e-06 * t(t(fitted.cpm) * (lib.size + 1))
-  fitted.logcount <- log2(fitted.count)
-  w <- 1/f(fitted.logcount)^4
-  dim(w) <- dim(fitted.logcount)
+    ## Taken from the main body of voom
+    fit <- lmFit(cpm, design, weights = w0, ...)
+    if (is.null(fit$Amean)) fit$Amean <- rowMeans(cpm, na.rm = TRUE)
+    sx <- fit$Amean + mean(log2(lib.size + 1)) - log2(1e+06)
+    sy <- sqrt(fit$sigma)
+    l <- lowess(sx, sy, f = span)
+    f <- approxfun(l, rule = 2, ties = list("ordered", mean))
+    if (fit$rank < ncol(design)) {
+        j <- fit$pivot[seq_len(fit$rank)]
+        fitted.values <- fit$coefficients[, j, drop = FALSE] %*%
+            t(fit$design[, j, drop = FALSE])
+    }
+    else {
+        fitted.values <- fit$coefficients %*% t(fit$design)
+    }
+    fitted.cpm <- 2^fitted.values
+    fitted.count <- 1e-06 * t(t(fitted.cpm) * (lib.size + 1))
+    fitted.logcount <- log2(fitted.count)
+    w <- 1/f(fitted.logcount)^4
+    dim(w) <- dim(fitted.logcount)
 
-  ## If array weights are provided, the values for `w` would then be used for a
-  ## second round of estimation, and scaled by these weights. Again, taken
-  ## from limma::voomWithArrayWeights()
-  aw <- c()
-  if (!is.null(w0)){
-    ## Use all defaults from this function, providing the precision weights
-    aw <- arrayWeights(
-      object = cpm, design = design, weights = w, var.design = NULL,
-      var.group = NULL, prior.n = 10, method = "auto", maxiter = 50,
-      tol = 1e-5, trace = FALSE
-    )
-    w <- t(aw * t(w))
-  }
-  v <- list(fit = fit, w = w, sx = sx, sy = sy, l = l)
-  if (!is.null(aw)) v$aw <- aw
-  return(v)
+    ## If array weights are provided, the values for `w` would then be used for
+    ## a second round of estimation, and scaled by these weights. Again, taken
+    ## from limma::voomWithArrayWeights()
+    aw <- c()
+    if (!is.null(w0)){
+        ## Use all defaults from this function, providing the precision weights
+        aw <- arrayWeights(
+            object = cpm, design = design, weights = w, var.design = NULL,
+            var.group = NULL, prior.n = 10, method = "auto", maxiter = 50,
+            tol = 1e-5, trace = FALSE
+        )
+        w <- t(aw * t(w))
+    }
+    v <- list(fit = fit, w = w, sx = sx, sy = sy, l = l)
+    if (!is.null(aw)) v$aw <- aw
+    return(v)
 }
 
 .voomChecks <- function(cpm, w0, lib.size, isLogCPM) {
-  i <- ncol(cpm)
-  n <- nrow(cpm)
-  m <- min(cpm)
-  if (n < 2L) stop("Need at least two genes to fit a mean-variance trend")
-  if (is.na(m)) stop("NA values not allowed")
-  if (m < 0 & !isLogCPM) stop("Negative CPM values not allowed")
-  if (m == 0 & !isLogCPM)
-    stop("Please ensure an offset is used for estimation of CPM values.")
-  ## Check the initial weights
-  if (!is.null(w0)) {
-    stopifnot(is.numeric(w0))
-    if(length(w0) != i) stop("Supplied weights do not match the data")
-  }
-  ## Library sizes must be supplied & valid
-  if (is.null(lib.size))
-    stop("Library sizes must be provded as these cannot estimated from CPM")
-  if (length(lib.size) != i) stop("Library sizes do not match the data")
-  stopifnot(is.numeric(lib.size))
-  if (!all(lib.size > 0)) stop("Library sizes must be > 0")
-  TRUE
+    i <- ncol(cpm)
+    n <- nrow(cpm)
+    m <- min(cpm)
+    if (n < 2L) stop("Need at least two genes to fit a mean-variance trend")
+    if (is.na(m)) stop("NA values not allowed")
+    if (m < 0 & !isLogCPM) stop("Negative CPM values not allowed")
+    if (m == 0 & !isLogCPM)
+        stop("Please ensure an offset is used for estimation of CPM values.")
+    ## Check the initial weights
+    if (!is.null(w0)) {
+        stopifnot(is.numeric(w0))
+        if(length(w0) != i) stop("Supplied weights do not match the data")
+    }
+    ## Library sizes must be supplied & valid
+    if (is.null(lib.size))
+        stop("Library sizes must be provded as these cannot estimated from CPM")
+    if (length(lib.size) != i) stop("Library sizes do not match the data")
+    stopifnot(is.numeric(lib.size))
+    if (!all(lib.size > 0)) stop("Library sizes must be > 0")
+    TRUE
 }

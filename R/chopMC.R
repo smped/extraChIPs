@@ -63,4 +63,4 @@ chopMC <- function(x, simplify = TRUE) {
     mcols(gr) <- tbl_list[cols]
     gr
 
-  }
+}
