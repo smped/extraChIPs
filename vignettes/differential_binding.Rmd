@@ -198,9 +198,9 @@ mean(rowRanges(filtcounts)$overlaps_ref)
 Multiple approaches are available for analysis of differential binding, and 
 given the small example dataset, only a brief example of conventional results
 will be used.
-`extraChIPs` does provide a simple coercion function to covert `logCPM` to a 
-`voom` object, which requires the relationship between library sizes and
-`logCPM` values to be intact.
+`extraChIPs` does provide a simple coercion function to convert `logCPM` to a 
+`voom` object, which requires the relationship between **library sizes** and
+**`logCPM` values** to be intact.
 Whist this will not be discussed further here should this be a viable approach 
 for an analysis, the following code may prove helpful.
 
@@ -639,9 +639,64 @@ however these basic approaches cover the elemental functionality of `plotHFCG()`
 for enabling simple & reproducible plotting across regions for multiple sites
 within a larger experiment.
 
+## Comparison Across Replicates Or Experiments
+
+Summaries about eh relationship between multiple ChIP-Seq replicates, or even 
+sets of results, can form an important part of many analysis.
+In the case of comparing replicates, two options are possible using 
+`plotOverlaps()`.
+For 1-3 replicates Venn Diagrams are enabled, whilst UpSet plots are possible 
+for 2 or more replicates.
+
+```{r ex-grl}
+set.seed(100)
+grl <- GRangesList(
+  a = GRanges(c("chr1:1-10", "chr1:21-30", "chr1:31-40")),
+  b = GRanges(c("chr1:12-15", "chr1:21-30", "chr1:46-50"))
+)
+grl$a$score <- rnorm(3)
+grl$b$score <- rnorm(3)
+```
+
+During generation of these plots, ranges are reduced using 
+`GenomicRanges::reduce()` to ensure common ranges between replicates.
+
+```{r ex-plotoverlaps}
+plotOverlaps(grl)
+plotOverlaps(grl, type = "upset")
+```
+
+The gap width used for range reduction can also be passed through 
+`plotOverlaps()`, with the default being `min.gapwidth = 1L`.
+
+```{r ex-plotoverlaps-gapwidth}
+plotOverlaps(grl, type = "upset", min.gapwidth = 2)
+```
+
+In the case of UpSet plots, a common value across replicates 
+(e.g. logCPM, score) can be averaged and a boxplot added as an additional panel
+above the conventional UpSet plot.
+
+```{r ex-plotoverlaps-upset}
+plotOverlaps(grl, type = "upset", var = "score")
+```
+
+When comparing results, it may simpler to pass character vectors of genes.
+
+```{r ex-plotoverlaps-genes}
+list(
+    mapped_to_target = unlist(res_gr_mapped$symbol),
+    de_genes = c("LDB1", "FOXA1", "ESR2")
+) %>% 
+    plotOverlaps()
+```
+
+Whilst this example is simple, larger datasets with multiple elements can be 
+easily explored in this manner.
+
 # Session Info
 
-```{r}
+```{r session-info}
 sessionInfo()
 ```
 

@@ -1,5 +1,5 @@
 Package: extraChIPs
-Version: 1.1.2
+Version: 1.1.3
 Title: Additional functions for working with ChIP-Seq data
 Authors@R: person("Stephen", "Pederson", 
   email = "stephen.pederson.au@gmail.com", 
@@ -27,6 +27,7 @@ Depends:
 Imports:
   BiocIO,
   broom,
+  ComplexUpset,
   csaw,
   dplyr,
   edgeR,
@@ -39,6 +40,7 @@ Imports:
   ggside,
   glue,
   grDevices,
+  grid,
   Gviz,
   InteractionSet,
   IRanges,
@@ -55,7 +57,8 @@ Imports:
   tidyr,
   tidyselect,
   utils,
-  vctrs
+  vctrs,
+  VennDiagram
 Suggests: 
   BiocStyle,
   covr,
@@ -68,5 +71,5 @@ biocViews: ChIPSeq, HiC, Sequencing, Coverage
 BiocType: Software
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)  
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 Config/testthat/edition: 3
