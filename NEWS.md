@@ -13,6 +13,6 @@
 - `getProfileData()` now uses `bplapply()` internally
 - Bugfixes for `plotPie()`, `distinctMC()` `colToRanges()` and `stitchRanges()`
 
-# Changes in version 1.1.3 (2022-07-22)
+# Changes in version 1.1.3 (2022-08-01)
 
 - Added `plotOverlaps()` for generation of Venn Diagrams and ComplexUpset plots
