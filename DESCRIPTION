@@ -10,7 +10,7 @@ Description: This package builds on existing tools and adds some simple but
    extremely useful capabilities for working with ChIP-Seq data. The focus is 
    on detecting differential binding windows/regions. 
    One set of functions focusses on set-operations retaining mcols for GRanges
-   objects, whilst another group of functions are to aid visualisatino of 
+   objects, whilst another group of functions are to aid visualisation of 
    results.
    Coercion to tibble objects is also included.
 License: GPL-3
