@@ -50,10 +50,11 @@ plotHFGC(
 \item{hic}{Any HiC interactions to be included as a GenomicInteractions
 object. If not supplied, no HiC track will be drawn.}
 
-\item{features}{A named GRangesList object containing regulatory features in
-each list element. Features will be drawn on a single track with colours
-matching those provided in \code{featcol}. If not included, no feature track
-will be drawn}
+\item{features}{A named GRangesList or list of GRangesList objects. Each
+GRangesList should contain features in each element which will drawn on the
+same track. If providing a list, each GRangesList within the list will drawn
+on a separate track. If this argument is not specified, no feature track will
+be drawn. Features will be drawn with colours provided in  \code{featcol}.}
 
 \item{genes}{A GRanges object with exon structure for each transcript/gene.
 If not included, no track will be drawn for gene/transcript structure}
@@ -99,7 +100,8 @@ BigWigFileList. Only used if covtype = "l".}
 \item{hiccol}{list with names \code{"anchors"} and \code{"interactions"}. Colours
 are passed to these elements}
 
-\item{featcol}{Named vector (or list) of colours for each feature}
+\item{featcol}{Named vector (or list) of colours for each feature. Must be
+provided if drawing features}
 
 \item{genecol}{Named vector (or list) of colours for each gene category}
 

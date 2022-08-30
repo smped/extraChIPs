@@ -56,6 +56,23 @@ test_that("Correct plotting works", {
     expect_true(is(p[[3]], "DataTrack"))
     expect_equal(p[[3]]@dp@pars$ylim, c(-1, 5))
 
+    ## Test Feature Tracks as a list
+    p <- plotHFGC(
+        gr,
+        features = list(
+            A = GRangesList(Promoter = feat_gr$Promoter),
+            B = GRangesList(Enhancer = feat_gr$Enhancer)
+        ),
+        featcol = list(A = c(Promoter = "red"), B = c(Enhancer = "yellow")),
+        cytobands = grch37.cytobands, zoom = 10
+    )
+    expect_equal(length(p), 5)
+    expect_true(all(vapply(p[3:4], is, logical(1), class2 = "AnnotationTrack")))
+    expect_equal(
+        vapply(p[3:4], function(x) x@name, character(1)),
+        c(A = "A", B = "B")
+    )
+
 })
 
 test_that(".makeIdeoTrack behaves as expected", {

@@ -107,7 +107,7 @@ test_that("Malformed features are caught", {
             gr1, zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, type = "l",
             features = c()
         ),
-        "'features' must be provided as a GRangesList"
+        "'features' must be a GRangesList"
     )
     expect_message(
         .checkHFGCArgs(

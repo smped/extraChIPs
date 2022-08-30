@@ -216,10 +216,11 @@
 #' @param gr The range(s) of interest. Must be on a single chromosome
 #' @param hic Any HiC interactions to be included as a GenomicInteractions
 #' object. If not supplied, no HiC track will be drawn.
-#' @param features A named GRangesList object containing regulatory features in
-#' each list element. Features will be drawn on a single track with colours
-#' matching those provided in `featcol`. If not included, no feature track
-#' will be drawn
+#' @param features A named GRangesList or list of GRangesList objects. Each
+#' GRangesList should contain features in each element which will drawn on the
+#' same track. If providing a list, each GRangesList within the list will drawn
+#' on a separate track. If this argument is not specified, no feature track will
+#' be drawn. Features will be drawn with colours provided in  `featcol`.
 #' @param genes A GRanges object with exon structure for each transcript/gene.
 #' If not included, no track will be drawn for gene/transcript structure
 #' @param coverage A named list of BigWigFileList objects containing the
@@ -245,7 +246,8 @@
 #' @param fontsize Applied across all tracks
 #' @param hiccol list with names `"anchors"` and `"interactions"`. Colours
 #' are passed to these elements
-#' @param featcol Named vector (or list) of colours for each feature
+#' @param featcol Named vector (or list) of colours for each feature. Must be
+#' provided if drawing features
 #' @param genecol Named vector (or list) of colours for each gene category
 #' @param annotcol Colours matching the coverage annotations
 #' @param covtype The plot type for coverage. Currently only lines ("l")
@@ -329,7 +331,7 @@ plotHFGC <- function(
     ## If interactions were found, reset the plot range. This should be the
     ## maximum of all interactions < max or the initial range
     plot_range <- range(gr)
-    if (!is.null(hic_track)) {
+    if (length(hic_track)) {
         hic <- slot(hic_track, "giobject")
         anchors <- anchors(hic[calculateDistances(hic) < max])
         anchors <- unlist(GRangesList(anchors))
@@ -344,10 +346,28 @@ plotHFGC <- function(
 
     ## Form the features track
     featstack <- match.arg(featstack)
-    feature_track <- .makeFeatureTrack(
-        features, plot_range, fontsize, featcol, featsize, cex.title,
-        rotation.title, featname, featstack, col.title, background.title
-    )
+    if (missing(features)) {
+        feature_track <- NULL
+    } else {
+        if (is(features, "GRangesList")) {
+            feature_track <- .makeFeatureTrack(
+                features, plot_range, fontsize, featcol, featsize, cex.title,
+                rotation.title, featname, featstack, col.title, background.title
+            )
+        }
+        if (is(features, "list")) {
+            feature_track <- lapply(
+                names(features),
+                function(x) {
+                    .makeFeatureTrack(
+                        features[[x]], plot_range, fontsize, featcol[[x]],
+                        featsize, cex.title, rotation.title, x, featstack,
+                        col.title, background.title
+                    )
+                }
+            )
+        }
+    }
 
     ## Form the genes tracks. NB: This will be a list of tracks
     gene_tracks <- .makeGeneTracks(
@@ -807,27 +827,11 @@ plotHFGC <- function(
             )
     }
 
-    if (!missing(features)) {
-        if (!is(features, "GRangesList"))
-            msg <- c(msg, "'features' must be provided as a GRangesList\n")
-        if ("" %in% names(features))
-            msg <- c(
-                msg, "All elements of 'features' must be explicitly named\n"
-            )
-        if (!missing(featcol)) {
-            if (!all(names(features) %in% names(featcol)))
-                msg <- c(
-                    msg, "All elements of 'features' must be in 'featcol'\n"
-                )
-        }
-    }
-
+    msg <- .checkFeatures(msg, features, featcol)
     msg <- .checkGenes(msg, genes, genecol, collapseTranscripts, maxTrans)
-
     msg <- .checkCoverage(
         msg, coverage, linecol, type, annotation, annotcol, ylim
     )
-
     bools <- c(axistrack)
     if (!is.logical(bools)) msg <- c(msg, "axistrack must be logical values")
 
@@ -1122,6 +1126,60 @@ plotHFGC <- function(
                     )
                 )
         }
+    }
+
+    msg
+
+}
+
+.checkFeatures <- function(msg, features, featcol) {
+
+    if (missing(features)) return(msg)
+
+    if (!any(is(features, "GRangesList"), is(features, "list"))) {
+        msg <- c(msg, "'features' must be a GRangesList or list")
+        return(msg)
+    }
+
+    ## These two checks apply if features is either a GRangesList or list
+    if ("" %in% names(features) | length(names(features)) != length(features))
+        msg <- c(
+            msg, "All elements of 'features' must be explicitly named\n"
+        )
+
+    if (!missing(featcol)) {
+        if (!all(names(features) %in% names(featcol)))
+            msg <- c(
+                msg, "All elements of 'features' must be in 'featcol'\n"
+            )
+    }
+
+    if (is(features, "list")) {
+        all_grl <- all(vapply(features, is, logical(1), class2 = "GRangesList"))
+        if (!all_grl)
+            msg <- c(msg, "All elements of features must be a GRangesList")
+
+        # All elements must be a named GRangesList
+        all_named <- all(
+            c(
+                vapply(features, function(x) !"" %in% names(x), logical(1)),
+                vapply(
+                    features,
+                    function(x) length(names(x)) == length(x),
+                    logical(1)
+                )
+            )
+        )
+        if (!all_named)
+            msg <- c(msg, "All GRangesList elements of features must be named")
+
+        # featcol must be a named list with identical names in each element
+        named_cols <- mapply(
+            function(x, y) all(names(x) %in% names(y)),
+            x = features, y = featcol
+        )
+        if (!all(named_cols))
+            msg <- c(msg, "All features must have a named colour")
     }
 
     msg
