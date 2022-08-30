@@ -93,7 +93,7 @@ setMethod(
             )
             ## Form a character list & plot
             grl <- lapply(x, function(y) as.character(subsetByOverlaps(gr, y)))
-            plotOverlaps(grl, type = type, ...)
+            plotOverlaps(grl, type = type, set_col = set_col, ...)
         } else {
 
             if (!var %in% c(colnames(mcols(x[[1]])), "width"))

@@ -18,11 +18,11 @@ colToRanges(x, ...)
 \arguments{
 \item{x}{A data-frame or GRanges object containing the column to coerce}
 
-\item{...}{Not used}
+\item{...}{Used to pass arguments to lower-level functions}
 
 \item{var}{The name of the column to coerce}
 
-\item{seqinfo}{A seginfo object to be applied to the GRanges object}
+\item{seqinfo}{A seqinfo object to be applied to the GRanges object}
 }
 \value{
 A GenomicRanges object

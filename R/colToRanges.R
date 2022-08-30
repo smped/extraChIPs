@@ -26,8 +26,8 @@
 #'
 #' @param x A data-frame or GRanges object containing the column to coerce
 #' @param var The name of the column to coerce
-#' @param seqinfo A seginfo object to be applied to the GRanges object
-#' @param ... Not used
+#' @param seqinfo A seqinfo object to be applied to the GRanges object
+#' @param ... Used to pass arguments to lower-level functions
 #'
 #' @importFrom methods as
 #' @importFrom GenomicRanges 'mcols<-' GRanges
@@ -54,7 +54,7 @@ setMethod(
     "colToRanges", signature = signature(x = "GRanges"),
     function(x, var, ...) {
         df <- mcols(x)
-        colToRanges(df, var, seqinfo = seqinfo(x), ...)
+        colToRanges(df, var, ...)
     }
 )
 #' @importFrom GenomicRanges 'mcols<-' GRanges
