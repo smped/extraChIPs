@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.4</span>
       </span>
     </div>
 
@@ -119,10 +119,11 @@ object. If not supplied, no HiC track will be drawn.</p></dd>
 
 
 <dt>features</dt>
-<dd><p>A named GRangesList object containing regulatory features in
-each list element. Features will be drawn on a single track with colours
-matching those provided in <code>featcol</code>. If not included, no feature track
-will be drawn</p></dd>
+<dd><p>A named GRangesList or list of GRangesList objects. Each
+GRangesList should contain features in each element which will drawn on the
+same track. If providing a list, each GRangesList within the list will drawn
+on a separate track. If this argument is not specified, no feature track will
+be drawn. Features will be drawn with colours provided in  <code>featcol</code>.</p></dd>
 
 
 <dt>genes</dt>
@@ -194,7 +195,8 @@ are passed to these elements</p></dd>
 
 
 <dt>featcol</dt>
-<dd><p>Named vector (or list) of colours for each feature</p></dd>
+<dd><p>Named vector (or list) of colours for each feature. Must be
+provided if drawing features</p></dd>
 
 
 <dt>genecol</dt>
