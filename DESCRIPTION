@@ -1,5 +1,5 @@
 Package: extraChIPs
-Version: 1.0.3
+Version: 1.0.4
 Title: Additional functions for working with ChIP-Seq data
 Authors@R: person("Stephen", "Pederson", 
   email = "stephen.pederson.au@gmail.com", 
@@ -11,8 +11,7 @@ Description: This package builds on existing tools and adds some simple but
    on detecting differential binding windows/regions. 
    One set of functions focusses on set-operations retaining mcols for GRanges
    objects, whilst another group of functions are to aid visualisation of 
-   results.
-   Coercion to tibble objects is also included.
+   results. Coercion to tibble objects is also implemented.
 License: GPL-3
 Encoding: UTF-8
 URL: https://github.com/steveped/extraChIPs
