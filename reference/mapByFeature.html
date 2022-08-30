@@ -66,22 +66,22 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">mapByFeature</span><span class="op">(</span>
-  <span class="va">gr</span>,
-  <span class="va">genes</span>,
-  <span class="va">prom</span>,
-  <span class="va">enh</span>,
-  <span class="va">gi</span>,
-  cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gene_id"</span>, <span class="st">"gene_name"</span>, <span class="st">"symbol"</span><span class="op">)</span>,
-  gr2prom <span class="op">=</span> <span class="fl">0</span>,
-  gr2enh <span class="op">=</span> <span class="fl">0</span>,
-  gr2gi <span class="op">=</span> <span class="fl">0</span>,
-  gr2gene <span class="op">=</span> <span class="fl">1e+05</span>,
-  prom2gene <span class="op">=</span> <span class="fl">0</span>,
-  enh2gene <span class="op">=</span> <span class="fl">1e+05</span>,
-  gi2gene <span class="op">=</span> <span class="fl">0</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">mapByFeature</span><span class="op">(</span></span>
+<span>  <span class="va">gr</span>,</span>
+<span>  <span class="va">genes</span>,</span>
+<span>  <span class="va">prom</span>,</span>
+<span>  <span class="va">enh</span>,</span>
+<span>  <span class="va">gi</span>,</span>
+<span>  cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gene_id"</span>, <span class="st">"gene_name"</span>, <span class="st">"symbol"</span><span class="op">)</span>,</span>
+<span>  gr2prom <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  gr2enh <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  gr2gi <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  gr2gene <span class="op">=</span> <span class="fl">1e+05</span>,</span>
+<span>  prom2gene <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  enh2gene <span class="op">=</span> <span class="fl">1e+05</span>,</span>
+<span>  gi2gene <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -189,10 +189,10 @@ obtained from the <code>genes</code> object.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">## Define some genes</span></span>
-<span class="r-in"><span class="va">genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chr1:2-10:*"</span>, <span class="st">"chr1:25-30:-"</span>, <span class="st">"chr1:31-40:+"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">genes</span><span class="op">$</span><span class="va">gene_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"gene"</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">genes</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">genes</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## Define some genes</span></span></span>
+<span class="r-in"><span><span class="va">genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chr1:2-10:*"</span>, <span class="st">"chr1:25-30:-"</span>, <span class="st">"chr1:31-40:+"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">genes</span><span class="op">$</span><span class="va">gene_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"gene"</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">genes</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">genes</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 3 ranges and 1 metadata column:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand |     gene_id</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;</span>
@@ -201,9 +201,9 @@ obtained from the <code>genes</code> object.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [3]     chr1     31-40      + |       gene3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
-<span class="r-in"><span class="co">## Add a promoter for each gene</span></span>
-<span class="r-in"><span class="va">prom</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/intra-range-methods.html" class="external-link">promoters</a></span><span class="op">(</span><span class="va">genes</span>, upstream <span class="op">=</span> <span class="fl">1</span>, downstream <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">prom</span></span>
+<span class="r-in"><span><span class="co">## Add a promoter for each gene</span></span></span>
+<span class="r-in"><span><span class="va">prom</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/IRanges/man/intra-range-methods.html" class="external-link">promoters</a></span><span class="op">(</span><span class="va">genes</span>, upstream <span class="op">=</span> <span class="fl">1</span>, downstream <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">prom</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 3 ranges and 1 metadata column:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand |     gene_id</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;</span>
@@ -212,9 +212,9 @@ obtained from the <code>genes</code> object.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [3]     chr1     30-31      + |       gene3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
-<span class="r-in"><span class="co">## Some ranges to map</span></span>
-<span class="r-in"><span class="va">gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"chr1:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">60</span>, by <span class="op">=</span> <span class="fl">15</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">gr</span></span>
+<span class="r-in"><span><span class="co">## Some ranges to map</span></span></span>
+<span class="r-in"><span><span class="va">gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"chr1:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">60</span>, by <span class="op">=</span> <span class="fl">15</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">gr</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 5 ranges and 0 metadata columns:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt;</span>
@@ -225,9 +225,9 @@ obtained from the <code>genes</code> object.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [5]     chr1        60      *</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Map so that any gene within 25bp of the range is assigned</span></span>
-<span class="r-in"><span class="fu">mapByFeature</span><span class="op">(</span><span class="va">gr</span>, <span class="va">genes</span>, gr2gene <span class="op">=</span> <span class="fl">25</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Map so that any gene within 25bp of the range is assigned</span></span></span>
+<span class="r-in"><span><span class="fu">mapByFeature</span><span class="op">(</span><span class="va">gr</span>, <span class="va">genes</span>, gr2gene <span class="op">=</span> <span class="fl">25</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 5 ranges and 1 metadata column:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand |         gene_id</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;CharacterList&gt;</span>
@@ -238,11 +238,11 @@ obtained from the <code>genes</code> object.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [5]     chr1        60      * |           gene3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Now use promoters to be more accurate in the gene assignment</span></span>
-<span class="r-in"><span class="co">## Given that the first range overlaps the promoter of gene1, this is a</span></span>
-<span class="r-in"><span class="co">## more targetted approach. Similarly for the third range</span></span>
-<span class="r-in"><span class="fu">mapByFeature</span><span class="op">(</span><span class="va">gr</span>, <span class="va">genes</span>, <span class="va">prom</span>, gr2gene <span class="op">=</span> <span class="fl">25</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Now use promoters to be more accurate in the gene assignment</span></span></span>
+<span class="r-in"><span><span class="co">## Given that the first range overlaps the promoter of gene1, this is a</span></span></span>
+<span class="r-in"><span><span class="co">## more targetted approach. Similarly for the third range</span></span></span>
+<span class="r-in"><span><span class="fu">mapByFeature</span><span class="op">(</span><span class="va">gr</span>, <span class="va">genes</span>, <span class="va">prom</span>, gr2gene <span class="op">=</span> <span class="fl">25</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 5 ranges and 1 metadata column:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand |         gene_id</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;CharacterList&gt;</span>
@@ -253,7 +253,7 @@ obtained from the <code>genes</code> object.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [5]     chr1        60      * |           gene3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>

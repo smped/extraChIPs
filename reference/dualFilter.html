@@ -66,15 +66,15 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">dualFilter</span><span class="op">(</span>
-  <span class="va">x</span>,
-  <span class="va">bg</span>,
-  <span class="va">ref</span>,
-  q <span class="op">=</span> <span class="fl">0.5</span>,
-  logCPM <span class="op">=</span> <span class="cn">TRUE</span>,
-  keep.totals <span class="op">=</span> <span class="cn">TRUE</span>,
-  BPPARAM <span class="op">=</span> <span class="fu">bpparam</span><span class="op">(</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">dualFilter</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">bg</span>,</span>
+<span>  <span class="va">ref</span>,</span>
+<span>  q <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  logCPM <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  keep.totals <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  BPPARAM <span class="op">=</span> <span class="fu">bpparam</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -143,13 +143,13 @@ prepared. Please see the example/vignette for runnable conde.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"><span class="co">## Taken from the differential_binding vignette</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Attaching packages</span> ─────────────────────────────────────── tidyverse 1.3.1 ──</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co">## Taken from the differential_binding vignette</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Attaching packages</span> ─────────────────────────────────────── tidyverse 1.3.2 ──</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">tidyr  </span> 1.2.0     <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">dplyr  </span> 1.0.9</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">readr  </span> 2.1.2     <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">stringr</span> 1.4.0</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">purrr  </span> 0.3.4     <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">forcats</span> 0.5.1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">readr  </span> 2.1.2     <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">stringr</span> 1.4.1</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">purrr  </span> 0.3.4     <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">forcats</span> 0.5.2</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Conflicts</span> ────────────────────────────────────────── tidyverse_conflicts() ──</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">ggplot2</span>::<span style="color: #00BB00;">Position()</span> masks <span style="color: #0000BB;">BiocGenerics</span>::Position(), <span style="color: #0000BB;">base</span>::Position()</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">dplyr</span>::<span style="color: #00BB00;">collapse()</span>   masks <span style="color: #0000BB;">IRanges</span>::collapse()</span>
@@ -163,7 +163,7 @@ prepared. Please see the example/vignette for runnable conde.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">purrr</span>::<span style="color: #00BB00;">reduce()</span>     masks <span style="color: #0000BB;">GenomicRanges</span>::reduce(), <span style="color: #0000BB;">IRanges</span>::reduce()</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">dplyr</span>::<span style="color: #00BB00;">rename()</span>     masks <span style="color: #0000BB;">S4Vectors</span>::rename()</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">dplyr</span>::<span style="color: #00BB00;">slice()</span>      masks <span style="color: #0000BB;">IRanges</span>::slice()</span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/Rsamtools" class="external-link">Rsamtools</a></span><span class="op">)</span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/Rsamtools" class="external-link">Rsamtools</a></span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: Biostrings</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: XVector</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
@@ -176,66 +176,66 @@ prepared. Please see the example/vignette for runnable conde.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from 'package:base':</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>     strsplit</span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">csaw</span><span class="op">)</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Bioconductor/BiocParallel" class="external-link">BiocParallel</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">rtracklayer</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## For this function we need a set of counts using sliding windows and the</span></span>
-<span class="r-in"><span class="co">## original BamFiles from which they were taken</span></span>
-<span class="r-in"><span class="co">## First we'll set up the bam file list</span></span>
-<span class="r-in"><span class="va">bfl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
-<span class="r-in">    <span class="st">"extdata"</span>, <span class="st">"bam"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ex1.bam"</span>, <span class="st">"ex2.bam"</span>, <span class="st">"input.bam"</span><span class="op">)</span>, package <span class="op">=</span> <span class="st">"extraChIPs"</span></span>
-<span class="r-in">    <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/pkg/Rsamtools/man/BamFile-class.html" class="external-link">BamFileList</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ex1"</span>, <span class="st">"ex2"</span>, <span class="st">"input"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Then define the readParam settings for csaw::readParam()</span></span>
-<span class="r-in"><span class="va">rp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/csaw/man/readParam.html" class="external-link">readParam</a></span><span class="op">(</span></span>
-<span class="r-in">    pe <span class="op">=</span> <span class="st">"none"</span>,</span>
-<span class="r-in">    dedup <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span class="r-in">    restrict <span class="op">=</span> <span class="st">"chr10"</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Now we can form our sliding window object with the counts.</span></span>
-<span class="r-in"><span class="va">wincounts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/csaw/man/windowCounts.html" class="external-link">windowCounts</a></span><span class="op">(</span></span>
-<span class="r-in">    bam.files <span class="op">=</span> <span class="va">bfl</span>,</span>
-<span class="r-in">    spacing <span class="op">=</span> <span class="fl">60</span>,</span>
-<span class="r-in">    width <span class="op">=</span> <span class="fl">180</span>,</span>
-<span class="r-in">    ext <span class="op">=</span> <span class="fl">200</span>,</span>
-<span class="r-in">    filter <span class="op">=</span> <span class="fl">1</span>,</span>
-<span class="r-in">    param <span class="op">=</span> <span class="va">rp</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="co">## As this is a subset of reads, add the initial library sizes for accuracy</span></span>
-<span class="r-in"><span class="co">## Note that this step is not normally required</span></span>
-<span class="r-in"><span class="va">wincounts</span><span class="op">$</span><span class="va">totals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">964076L</span>, <span class="fl">989543L</span>, <span class="fl">1172179L</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## We should also update the metadata for our counts</span></span>
-<span class="r-in"><span class="va">wincounts</span><span class="op">$</span><span class="va">sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">wincounts</span><span class="op">$</span><span class="va">treat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ctrl"</span>, <span class="st">"treat"</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">csaw</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Bioconductor/BiocParallel" class="external-link">BiocParallel</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">rtracklayer</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## For this function we need a set of counts using sliding windows and the</span></span></span>
+<span class="r-in"><span><span class="co">## original BamFiles from which they were taken</span></span></span>
+<span class="r-in"><span><span class="co">## First we'll set up the bam file list</span></span></span>
+<span class="r-in"><span><span class="va">bfl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="st">"extdata"</span>, <span class="st">"bam"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ex1.bam"</span>, <span class="st">"ex2.bam"</span>, <span class="st">"input.bam"</span><span class="op">)</span>, package <span class="op">=</span> <span class="st">"extraChIPs"</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/pkg/Rsamtools/man/BamFile-class.html" class="external-link">BamFileList</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ex1"</span>, <span class="st">"ex2"</span>, <span class="st">"input"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Then define the readParam settings for csaw::readParam()</span></span></span>
+<span class="r-in"><span><span class="va">rp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/csaw/man/readParam.html" class="external-link">readParam</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    pe <span class="op">=</span> <span class="st">"none"</span>,</span></span>
+<span class="r-in"><span>    dedup <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>    restrict <span class="op">=</span> <span class="st">"chr10"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Now we can form our sliding window object with the counts.</span></span></span>
+<span class="r-in"><span><span class="va">wincounts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/csaw/man/windowCounts.html" class="external-link">windowCounts</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    bam.files <span class="op">=</span> <span class="va">bfl</span>,</span></span>
+<span class="r-in"><span>    spacing <span class="op">=</span> <span class="fl">60</span>,</span></span>
+<span class="r-in"><span>    width <span class="op">=</span> <span class="fl">180</span>,</span></span>
+<span class="r-in"><span>    ext <span class="op">=</span> <span class="fl">200</span>,</span></span>
+<span class="r-in"><span>    filter <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>    param <span class="op">=</span> <span class="va">rp</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## As this is a subset of reads, add the initial library sizes for accuracy</span></span></span>
+<span class="r-in"><span><span class="co">## Note that this step is not normally required</span></span></span>
+<span class="r-in"><span><span class="va">wincounts</span><span class="op">$</span><span class="va">totals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">964076L</span>, <span class="fl">989543L</span>, <span class="fl">1172179L</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## We should also update the metadata for our counts</span></span></span>
+<span class="r-in"><span><span class="va">wincounts</span><span class="op">$</span><span class="va">sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wincounts</span><span class="op">$</span><span class="va">treat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ctrl"</span>, <span class="st">"treat"</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DataFrame with 3 rows and 6 columns</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                    bam.files    totals       ext      rlen      sample    treat</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  &lt;character&gt; &lt;integer&gt; &lt;integer&gt; &lt;integer&gt; &lt;character&gt; &lt;factor&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ex1   /__w/_temp/Library/e..    964076       200        73         ex1    ctrl </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ex2   /__w/_temp/Library/e..    989543       200        74         ex2    treat</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> input /__w/_temp/Library/e..   1172179       200        74       input    NA   </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## The function dualFilter requires a set of peaks which will guide the</span></span>
-<span class="r-in"><span class="co">## filtering step. This indicate where genuine signal is likely to be found</span></span>
-<span class="r-in"><span class="co">## and will perform the filtering based on a) signal above the input, and</span></span>
-<span class="r-in"><span class="co">## b) The overall signal level, using the guide set of peaks to inform the</span></span>
-<span class="r-in"><span class="co">## cutoff values for inclusion</span></span>
-<span class="r-in"><span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/BEDFile-class.html" class="external-link">import.bed</a></span><span class="op">(</span></span>
-<span class="r-in">    <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"peaks.bed.gz"</span>, package <span class="op">=</span> <span class="st">"extraChIPs"</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="va">filtcounts</span> <span class="op">&lt;-</span> <span class="fu">dualFilter</span><span class="op">(</span></span>
-<span class="r-in">    x <span class="op">=</span> <span class="va">wincounts</span><span class="op">[</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">$</span><span class="va">treat</span><span class="op">)</span><span class="op">]</span>,</span>
-<span class="r-in">    bg <span class="op">=</span> <span class="va">wincounts</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">$</span><span class="va">treat</span><span class="op">)</span><span class="op">]</span>,</span>
-<span class="r-in">    ref <span class="op">=</span> <span class="va">peaks</span>,</span>
-<span class="r-in">    q <span class="op">=</span> <span class="fl">0.8</span> <span class="co"># Better to use q = 0.5 on real data</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># }</span></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## The function dualFilter requires a set of peaks which will guide the</span></span></span>
+<span class="r-in"><span><span class="co">## filtering step. This indicate where genuine signal is likely to be found</span></span></span>
+<span class="r-in"><span><span class="co">## and will perform the filtering based on a) signal above the input, and</span></span></span>
+<span class="r-in"><span><span class="co">## b) The overall signal level, using the guide set of peaks to inform the</span></span></span>
+<span class="r-in"><span><span class="co">## cutoff values for inclusion</span></span></span>
+<span class="r-in"><span><span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/BEDFile-class.html" class="external-link">import.bed</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"peaks.bed.gz"</span>, package <span class="op">=</span> <span class="st">"extraChIPs"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">filtcounts</span> <span class="op">&lt;-</span> <span class="fu">dualFilter</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    x <span class="op">=</span> <span class="va">wincounts</span><span class="op">[</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">$</span><span class="va">treat</span><span class="op">)</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>    bg <span class="op">=</span> <span class="va">wincounts</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">$</span><span class="va">treat</span><span class="op">)</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>    ref <span class="op">=</span> <span class="va">peaks</span>,</span></span>
+<span class="r-in"><span>    q <span class="op">=</span> <span class="fl">0.8</span> <span class="co"># Better to use q = 0.5 on real data</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>

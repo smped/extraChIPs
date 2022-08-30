@@ -66,43 +66,43 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">plotProfileHeatmap</span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for GenomicRangesList</span>
-<span class="fu">plotProfileHeatmap</span><span class="op">(</span>
-  <span class="va">object</span>,
-  <span class="va">profileCol</span>,
-  xValue <span class="op">=</span> <span class="st">"bp"</span>,
-  fillValue <span class="op">=</span> <span class="st">"score"</span>,
-  facetX <span class="op">=</span> <span class="cn">NULL</span>,
-  facetY <span class="op">=</span> <span class="cn">NULL</span>,
-  colour <span class="op">=</span> <span class="va">facetY</span>,
-  linetype <span class="op">=</span> <span class="cn">NULL</span>,
-  summariseBy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"median"</span>, <span class="st">"min"</span>, <span class="st">"max"</span>, <span class="st">"none"</span><span class="op">)</span>,
-  xLab <span class="op">=</span> <span class="va">xValue</span>,
-  yLab <span class="op">=</span> <span class="cn">NULL</span>,
-  fillLab <span class="op">=</span> <span class="va">fillValue</span>,
-  relHeight <span class="op">=</span> <span class="fl">0.3</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="co"># S4 method for GenomicRanges</span>
-<span class="fu">plotProfileHeatmap</span><span class="op">(</span>
-  <span class="va">object</span>,
-  <span class="va">profileCol</span>,
-  xValue <span class="op">=</span> <span class="st">"bp"</span>,
-  fillValue <span class="op">=</span> <span class="st">"score"</span>,
-  facetX <span class="op">=</span> <span class="cn">NULL</span>,
-  facetY <span class="op">=</span> <span class="cn">NULL</span>,
-  colour <span class="op">=</span> <span class="va">facetY</span>,
-  linetype <span class="op">=</span> <span class="cn">NULL</span>,
-  summariseBy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"median"</span>, <span class="st">"min"</span>, <span class="st">"max"</span>, <span class="st">"none"</span><span class="op">)</span>,
-  xLab <span class="op">=</span> <span class="va">xValue</span>,
-  yLab <span class="op">=</span> <span class="cn">NULL</span>,
-  fillLab <span class="op">=</span> <span class="va">fillValue</span>,
-  relHeight <span class="op">=</span> <span class="fl">0.3</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plotProfileHeatmap</span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for GenomicRangesList</span></span>
+<span><span class="fu">plotProfileHeatmap</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  <span class="va">profileCol</span>,</span>
+<span>  xValue <span class="op">=</span> <span class="st">"bp"</span>,</span>
+<span>  fillValue <span class="op">=</span> <span class="st">"score"</span>,</span>
+<span>  facetX <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  facetY <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colour <span class="op">=</span> <span class="va">facetY</span>,</span>
+<span>  linetype <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  summariseBy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"median"</span>, <span class="st">"min"</span>, <span class="st">"max"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
+<span>  xLab <span class="op">=</span> <span class="va">xValue</span>,</span>
+<span>  yLab <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  fillLab <span class="op">=</span> <span class="va">fillValue</span>,</span>
+<span>  relHeight <span class="op">=</span> <span class="fl">0.3</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for GenomicRanges</span></span>
+<span><span class="fu">plotProfileHeatmap</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  <span class="va">profileCol</span>,</span>
+<span>  xValue <span class="op">=</span> <span class="st">"bp"</span>,</span>
+<span>  fillValue <span class="op">=</span> <span class="st">"score"</span>,</span>
+<span>  facetX <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  facetY <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colour <span class="op">=</span> <span class="va">facetY</span>,</span>
+<span>  linetype <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  summariseBy <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"median"</span>, <span class="st">"min"</span>, <span class="st">"max"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
+<span>  xLab <span class="op">=</span> <span class="va">xValue</span>,</span>
+<span>  yLab <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  fillLab <span class="op">=</span> <span class="va">fillValue</span>,</span>
+<span>  relHeight <span class="op">=</span> <span class="fl">0.3</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -186,29 +186,27 @@ element of any resultant ggplot object produced by this function.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># \donttest{</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">rtracklayer</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">fl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
-<span class="r-in"><span class="st">"extdata"</span>, <span class="st">"bigwig"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ex1.bw"</span>, <span class="st">"ex2.bw"</span><span class="op">)</span>, package <span class="op">=</span> <span class="st">"extraChIPs"</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="va">bwfl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/BigWigFile.html" class="external-link">BigWigFileList</a></span><span class="op">(</span><span class="va">fl</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">bwfl</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ex1"</span>, <span class="st">"ex2"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span></span>
-<span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span class="r-in">    <span class="st">"chr10:103880281-103880460"</span>, <span class="st">"chr10:103892581-103892760"</span>,</span>
-<span class="r-in">    <span class="st">"chr10:103877281-103877460"</span></span>
-<span class="r-in">   <span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="va">pd</span> <span class="op">&lt;-</span> <span class="fu"><a href="getProfileData-methods.html">getProfileData</a></span><span class="op">(</span><span class="va">bwfl</span>, <span class="va">gr</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">plotProfileHeatmap</span><span class="op">(</span><span class="va">pd</span>, <span class="st">"profile_data"</span><span class="op">)</span> <span class="op">+</span></span>
-<span class="r-in">  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_fill_viridis_c</a></span><span class="op">(</span>option <span class="op">=</span> <span class="st">"inferno"</span>, direction <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
-<span class="r-in">  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"Coverage"</span><span class="op">)</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'&lt;' not meaningful for factors</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'&gt;' not meaningful for factors</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">rtracklayer</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">fl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="st">"extdata"</span>, <span class="st">"bigwig"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ex1.bw"</span>, <span class="st">"ex2.bw"</span><span class="op">)</span>, package <span class="op">=</span> <span class="st">"extraChIPs"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">bwfl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/BigWigFile.html" class="external-link">BigWigFileList</a></span><span class="op">(</span><span class="va">fl</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">bwfl</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ex1"</span>, <span class="st">"ex2"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="st">"chr10:103880281-103880460"</span>, <span class="st">"chr10:103892581-103892760"</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"chr10:103877281-103877460"</span></span></span>
+<span class="r-in"><span>   <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pd</span> <span class="op">&lt;-</span> <span class="fu"><a href="getProfileData-methods.html">getProfileData</a></span><span class="op">(</span><span class="va">bwfl</span>, <span class="va">gr</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plotProfileHeatmap</span><span class="op">(</span><span class="va">pd</span>, <span class="st">"profile_data"</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_fill_viridis_c</a></span><span class="op">(</span>option <span class="op">=</span> <span class="st">"inferno"</span>, direction <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"Coverage"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotProfileHeatmap-methods-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="co"># }</span></span>
-<span class="r-in"></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>

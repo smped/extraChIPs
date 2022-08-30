@@ -66,29 +66,29 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">plotOverlaps</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for GRangesList</span>
-<span class="fu">plotOverlaps</span><span class="op">(</span>
-  <span class="va">x</span>,
-  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"venn"</span>, <span class="st">"upset"</span><span class="op">)</span>,
-  var <span class="op">=</span> <span class="cn">NULL</span>,
-  f <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"median"</span>, <span class="st">"max"</span>, <span class="st">"min"</span>, <span class="st">"sd"</span><span class="op">)</span>,
-  set_col <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">...</span>,
-  .sort_sets <span class="op">=</span> <span class="st">"ascending"</span>,
-  min.gapwidth <span class="op">=</span> <span class="fl">1L</span>,
-  ignore.strand <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span>
-
-<span class="co"># S4 method for list</span>
-<span class="fu">plotOverlaps</span><span class="op">(</span>
-  <span class="va">x</span>,
-  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"venn"</span>, <span class="st">"upset"</span><span class="op">)</span>,
-  set_col <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">...</span>,
-  .sort_sets <span class="op">=</span> <span class="st">"ascending"</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plotOverlaps</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for GRangesList</span></span>
+<span><span class="fu">plotOverlaps</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"venn"</span>, <span class="st">"upset"</span><span class="op">)</span>,</span>
+<span>  var <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  f <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"median"</span>, <span class="st">"max"</span>, <span class="st">"min"</span>, <span class="st">"sd"</span><span class="op">)</span>,</span>
+<span>  set_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  .sort_sets <span class="op">=</span> <span class="st">"ascending"</span>,</span>
+<span>  min.gapwidth <span class="op">=</span> <span class="fl">1L</span>,</span>
+<span>  ignore.strand <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for list</span></span>
+<span><span class="fu">plotOverlaps</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"venn"</span>, <span class="st">"upset"</span><span class="op">)</span>,</span>
+<span>  set_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  .sort_sets <span class="op">=</span> <span class="st">"ascending"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -126,7 +126,7 @@ numeric vector</p></dd>
 
 
 <dt>min.gapwidth, ignore.strand</dt>
-<dd><p>Passed to <a href="https://rdrr.io/pkg/GenomicRanges/man/inter-range-methods.html" class="external-link">reduce</a></p></dd>
+<dd><p>Passed to <a href="https://rdrr.io/pkg/IRanges/man/inter-range-methods.html" class="external-link">reduce</a></p></dd>
 
 </dl></div>
     <div id="value">
@@ -151,31 +151,31 @@ and the boxplot will be included as an upper panel above the intersections</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co">## Examples using a list of character vectors</span></span>
-<span class="r-in"><span class="va">ex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span class="r-in">  x <span class="op">=</span> <span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, y <span class="op">=</span> <span class="va">letters</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6</span><span class="op">:</span><span class="fl">15</span>, <span class="fl">26</span><span class="op">)</span><span class="op">]</span>, z <span class="op">=</span> <span class="va">letters</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">10</span><span class="op">:</span><span class="fl">25</span><span class="op">)</span><span class="op">]</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="fu">plotOverlaps</span><span class="op">(</span><span class="va">ex</span>, type <span class="op">=</span> <span class="st">"upset"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## Examples using a list of character vectors</span></span></span>
+<span class="r-in"><span><span class="va">ex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  x <span class="op">=</span> <span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, y <span class="op">=</span> <span class="va">letters</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6</span><span class="op">:</span><span class="fl">15</span>, <span class="fl">26</span><span class="op">)</span><span class="op">]</span>, z <span class="op">=</span> <span class="va">letters</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">10</span><span class="op">:</span><span class="fl">25</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plotOverlaps</span><span class="op">(</span><span class="va">ex</span>, type <span class="op">=</span> <span class="st">"upset"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotOverlaps-methods-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu">plotOverlaps</span><span class="op">(</span><span class="va">ex</span>, type <span class="op">=</span> <span class="st">"venn"</span>, set_col <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, alpha <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">plotOverlaps</span><span class="op">(</span><span class="va">ex</span>, type <span class="op">=</span> <span class="st">"venn"</span>, set_col <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, alpha <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotOverlaps-methods-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu">plotOverlaps</span><span class="op">(</span><span class="va">ex</span>, type <span class="op">=</span> <span class="st">"upset"</span>, set_col <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, labeller <span class="op">=</span> <span class="fu">stringr</span><span class="fu">::</span><span class="va"><a href="https://stringr.tidyverse.org/reference/case.html" class="external-link">str_to_title</a></span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">plotOverlaps</span><span class="op">(</span><span class="va">ex</span>, type <span class="op">=</span> <span class="st">"upset"</span>, set_col <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, labeller <span class="op">=</span> <span class="fu">stringr</span><span class="fu">::</span><span class="va"><a href="https://stringr.tidyverse.org/reference/case.html" class="external-link">str_to_title</a></span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotOverlaps-methods-3.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu">plotOverlaps</span><span class="op">(</span><span class="va">ex</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">plotOverlaps</span><span class="op">(</span><span class="va">ex</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotOverlaps-methods-4.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## GRangesList object will produce a boxplot of summarised values in the</span></span>
-<span class="r-in"><span class="co">## upper panel</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">grl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRangesList-class.html" class="external-link">GRangesList</a></span><span class="op">(</span></span>
-<span class="r-in">  a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chr1:1-10"</span>, <span class="st">"chr1:21-30"</span>, <span class="st">"chr1:31-40"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span class="r-in">  b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chr1:12-15"</span>, <span class="st">"chr1:21-30"</span>, <span class="st">"chr1:46-50"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="va">grl</span><span class="op">$</span><span class="va">a</span><span class="op">$</span><span class="va">score</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">grl</span><span class="op">$</span><span class="va">b</span><span class="op">$</span><span class="va">score</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">plotOverlaps</span><span class="op">(</span><span class="va">grl</span>, type <span class="op">=</span> <span class="st">'upset'</span>, var <span class="op">=</span> <span class="st">'score'</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## GRangesList object will produce a boxplot of summarised values in the</span></span></span>
+<span class="r-in"><span><span class="co">## upper panel</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">grl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRangesList-class.html" class="external-link">GRangesList</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chr1:1-10"</span>, <span class="st">"chr1:21-30"</span>, <span class="st">"chr1:31-40"</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chr1:12-15"</span>, <span class="st">"chr1:21-30"</span>, <span class="st">"chr1:46-50"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">grl</span><span class="op">$</span><span class="va">a</span><span class="op">$</span><span class="va">score</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">grl</span><span class="op">$</span><span class="va">b</span><span class="op">$</span><span class="va">score</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plotOverlaps</span><span class="op">(</span><span class="va">grl</span>, type <span class="op">=</span> <span class="st">'upset'</span>, var <span class="op">=</span> <span class="st">'score'</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotOverlaps-methods-5.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>

@@ -66,20 +66,20 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">setdiffMC</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">intersectMC</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">unionMC</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for GRanges,GRanges</span>
-<span class="fu">setdiffMC</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, ignore.strand <span class="op">=</span> <span class="cn">FALSE</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for GRanges,GRanges</span>
-<span class="fu">intersectMC</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, ignore.strand <span class="op">=</span> <span class="cn">FALSE</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for GRanges,GRanges</span>
-<span class="fu">unionMC</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, ignore.strand <span class="op">=</span> <span class="cn">FALSE</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">setdiffMC</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">intersectMC</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">unionMC</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for GRanges,GRanges</span></span>
+<span><span class="fu">setdiffMC</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, ignore.strand <span class="op">=</span> <span class="cn">FALSE</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for GRanges,GRanges</span></span>
+<span><span class="fu">intersectMC</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, ignore.strand <span class="op">=</span> <span class="cn">FALSE</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for GRanges,GRanges</span></span>
+<span><span class="fu">unionMC</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, ignore.strand <span class="op">=</span> <span class="cn">FALSE</span>, simplify <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -114,8 +114,8 @@ original set of Ranges, mcols will be returned as
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>This extends the methods provided by <a href="https://rdrr.io/pkg/GenomicRanges/man/setops-methods.html" class="external-link">setdiff</a>,
-<a href="https://rdrr.io/pkg/GenomicRanges/man/setops-methods.html" class="external-link">intersect</a> and <a href="https://rdrr.io/pkg/GenomicRanges/man/setops-methods.html" class="external-link">union</a> so that
+    <p>This extends the methods provided by <a href="https://rdrr.io/pkg/BiocGenerics/man/sets.html" class="external-link">setdiff</a>,
+<a href="https://rdrr.io/pkg/BiocGenerics/man/sets.html" class="external-link">intersect</a> and <a href="https://rdrr.io/pkg/BiocGenerics/man/sets.html" class="external-link">union</a> so that
 <code>mcols</code> from <code>x</code> will be returned as part of the output.</p>
 <p>Where output ranges map back to multiple ranges in <code>x</code>, <code>CompressedList</code>
 columns will be returned.
@@ -131,10 +131,10 @@ such as <code><a href="https://dplyr.tidyverse.org/reference/mutate.html" class=
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="st">"chr1:1-100:+"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">x</span><span class="op">$</span><span class="va">id</span> <span class="op">&lt;-</span> <span class="st">"range1"</span></span>
-<span class="r-in"><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chr1:51-60:+"</span>, <span class="st">"chr1:21-30:-"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">setdiffMC</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="st">"chr1:1-100:+"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span><span class="op">$</span><span class="va">id</span> <span class="op">&lt;-</span> <span class="st">"range1"</span></span></span>
+<span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chr1:51-60:+"</span>, <span class="st">"chr1:21-30:-"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">setdiffMC</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 2 ranges and 1 metadata column:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand |          id</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;</span>
@@ -142,7 +142,7 @@ such as <code><a href="https://dplyr.tidyverse.org/reference/mutate.html" class=
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chr1    61-100      + |      range1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
-<span class="r-in"><span class="fu">setdiffMC</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, ignore.strand <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">setdiffMC</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, ignore.strand <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 3 ranges and 1 metadata column:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand |          id</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;</span>
@@ -151,18 +151,18 @@ such as <code><a href="https://dplyr.tidyverse.org/reference/mutate.html" class=
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [3]     chr1    61-100      * |      range1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># The intersection works similarly</span></span>
-<span class="r-in"><span class="fu">intersectMC</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># The intersection works similarly</span></span></span>
+<span class="r-in"><span><span class="fu">intersectMC</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 1 range and 1 metadata column:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand |          id</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1     51-60      + |      range1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Union may contain ranges not initially in x</span></span>
-<span class="r-in"><span class="fu">unionMC</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Union may contain ranges not initially in x</span></span></span>
+<span class="r-in"><span><span class="fu">unionMC</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 2 ranges and 1 metadata column:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand |          id</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;</span>
@@ -170,15 +170,15 @@ such as <code><a href="https://dplyr.tidyverse.org/reference/mutate.html" class=
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chr1     21-30      - |        &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
-<span class="r-in"><span class="fu">unionMC</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, ignore.strand <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">unionMC</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, ignore.strand <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 1 range and 1 metadata column:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand |          id</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1     1-100      * |      range1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
-<span class="r-in"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
