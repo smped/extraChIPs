@@ -15,7 +15,12 @@
 #'
 #' @return
 #' `GRanges` object with mcols containing a logical vector for every element of
-#' x, along with the column `n` which adds all logical columns
+#' x, along with the column `n` which adds all logical columns.
+#'
+#' If any additional columns have been requested using `var`, these will be
+#' returned as CompressedList objects as usually produced by `reduceMC()`
+#'
+#' @seealso \link{reduceMC}
 #'
 #' @examples
 #' a <- GRanges("chr1:11-20")
@@ -39,7 +44,11 @@ makeConsensus <- function(
     ## Starting with a GRList
     if (!is(x, "GRangesList")) stop("Input must be a GRangesList")
     if (!is.null(var)) {
-        stopifnot(all(var %in% colnames(mcols(x[[1]]))))
+        mc_names <- colnames(mcols(x[[1]]))
+        if (length(setdiff(var, mc_names))) {
+            d <- paste(setdiff(var, mc_names), collapse = ", ")
+            stop("Couldn't find column", d)
+        }
         x <- endoapply(
             x,
             function(gr) {
@@ -63,7 +72,5 @@ makeConsensus <- function(
     ol$n <- rowSums(ol)
     mcols(red_ranges) <- cbind(mcols(red_ranges), ol)
     subset(red_ranges, n >= p * length(x))
-
-    ## Now build tests, add to main and change plotOverlaps to use it
 
 }

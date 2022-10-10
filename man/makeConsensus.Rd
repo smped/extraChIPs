@@ -19,7 +19,10 @@ be returned}
 }
 \value{
 \code{GRanges} object with mcols containing a logical vector for every element of
-x, along with the column \code{n} which adds all logical columns
+x, along with the column \code{n} which adds all logical columns.
+
+If any additional columns have been requested using \code{var}, these will be
+returned as CompressedList objects as usually produced by \code{reduceMC()}
 }
 \description{
 Make a set of consensus peaks based on umber of replicates
@@ -38,4 +41,7 @@ makeConsensus(grl)
 makeConsensus(grl, p = 1)
 makeConsensus(grl, p = 1, var = "score")
 
+}
+\seealso{
+\link{reduceMC}
 }
