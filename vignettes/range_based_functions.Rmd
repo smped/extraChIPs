@@ -94,6 +94,73 @@ collapseGenes(gn)
 ```
 
 
+# Formation of Consensus Peaks
+
+The formation of consensus peaks incorporating ranges from multiple replicates 
+is a key part of many ChIP-Seq analyses.
+A common format returned by tools such as `mcas2 callpeak` is the `narrowPeak` 
+(or `broadPeak`) format.
+Sets of these across multiple replicates can imported using the function 
+`importPeaks()`, which returns a `GRangesList()`
+
+```{r load-peaks}
+fl <- system.file(
+    c("extdata/ER_1.narrowPeak", "extdata/ER_2.narrowPeak"),
+    package = "extraChIPs"
+)
+peaks <- importPeaks(fl)
+names(peaks) <- c("ER_1", "ER_2")
+```
+
+In the above we have loaded the peaks from two replicates from the Estrogen 
+Receptor (ER) in T-47D cells.
+To form consensus peaks we can place a restriction on the number of replicates 
+an overlapping peak needs to appear in.
+By default, the function `makeConsensus()` sets the proportion to be zero 
+`(p = 0)` so all peaks are retained.
+Note that a logical vector/column is returned for each replicate, along with 
+the number of replicates the consensus peak is derived from.
+
+```{r make-consensus1}
+makeConsensus(peaks)
+```
+
+However, we may wish for peaks to appear in all replicates, so we can set the 
+argument `p = 1` (or any other value $0 \leq p \leq 1$).
+
+```{r make-consensus2}
+makeConsensus(peaks, p = 1)
+```
+
+In addition, we may wish to keep the values from the `mcols` as part of our 
+consensus peaks, such as the `qValue`.
+This can be specified using the `var` argument, and will return a 
+`CompressedList` as returned by `reduceMC()`, seen below.
+
+```{r make-consensus-var}
+makeConsensus(peaks, p = 1, var = "qValue")
+```
+
+We could even identify the peak centre and pass these to the set of consensus 
+peaks for downstream peak re-centreing.
+
+```{r make-consensus-mutate}
+library(plyranges)
+peaks %>% 
+    endoapply(mutate, centre = start + peak) %>% 
+    makeConsensus(p = 1, var = "centre")
+```
+
+We could then find the mean of the peak centres for an averaged centre.
+
+```{r make-consensus-centre}
+peaks %>% 
+    endoapply(mutate, centre = start + peak) %>% 
+    makeConsensus(p = 1, var = "centre") %>% 
+    mutate(centre = vapply(centre, mean, numeric(1)))
+```
+
+
 # Simple Operations Retaining `mcols()`
 
 The standard set operations implemented in the package `GenomicRanges` will
@@ -190,11 +257,11 @@ If only wishing to retain a subset of `mcols`, these should be selected prior
 to passing to these functions.
 
 ```{r setopts-plyranges}
-library(plyranges)
 gr %>% 
   select(tx_id) %>% 
   intersectMC(peaks, ignore.strand = TRUE)
 ```
+
 
 ## Overlapping proportions
 

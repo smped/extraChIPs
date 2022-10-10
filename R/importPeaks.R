@@ -23,9 +23,11 @@
 #'
 #' @examples
 #' fl <- system.file(
-#' "extdata", "testFiles", "test.narrowPeak", package = "extraChIPs"
+#'     c("extdata/ER_1.narrowPeak", "extdata/ER_2.narrowPeak"),
+#'     package = "extraChIPs"
 #' )
-#' gr <- importPeaks(fl, "narrow")
+#' peaks <- importPeaks(fl)
+#' peaks
 #'
 #' @importFrom GenomeInfoDb seqinfo seqnames
 #' @importFrom IRanges overlapsAny
