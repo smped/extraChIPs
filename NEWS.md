@@ -16,3 +16,7 @@
 # Changes in version 1.1.3 (2022-08-01)
 
 - Added `plotOverlaps()` for generation of Venn Diagrams and ComplexUpset plots
+
+# Changes in version 1.1.5 (2022-10-11)
+
+- Added `makeConsensus()` and updated vignette
