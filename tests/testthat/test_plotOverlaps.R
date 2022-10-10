@@ -82,7 +82,7 @@ test_that("plotOverlaps dispatches type = 'auto' correctly", {
 })
 
 test_that("plotOverlaps adds annotations as expected", {
-    p <- plotOverlaps(grl, type = 'upset', var = 'score')
+    p <- plotOverlaps(grl, type = 'upset', var = 'score', set_col = "red")
     expect_true(is(p, 'patchwork'))
     expect_equal(length(p$patches$plots), 5)
     bp <- p$patches$plots[[2]]
@@ -96,9 +96,6 @@ test_that("plotOverlaps adds annotations as expected", {
     )
     expect_equal(bp$labels$y, "score")
     expect_true(is(bp$layers[[1]]$geom, "GeomBoxplot"))
-    p <- plotOverlaps(grl, type = 'upset', var = 'width', set_col = 'red')
-    bp <- p$patches$plots[[2]]
-    expect_equal(bp$labels$y, "width")
     expect_equal(p$patches$plots[[5]]$geom[[1]]$geom_params$fill, "red")
 
 })

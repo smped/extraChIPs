@@ -47,7 +47,7 @@ makeConsensus <- function(
         mc_names <- colnames(mcols(x[[1]]))
         if (length(setdiff(var, mc_names))) {
             d <- paste(setdiff(var, mc_names), collapse = ", ")
-            stop("Couldn't find column", d)
+            stop("Couldn't find column ", d)
         }
         x <- endoapply(
             x,

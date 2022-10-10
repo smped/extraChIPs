@@ -76,55 +76,44 @@ setMethod(
     ) {
 
         stopifnot(is(x, "GRangesList"))
-        stopifnot(length(names(x)) == length(x))
-        n <- length(x)
         nm <- names(x)
+        n <- length(x)
+        stopifnot(length(nm) == n)
         type <- match.arg(type)
         if (type == "auto") type <- ifelse(n > 3, "upset", "venn")
+        if (n == 1 & type == "upset")
+            stop("UpSet plots can only be drawn using more than one group")
+        if (length(var) > 1) {
+            var <- var[[1]]
+            message(
+                "Only one column can be specified in 'var'. Choosing ", var
+            )
+        }
 
         ## Dummy variables for R CMD check
         count <- range <- intersection <- c()
+        # Collapse as required
+        gr <- makeConsensus(
+            x, var = var,
+            min.gapwidth = min.gapwidth, ignore.strand = ignore.strand
+        )
 
         if (is.null(var) | type == "venn") {
-            ## Reduce the ranges
-            gr <- unlist(x)
-            gr <- GenomicRanges::reduce(
-                gr, min.gapwidth = min.gapwidth, ignore.strand = ignore.strand
-            )
+
             ## Form a character list & plot
-            grl <- lapply(x, function(y) as.character(subsetByOverlaps(gr, y)))
-            plotOverlaps(grl, type = type, set_col = set_col, ...)
+            l <- lapply(
+                nm, function(x) as.character(gr)[mcols(gr)[[x]]]
+            )
+            names(l) <- nm
+            plotOverlaps(l, type = type, set_col = set_col, ...)
+
         } else {
 
-            if (!var %in% c(colnames(mcols(x[[1]])), "width"))
-                stop("Couldn't find column ", var)
-
-            if (var != "width" & !is.numeric(mcols(x[[1]])[[var]]))
+            if (!is.numeric(mcols(x[[1]])[[var]]))
                 stop(var, " must contain numeric values")
 
-
-            if (n == 1)
-                stop("UpSet plots can only be drawn using more than one group")
             ## Setup the df
-            if (var != "width") {
-                x <- endoapply(
-                    x,
-                    function(y) {
-                        mcols(y) <- mcols(y)[names(mcols(y)) == var]
-                        y
-                    }
-                )
-            } else {
-                x <- endoapply(x, granges)
-            }
-            gr <- setNames(unlist(x), c())
-            gr <- reduceMC(
-                gr, ignore.strand = ignore.strand, min.gapwidth = min.gapwidth
-            )
             tbl <- as_tibble(gr)
-            if (var == 'width') tbl$width <- width(gr)
-            hits <- lapply(x, function(y) as.integer(overlapsAny(gr, y)))
-            tbl <- bind_cols(tbl, hits)
             f <- match.arg(f)
             f <- match.fun(f)
             if (is(tbl[[var]], "list"))
