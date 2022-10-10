@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.5</span>
       </span>
     </div>
 
@@ -130,9 +130,70 @@ GenomicRanges objects.</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">fl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span><span class="st">"extdata"</span>, <span class="st">"testFiles"</span>, <span class="st">"test.narrowPeak"</span>, package <span class="op">=</span> <span class="st">"extraChIPs"</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"extdata/ER_1.narrowPeak"</span>, <span class="st">"extdata/ER_2.narrowPeak"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    package <span class="op">=</span> <span class="st">"extraChIPs"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">gr</span> <span class="op">&lt;-</span> <span class="fu">importPeaks</span><span class="op">(</span><span class="va">fl</span>, <span class="st">"narrow"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu">importPeaks</span><span class="op">(</span><span class="va">fl</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">peaks</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GRangesList object of length 2:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ER_1.narrowPeak</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 10 ranges and 5 metadata columns:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                     seqnames          ranges strand |     score</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                        &lt;Rle&gt;       &lt;IRanges&gt;  &lt;Rle&gt; | &lt;numeric&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_1_mapped_reads_peak_1     chr1   856458-856640      * |        56</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_1_mapped_reads_peak_2     chr1 1008550-1010075      * |      6357</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_1_mapped_reads_peak_3     chr1 1014771-1016015      * |       951</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_1_mapped_reads_peak_4     chr1 1051383-1051896      * |       655</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_1_mapped_reads_peak_5     chr1 1342664-1342846      * |        66</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_1_mapped_reads_peak_6     chr1 1368480-1368979      * |       225</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_1_mapped_reads_peak_7     chr1 1608098-1608345      * |       723</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_1_mapped_reads_peak_8     chr1 1790733-1790975      * |        77</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_1_mapped_reads_peak_9     chr1 1878927-1879257      * |       338</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   T47D_ER_E2_1_mapped_reads_peak_10     chr1 1900588-1900902      * |       225</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                     signalValue    pValue    qValue      peak</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                       &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_1_mapped_reads_peak_1     5.65444   8.52782   5.65761        91</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_1_mapped_reads_peak_2   149.37155 641.42468 635.74786       662</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_1_mapped_reads_peak_3    33.45546  98.85455  95.12226       210</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_1_mapped_reads_peak_4    25.44500  69.13743  65.55376       182</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_1_mapped_reads_peak_5     6.12565   9.59455   6.68896       108</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_1_mapped_reads_peak_6    12.25129  25.77251  22.54826       133</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_1_mapped_reads_peak_7    27.32981  75.94558  72.32353       149</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_1_mapped_reads_peak_8     6.59685  10.69307   7.75227       115</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_1_mapped_reads_peak_9    16.02092  37.24069  33.88997       160</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   T47D_ER_E2_1_mapped_reads_peak_10    12.25129  25.77251  22.54826       169</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ER_2.narrowPeak</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 10 ranges and 5 metadata columns:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                     seqnames          ranges strand |     score</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                        &lt;Rle&gt;       &lt;IRanges&gt;  &lt;Rle&gt; | &lt;numeric&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_2_mapped_reads_peak_1     chr1   868541-868839      * |        97</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_2_mapped_reads_peak_2     chr1 1008607-1010057      * |      6050</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_2_mapped_reads_peak_3     chr1 1014770-1015980      * |       783</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_2_mapped_reads_peak_4     chr1 1051307-1051918      * |       959</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_2_mapped_reads_peak_5     chr1 1296000-1296181      * |        66</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_2_mapped_reads_peak_6     chr1 1310420-1310703      * |        55</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_2_mapped_reads_peak_7     chr1 1368372-1369009      * |       291</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_2_mapped_reads_peak_8     chr1 1608102-1608346      * |       648</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_2_mapped_reads_peak_9     chr1 1690460-1690641      * |        35</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   T47D_ER_E2_2_mapped_reads_peak_10     chr1 1878958-1879250      * |       144</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                     signalValue    pValue    qValue      peak</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                       &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_2_mapped_reads_peak_1     7.42145  12.78537   9.77580       165</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_2_mapped_reads_peak_2   141.93524 610.62402 605.03973       605</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_2_mapped_reads_peak_3    28.75812  82.09051  78.39533       179</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_2_mapped_reads_peak_4    33.39653  99.75146  95.96765       327</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_2_mapped_reads_peak_5     5.89933   9.56727   6.65018       135</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_2_mapped_reads_peak_6     5.56609   8.38709   5.51349       139</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_2_mapped_reads_peak_7    14.37906  32.45039  29.12307       395</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_2_mapped_reads_peak_8    25.04739  68.45815  64.84392       145</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    T47D_ER_E2_2_mapped_reads_peak_9     4.63841   6.38478   3.59695       120</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   T47D_ER_E2_2_mapped_reads_peak_10     9.27681  17.60511  14.49095       136</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
