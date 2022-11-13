@@ -15,7 +15,6 @@
 #' @param colour Column from `colData(x)` to outline the boxplots
 #' @param fill Column from `colData(x)` to fill the boxplots
 #' @param rle_group Column from `colData(x)` to calculate RLE within groups
-#' @param x_col Any alternative columns in `colData(x)` to use for the x-axis.
 #' Commonly an alternative sample label.
 #' @param n_max Maximum number of points to plot
 #' @param trans character(1). NUmerical transformation to apply to the data
@@ -36,9 +35,9 @@
 #' @importFrom tidyr pivot_longer
 #' @importFrom tidyselect all_of
 #' @importFrom dplyr left_join group_by mutate
-#' @importFrom rlang syms '!!!'
-#' @importFrom ggplot2 ggplot aes_string geom_boxplot labs
+#' @importFrom rlang syms '!!!' sym
 #' @importFrom stats median
+#' @import ggplot2
 #'
 #' @rdname plotAssayRle-methods
 #' @aliases plotAssayRle
@@ -47,19 +46,17 @@ setMethod(
     "plotAssayRle",
     signature = signature(x = "SummarizedExperiment"),
     function(
-        x, assay = "counts", colour = c(), fill = c(), rle_group = c(),
-        x_col = "sample", n_max = Inf, trans = c(), ...
+        x, assay = "counts", colour = NULL, fill = NULL, rle_group = NULL,
+        n_max = Inf, trans = c(), ...
     ) {
 
-        if (is.null(colnames(x)))
-            colnames(x) <- as.character(seq_len(ncol(x)))
+        if (is.null(colnames(x))) colnames(x) <- as.character(seq_len(ncol(x)))
         df <- as.data.frame(colData(x))
-        df <- rownames_to_column(df, "sample")
-        x_col <- match.arg(x_col, colnames(df))
-        if (!is.null(colour)) colour <- match.arg(colour, colnames(df))
-        if (!is.null(fill)) fill <- match.arg(fill, colnames(df))
-        if (!is.null(rle_group))
-            rle_group <- match.arg(rle_group, colnames(df))
+        df$sample <- rownames(df)
+        args <- colnames(df)
+        if (!is.null(colour)) colour <- sym(match.arg(colour, args))
+        if (!is.null(fill)) fill <- sym(match.arg(fill, args))
+        if (!is.null(rle_group)) rle_group <- match.arg(rle_group, args)
         grps <- c("ind", rle_group)
 
         n_max <- min(nrow(x), n_max)
@@ -86,8 +83,10 @@ setMethod(
         mat_df <- group_by(mat_df, !!!syms(grps))
         mat_df <- mutate(mat_df, rle = assay - median(assay))
 
+        sample <- rle <- NULL ## R CMD check
         ggplot(
-            mat_df, aes_string(x_col, "rle", fill = fill, colour = colour)
+            mat_df,
+            aes(sample, rle, fill = {{ fill }}, colour = {{ colour }})
         ) +
             geom_boxplot() +
             labs(y = "RLE")

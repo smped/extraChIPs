@@ -58,10 +58,10 @@
 #' @importFrom S4Vectors endoapply mcols
 #' @importFrom dplyr bind_cols
 #' @importFrom rlang list2 ':=' '!!' sym
-#' @importFrom ggplot2 aes geom_boxplot geom_text aes element_blank stat
 #' @importFrom ComplexUpset upset upset_set_size upset_default_themes upset_data
 #' @importFrom ComplexUpset upset_query
 #' @importFrom scales comma
+#' @import ggplot2
 #' @rdname plotOverlaps-methods
 #' @aliases plotOverlaps
 #' @export
@@ -170,7 +170,6 @@ setMethod(
 #' @importFrom methods is
 #' @importFrom ComplexUpset upset upset_set_size upset_default_themes upset_data
 #' @importFrom ComplexUpset upset_query
-#' @importFrom ggplot2 geom_text aes element_blank stat
 #' @importFrom scales comma
 #' @importFrom grid grid.newpage
 #' @rdname plotOverlaps-methods

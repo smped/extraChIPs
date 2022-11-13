@@ -8,27 +8,28 @@
 #'
 #' @return
 #' A `ggplot2` object. Scales and labels can be added using conventional
-#' `ggplot2` syntax. (See example)
+#' `ggplot2` syntax.
 #'
 #' @examples
 #' nrows <- 200; ncols <- 4
 #' counts <- matrix(runif(nrows * ncols, 1, 1e4), nrows)
+#' colnames(counts) <- paste0("Sample_", seq_len(ncols))
 #' df <- DataFrame(treat = c("A", "A", "B", "B"))
 #' se <- SummarizedExperiment(
 #'   assays = SimpleList(counts = counts),
 #'   colData = df
 #' )
-#' plotAssayDensities(se, colour = "treat") +
-#'   labs(colour = "Treat")
+#' plotAssayDensities(se, colour = "treat")
 #'
 #' @param x A SummarizedExperiment object
 #' @param assay An assay within x
-#' @param colour The column in colData to colour lines by
-#' @param linetype Any column in colData used to determine linetype
+#' @param colour The column in colData to colour lines by. To remove any
+#' colours, set this argument to `NULL`
+#' @param linetype Any optional column in colData used to determine linetype
 #' @param trans character(1). Any transformative function to be applied to the
 #' data before calculating the density, e.g. `trans = "log2"`
 #' @param n_max Maximum number of points to use when calculating densities
-#' @param ... Not used
+#' @param ... Passed to \link[stats]{density}
 #'
 #' @name plotAssayDensities
 #' @rdname plotAssayDensities-methods
@@ -38,14 +39,15 @@ setGeneric(
     "plotAssayDensities",
     function(x, ...){standardGeneric("plotAssayDensities")}
 )
-#' @importFrom SummarizedExperiment assayNames colData
+#' @importFrom SummarizedExperiment colData
 #' @importFrom stats density
 #' @importFrom tibble as_tibble tibble
 #' @importFrom tidyr pivot_longer unnest
 #' @importFrom tidyselect everything
-#' @importFrom ggplot2 ggplot aes_string geom_line labs
 #' @importFrom methods as
-#' @importFrom dplyr left_join bind_cols
+#' @importFrom dplyr bind_cols
+#' @importFrom rlang sym .data
+#' @import ggplot2
 #'
 #' @rdname plotAssayDensities-methods
 #' @export
@@ -53,22 +55,24 @@ setMethod(
     "plotAssayDensities",
     signature = signature(x = "SummarizedExperiment"),
     function(
-        x, assay = "counts",
-        colour = NULL, linetype = NULL, trans = NULL, n_max = Inf, ...
+        x, assay = "counts", colour, linetype = NULL, trans = NULL,
+        n_max = Inf, ...
     ) {
 
-        ## Checks
+        ## Check column names & set plot aesthetics
         if (is.null(colnames(x))) colnames(x) <- as.character(seq_len(ncol(x)))
-
         col_data <- as.data.frame(colData(x))
-        if (!is.null(colour)) colour <- match.arg(colour, colnames(col_data))
-        if (!is.null(linetype))
-            linetype <- match.arg(linetype, colnames(col_data))
+        args <- colnames(col_data)
+        if (missing(colour)) colour <- "Sample"
+        if (!is.null(colour)) colour <- sym(match.arg(colour, c("Sample", args)))
+        if (!is.null(linetype)) linetype <- sym(match.arg(linetype, args))
 
+        ## Subsample if required
         n_max <- min(nrow(x), n_max)
         ind <- seq_len(n_max)
         if (n_max < nrow(x)) ind <- sample.int(nrow(x), n_max, replace = FALSE)
 
+        ## Transform as required
         mat <- assay(x[ind,], assay)
         if (!is.null(trans)) {
             mat <- match.fun(trans)(mat)
@@ -79,26 +83,27 @@ setMethod(
             if (!trans_ok) stop("This transformation is not applicable")
         }
 
-        dens <- apply(mat, MARGIN = 2, density)
+        ## Get densities & combine with existing colData as a tibble
+        dens <- apply(mat, MARGIN = 2, density, ...)
         dens <- lapply(dens, function(d){list(tibble(x = d$x, y = d$y))})
         df <- as_tibble(dens)
         df <- pivot_longer(
-            df, cols = everything(), names_to = "colnames", values_to = "dens"
+            df, cols = everything(), names_to = "Sample", values_to = "dens"
         )
         df <- bind_cols(df, col_data)
         df <- unnest(df, dens)
 
+        xlab <- ifelse(is.null(trans), assay, paste(trans, assay))
         ggplot(
             df,
-            aes_string(
-                "x", "y",
-                group = "colnames", colour = colour, linetype = linetype
+            aes(
+                x, .data$y, group = .data[["Sample"]],
+                colour = {{ colour }}, linetype = {{ linetype }}
             )
         ) +
             geom_line() +
             labs(
-                x = ifelse(is.null(trans), assay, paste(trans, assay)),
-                y = "Density", colour = colour, linetype = linetype
+                x = xlab, y = "Density", colour = colour, linetype = linetype
             )
     }
 )

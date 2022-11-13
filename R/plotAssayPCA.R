@@ -44,14 +44,13 @@ setGeneric(
     function(x, ...){standardGeneric("plotAssayPCA")}
 )
 #' @importFrom SummarizedExperiment colData assay
-#' @importFrom tibble rownames_to_column
 #' @importFrom broom tidy
-#' @importFrom dplyr left_join filter
+#' @importFrom dplyr left_join
 #' @importFrom tidyr pivot_wider
 #' @importFrom scales percent
 #' @importFrom stats prcomp
-#' @importFrom ggplot2 ggplot aes_string geom_point geom_text labs
 #' @importFrom ggrepel geom_text_repel
+#' @import ggplot2
 #'
 #' @rdname plotAssayPCA-methods
 #' @export
@@ -59,18 +58,17 @@ setMethod(
     "plotAssayPCA",
     signature = signature(x = "SummarizedExperiment"),
     function(
-        x, assay = "counts", colour = c(), shape = c(), label = c(),
-        show_points = TRUE, pc_x = 1, pc_y = 2, trans = c(), n_max = Inf, ...
+        x, assay = "counts", colour = NULL, shape = NULL, label = NULL,
+        show_points = TRUE, pc_x = 1, pc_y = 2, trans = NULL, n_max = Inf, ...
     ) {
-
-        PC <- value <- c() # avoiding R CMD check errors
 
         if (is.null(colnames(x))) colnames(x) <- as.character(seq_len(ncol(x)))
         df <- as.data.frame(colData(x))
-        df$row <- rownames(df)
-        if (!is.null(colour)) colour <- match.arg(colour, colnames(df))
-        if (!is.null(shape)) shape <- match.arg(shape, colnames(df))
-        if (!is.null(label)) label <- match.arg(label, colnames(df))
+        args <- colnames(df)
+        df$row <- rownames(df) ## To match tidy(pca) later
+        if (!is.null(colour)) colour <- sym(match.arg(colour, args))
+        if (!is.null(shape)) shape <- sym(match.arg(shape, args))
+        if (!is.null(label)) label <- sym(match.arg(label, args))
         stopifnot(is.logical(show_points))
 
         n_max <- min(nrow(x), n_max)
@@ -87,36 +85,38 @@ setMethod(
             if (!trans_ok) stop("This transformation is not applicable")
         }
 
+        PC <- c() # avoiding R CMD check errors
         pca <- prcomp(t(mat), center = TRUE, scale. = TRUE)
+        max_comp <- length(pca$sdev)
+        if (max(c(pc_x, pc_y)) > max_comp)
+            stop("The highest available PC is ", max_comp)
         pca_df <- tidy(pca)
         pca_df <- left_join(pca_df, df, by = "row")
         pca_df <- dplyr::filter(pca_df, PC %in% c(pc_x, pc_y))
         pca_df <- pivot_wider(
-            data = pca_df, names_from = PC, values_from = value,
+            data = pca_df, names_from = "PC", values_from = "value",
             names_prefix = "PC"
         )
-        prop_var <- pca$sdev^2/sum(pca$sdev^2)
-        comps <- c(x = pc_x[[1]], y = pc_y[[1]])
-        labs <- lapply(comps, function(x) {
-            paste0("PC", x, " (", percent(prop_var[x], accuracy = 0.1), ")")
-        })
-        cols <- setNames(paste0("PC", comps), c("x", "y"))
+        prop_var <- pca$sdev^2 / sum(pca$sdev^2)
+        labs <- lapply(
+            c(x = pc_x[[1]], y = pc_y[[1]]),
+            function(x) {
+                paste0("PC", x, " (", percent(prop_var[x], accuracy = 0.1), ")")
+            }
+        )
+        x <- sym(paste0("PC", pc_x))
+        y <- sym(paste0("PC", pc_y))
 
-        p <- ggplot(
-            pca_df,
-            aes_string(
-                cols[["x"]], cols[["y"]], colour = colour, shape = shape
-            )
+        plot_aes <- aes(
+            x = {{ x }}, y = {{ y }}, colour = {{ colour }}, shape = {{ shape }}
         )
+        p <- ggplot(pca_df, plot_aes)
         if (show_points) p <- p + geom_point()
-        if (!is.null(label) & show_points)
-            p <- p +
-            geom_text_repel(aes_string(label = label), show.legend = FALSE)
-        if (!is.null(label) & !show_points)
-            p <- p +
-            geom_text(aes_string(label = label), show.legend = FALSE)
-        p + labs(
-            x = labs$x, y = labs$y, shape = shape, colour = colour
-        )
+        if (!is.null(label)) {
+            lab_fun <- ifelse(show_points, geom_text_repel, geom_text)
+            p <- p + lab_fun(aes(label = {{ label }}), show.legend = FALSE)
+        }
+
+        p + labs(x = labs$x, y = labs$y, shape = shape, colour = colour)
     }
 )

@@ -10,7 +10,7 @@ plotAssayDensities(x, ...)
 \S4method{plotAssayDensities}{SummarizedExperiment}(
   x,
   assay = "counts",
-  colour = NULL,
+  colour,
   linetype = NULL,
   trans = NULL,
   n_max = Inf,
@@ -20,13 +20,14 @@ plotAssayDensities(x, ...)
 \arguments{
 \item{x}{A SummarizedExperiment object}
 
-\item{...}{Not used}
+\item{...}{Passed to \link[stats]{density}}
 
 \item{assay}{An assay within x}
 
-\item{colour}{The column in colData to colour lines by}
+\item{colour}{The column in colData to colour lines by. To remove any
+colours, set this argument to \code{NULL}}
 
-\item{linetype}{Any column in colData used to determine linetype}
+\item{linetype}{Any optional column in colData used to determine linetype}
 
 \item{trans}{character(1). Any transformative function to be applied to the
 data before calculating the density, e.g. \code{trans = "log2"}}
@@ -35,7 +36,7 @@ data before calculating the density, e.g. \code{trans = "log2"}}
 }
 \value{
 A \code{ggplot2} object. Scales and labels can be added using conventional
-\code{ggplot2} syntax. (See example)
+\code{ggplot2} syntax.
 }
 \description{
 Plot Densities for any assay within a SummarizedExperiment
@@ -47,12 +48,12 @@ assay
 \examples{
 nrows <- 200; ncols <- 4
 counts <- matrix(runif(nrows * ncols, 1, 1e4), nrows)
+colnames(counts) <- paste0("Sample_", seq_len(ncols))
 df <- DataFrame(treat = c("A", "A", "B", "B"))
 se <- SummarizedExperiment(
   assays = SimpleList(counts = counts),
   colData = df
 )
-plotAssayDensities(se, colour = "treat") +
-  labs(colour = "Treat")
+plotAssayDensities(se, colour = "treat")
 
 }

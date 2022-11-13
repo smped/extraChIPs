@@ -4,7 +4,14 @@
 \alias{makeConsensus}
 \title{Make a set of consensus peaks}
 \usage{
-makeConsensus(x, p = 0, var = NULL, min.gapwidth = 1L, ignore.strand = TRUE)
+makeConsensus(
+  x,
+  p = 0,
+  var = NULL,
+  ignore.strand = TRUE,
+  simplify = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{A GRangesList}
@@ -15,14 +22,14 @@ be returned}
 
 \item{var}{Additional columns in the \code{mcols} element to retain}
 
-\item{min.gapwidth, ignore.strand}{Passed to \link[GenomicRanges]{reduce}}
+\item{ignore.strand, simplify, ...}{Passed to \code{reduceMC()}}
 }
 \value{
 \code{GRanges} object with mcols containing a logical vector for every element of
 x, along with the column \code{n} which adds all logical columns.
 
 If any additional columns have been requested using \code{var}, these will be
-returned as CompressedList objects as usually produced by \code{reduceMC()}
+returned as CompressedList objects as produced by \code{reduceMC()}.
 }
 \description{
 Make a set of consensus peaks based on umber of replicates

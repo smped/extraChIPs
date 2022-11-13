@@ -183,13 +183,11 @@ setMethod(
 #' @param x_lab,y_lab,fill_lab _labels added to x/y-axes & the fill legend
 #' @param ... Passed to facet_grid
 #'
-#' @importFrom ggplot2 ggplot aes_string facet_grid theme labs expansion
-#' @importFrom ggplot2 geom_raster geom_segment scale_y_discrete
-#' @importFrom ggplot2 scale_x_discrete scale_x_continuous element_blank
 #' @importFrom ggside geom_xsideline ggside scale_xsidey_continuous
 #' @importFrom dplyr group_by summarise
 #' @importFrom rlang '!!' sym '!!!' syms
 #' @importFrom stats as.formula
+#' @import ggplot2
 #' @keywords internal
 .makeFinalProfileHeatmap <- function(
         data, x = NULL, y = NULL, fill = NULL, colour = NULL, linetype = NULL,
@@ -201,7 +199,12 @@ setMethod(
     ## data should be a simple data.frame or tibble used to make the final plot
     all_vars <- c(x, y, fill, colour, linetype, facet_x, facet_y)
     stopifnot(is(data, "data.frame"))
-    stopifnot(all(all_vars %in% colnames(data)))
+    args <- colnames(data)
+    stopifnot(all(all_vars %in% args))
+    if (!is.null(fill)) fill <- sym(match.arg(fill, args))
+    if (!is.null(colour)) colour <- sym(match.arg(colour, args))
+    if (!is.null(linetype)) linetype <- sym(match.arg(linetype, args))
+
     summary_fun <- match.arg(summary_fun)
 
     ## The basic plot
@@ -210,8 +213,9 @@ setMethod(
         x_axis <-  scale_x_continuous(expand = rep(0, 4))
     p <- ggplot(
         data,
-        aes_string(
-            x = x, y = y, fill = fill, colour = colour, linetype = linetype
+        aes(
+            !!sym(x), !!sym(y), fill = {{ fill }}, colour = {{ colour }},
+            linetype = {{ linetype }}
         )
     ) +
         geom_raster() + x_axis +
@@ -223,20 +227,23 @@ setMethod(
     ## This will ensure a legend appears for colour or linetype
     if (!is.null(colour) | !is.null(linetype))
         p <- p + geom_segment(
-            aes_string(
-                x = x, y = y, xend = x, yend = y, colour = colour,
-                linetype = linetype
+            aes(
+                !!sym(x), !!sym(y), xend = !!sym(x), yend = !!sym(y),
+                colour = {{ colour }}, linetype = {{ linetype }}
             ),
             data = data[1,], inherit.aes = FALSE
         )
     ## Only add the top summary if this is called
     if (summary_fun != "none") {
+        y <- c() ## R CMD check
         f <- match.fun(summary_fun)
-        grp_vars <- unique(c(x, facet_x, facet_y, colour, linetype))
+        grp_vars <- unique(
+            c(x, facet_x, facet_y, as.character(colour), as.character(linetype))
+        )
         grp_df <- group_by(data, !!!syms(grp_vars))
-        summ_df <- summarise(grp_df, y = f(!!sym(fill)), .groups = "drop")
+        summ_df <- summarise(grp_df, y = f(!!fill), .groups = "drop")
         p <- p + geom_xsideline(
-            aes_string(x = x, y = "y", colour = colour, linetype = linetype),
+            aes(!!sym(x), y, colour = {{ colour }}, linetype = {{ linetype }}),
             data = summ_df, inherit.aes = FALSE
         ) +
             ggside(collapse = "x") +

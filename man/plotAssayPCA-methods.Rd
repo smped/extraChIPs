@@ -10,13 +10,13 @@ plotAssayPCA(x, ...)
 \S4method{plotAssayPCA}{SummarizedExperiment}(
   x,
   assay = "counts",
-  colour = c(),
-  shape = c(),
-  label = c(),
+  colour = NULL,
+  shape = NULL,
+  label = NULL,
   show_points = TRUE,
   pc_x = 1,
   pc_y = 2,
-  trans = c(),
+  trans = NULL,
   n_max = Inf,
   ...
 )
