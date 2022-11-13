@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.0</span>
       </span>
     </div>
 
@@ -66,7 +66,14 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">makeConsensus</span><span class="op">(</span><span class="va">x</span>, p <span class="op">=</span> <span class="fl">0</span>, var <span class="op">=</span> <span class="cn">NULL</span>, min.gapwidth <span class="op">=</span> <span class="fl">1L</span>, ignore.strand <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">makeConsensus</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  p <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  var <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ignore.strand <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  simplify <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -85,8 +92,8 @@ be returned</p></dd>
 <dd><p>Additional columns in the <code>mcols</code> element to retain</p></dd>
 
 
-<dt>min.gapwidth, ignore.strand</dt>
-<dd><p>Passed to <a href="https://rdrr.io/pkg/IRanges/man/inter-range-methods.html" class="external-link">reduce</a></p></dd>
+<dt>ignore.strand, simplify, ...</dt>
+<dd><p>Passed to <code><a href="reduceMC.html">reduceMC()</a></code></p></dd>
 
 </dl></div>
     <div id="value">
@@ -98,9 +105,7 @@ x, along with the column <code>n</code> which adds all logical columns.</p>
 
 
 <p>If any additional columns have been requested using <code>var</code>, these will be
-returned as CompressedList objects as usually produced by <code><a href="reduceMC.html">reduceMC()</a></code></p>
-
-
+returned as CompressedList objects as produced by <code><a href="reduceMC.html">reduceMC()</a></code>.</p>
     </div>
     <div id="details">
     <h2>Details</h2>

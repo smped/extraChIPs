@@ -1,8 +1,8 @@
 pandoc: 2.19.2
 pkgdown: 2.0.6.9000
-pkgdown_sha: 7fe9e802df2964d483d0267f1d5a59aa7b3c685d
+pkgdown_sha: d94fb41b1a1cd92b5b4e2d253aa4301e252702d6
 articles:
   differential_binding: differential_binding.html
   range_based_functions: range_based_functions.html
-last_built: 2022-10-10T16:09Z
+last_built: 2022-11-13T14:18Z
 
