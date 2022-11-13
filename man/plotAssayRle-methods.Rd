@@ -10,10 +10,9 @@ plotAssayRle(x, ...)
 \S4method{plotAssayRle}{SummarizedExperiment}(
   x,
   assay = "counts",
-  colour = c(),
-  fill = c(),
-  rle_group = c(),
-  x_col = "sample",
+  colour = NULL,
+  fill = NULL,
+  rle_group = NULL,
   n_max = Inf,
   trans = c(),
   ...
@@ -30,9 +29,7 @@ plotAssayRle(x, ...)
 
 \item{fill}{Column from \code{colData(x)} to fill the boxplots}
 
-\item{rle_group}{Column from \code{colData(x)} to calculate RLE within groups}
-
-\item{x_col}{Any alternative columns in \code{colData(x)} to use for the x-axis.
+\item{rle_group}{Column from \code{colData(x)} to calculate RLE within groups
 Commonly an alternative sample label.}
 
 \item{n_max}{Maximum number of points to plot}

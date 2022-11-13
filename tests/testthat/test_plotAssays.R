@@ -12,17 +12,17 @@ test_that("Assay Density plots behave correctly", {
   expect_error(plotAssayDensities(se, colour = "col"))
   p <- plotAssayDensities(se)
   expect_equal(dim(p$data), c(512*4, 4))
-  expect_equal(colnames(p$data), c("colnames", "x", "y", "treat"))
+  expect_equal(colnames(p$data), c("Sample", "x", "y", "treat"))
   expect_equal(
-    unlist(p$labels),
-    c(x = "counts", y = "Density", group = "colnames")
+    unlist(lapply(p$labels, as.character)),
+    c(x = "counts", y = "Density", colour = "Sample", group = "Sample")
   )
   p <- plotAssayDensities(se, colour = "treat", linetype = "treat")
   expect_equal(
-    unlist(p$labels),
+    unlist(lapply(p$labels, as.character)),
     c(
       x = "counts", y = "Density", colour = "treat", linetype = "treat",
-      group = "colnames"
+      group = "Sample"
     )
   )
   p <- plotAssayPCA(se, n_max = 10)
@@ -60,14 +60,14 @@ test_that("colours are added correctly", {
   expect_equal(
     grepl("PC", unlist(p$labels)), c(TRUE, TRUE, FALSE)
   )
-  expect_equal(p$labels$colour, "treat")
+  expect_equal(p$labels$colour, sym("treat"))
 })
 
 test_that("labels repel correctly", {
-  p <- plotAssayPCA(se, label = "row")
+  p <- plotAssayPCA(se, label = "treat")
   expect_equal(length(p$layers), 2)
   expect_s3_class(p$layers[[2]]$geom, "GeomTextRepel")
-  p <- plotAssayPCA(se, label = "row", show_points = FALSE)
+  p <- plotAssayPCA(se, label = "treat", show_points = FALSE)
   expect_equal(length(p$layers), 1)
   expect_s3_class(p$layers[[1]]$geom, "GeomText")
 })
@@ -79,8 +79,7 @@ test_that("data is transformed correctly", {
 })
 
 test_that("plotAssayRle errors correctly", {
-  err <- "'arg' should be one of \"sample\", \"treat\""
-  expect_error(plotAssayRle(se, "counts", x_col = ""), err)
+  err <- "'arg' should be one of \"treat\", \"sample\""
   expect_error(plotAssayRle(se, "counts", colour = ""), err)
   expect_error(plotAssayRle(se, "counts", fill = ""), err)
   expect_error(plotAssayRle(se, "counts", rle_group = ""), err)
@@ -101,6 +100,6 @@ test_that("plotAssayRle creates a plot", {
   expect_equal(dim(p$data), c(100*ncols, 6))
   expect_equal(
     unlist(p$labels),
-    c(y = "RLE", fill = "treat", colour = "colour", x = "sample")
+    c(y = "RLE", x = "sample", fill = "treat", colour = "colour")
   )
 })

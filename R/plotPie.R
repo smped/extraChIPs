@@ -172,12 +172,11 @@ setMethod(
 )
 
 #' @importFrom dplyr group_by summarise mutate arrange filter
-#' @importFrom ggplot2 ggplot aes geom_col geom_text geom_segment geom_label
-#' @importFrom ggplot2 coord_polar theme_void theme
 #' @importFrom scales comma percent
 #' @importFrom rlang '!!' sym
 #' @importFrom stringr str_wrap
 #' @importFrom tidyr complete
+#' @import ggplot2
 .plotSinglePie <- function(
         df, fill, width , show_total, .lab_fill, .lab_alpha, .lab_size, .text_size,
         .text_col, .min_p, .show_cat, .text_width, .scale_by
@@ -234,11 +233,10 @@ setMethod(
 #' @importFrom dplyr group_by summarise mutate filter ungroup distinct
 #' @importFrom tidyr pivot_wider complete
 #' @importFrom tidyselect all_of
-#' @importFrom ggplot2 ggplot aes geom_label scale_x_continuous
-#' @importFrom ggplot2 coord_equal labs
 #' @importFrom scales comma
 #' @importFrom rlang '!!' sym
 #' @importFrom ggforce stat_pie
+#' @import ggplot2
 .plotDoublePie <- function(
         df, x, fill, width, show_total, .lab_fill, .lab_alpha, .lab_size, .min_p,
         .scale_by
@@ -306,11 +304,10 @@ setMethod(
 #' @importFrom dplyr group_by summarise mutate filter ungroup distinct
 #' @importFrom tidyr pivot_wider complete
 #' @importFrom tidyselect all_of
-#' @importFrom ggplot2 ggplot aes geom_label scale_x_continuous
-#' @importFrom ggplot2 coord_equal labs scale_y_continuous
 #' @importFrom scales comma
 #' @importFrom rlang '!!' sym
 #' @importFrom ggforce stat_pie
+#' @import ggplot2
 .plotTriplePie <- function(
         df, x, y, fill, width, show_total, .lab_fill, .lab_alpha, .lab_size, .min_p,
         .scale_by

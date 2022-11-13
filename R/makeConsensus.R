@@ -11,14 +11,14 @@
 #' for a peak to be retained in the output. By default all merged peaks will
 #' be returned
 #' @param var Additional columns in the `mcols` element to retain
-#' @param min.gapwidth,ignore.strand Passed to \link[GenomicRanges]{reduce}
+#' @param ignore.strand,simplify,... Passed to `reduceMC()`
 #'
 #' @return
 #' `GRanges` object with mcols containing a logical vector for every element of
 #' x, along with the column `n` which adds all logical columns.
 #'
 #' If any additional columns have been requested using `var`, these will be
-#' returned as CompressedList objects as usually produced by `reduceMC()`
+#' returned as CompressedList objects as produced by `reduceMC()`.
 #'
 #' @seealso \link{reduceMC}
 #'
@@ -38,7 +38,7 @@
 #' @importFrom methods is
 #' @export
 makeConsensus <- function(
-        x, p = 0, var = NULL, min.gapwidth = 1L, ignore.strand = TRUE
+        x, p = 0, var = NULL, ignore.strand = TRUE, simplify = FALSE, ...
 ) {
 
     ## Starting with a GRList
@@ -63,7 +63,7 @@ makeConsensus <- function(
     ## For now, remove all mcols, however reduceMC may be useful if wishing to
     ## retain these for use with plotOverlaps()
     red_ranges <- reduceMC(
-        unlist(x), ignore.strand = ignore.strand, min.gapwidth = min.gapwidth
+        unlist(x), ignore.strand = ignore.strand, simplify = simplify, ...
     )
     ol <- lapply(x, function(x) overlapsAny(red_ranges, x))
     ol <- as.data.frame(ol)

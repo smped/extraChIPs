@@ -1,8 +1,8 @@
 ---
 title: "extraChIPs: Differential Binding Analysis"
 author:
-- name: Steve Pederson
-  affiliation: Dame Roma Mitchell Cancer Research Laboratories, Adelaide Medical School, University of Adelaide
+- name: Stevie Pederson
+  affiliation: Black Ochre Data Laboratories, Telethon Kids Institute
   email: stephen.pederson.au@gmail.com
 package: extraChIPs
 output:
