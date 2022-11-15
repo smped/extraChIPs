@@ -26,11 +26,13 @@
 #'
 #' @param x A data-frame or GRanges object containing the column to coerce
 #' @param var The name of the column to coerce
-#' @param seqinfo A seqinfo object to be applied to the GRanges object
+#' @param seqinfo A seqinfo object to be applied to the new GRanges object.
+#' Ignored if the column is already a GRanges object
 #' @param ... Used to pass arguments to lower-level functions
 #'
 #' @importFrom methods as
 #' @importFrom GenomicRanges 'mcols<-' GRanges
+#' @importFrom GenomeInfoDb 'seqinfo<-' seqlevels
 #' @rdname colToRanges-methods
 #' @aliases colToRanges
 #' @export
@@ -39,7 +41,10 @@ setMethod(
     function(x, var, seqinfo = NULL, ...) {
         stopifnot(var %in% colnames(x))
         gr <- GRanges(x[[var]])
-        if (!is.null(seqinfo)) seqinfo(gr) <- seqinfo
+        if (!is.null(seqinfo) & !is(x[[var]], "GRanges")) {
+            map <- match(seqlevels(seqinfo), seqlevels(gr))
+            seqinfo(gr, new2old = map) <- seqinfo
+        }
         keep <- setdiff(colnames(x), var)
         mcols(gr) <- x[keep]
         gr
@@ -58,7 +63,7 @@ setMethod(
     }
 )
 #' @importFrom GenomicRanges 'mcols<-' GRanges
-#' @importFrom GenomeInfoDb "seqinfo<-"
+#' @importFrom GenomeInfoDb "seqinfo<-" seqlevels
 #' @importFrom S4Vectors DataFrame
 #' @importClassesFrom IRanges CompressedList
 #' @rdname colToRanges-methods
@@ -69,7 +74,10 @@ setMethod(
     function(x, var, seqinfo = NULL, ...) {
         stopifnot(var %in% colnames(x))
         gr <- GRanges(x[[var]])
-        if (is(seqinfo, "Seqinfo")) seqinfo(gr) <- seqinfo
+        if (!is.null(seqinfo) & !is(x[[var]], "GRanges")) {
+            map <- match(seqlevels(seqinfo), seqlevels(gr))
+            seqinfo(gr, new2old = map) <- seqinfo
+        }
         keep <- setdiff(colnames(x), var)
         DF <- x[keep]
         list_cols <- vapply(DF, is.list, logical(1))

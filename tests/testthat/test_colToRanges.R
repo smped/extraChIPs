@@ -32,3 +32,17 @@ test_that("S3 list columns are coerced", {
         as_tibble(colToRanges(tbl, "range"))
     )
 })
+
+test_that("Mismatched seqinfo order is handled", {
+    sq <- Seqinfo(seqnames = c("chr1", "chr2", "chr3"))
+    df <- DataFrame(
+        a = c("a", "b"),
+        range = c("chr2:1", "chr1:10"),
+        gr = GRanges(c("chr2:1", "chr1:10"))
+    )
+    gr <- colToRanges(df, "range", sq)
+    expect_true(is(gr, "GRanges"))
+    expect_equal(length(gr), 2)
+    expect_equal(length(seqlevels(gr)), 3)
+    # colToRanges(df, "gr", sq)
+})

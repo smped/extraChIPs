@@ -22,7 +22,8 @@ colToRanges(x, ...)
 
 \item{var}{The name of the column to coerce}
 
-\item{seqinfo}{A seqinfo object to be applied to the GRanges object}
+\item{seqinfo}{A seqinfo object to be applied to the new GRanges object.
+Ignored if the column is already a GRanges object}
 }
 \value{
 A GenomicRanges object
