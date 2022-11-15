@@ -49,11 +49,11 @@
 #' @importFrom csaw filterWindowsControl filterWindowsProportion
 #' @importFrom BiocParallel bpparam bplapply bpisup bpstart bpstop
 #' @importFrom edgeR cpm
-#' @importFrom S4Vectors metadata 'metadata<-' 'colData<-'
+#' @importFrom S4Vectors metadata 'metadata<-'
 #' @importFrom stats quantile
 #' @importClassesFrom SummarizedExperiment RangedSummarizedExperiment
 #' @importMethodsFrom SummarizedExperiment rowRanges rowData 'rowData<-'
-#' @importMethodsFrom SummarizedExperiment colData
+#' @importMethodsFrom SummarizedExperiment colData 'colData<-'
 #' @importMethodsFrom SummarizedExperiment assay 'assay<-'
 #'
 #' @examples
