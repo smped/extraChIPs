@@ -53,7 +53,7 @@
 #' @importFrom stats quantile
 #' @importClassesFrom SummarizedExperiment RangedSummarizedExperiment
 #' @importMethodsFrom SummarizedExperiment rowRanges rowData 'rowData<-'
-#' @importMethodsFrom SummarizedExperiment colData
+#' @importMethodsFrom SummarizedExperiment colData 'colData<-'
 #' @importMethodsFrom SummarizedExperiment assay 'assay<-'
 #'
 #' @examples
