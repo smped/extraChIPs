@@ -49,7 +49,7 @@
 #' @importFrom csaw filterWindowsControl filterWindowsProportion
 #' @importFrom BiocParallel bpparam bplapply bpisup bpstart bpstop
 #' @importFrom edgeR cpm
-#' @importFrom S4Vectors metadata 'metadata<-'
+#' @importFrom S4Vectors metadata 'metadata<-' 'colData<-'
 #' @importFrom stats quantile
 #' @importClassesFrom SummarizedExperiment RangedSummarizedExperiment
 #' @importMethodsFrom SummarizedExperiment rowRanges rowData 'rowData<-'
@@ -187,6 +187,7 @@ dualFilter <- function(
     out <- x[keep,]
     rowData(out)$overlaps_ref <- ol[keep]
     metadata(out)$cuts <- lapply(cuts, as.numeric)
+    colData(out) <- droplevels(colData(out))
 
     if (!keep.totals) {
         gr <- rowRanges(out)
