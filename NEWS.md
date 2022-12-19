@@ -20,3 +20,7 @@
 # Changes in version 1.1.5 (2022-10-11)
 
 - Added `makeConsensus()` and updated vignette
+
+# Changes in version 1.3.4 (22-12-20)
+
+- Added `mergeBySig()`
