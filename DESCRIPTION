@@ -45,6 +45,7 @@ Imports:
   InteractionSet,
   IRanges,
   limma,
+  metapod,
   methods,
   RColorBrewer,
   rlang,

@@ -50,7 +50,8 @@
 #'
 #' @examples
 #' x <- GRanges(c("chr1:1-10", "chr1:6-15", "chr1:51-60"))
-#' df <- DataFrame(logFC = rnorm(3), logCPM = rnorm(3,8), p = 10^-rexp(3))
+#' set.seed(1001)
+#' df <- DataFrame(logFC = rnorm(3), logCPM = rnorm(3,8), p = rexp(3, 10))
 #' mergeByCol(x, df, col = "logCPM", pval = "p")
 #' mcols(x) <- df
 #' x
@@ -81,8 +82,7 @@ setMethod(
         x, df = NULL, col,
         by = c("max", "median", "mean", "min"),
         logfc = "logFC", pval = "P", inc_cols, p_adj_method = "fdr",
-        merge_within = 1L, ignore_strand = FALSE,
-        ...
+        merge_within = 1L, ignore_strand = TRUE, ...
     ) {
 
         ## Checks & defining the key columns
