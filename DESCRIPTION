@@ -21,7 +21,7 @@ Depends:
   BiocParallel,
   R (>= 4.2.0),
   GenomicRanges,
-  ggplot2,
+  ggplot2 (>= 3.4.0),
   SummarizedExperiment,
   tibble
 Imports:
@@ -45,7 +45,6 @@ Imports:
   InteractionSet,
   IRanges,
   limma,
-  metapod,
   methods,
   RColorBrewer,
   rlang,

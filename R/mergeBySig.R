@@ -35,7 +35,7 @@
 #' @param merge_within Merge any non-overlapping windows within this distance
 #' @param ignore_strand Passed internally to \link[GenomicRanges]{reduce} and
 #' \link[GenomicRanges]{findOverlaps}
-#' @param ... Passed to \link[csaw]{minimalTests}
+#' @param ... Passed to all csaw functions being wrapped
 #'
 #' @return
 #' A GenomicRanges object with overlapping ranges from the original object
@@ -60,6 +60,8 @@ setGeneric(
 )
 #' @importFrom S4Vectors DataFrame mcols 'mcols<-'
 #' @importFrom GenomicRanges findOverlaps
+#' @rdname mergeBySig-methods
+#' @export
 setMethod(
     "mergeBySig",
     signature = signature(x = "GenomicRanges"),
@@ -101,9 +103,9 @@ setMethod(
         ol <- findOverlaps(x, ranges_out, ignore.strand = ignore_strand)
 
         if (method == "combine")
-            merged_df <- .ec_combTests(x, ol, df, pval, logfc)
+            merged_df <- .ec_combTests(x, ol, df, pval, logfc, alpha, ...)
         if (method == "best")
-            merged_df <- .ec_bestTest(x, ol, df, pval, logfc, alpha, ret_cols)
+            merged_df <- .ec_bestTest(x, ol, df, pval, logfc, alpha, ...)
         if (method == "minimal")
             merged_df <- .ec_minTest(x, ol, df, pval, logfc, alpha, ...)
 
@@ -141,87 +143,69 @@ setMethod(
 )
 
 
-#' @importFrom metapod groupedSimes
 #' @importFrom GenomicRanges granges
-#' @importFrom S4Vectors queryHits subjectHits DataFrame
-#' @importFrom dplyr group_by summarise
-#' @importFrom rlang sym '!!'
+#' @importFrom S4Vectors subjectHits DataFrame
+#' @importFrom csaw combineTests
 #' @keywords internal
-.ec_combTests <- function(x, ol, df, pval, logfc){
-    ## A quick run of microbenchmark to compare csaw::combineTests
-    ## showed this is about 25% faster
-    ind <- subjectHits(ol)
-    grp_df <- as.data.frame(ol)
-    simes <- groupedSimes(df[[pval]], ind)
-    df$keyval_range <- granges(x)[simes$representative[ind]]
-    grp_df <- cbind(grp_df, df[queryHits(ol),])
-    grp_df <- group_by(grp_df, subjectHits)
-    grp_df$simes_p <- simes$p.value[grp_df$subjectHits]
-    merged_df <- summarise(
-        grp_df,
-        n_windows = dplyr::n(),
-        n_up = sum(!!sym(pval) <= simes_p & !!sym(logfc) > 0),
-        n_down = sum(!!sym(pval) <=  simes_p & !!sym(logfc) < 0),
-        "{pval}" := unique(simes_p),
-        .groups = "drop"
+.ec_combTests <- function(x, ol, df, pval, logfc, alpha, ...){
+
+    ids <- subjectHits(ol)
+    ct <- combineTests(
+        ids, df, pval.col = pval, fc.col = logfc, fc.threshold = alpha, ...
     )
-    merged_df <- DataFrame(merged_df)
-    df <- df[setdiff(names(df), pval)]
-    cbind(merged_df, df[simes$representative,])
+    i <- ct[["rep.test"]]
+    DF <- DataFrame(
+        n_windows = ct[["num.tests"]], n_up = ct[["num.up.logFC"]],
+        n_down = ct[["num.down.logFC"]], keyval_range = granges(x)[i]
+    )
+    DF[[pval]] <- ct[[pval]]
+    cols <- setdiff(colnames(df), c(pval))
+    rc <- DataFrame(df[i, cols])
+    names(rc) <- cols
+    cbind(DF, rc)
 }
 
-#' @importFrom dplyr group_by mutate summarise across
-#' @importFrom tidyselect all_of
-#' @importFrom rlang sym '!!'
-#' @importFrom GenomicRanges GRanges
-#' @importFrom GenomeInfoDb seqinfo
-#' @importFrom S4Vectors queryHits DataFrame
+#' @importFrom GenomicRanges granges
+#' @importFrom S4Vectors subjectHits DataFrame
+#' @importFrom csaw getBestTest
 #' @keywords internal
-.ec_bestTest <- function(x, ol, df, pval, logfc, alpha, ret_cols){
+.ec_bestTest <- function(x, ol, df, pval, logfc, alpha, ...){
     ## This essentially replicates mergeByCol but using p-values
-    ## which is itself csaw::getBestTest(). This is also slightly faster
-    grp_df <- as.data.frame(ol)
-    ## Needs to be here given the call to 'ret_cols' below
-    grp_df[["keyval_range"]] <- as.character(x)[queryHits(ol)]
-    grp_df <- cbind(grp_df, df[queryHits(ol),])
-    grp_df <- group_by(grp_df, subjectHits)
-    grp_df <- mutate(grp_df, holm = p.adjust(!!sym(pval), "holm"))
-    merged_df <- summarise(
-        grp_df,
-        i = which.min(abs(!!sym(pval) - min(!!sym(pval))))[[1]],
-        n_windows = dplyr::n(),
-        n_up = sum(holm < alpha & !!sym(logfc) > 0),
-        n_down = sum(holm < alpha  & !!sym(logfc) < 0),
-        across(all_of(ret_cols), function(x) x[i]),
-        "{pval}" := holm[i],
-        .groups = "drop"
+    ## which is itself csaw::getBestTest().
+    ids <- subjectHits(ol)
+    bt <- getBestTest(
+        ids, df, pval.col = pval, fc.col = logfc, fc.threshold = alpha, ...
     )
-    merged_df <- DataFrame(merged_df)
-    sq <- seqinfo(x)
-    merged_df$keyval_range <- GRanges(merged_df$keyval_range, seqinfo = sq)
-    merged_df
+    i <- bt[["rep.test"]]
+    DF <- DataFrame(
+        n_windows = bt[["num.tests"]], n_up = bt[["num.up.logFC"]],
+        n_down = bt[["num.down.logFC"]], keyval_range = granges(x)[i]
+    )
+    DF[[pval]] <- bt[[pval]]
+    cols <- setdiff(colnames(df), c(pval))
+    rc <- DataFrame(df[i, cols])
+    names(rc) <- cols
+    cbind(DF, rc)
 }
 
 #' @importFrom csaw minimalTests
-#' @importFrom S4Vectors queryHits DataFrame
+#' @importFrom S4Vectors subjectHits DataFrame
 #' @importFrom GenomicRanges granges
 #' @keywords internal
 .ec_minTest <- function(x, ol, df, pval, logfc, alpha, ...) {
     ## Just use the standard csaw function here for simplicity
-    ind <- subjectHits(ol)
+    ids <- subjectHits(ol)
     min_df <- minimalTests(
-        ind, df, pval.col = pval, fc.col = logfc, fc.threshold = alpha, ...
+        ids, df, pval.col = pval, fc.col = logfc, fc.threshold = alpha, ...
     )
     i <- min_df[["rep.test"]]
-    merged_df <- data.frame(
-        n_windows = min_df$num.tests,
-        n_up = min_df$num.up.logFC,
-        n_down = min_df$num.down.logFC
+    merged_df <- DataFrame(
+        n_windows = min_df$num.tests, n_up = min_df$num.up.logFC,
+        n_down = min_df$num.down.logFC, keyval_range = granges(x)[i]
     )
-    merged_df <- DataFrame(cbind(merged_df, df[i,]))
+    merged_df <- cbind(merged_df, df[i,])
     ## Replace the p-values with the holm's one from csaw
     merged_df[[pval]] <- min_df[[pval]]
-    merged_df[["keyval_range"]] <- granges(x)[i]
     merged_df
 }
 
