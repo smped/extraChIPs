@@ -2,10 +2,26 @@
 % Please edit documentation in R/mergeBySig.R
 \name{mergeBySig}
 \alias{mergeBySig}
+\alias{mergeBySig,GenomicRanges-method}
 \alias{mergeBySig,RangedSummarizedExperiment-method}
 \title{Merge overlapping ranges based on p-values}
 \usage{
 mergeBySig(x, ...)
+
+\S4method{mergeBySig}{GenomicRanges}(
+  x,
+  df = NULL,
+  logfc = "logFC",
+  pval = "P",
+  cpm = "logCPM",
+  inc_cols,
+  p_adj_method = "fdr",
+  alpha = 0.05,
+  method = c("combine", "best", "minimal"),
+  merge_within = 1L,
+  ignore_strand = TRUE,
+  ...
+)
 
 \S4method{mergeBySig}{RangedSummarizedExperiment}(
   x,
@@ -25,7 +41,7 @@ mergeBySig(x, ...)
 \arguments{
 \item{x}{GenomicRanges object}
 
-\item{...}{Passed to \link[csaw]{minimalTests}}
+\item{...}{Passed to all csaw functions being wrapped}
 
 \item{df}{data.frame with results of differential binding analysis performed
 using a sliding window strategy. If not provided, the columns in the

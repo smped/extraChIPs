@@ -28,7 +28,7 @@ reference:
     - getProfileData
     - grlToSE
     - mapByFeature
-    - mergeByCol
+    - starts_with("mergeBy")
     - voomWeightsFromCPM
 
 - title: Visualisation
