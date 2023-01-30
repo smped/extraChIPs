@@ -46,6 +46,7 @@ Imports:
   IRanges,
   limma,
   methods,
+  patchwork,
   RColorBrewer,
   rlang,
   Rsamtools,
