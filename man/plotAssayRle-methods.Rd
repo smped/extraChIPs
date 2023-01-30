@@ -13,8 +13,9 @@ plotAssayRle(x, ...)
   colour = NULL,
   fill = NULL,
   rle_group = NULL,
+  by_x = NULL,
   n_max = Inf,
-  trans = c(),
+  trans = NULL,
   ...
 )
 }
@@ -32,9 +33,12 @@ plotAssayRle(x, ...)
 \item{rle_group}{Column from \code{colData(x)} to calculate RLE within groups
 Commonly an alternative sample label.}
 
+\item{by_x}{Boxplots will be drawn by this grouping variable from
+\code{colData(x)}. If not specified, the default values will be \code{colnames(x)}}
+
 \item{n_max}{Maximum number of points to plot}
 
-\item{trans}{character(1). NUmerical transformation to apply to the data
+\item{trans}{character(1). NUuerical transformation to apply to the data
 prior to RLE calculation}
 }
 \value{
@@ -57,5 +61,6 @@ se <- SummarizedExperiment(
   colData = df
 )
 plotAssayRle(se, "counts", fill = "treat")
+plotAssayRle(se, "counts", fill = "treat", by_x = "treat")
 
 }

@@ -11,18 +11,18 @@ test_that("Assay Density plots behave correctly", {
 
   expect_error(plotAssayDensities(se, colour = "col"))
   p <- plotAssayDensities(se)
-  expect_equal(dim(p$data), c(512*4, 4))
-  expect_equal(colnames(p$data), c("Sample", "x", "y", "treat"))
+  expect_equal(dim(p$data), c(512*4, 3))
+  expect_equal(colnames(p$data), c("colnames", "x", "y"))
   expect_equal(
     unlist(lapply(p$labels, as.character)),
-    c(x = "counts", y = "Density", colour = "Sample", group = "Sample")
+    c(x = "counts", y = "Density", group = "colnames")
   )
   p <- plotAssayDensities(se, colour = "treat", linetype = "treat")
   expect_equal(
     unlist(lapply(p$labels, as.character)),
     c(
       x = "counts", y = "Density", colour = "treat", linetype = "treat",
-      group = "Sample"
+      group = "colnames"
     )
   )
   p <- plotAssayPCA(se, n_max = 10)
@@ -79,10 +79,11 @@ test_that("data is transformed correctly", {
 })
 
 test_that("plotAssayRle errors correctly", {
-  err <- "'arg' should be one of \"treat\", \"sample\""
+  err <- "'arg' should be one of .+"
   expect_error(plotAssayRle(se, "counts", colour = ""), err)
   expect_error(plotAssayRle(se, "counts", fill = ""), err)
   expect_error(plotAssayRle(se, "counts", rle_group = ""), err)
+  expect_error(plotAssayRle(se, "counts", by_x = ""), err)
   expect_error(
     plotAssayRle(se, "counts", trans = "a"),
     "object 'a' of mode 'function' was not found"
@@ -97,9 +98,11 @@ test_that("plotAssayRle errors correctly", {
 test_that("plotAssayRle creates a plot", {
   p <- plotAssayRle(se, "counts", fill = "treat", n_max = 100)
   expect_true(is(p, "gg"))
-  expect_equal(dim(p$data), c(100*ncols, 6))
+  expect_equal(dim(p$data), c(100*ncols, 4))
   expect_equal(
     unlist(p$labels),
-    c(y = "RLE", x = "sample", fill = "treat", colour = "colour")
+    c(x = "Sample", y = "RLE", fill = "treat", colour = "colour")
   )
+  p <- plotAssayRle(se, "counts", by_x = "treat")
+  expect_equal(unlist(p$labels)[["x"]], "treat")
 })
