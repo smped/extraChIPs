@@ -24,7 +24,7 @@ plotAssayPCA(x, ...)
 \arguments{
 \item{x}{An object containing an assay slot}
 
-\item{...}{Not used}
+\item{...}{Passed to \link[ggplot2]{geom_text}}
 
 \item{assay}{The assay to perform PCA on}
 
@@ -66,6 +66,10 @@ se <- SummarizedExperiment(
   colData = df
 )
 plotAssayPCA(se, "counts", colour = "treat", label = "sample")
+plotAssayPCA(
+  se, "counts", colour = "treat", label = "sample",
+  inherit.aes = FALSE, size = 5
+)
 
 
 }

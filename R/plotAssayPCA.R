@@ -22,7 +22,7 @@
 #' @param trans character(1). Any transformative function to be applied to the
 #' data before performing the PCA, e.g. `trans = "log2"`
 #' @param n_max Subsample the data to this many points before performing PCA
-#' @param ... Not used
+#' @param ... Passed to \link[ggplot2]{geom_text}
 #'
 #' @examples
 #' nrows <- 200; ncols <- 4
@@ -33,6 +33,10 @@
 #'   colData = df
 #' )
 #' plotAssayPCA(se, "counts", colour = "treat", label = "sample")
+#' plotAssayPCA(
+#'   se, "counts", colour = "treat", label = "sample",
+#'   inherit.aes = FALSE, size = 5
+#' )
 #'
 #'
 #' @name plotAssayPCA
@@ -114,7 +118,10 @@ setMethod(
         if (show_points) p <- p + geom_point()
         if (!is.null(label)) {
             lab_fun <- ifelse(show_points, geom_text_repel, geom_text)
-            p <- p + lab_fun(aes(label = {{ label }}), show.legend = FALSE)
+            p <- p +
+                lab_fun(
+                    aes(x = {{ x }}, y = {{ y }}, label = {{ label }}), ...
+                )
         }
 
         p + labs(x = labs$x, y = labs$y, shape = shape, colour = colour)

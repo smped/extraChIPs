@@ -21,7 +21,7 @@
 #' @param n_max Maximum number of points to plot
 #' @param trans character(1). NUuerical transformation to apply to the data
 #' prior to RLE calculation
-#' @param ... Not used
+#' @param ... Passed to \link[ggplot2]{geom_boxplot}
 #'
 #' @examples
 #' nrows <- 200; ncols <- 4
@@ -91,7 +91,7 @@ setMethod(
             df,
             aes(.data[[by_x]], .data[["rle"]], fill = {{ fill }}, colour = {{ colour }})
         ) +
-            geom_boxplot() +
+            geom_boxplot(...) +
             labs(x = xlab, y = "RLE")
 
     }

@@ -22,7 +22,7 @@ plotAssayRle(x, ...)
 \arguments{
 \item{x}{A SummarizedExperiment object}
 
-\item{...}{Not used}
+\item{...}{Passed to \link[ggplot2]{geom_boxplot}}
 
 \item{assay}{The assay to plot}
 
