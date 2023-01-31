@@ -16,10 +16,12 @@
 #' @param fill Column from `colData(x)` to fill the boxplots
 #' @param rle_group Column from `colData(x)` to calculate RLE within groups
 #' Commonly an alternative sample label.
+#' @param by_x Boxplots will be drawn by this grouping variable from
+#' `colData(x)`. If not specified, the default values will be `colnames(x)`
 #' @param n_max Maximum number of points to plot
-#' @param trans character(1). NUmerical transformation to apply to the data
+#' @param trans character(1). Numerical transformation to apply to the data
 #' prior to RLE calculation
-#' @param ... Not used
+#' @param ... Passed to \link[ggplot2]{geom_boxplot}
 #'
 #' @examples
 #' nrows <- 200; ncols <- 4
@@ -30,12 +32,13 @@
 #'   colData = df
 #' )
 #' plotAssayRle(se, "counts", fill = "treat")
+#' plotAssayRle(se, "counts", fill = "treat", by_x = "treat")
 #'
-#' @importFrom SummarizedExperiment assay
-#' @importFrom tidyr pivot_longer
+#' @importFrom SummarizedExperiment assay colData
+#' @importFrom tidyr unnest
 #' @importFrom tidyselect all_of
-#' @importFrom dplyr left_join group_by mutate
-#' @importFrom rlang syms '!!!' sym
+#' @importFrom dplyr group_by mutate ungroup
+#' @importFrom rlang '!!' sym .data
 #' @importFrom stats median
 #' @import ggplot2
 #'
@@ -47,17 +50,21 @@ setMethod(
     signature = signature(x = "SummarizedExperiment"),
     function(
         x, assay = "counts", colour = NULL, fill = NULL, rle_group = NULL,
-        n_max = Inf, trans = c(), ...
+        by_x = NULL, n_max = Inf, trans = NULL, ...
     ) {
 
         if (is.null(colnames(x))) colnames(x) <- as.character(seq_len(ncol(x)))
         df <- as.data.frame(colData(x))
-        df$sample <- rownames(df)
+        df$colnames <- colnames(x)
         args <- colnames(df)
         if (!is.null(colour)) colour <- sym(match.arg(colour, args))
         if (!is.null(fill)) fill <- sym(match.arg(fill, args))
-        if (!is.null(rle_group)) rle_group <- match.arg(rle_group, args)
-        grps <- c("ind", rle_group)
+        if (!is.null(rle_group)) rle_group <- sym(match.arg(rle_group, args))
+        if (!is.null(by_x)) {
+            by_x <- match.arg(by_x, args)
+        } else {
+            by_x <- "colnames"
+        }
 
         n_max <- min(nrow(x), n_max)
         ind <- seq_len(n_max)
@@ -73,23 +80,19 @@ setMethod(
             if (!trans_ok) stop("This transformation is not applicable")
         }
 
-        mat_df <- as.data.frame(mat)
-        mat_df$ind <- ind
-        mat_df <- pivot_longer(
-            mat_df,
-            all_of(colnames(x)), names_to = "sample", values_to = "assay"
-        )
-        mat_df <- left_join(mat_df, df, by = "sample")
-        mat_df <- group_by(mat_df, !!!syms(grps))
-        mat_df <- mutate(mat_df, rle = assay - median(assay))
+        df$vals <- split(t(mat), seq_len(ncol(x)))
+        df <- unnest(df, all_of("vals"))
+        if (!is.null(rle_group)) df <- group_by(df, !!rle_group)
+        df <- mutate(df, rle = !!sym("vals") - median(!!sym("vals")))
+        df <- ungroup(df)
 
-        sample <- rle <- NULL ## R CMD check
+        xlab <- ifelse(by_x == "colnames", "Sample", by_x)
         ggplot(
-            mat_df,
-            aes(sample, rle, fill = {{ fill }}, colour = {{ colour }})
+            df,
+            aes(.data[[by_x]], .data[["rle"]], fill = {{ fill }}, colour = {{ colour }})
         ) +
-            geom_boxplot() +
-            labs(y = "RLE")
+            geom_boxplot(...) +
+            labs(x = xlab, y = "RLE")
 
     }
 )

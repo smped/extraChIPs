@@ -46,6 +46,7 @@ Imports:
   IRanges,
   limma,
   methods,
+  patchwork,
   RColorBrewer,
   rlang,
   Rsamtools,
@@ -73,3 +74,35 @@ VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)  
 RoxygenNote: 7.2.2
 Config/testthat/edition: 3
+Collate: 
+    'allGenerics.R'
+    'asTibble.R'
+    'bestOverlap.R'
+    'chopMC.R'
+    'colToRanges.R'
+    'collapseGenes.R'
+    'data.R'
+    'distinctMC.R'
+    'dualFilter.R'
+    'extraChIPs.R'
+    'getProfileData.R'
+    'grlToSE.R'
+    'importPeaks.R'
+    'makeConsensus.R'
+    'mapByFeature.R'
+    'mergeByCol.R'
+    'mergeBySig.R'
+    'partitionRanges.R'
+    'plotAssayDensities.R'
+    'plotAssayPCA.R'
+    'plotAssayRle.R'
+    'plotHFGC.R'
+    'plotOverlaps.R'
+    'plotPie.R'
+    'plotProfileHeatmap.R'
+    'plotSplitDonut.R'
+    'propOverlaps.R'
+    'reduceMC.R'
+    'setoptsMC.R'
+    'stitchRanges.R'
+    'voomWeightsFromCPM.R'

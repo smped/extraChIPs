@@ -10,8 +10,9 @@ plotAssayDensities(x, ...)
 \S4method{plotAssayDensities}{SummarizedExperiment}(
   x,
   assay = "counts",
-  colour,
+  colour = NULL,
   linetype = NULL,
+  group,
   trans = NULL,
   n_max = Inf,
   ...
@@ -28,6 +29,10 @@ plotAssayDensities(x, ...)
 colours, set this argument to \code{NULL}}
 
 \item{linetype}{Any optional column in colData used to determine linetype}
+
+\item{group}{Used by \link[ggplot2]{geom_line}. Defaults to the sample names
+but setting to NULL will over-write this and only groups specified by colour
+or linetype will be drawn}
 
 \item{trans}{character(1). Any transformative function to be applied to the
 data before calculating the density, e.g. \code{trans = "log2"}}
@@ -55,5 +60,6 @@ se <- SummarizedExperiment(
   colData = df
 )
 plotAssayDensities(se, colour = "treat")
+plotAssayDensities(se, colour = "treat", group = NULL)
 
 }

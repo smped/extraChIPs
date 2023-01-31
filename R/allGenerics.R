@@ -31,6 +31,13 @@ setGeneric("plotAssayRle", function(x, ...) standardGeneric("plotAssayRle"))
 setGeneric("plotPie", function(object, ...) standardGeneric("plotPie"))
 
 #' @export
+#' @name plotSplitDonut
+#' @rdname plotSplitDonut-methods
+setGeneric(
+    "plotSplitDonut", function(object, ...) standardGeneric("plotSplitDonut")
+)
+
+#' @export
 #' @name setoptsMC
 #' @rdname setoptsMC-methods
 setGeneric("setdiffMC", function(x, y, ...) standardGeneric("setdiffMC"))
