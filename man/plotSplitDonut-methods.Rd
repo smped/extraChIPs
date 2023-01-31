@@ -17,16 +17,20 @@ plotSplitDonut(object, ...)
   r_centre = 0.5,
   r_inner = 1,
   r_outer = 1,
-  show_total = TRUE,
+  total_size = 5,
   show_cat = TRUE,
-  show_n = TRUE,
+  show_n = FALSE,
   show_percent = TRUE,
+  cat_inner = TRUE,
+  cat_outer = TRUE,
   label_width = 10,
   sep = " ",
   label_alpha = 1,
   label_size = 4,
   min_p = 0.05,
-  explode_cat = "",
+  explode_inner = NULL,
+  explode_outer = NULL,
+  explode_query = c("AND", "OR"),
   explode_x = 0,
   explode_y = 0,
   explode_r = 0,
@@ -34,7 +38,7 @@ plotSplitDonut(object, ...)
   expand = 0.1,
   inner_palette = NULL,
   outer_palette = NULL,
-  layout = c(area(1, 1, 6, 6), area(2, 7), area(3, 7)),
+  layout = c(main = area(1, 1, 6, 6), lg1 = area(2, 7), lg2 = area(3, 7)),
   ...
 )
 }
@@ -52,14 +56,18 @@ create a Pie chart}
 
 \item{r_inner, r_outer}{The radii of the inner/outer rings}
 
-\item{show_total}{Display the total number of entries in the centre of the
-plot}
+\item{total_size}{Label size total number of entries in the centre of the
+plot. Set to \code{NA} to hide the label itself}
 
 \item{show_cat}{logical(1) Show category names for each segment}
 
 \item{show_n}{logical(1) Show category totals for each segment}
 
-\item{show_percent}{logical(1) Show pecentages represented by each segment}
+\item{show_percent}{logical(1) Show percentages represented by each segment}
+
+\item{cat_inner}{logical(1) Add the column name to labels in the inner ring}
+
+\item{cat_outer}{logical(1) Add the column name to labels in the outer ring}
 
 \item{label_width}{Width at which labels will try to wrap onto a new line}
 
@@ -73,8 +81,11 @@ and percentages}
 \item{min_p}{only display labels for segments representing greater than this
 proportion of the total}
 
-\item{explode_cat}{Single values from either the inner or outer ring for
-which segments will be 'exploded'}
+\item{explode_inner, explode_outer}{Regular expressions from either the inner
+or outer ring for which segments will be 'exploded'}
+
+\item{explode_query}{Setting to AND and specifying values for both the inner
+and outer ring will require matches in both categories}
 
 \item{explode_x, explode_y}{Numeric values for shifting exploded values}
 
@@ -86,7 +97,7 @@ which segments will be 'exploded'}
 
 \item{inner_palette}{Colour palette for the inner ring}
 
-\item{outer_palette}{Optional colour paletter for the outer ring}
+\item{outer_palette}{Optional colour palette for the outer ring}
 
 \item{layout}{Passed to \link[patchwork]{plot_layout}}
 }
@@ -114,11 +125,12 @@ plotSplitDonut(df, inner = "TF1", outer = "TF2")
 
 ## Adding an exploded section along with an outer palette & customisation
 plotSplitDonut(
-  df, inner = "TF1", outer = "feature",
+  df, inner = "TF1", outer = "feature", total_size = NA,
   label_width = 1, show_n = FALSE, label_alpha = 0.5, r_centre = 0,
-  explode_cat = "Up", explode_r = 0.2, explode_x = -0.2, explode_y = 0.2,
-  inner_palette = hcl.colors(3, "Cividis"),
-  outer_palette = hcl.colors(3, "Spectral")
+  cat_outer = FALSE, explode_inner = "Up", explode_outer = "Prom|Enh",
+  explode_query = "AND", explode_r = 0.4,
+  inner_palette = hcl.colors(3, "Spectral", rev = TRUE),
+  outer_palette = hcl.colors(3, "Cividis")
 )
 
 }
