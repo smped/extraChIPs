@@ -24,3 +24,8 @@
 # Changes in version 1.3.4 (22-12-20)
 
 - Added `mergeBySig()`
+
+# Changes in version 1.3.5 (23-01-31)
+
+- Added `plotSplitDonut()`
+- Bugfix in `plotAssayDensities()` and `plotAssayRle()` along with enabling plotting by group
