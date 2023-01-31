@@ -22,13 +22,11 @@ plotSplitDonut(object, ...)
   r_inner = 1,
   r_outer = 1,
   total_size = 5,
-  show_cat = TRUE,
-  show_n = FALSE,
-  show_percent = TRUE,
-  cat_inner = TRUE,
-  cat_outer = TRUE,
-  label_width = 10,
-  sep = " ",
+  total_glue = "{comma(N)}",
+  inner_glue = "{inner} {.data[[inner]]}\\n{percent(p,0.1)}",
+  outer_glue = "{outer} {.data[[outer]]}\\n{percent(p,0.1)}",
+  inner_label = c("label", "text", "none"),
+  outer_label = c("label", "text", "none"),
   label_alpha = 1,
   label_size = 4,
   min_p = 0.05,
@@ -67,20 +65,18 @@ create a Pie chart}
 \item{total_size}{Label size total number of entries in the centre of the
 plot. Set to \code{NA} to hide the label itself}
 
-\item{show_cat}{logical(1) Show category names for each segment}
+\item{total_glue}{\link[glue]{glue}-syntax for formatting the total which
+appears in the centre of the plot. Internally, the value \code{N} will be
+calculated and as such, this value should appear within this argument.}
 
-\item{show_n}{logical(1) Show category totals for each segment}
+\item{inner_glue, outer_glue}{\link[glue]{glue}-syntax for formatting labels
+which appear on each inner/outer segment Internally, the values \code{n} and \code{p}
+will be calculated as totals and proportions of the total. As such, these
+values can appear within this argument.}
 
-\item{show_percent}{logical(1) Show percentages represented by each segment}
-
-\item{cat_inner}{logical(1) Add the column name to labels in the inner ring}
-
-\item{cat_outer}{logical(1) Add the column name to labels in the outer ring}
-
-\item{label_width}{Width at which labels will try to wrap onto a new line}
-
-\item{sep}{character string to be used when concatenating categories, totals
-and percentages}
+\item{inner_label, outer_label}{Can take values 'text', 'label' or 'none'.
+If setting one the first two values, the labelling function \verb{geom_*} will be
+called, otherwise no label will be drawn}
 
 \item{label_alpha}{transparency for labels in the inner ring only}
 
@@ -117,7 +113,34 @@ Create Donut charts based on one or two columns in a data frame
 }
 \details{
 Using a data.frame or GRanges object, this function enables creation of a
-Pie/Donut chart with an inner and outer ring
+Pie/Donut chart with an inner and outer ring. The function itself is
+extremely flexible allowing for separate colour palettes in the inner and
+outer rings, as well as highly customisable labels.
+
+Sections can be exploded using a value from the inner ring or outer ring
+separately, or in combination by setting \code{explode_query = "AND"}.
+Exploded sections can be shifted by expanding the radius (\code{explode_r}), or
+along the x/y co-ordinates using \code{explode_x/y}, allowing for detailed
+placement of sections.
+
+If only the inner palette is specified, segments in the outer ring will be
+assigned the same colours as the inner segments, but with increased
+transparency. Only a single legend will be drawn in this scenario. If an
+outer palette is specified, both colour palettes are completely distinct
+and two distinct legends will be drawn. The placement of these legends,
+along with the larger donut plot, can be manually specified by providing a
+layout as defined in \link[patchwork]{plot_layout}. Names are not required
+on this layout, but may be beneficial for code reproducibility.
+
+The inner label denoting the total can also be heavily customised using the
+\link[glue]{glue} syntax to present the calculated value \code{N} along with any
+additional text, such as 'kb' if scaling GenomicRanges by width. The same
+approach can be taken for the inner and outer labels, where totals are
+held in the value \code{n}, proportions are held in the value \code{p} and the values
+corresponding to each segment can be accessed using \code{.data[[inner]]} or
+\code{.data[[outer]]}. Values from the inner segments can be added to the outer
+labels using this strategy enabling a wide variety of labellinf approaches
+to be utilised.
 }
 \examples{
 set.seed(200)
@@ -134,8 +157,9 @@ plotSplitDonut(df, inner = "TF1", outer = "TF2")
 ## Adding an exploded section along with an outer palette & customisation
 plotSplitDonut(
   df, inner = "TF1", outer = "feature", total_size = NA,
-  label_width = 1, show_n = FALSE, label_alpha = 0.5, r_centre = 0,
-  cat_outer = FALSE, explode_inner = "Up", explode_outer = "Prom|Enh",
+  label_alpha = 0.5, r_centre = 0,
+  outer_glue = "{.data[[outer]]}\n(n = {n})", outer_label = "text",
+  explode_inner = "Up", explode_outer = "Prom|Enh",
   explode_query = "AND", explode_r = 0.4,
   inner_palette = hcl.colors(3, "Spectral", rev = TRUE),
   outer_palette = hcl.colors(3, "Cividis")

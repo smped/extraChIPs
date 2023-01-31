@@ -4,7 +4,34 @@
 #'
 #' @details
 #' Using a data.frame or GRanges object, this function enables creation of a
-#' Pie/Donut chart with an inner and outer ring
+#' Pie/Donut chart with an inner and outer ring. The function itself is
+#' extremely flexible allowing for separate colour palettes in the inner and
+#' outer rings, as well as highly customisable labels.
+#'
+#' Sections can be exploded using a value from the inner ring or outer ring
+#' separately, or in combination by setting `explode_query = "AND"`.
+#' Exploded sections can be shifted by expanding the radius (`explode_r`), or
+#' along the x/y co-ordinates using `explode_x/y`, allowing for detailed
+#' placement of sections.
+#'
+#' If only the inner palette is specified, segments in the outer ring will be
+#' assigned the same colours as the inner segments, but with increased
+#' transparency. Only a single legend will be drawn in this scenario. If an
+#' outer palette is specified, both colour palettes are completely distinct
+#' and two distinct legends will be drawn. The placement of these legends,
+#' along with the larger donut plot, can be manually specified by providing a
+#' layout as defined in \link[patchwork]{plot_layout}. Names are not required
+#' on this layout, but may be beneficial for code reproducibility.
+#'
+#' The inner label denoting the total can also be heavily customised using the
+#' \link[glue]{glue} syntax to present the calculated value `N` along with any
+#' additional text, such as 'kb' if scaling GenomicRanges by width. The same
+#' approach can be taken for the inner and outer labels, where totals are
+#' held in the value `n`, proportions are held in the value `p` and the values
+#' corresponding to each segment can be accessed using `.data[[inner]]` or
+#' `.data[[outer]]`. Values from the inner segments can be added to the outer
+#' labels using this strategy enabling a wide variety of labellinf approaches
+#' to be utilised.
 #'
 #' @return
 #' A patchwork object consisting of both ggplot2 objects and legend grobs
@@ -20,16 +47,18 @@
 #' @param r_inner,r_outer The radii of the inner/outer rings
 #' @param total_size Label size total number of entries in the centre of the
 #' plot. Set to `NA` to hide the label itself
-#' @param show_cat logical(1) Show category names for each segment
-#' @param show_n logical(1) Show category totals for each segment
-#' @param show_percent logical(1) Show percentages represented by each segment
-#' @param cat_inner logical(1) Add the column name to labels in the inner ring
-#' @param cat_outer logical(1) Add the column name to labels in the outer ring
-#' @param label_width Width at which labels will try to wrap onto a new line
+#' @param total_glue \link[glue]{glue}-syntax for formatting the total which
+#' appears in the centre of the plot. Internally, the value `N` will be
+#' calculated and as such, this value should appear within this argument.
+#' @param inner_glue,outer_glue \link[glue]{glue}-syntax for formatting labels
+#' which appear on each inner/outer segment Internally, the values `n` and `p`
+#' will be calculated as totals and proportions of the total. As such, these
+#' values can appear within this argument.
+#' @param inner_label,outer_label Can take values 'text', 'label' or 'none'.
+#' If setting one the first two values, the labelling function `geom_*` will be
+#' called, otherwise no label will be drawn
 #' @param label_size Size of all text labels
 #' @param label_alpha transparency for labels in the inner ring only
-#' @param sep character string to be used when concatenating categories, totals
-#' and percentages
 #' @param min_p only display labels for segments representing greater than this
 #' proportion of the total
 #' @param explode_inner,explode_outer Regular expressions from either the inner
@@ -60,8 +89,9 @@
 #' ## Adding an exploded section along with an outer palette & customisation
 #' plotSplitDonut(
 #'   df, inner = "TF1", outer = "feature", total_size = NA,
-#'   label_width = 1, show_n = FALSE, label_alpha = 0.5, r_centre = 0,
-#'   cat_outer = FALSE, explode_inner = "Up", explode_outer = "Prom|Enh",
+#'   label_alpha = 0.5, r_centre = 0,
+#'   outer_glue = "{.data[[outer]]}\n(n = {n})", outer_label = "text",
+#'   explode_inner = "Up", explode_outer = "Prom|Enh",
 #'   explode_query = "AND", explode_r = 0.4,
 #'   inner_palette = hcl.colors(3, "Spectral", rev = TRUE),
 #'   outer_palette = hcl.colors(3, "Cividis")
@@ -100,10 +130,10 @@ setMethod(
 #' @importFrom patchwork plot_layout area plot_spacer
 #' @importFrom rlang '!!' '!!!' sym syms .data
 #' @importFrom scales comma percent
-#' @importFrom stringr str_wrap
 #' @importFrom ggforce geom_arc_bar
 #' @importFrom stringr str_replace_all
 #' @importFrom forcats fct_relabel
+#' @importFrom glue glue
 #'
 #' @rdname plotSplitDonut-methods
 #' @export
@@ -113,12 +143,16 @@ setMethod(
     function(
         object, inner, outer, scale_by = NULL,
         r_centre = 0.5, r_inner = 1, r_outer = 1,
-        total_size = 5, show_cat = TRUE, show_n = FALSE, show_percent = TRUE,
-        cat_inner = TRUE, cat_outer = TRUE, label_width = 10, sep = " ",
-        label_alpha = 1, label_size = 4, min_p = 0.05, explode_inner = NULL,
-        explode_outer = NULL, explode_query = c("AND", "OR"),
-        explode_x = 0, explode_y = 0, explode_r = 0,
-        nudge_r = 0.5, expand = 0.1, inner_palette = NULL, outer_palette = NULL,
+        total_size = 5, total_glue = "{comma(N)}",
+        inner_glue = "{inner} {.data[[inner]]}\n{percent(p,0.1)}",
+        outer_glue = "{outer} {.data[[outer]]}\n{percent(p,0.1)}",
+        inner_label = c("label", "text", "none"),
+        outer_label = c("label", "text", "none"),
+        label_alpha = 1, label_size = 4, min_p = 0.05,
+        explode_inner = NULL, explode_outer = NULL,
+        explode_query = c("AND", "OR"), explode_x = 0, explode_y = 0,
+        explode_r = 0, nudge_r = 0.5,
+        expand = 0.1, inner_palette = NULL, outer_palette = NULL,
         layout = c(main = area(1, 1, 6, 6), lg1 = area(2, 7), lg2 = area(3, 7)),
         ...
     ) {
@@ -132,6 +166,8 @@ setMethod(
         object[[inner]] <- as.factor(object[[inner]])
         object[[outer]] <- as.factor(object[[outer]])
         explode_query <- match.arg(explode_query)
+        inner_label <- match.arg(inner_label)
+        outer_label <- match.arg(outer_label)
         if (is.null(explode_inner)) explode_inner <- "^$"
         if (is.null(explode_outer)) explode_outer <- "^$"
         if (any(c(explode_inner, explode_outer) == "^$")) explode_query <- "OR"
@@ -203,27 +239,7 @@ setMethod(
                         max(as.numeric(!!sym(outer)), na.rm = TRUE) + 1
                     )
             ),
-            cat = case_when(
-                is.na(!!sym(outer)) & cat_inner ~ paste(inner, !!sym(inner)),
-                is.na(!!sym(outer)) & !cat_inner ~ as.character(!!sym(inner)),
-                !is.na(!!sym(outer)) & cat_outer ~ paste(outer, !!sym(outer)),
-                !is.na(!!sym(outer)) & !cat_outer ~ as.character(!!sym(outer))
-            ),
-            lab = case_when(
-                show_cat & show_n & show_percent ~
-                    paste(cat, comma(n, 1), percent(p, 0.1), sep = sep),
-                show_cat & show_n & !show_percent ~
-                    paste(cat, comma(n, 1), sep = sep),
-                show_cat & !show_n & show_percent ~
-                    paste(cat, percent(p, 0.1), sep = sep),
-                !show_cat & show_n & show_percent ~
-                    paste(comma(n, 1), percent(p, 0.1), sep = sep),
-                !show_cat & show_n & !show_percent ~ comma(n, 1),
-                !show_cat & !show_n & show_percent ~ percent(p, 0.1),
-                show_cat & !show_n & !show_percent ~ as.character(cat),
-                !show_cat & !show_n & !show_percent ~ ""
-            ),
-            lab = str_wrap(lab, width = label_width)
+            lab = ifelse(ring == "inner", glue(inner_glue), glue(outer_glue))
         )
 
         ## Setup the default palette for the inner ring
@@ -291,26 +307,32 @@ setMethod(
 
         ## Add the centre total if required
         if (!is.na(total_size)) p <- p + geom_label(
-            x = 0 , y = 0, size = total_size, label = comma(N, 1)
+            x = 0 , y = 0, size = total_size, label = glue(total_glue)
         )
 
         ## Add segment labels
-        if (any(c(show_cat, show_n, show_percent))) p <- p + geom_label(
-            aes(
-                x = sin(mid) * (x + 0.5 * r_inner) + x0,
-                y = cos(mid) * (x + 0.5 * r_inner) + y0, label = lab
-            ),
-            data = dplyr::filter(plot_df, ring == "inner", p > min_p),
-            size = label_size, alpha = label_alpha
-        ) +
-            geom_text(
+        if (inner_label != "none") {
+            lab_fun <- match.fun(paste0("geom_", inner_label))
+            p <- p + lab_fun(
+                aes(
+                    x = sin(mid) * (x + 0.5 * r_inner) + x0,
+                    y = cos(mid) * (x + 0.5 * r_inner) + y0, label = lab
+                ),
+                data = dplyr::filter(plot_df, ring == "inner", p > min_p),
+                size = label_size, alpha = label_alpha
+            )
+        }
+        if (outer_label != "none") {
+            lab_fun <- match.fun(paste0("geom_", outer_label))
+            p <- p + lab_fun(
                 aes(
                     x = sin(mid) * (x1 + nudge_r) + x0 ,
                     y = cos(mid) * (x1 + nudge_r) + y0, label = lab
                 ),
                 data = dplyr::filter(plot_df, ring == "outer", p > min_p),
-                size = label_size
+                size = label_size, alpha = label_alpha
             )
+        }
 
         ## Add all remaining elements & formatting
         p <- p +
