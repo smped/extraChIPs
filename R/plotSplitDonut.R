@@ -148,12 +148,12 @@ setMethod(
         outer_glue = "{outer} {.data[[outer]]}\n{percent(p,0.1)}",
         inner_label = c("label", "text", "none"),
         outer_label = c("label", "text", "none"),
-        label_alpha = 1, label_size = 4, min_p = 0.05,
+        label_alpha = 1, label_size = 3, min_p = 0.05,
         explode_inner = NULL, explode_outer = NULL,
         explode_query = c("AND", "OR"), explode_x = 0, explode_y = 0,
         explode_r = 0, nudge_r = 0.5,
         expand = 0.1, inner_palette = NULL, outer_palette = NULL,
-        layout = c(main = area(1, 1, 6, 6), lg1 = area(2, 7), lg2 = area(3, 7)),
+        layout = c(main = area(1, 1, 6, 6), lg1 = area(2, 7), lg2 = area(4, 7)),
         ...
     ) {
 
