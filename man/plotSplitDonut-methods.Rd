@@ -2,11 +2,14 @@
 % Please edit documentation in R/AllGenerics.R, R/plotSplitDonut.R
 \name{plotSplitDonut}
 \alias{plotSplitDonut}
+\alias{plotSplitDonut,GRanges-method}
 \alias{plotSplitDonut,DataFrame-method}
 \alias{plotSplitDonut,data.frame-method}
 \title{Draw Two-Level Donut Charts}
 \usage{
 plotSplitDonut(object, ...)
+
+\S4method{plotSplitDonut}{GRanges}(object, scale_by = c("n", "width"), ...)
 
 \S4method{plotSplitDonut}{DataFrame}(object, ...)
 
@@ -14,6 +17,7 @@ plotSplitDonut(object, ...)
   object,
   inner,
   outer,
+  scale_by = NULL,
   r_centre = 0.5,
   r_inner = 1,
   r_outer = 1,
@@ -46,6 +50,10 @@ plotSplitDonut(object, ...)
 \item{object}{A \code{GRanges} or \code{data.frame}-like object}
 
 \item{...}{Not used}
+
+\item{scale_by}{Column to scale values by. If provided, values in this column
+will be summed, instead of simply counting entries. Any label in the centre
+of the plot will also reflect this difference}
 
 \item{inner}{Column name to create the inner ring}
 

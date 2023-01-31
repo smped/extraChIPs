@@ -12,6 +12,9 @@
 #' @param object A `GRanges` or `data.frame`-like object
 #' @param inner Column name to create the inner ring
 #' @param outer Column name to create the outer ring, subset by the inner ring
+#' @param scale_by Column to scale values by. If provided, values in this column
+#' will be summed, instead of simply counting entries. Any label in the centre
+#' of the plot will also reflect this difference
 #' @param r_centre The radius of the hole in the centre. Setting to zero will
 #' create a Pie chart
 #' @param r_inner,r_outer The radii of the inner/outer rings
@@ -64,6 +67,21 @@
 #'   outer_palette = hcl.colors(3, "Cividis")
 #' )
 #'
+#' @importClassesFrom GenomicRanges GRanges
+#' @rdname plotSplitDonut-methods
+#' @export
+setMethod(
+    "plotSplitDonut",
+    signature = signature(object = "GRanges"),
+    function(object, scale_by = c("n", "width"), ...){
+        df <- as_tibble(object)
+        scale_by <- match.arg(scale_by)
+        if (scale_by == "n") df[["n"]] <- 1
+        ## Set width to be in Kb by default
+        if (scale_by == "width") df[["width"]] <- width(object) / 1e3
+        plotSplitDonut(df, scale_by = scale_by, ...)
+    }
+)
 #' @importClassesFrom S4Vectors DataFrame
 #' @rdname plotSplitDonut-methods
 #' @export
@@ -71,7 +89,7 @@ setMethod(
     "plotSplitDonut",
     signature = signature(object = "DataFrame"),
     function(object, ...){
-        object <- as.data.frame(object)
+        object <- as_tibble(object)
         plotSplitDonut(object, ...)
     }
 )
@@ -93,7 +111,8 @@ setMethod(
     "plotSplitDonut",
     signature = signature(object = "data.frame"),
     function(
-        object, inner, outer, r_centre = 0.5, r_inner = 1, r_outer = 1,
+        object, inner, outer, scale_by = NULL,
+        r_centre = 0.5, r_inner = 1, r_outer = 1,
         total_size = 5, show_cat = TRUE, show_n = FALSE, show_percent = TRUE,
         cat_inner = TRUE, cat_outer = TRUE, label_width = 10, sep = " ",
         label_alpha = 1, label_size = 4, min_p = 0.05, explode_inner = NULL,
@@ -106,9 +125,10 @@ setMethod(
 
         inner <- inner[[1]]
         outer <- outer[[1]]
-        stopifnot(all(c(inner, outer) %in% colnames(object)))
-        stopifnot(length(c(inner, outer)) == 2)
+        scale_by <- scale_by[[1]]
+        stopifnot(all(c(inner, outer, scale_by) %in% colnames(object)))
         stopifnot(inner != outer)
+        if (!is.null(scale_by)) stopifnot(is.numeric(object[[scale_by]]))
         object[[inner]] <- as.factor(object[[inner]])
         object[[outer]] <- as.factor(object[[outer]])
         explode_query <- match.arg(explode_query)
@@ -117,7 +137,15 @@ setMethod(
         if (any(c(explode_inner, explode_outer) == "^$")) explode_query <- "OR"
 
         summ_df <- group_by(object, !!!syms(c(inner, outer)))
-        summ_df <- summarise(summ_df, n = dplyr::n(), .groups = "drop_last")
+        if (is.null(scale_by)) {
+            summ_df <- summarise(summ_df, n = dplyr::n(), .groups = "drop_last")
+            N <- nrow(object)
+        } else {
+            summ_df <- summarise(
+                summ_df, n = sum(!!sym(scale_by)), .groups = "drop_last"
+            )
+            N <- sum(object[[scale_by]])
+        }
         inner_df <- summarise(summ_df, n = sum(n), .groups = "drop")
         inner_df <- mutate(
             inner_df,
@@ -183,15 +211,15 @@ setMethod(
             ),
             lab = case_when(
                 show_cat & show_n & show_percent ~
-                    paste(cat, comma(n, 1), percent(p), sep = sep),
+                    paste(cat, comma(n, 1), percent(p, 0.1), sep = sep),
                 show_cat & show_n & !show_percent ~
                     paste(cat, comma(n, 1), sep = sep),
                 show_cat & !show_n & show_percent ~
-                    paste(cat, percent(p), sep = sep),
+                    paste(cat, percent(p, 0.1), sep = sep),
                 !show_cat & show_n & show_percent ~
-                    paste(comma(n, 1), percent(p), sep = sep),
+                    paste(comma(n, 1), percent(p, 0.1), sep = sep),
                 !show_cat & show_n & !show_percent ~ comma(n, 1),
-                !show_cat & !show_n & show_percent ~ percent(p),
+                !show_cat & !show_n & show_percent ~ percent(p, 0.1),
                 show_cat & !show_n & !show_percent ~ as.character(cat),
                 !show_cat & !show_n & !show_percent ~ ""
             ),
@@ -252,21 +280,18 @@ setMethod(
             )
         }
 
-
         ## Create the basic plot
         x <- y <- x0 <- y0 <- x1 <- lab <- ring <- mid <- yend <- colour <- c()
-        p <- ggplot(plot_df) +
-            geom_arc_bar(
-                aes(
-                    x0 = x0, y0 = y0, r0 = x, r = x1,
-                    start = .data[["start"]], end = .data[["end"]],
-                    fill = colour, alpha = .data[["alpha"]]
-                )
+        p <- ggplot(plot_df) + geom_arc_bar(
+            aes(
+                x0 = x0, y0 = y0, r0 = x, r = x1, start = .data[["start"]],
+                end = .data[["end"]], fill = colour, alpha = .data[["alpha"]]
             )
+        )
 
         ## Add the centre total if required
         if (!is.na(total_size)) p <- p + geom_label(
-            x = 0 , y = 0, size = total_size, label = comma(nrow(object), 1)
+            x = 0 , y = 0, size = total_size, label = comma(N, 1)
         )
 
         ## Add segment labels
