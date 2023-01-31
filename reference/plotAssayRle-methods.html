@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.5</span>
       </span>
     </div>
 
@@ -75,8 +75,9 @@
 <span>  colour <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  fill <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  rle_group <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  by_x <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  n_max <span class="op">=</span> <span class="cn">Inf</span>,</span>
-<span>  trans <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  trans <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -88,7 +89,7 @@
 
 
 <dt>...</dt>
-<dd><p>Not used</p></dd>
+<dd><p>Passed to <a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html" class="external-link">geom_boxplot</a></p></dd>
 
 
 <dt>assay</dt>
@@ -108,12 +109,17 @@
 Commonly an alternative sample label.</p></dd>
 
 
+<dt>by_x</dt>
+<dd><p>Boxplots will be drawn by this grouping variable from
+<code>colData(x)</code>. If not specified, the default values will be <code>colnames(x)</code></p></dd>
+
+
 <dt>n_max</dt>
 <dd><p>Maximum number of points to plot</p></dd>
 
 
 <dt>trans</dt>
-<dd><p>character(1). NUmerical transformation to apply to the data
+<dd><p>character(1). NUuerical transformation to apply to the data
 prior to RLE calculation</p></dd>
 
 </dl></div>
@@ -141,6 +147,8 @@ transformation prior to performing the RLE can be specified using the
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">plotAssayRle</span><span class="op">(</span><span class="va">se</span>, <span class="st">"counts"</span>, fill <span class="op">=</span> <span class="st">"treat"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAssayRle-methods-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu">plotAssayRle</span><span class="op">(</span><span class="va">se</span>, <span class="st">"counts"</span>, fill <span class="op">=</span> <span class="st">"treat"</span>, by_x <span class="op">=</span> <span class="st">"treat"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plotAssayRle-methods-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
