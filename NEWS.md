@@ -20,3 +20,8 @@
 # Changes in version 1.1.5 (2022-10-11)
 
 - Added `makeConsensus()` and updated vignette
+
+# Changes in version 1.2.4 (2023-01-31)
+
+- Added `plotSplitDonut()`
+- Significant bugfix & rewrite for `plotAssayDensities()`, `plotAssayPCA()` and `plotAssayRle()`
