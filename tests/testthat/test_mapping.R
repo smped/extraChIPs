@@ -130,3 +130,4 @@ test_that("mappingArg Checks behave correctly", {
         "Interactions must be"
     )
 })
+

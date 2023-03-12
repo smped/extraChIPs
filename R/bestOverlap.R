@@ -41,19 +41,17 @@
 #' @aliases bestOverlap
 #' @export
 setMethod(
-    "bestOverlap",
-    signature = signature(x = "GRanges", y = "GRanges"),
-    function(
-        x, y, var = NULL, ignore.strand = FALSE, missing = NA_character_,
-        min_prop = 0.01, ...
-    ) {
-        cols <- colnames(mcols(y))
-        var <- match.arg(var, cols)
-        grl <- splitAsList(y, f = mcols(y)[[var]])
-        bestOverlap(
-            x, grl, ignore.strand, missing = missing, min_prop = min_prop
-        )
-    }
+  "bestOverlap",
+  signature = signature(x = "GRanges", y = "GRanges"),
+  function(
+    x, y, var = NULL, ignore.strand = FALSE, missing = NA_character_,
+    min_prop = 0.01, ...
+  ) {
+    cols <- colnames(mcols(y))
+    var <- match.arg(var, cols)
+    grl <- splitAsList(y, f = mcols(y)[[var]])
+    bestOverlap(x, grl, ignore.strand, missing = missing, min_prop = min_prop)
+  }
 )
 #'
 #' @importFrom tibble as_tibble tibble
@@ -64,38 +62,38 @@ setMethod(
 #' @aliases bestOverlap
 #' @export
 setMethod(
-    "bestOverlap",
-    signature = signature(x = "GRanges", y = "GRangesList"),
-    function(
-        x, y, ignore.strand = FALSE, missing = NA_character_, min_prop = 0.01,
-        ...
-    ) {
+  "bestOverlap",
+  signature = signature(x = "GRanges", y = "GRangesList"),
+  function(
+    x, y, ignore.strand = FALSE, missing = NA_character_, min_prop = 0.01,
+    ...
+  ) {
 
-        ## x is a GRanges, y is a GRangesList
-        if (is.null(names(y))) stop("'y' must be a named GRangesList")
+    ## x is a GRanges, y is a GRangesList
+    if (is.null(names(y))) stop("'y' must be a named GRangesList")
 
-        p <- lapply(y, function(.y) propOverlap(x, .y, ignore.strand))
-        tbl <- as_tibble(p)
-        tbl[["id"]] <- seq_along(x)
-        tbl_long <- pivot_longer(
-            tbl, cols = all_of(names(y)), names_to = "y", values_to = "prop"
-        )
-        id <- prop <- c() # R CMD check error avoidance
-        tbl_long <- dplyr::filter(tbl_long, prop >= min_prop)
-        tbl_long <- arrange(tbl_long, id, desc(prop))
-        ## Keep the highest prop
-        tbl_long <- distinct(tbl_long, id, .keep_all = TRUE)
-        tbl_long <- arrange(tbl_long, id)
+    p <- lapply(y, function(.y) propOverlap(x, .y, ignore.strand))
+    tbl <- as_tibble(p)
+    tbl[["id"]] <- seq_along(x)
+    tbl_long <- pivot_longer(
+      tbl, cols = all_of(names(y)), names_to = "y", values_to = "prop"
+    )
+    id <- prop <- c() # R CMD check error avoidance
+    tbl_long <- dplyr::filter(tbl_long, prop >= min_prop)
+    tbl_long <- arrange(tbl_long, id, desc(prop))
+    ## Keep the highest prop
+    tbl_long <- distinct(tbl_long, id, .keep_all = TRUE)
+    tbl_long <- arrange(tbl_long, id)
 
-        out <- tibble(id = seq_along(x))
-        out <- left_join(out, tbl_long, by = "id")
-        out[["y"]][is.na(out[["y"]])] <- missing
+    out <- tibble(id = seq_along(x))
+    out <- left_join(out, tbl_long, by = "id")
+    out[["y"]][is.na(out[["y"]])] <- missing
 
-        ## Can't see this happening, but put it here anyway
-        if (nrow(out) != length(x))
-            stop("Output length doesn't match input length")
+    ## Can't see this happening, but put it here anyway
+    if (nrow(out) != length(x))
+      stop("Output length doesn't match input length")
 
-        out[["y"]]
+    out[["y"]]
 
-    }
+  }
 )

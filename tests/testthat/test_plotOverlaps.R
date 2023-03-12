@@ -77,7 +77,7 @@ test_that("plotOverlaps dispatches type = 'auto' correctly", {
     expect_equal(length(p$patches$plots), 3)
     expect_equal(
         as_label(p$patches$plots[[3]]$layers[[3]]$mapping$label),
-        "comma(stat(count))"
+        "comma(after_stat(count))"
     )
 })
 

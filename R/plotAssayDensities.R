@@ -100,7 +100,7 @@ setMethod(
         vars <- vapply(c(group, colour, linetype), as.character, character(1))
         df <- group_by(df, !!!syms(unique(vars)))
         df <- summarise(
-            df, dens = as.data.frame(density(!!sym("vals"))[c("x", "y")]),
+            df, dens = list(as.data.frame(density(!!sym("vals"))[c("x", "y")])),
             .groups = "drop"
         )
         df <- unnest(df, all_of("dens"))

@@ -224,8 +224,12 @@ mapByFeature <- function(
     )
     ## This will drop any additional columns. They can be replaced back in the
     ## parent function
-    range_df <- inner_join(range_df, range_to_feat, by = "queryHits")
-    range_df <- inner_join(range_df, feat_df, by = "subjectHits")
+    range_df <- inner_join(
+        range_df, range_to_feat, by = "queryHits", multiple = "all"
+    )
+    range_df <- inner_join(
+        range_df, feat_df, by = "subjectHits", multiple = "all"
+    )
     range_df <- range_df[c("range", .cols)]
 
     ## Return the tibble
@@ -309,8 +313,12 @@ mapByFeature <- function(
     )
     ## This will drop any additional columns. They can be replaced back in the
     ## parent function
-    range_df <- inner_join(range_df, gr_to_gi, by = "queryHits")
-    range_df <- inner_join(range_df, mapped_df, by = "subjectHits")
+    range_df <- inner_join(
+        range_df, gr_to_gi, by = "queryHits", multiple = "all"
+    )
+    range_df <- inner_join(
+        range_df, mapped_df, by = "subjectHits", multiple = "all"
+    )
     range_df <- range_df[c("range", .cols)]
     return(range_df)
 
@@ -351,8 +359,12 @@ mapByFeature <- function(
 
     ## Now define the mappings back to the original set
     range_df <- data.frame(range = as.character(.gr), queryHits = seq_along(.gr))
-    range_df <- inner_join(range_df, range_to_genes, by = "queryHits")
-    range_df <- inner_join(range_df, mapped_df, by = "subjectHits")
+    range_df <- inner_join(
+        range_df, range_to_genes, by = "queryHits", multiple = "all"
+    )
+    range_df <- inner_join(
+        range_df, mapped_df, by = "subjectHits", multiple = "all"
+    )
     range_df[c("range", .cols)]
 }
 

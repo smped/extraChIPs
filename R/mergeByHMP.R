@@ -1,0 +1,204 @@
+#' @title Merge Sliding Windows using the Harmonic Mean P
+#'
+#' @description Merge overlapping windows using harmonic mean p-values from significance
+#' testing
+#'
+#' @details
+#' When using sliding windows to test for differential signal, overlapping
+#' windows can be merged based on the significance of results.
+#' `mergeByHMP()` merges overlapping windows using the asymptotically exact
+#' harmonic mean p-value \link[harmonicmeanp]{p.hmp} from the individual,
+#' window-level tests. This tests the Null Hypothesis that there is no
+#' significance amongst the initial set of p-values, and returns a summarised
+#' value which controls the FDR within a set of tests (Wilson, PNAS, 2019).
+#' No multilevel testing across the set of results is currently implemented.
+#'
+#' Given that the harmonic mean p-value is calculated from the inverse p-values,
+#' these are used to provide a *weighted average* of expression and logFC values
+#' in the returned object. Any weights provided in `w` are ignored for these
+#' values as they are simple representative estimates.
+#' The representative range returned in `keyval_range` corresponds to the window
+#' with the lowest p-value.
+#'
+#' The total number of windows is also returned in the final object, with the
+#' summarised values n_up and n_down indicating the number of windows with raw
+#' p-values below the calculated harmonic mean p-value, and with the
+#' corresponding direction of change.
+#'
+#' The column containing the harmonic mean p-values is returned as 'hmp'.
+#' An additional column with adjusted hmp-values is returned with the suffix
+#'  '_*' added where the p-value adjustment method is added after the underscore.
+#'
+#' @param x GenomicRanges object
+#' @param df data.frame with results of differential binding analysis performed
+#' using a sliding window strategy. If not provided, the columns in the
+#' `mcols()` element of `x` will be used
+#' @param w vector of weights to applied when calculating harmonic mean p-values
+#' @param logfc,pval,cpm Column names for the values holding window specific
+#' estimates of change in binding (logfc), overall signal intensity (cpm) and
+#' the significance from statistical testing (pval)
+#' @param inc_cols (Optional) Character vector of any additional columns in
+#' `df` to return. Values will correspond to the range in the `keyval_range`
+#' column
+#' @param p_adj_method One of `p.adjust.methods`
+#' @param merge_within Merge any non-overlapping windows within this distance
+#' @param ignore_strand Passed internally to \link[GenomicRanges]{reduce} and
+#' \link[GenomicRanges]{findOverlaps}
+#' @param ... Not used
+#'
+#' @return
+#' A GenomicRanges object with merged ranges from the original object along with
+#' summarised or representative values from the relevant columns. The range
+#' corresponding to a representative values is also returned as described above
+#'
+#' @examples
+#' x <- GRanges(c("chr1:1-10", "chr1:6-15", "chr1:51-60"))
+#' set.seed(1001)
+#' df <- DataFrame(logFC = rnorm(3), logCPM = rnorm(3,8), p = rexp(3, 10))
+#' mergeByHMP(x, df, pval = "p")
+#' mcols(x) <- df
+#' x
+#' mergeByHMP(x, pval = "p")
+#'
+#' @name mergeByHMP
+#' @rdname mergeByHMP-methods
+#' @export
+setGeneric(
+  "mergeByHMP",
+  function(x, ...){standardGeneric("mergeByHMP")}
+)
+#' @importFrom S4Vectors DataFrame mcols 'mcols<-' subjectHits
+#' @importFrom GenomicRanges findOverlaps
+#' @importFrom dplyr group_by summarise arrange distinct left_join bind_rows
+#' @importFrom rlang ":=" "!!" sym
+#' @rdname mergeByHMP-methods
+#' @export
+setMethod(
+  "mergeByHMP",
+  signature = signature(x = "GenomicRanges"),
+  function(
+    x, df = NULL, w = NULL,
+    logfc = "logFC", pval = "P", cpm = "logCPM", inc_cols = NULL,
+    p_adj_method = "fdr", merge_within = 1L, ignore_strand = TRUE, ...
+  ){
+
+    ## Checks & defining the key columns
+    if (is.null(df)) df <- mcols(x)
+    stopifnot(nrow(df) == length(x))
+    df <- as.data.frame(df)
+    df_cols <- colnames(df)
+    logfc <- match.arg(logfc, df_cols)
+    pval <- match.arg(pval, df_cols)
+    cpm <- match.arg(cpm, df_cols)
+    p_adj_method <- match.arg(p_adj_method, p.adjust.methods)
+    if (is.null(w)) {
+      df[["weights"]] <- 1
+    } else {
+      df[["weights"]] <- w
+    }
+
+    ## Define the columns to return
+    ret_cols <- c("keyval_range", cpm, logfc, pval)
+    if (!is.null(inc_cols)) {
+      inc_cols <- vapply(
+        inc_cols, match.arg, character(1), choices = df_cols
+      )
+      ret_cols <- unique(c(ret_cols, inc_cols))
+    }
+    ## Always return the columns counting the total, up & down windows
+    n_cols <- c("n_windows", "n_up", "n_down")
+    if ("index" %in% inc_cols)
+      warning("The column named 'index' will not be returned")
+
+    ## Merge the ranges and get the map back to the original windows
+    ranges_out <- GenomicRanges::reduce(
+      x, min.gapwidth = merge_within, ignore.strand = ignore_strand
+    )
+    ol <- findOverlaps(x, ranges_out, ignore.strand = ignore_strand)
+    stopifnot(length(ol) == length(x))
+
+    ## Summarise the key values
+    df[["subjectHits"]] <- subjectHits(ol)
+    grp_df <- group_by(df, subjectHits)
+    ret_df <- summarise(
+      grp_df,
+      hmp = .ec_HMP(!!sym(pval), !!sym("weights")),
+      n_windows = dplyr::n(),
+      n_up = sum(!!sym(logfc) > 0 & !!sym(pval) < !!sym("hmp")),
+      n_down = sum(!!sym(logfc) < 0 & !!sym(pval) < !!sym("hmp")),
+      "{cpm}" := sum(!!sym(cpm) / !!sym(pval)) / sum(1 / !!sym(pval)),
+      "{logfc}" :=  sum(!!sym(logfc) / !!sym(pval)) / sum(1 / !!sym(pval))
+    )
+    ## Replace the P-Value column in the return columns with 'hmp' for clarity
+    ret_cols[ret_cols == pval] <- "hmp"
+
+    ## Remaining columns, including the keyval range are based on the
+    ## minimal p-value. Form a separate df with these columns, then merge
+    inc_df <- as.data.frame(df[c(pval, inc_cols)])
+    inc_df[["keyval_range"]] <- as.character(x)
+    inc_df[["subjectHits"]] <- subjectHits(ol)
+    inc_df <- arrange(inc_df, !!sym("subjectHits"), !!sym(pval))
+    inc_df <- distinct(inc_df, !!sym("subjectHits"), .keep_all = TRUE)
+    inc_df <- inc_df[!names(inc_df) %in% pval]
+    ## Merge the two, select the final columns, adjust p & return
+    ret_df <- left_join(ret_df, inc_df, by = "subjectHits")
+    ret_df <- ret_df[c(n_cols, ret_cols)]
+    adj_col <- paste0("hmp_", p_adj_method)
+    ret_df[[adj_col]] <- p.adjust(ret_df$hmp, p_adj_method)
+    mcols(ranges_out) <- as.data.frame(ret_df)
+    ranges_out$keyval_range <- GRanges(
+      ranges_out$keyval_range, seqinfo = seqinfo(ranges_out)
+    )
+    ranges_out
+  }
+)
+#' @rdname mergeByHMP-methods
+#' @export
+setMethod(
+  "mergeByHMP",
+  signature = signature(x = "RangedSummarizedExperiment"),
+  function(
+    x, df = NULL, w = NULL,
+    logfc = "logFC", pval = "P", cpm = "logCPM", inc_cols = NULL,
+    p_adj_method = "fdr", merge_within = 1L, ignore_strand = FALSE,
+    ...
+  ) {
+
+    gr <- rowRanges(x)
+    mergeByHMP(
+      gr, df, w, logfc, pval, cpm, inc_cols, p_adj_method, merge_within,
+      ignore_strand, ...
+    )
+
+  }
+
+)
+
+
+#' This is a modified version of harmonicmeanp::p.hmp developed by Prof Daniel
+#' Wilson, and hardwired to simply return a combined asymptotically exact HMP.
+#' Hardwiring like this gives a 10-fold speed-up. Further modifications may be
+#' possible, but this seems enough for now
+#' @param p vector of p-values
+#' @param w vector of weights
+#' @useDynLib extraChIPs, .registration = TRUE
+#' @keywords internal
+.ec_HMP <- function(p, w) {
+  n <- length(p)
+  hmp <- sum(w) / sum(w / p)
+  loc <- log(n) + 1 + digamma(1) - log(2/pi)
+  dbl <- double(1)
+  # cout <- .C(
+  #     "RtailsMSS", 1, 0, 1, loc, log(pi/2), 1.0, 1/hmp,
+  #     out1 = dbl, out2 = dbl, out3 = dbl, out4 = dbl,
+  #     out5 = dbl, out6 = dbl, COPY = rep(c(FALSE, TRUE), c(7, 6)),
+  #     PACKAGE = "FMStable"
+  # )
+  # Still need to figure out if all of those outputs above can be dropped
+  Rcout <- .C(
+    "my_RtailsMSS", loc, 1/hmp, d = dbl, logd = dbl, `F` = dbl, logF = dbl,
+    cF = dbl, logcF = dbl,
+    COPY = rep(c(FALSE, TRUE), c(2, 6)), PACKAGE = "extraChIPs"
+  )
+  Rcout$cF
+}

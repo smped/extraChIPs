@@ -66,105 +66,106 @@
 #' @aliases plotOverlaps
 #' @export
 setMethod(
-    "plotOverlaps",
-    signature = "GRangesList",
-    function(
-        x, type = c("auto", "venn", "upset"), var = NULL,
-        f = c("mean", "median", "max", "min", "sd"),
-        set_col = NULL, ..., .sort_sets = "ascending", min.gapwidth = 1L,
-        ignore.strand = TRUE
-    ) {
+  "plotOverlaps",
+  signature = "GRangesList",
+  function(
+    x, type = c("auto", "venn", "upset"), var = NULL,
+    f = c("mean", "median", "max", "min", "sd"),
+    set_col = NULL, ..., .sort_sets = "ascending", min.gapwidth = 1L,
+    ignore.strand = TRUE
+  ) {
 
-        stopifnot(is(x, "GRangesList"))
-        nm <- names(x)
-        n <- length(x)
-        stopifnot(length(nm) == n)
-        type <- match.arg(type)
-        if (type == "auto") type <- ifelse(n > 3, "upset", "venn")
-        if (n == 1 & type == "upset")
-            stop("UpSet plots can only be drawn using more than one group")
-        if (length(var) > 1) {
-            var <- var[[1]]
-            message(
-                "Only one column can be specified in 'var'. Choosing ", var
-            )
-        }
-
-        ## Dummy variables for R CMD check
-        count <- range <- intersection <- c()
-        # Collapse as required
-        gr <- makeConsensus(
-            x, var = var,
-            min.gapwidth = min.gapwidth, ignore.strand = ignore.strand
-        )
-
-        if (is.null(var) | type == "venn") {
-
-            ## Form a character list & plot
-            l <- lapply(
-                nm, function(x) as.character(gr)[mcols(gr)[[x]]]
-            )
-            names(l) <- nm
-            plotOverlaps(l, type = type, set_col = set_col, ...)
-
-        } else {
-
-            if (!is.numeric(mcols(x[[1]])[[var]]))
-                stop(var, " must contain numeric values")
-
-            ## Setup the df
-            tbl <- as_tibble(gr)
-            f <- match.arg(f)
-            f <- match.fun(f)
-            if (is(tbl[[var]], "list"))
-                tbl[[var]] <- vapply(tbl[[var]], f, numeric(1))
-
-            ## Setup the boxplot & key inputs
-            ann <- list2(
-                "{var}" := list(
-                    aes = aes(x = intersection, y = !!sym(var)),
-                    geom = geom_boxplot(na.rm = TRUE)
-                )
-            )
-            ip <- list(data = tbl, intersect = nm, annotations = ann)
-
-            ## Add default arguments, respecting any supplied
-            dotArgs <- list(...)
-            allowed <- unique(names(c(formals(upset), formals(upset_data))))
-            dotArgs <- dotArgs[names(dotArgs) %in% allowed]
-            if (!"set_sizes" %in% names(dotArgs)) {
-                dotArgs$set_sizes <- upset_set_size() +
-                    geom_text(
-                        aes(label = comma(stat(count))),
-                        hjust = 1.15, stat = 'count'
-                    )
-            }
-            if (!'themes' %in% dotArgs) {
-                dotArgs$themes <- upset_default_themes(
-                    panel.grid = element_blank()
-                )
-            }
-            if (!is.null(set_col)) {
-                ## Respect any existing set queries
-                existing_sets <- unlist(
-                    lapply(dotArgs$queries, function(x) x$set)
-                )
-                set_col <- rep(set_col, n)
-                names(set_col)[seq_len(n)] <- nm
-                ql <- lapply(
-                    setdiff(nm, existing_sets),
-                    function(i) {
-                        upset_query(set = i, fill = set_col[[i]])
-                    }
-                )
-                dotArgs$queries <- c(dotArgs$queries, ql)
-            }
-            dotArgs$sort_sets <- .sort_sets
-            p <- do.call("upset", c(ip, dotArgs))
-            return(p)
-        }
-
+    stopifnot(is(x, "GRangesList"))
+    nm <- names(x)
+    n <- length(x)
+    stopifnot(length(nm) == n)
+    type <- match.arg(type)
+    if (type == "auto") type <- ifelse(n > 3, "upset", "venn")
+    if (n == 1 & type == "upset")
+      stop("UpSet plots can only be drawn using more than one group")
+    if (length(var) > 1) {
+      var <- var[[1]]
+      message(
+        "Only one column can be specified in 'var'. Choosing ", var
+      )
     }
+
+    ## Dummy variables for R CMD check
+    count <- range <- intersection <- c()
+    # Collapse as required
+    gr <- makeConsensus(
+      x, var = var,
+      min.gapwidth = min.gapwidth, ignore.strand = ignore.strand
+    )
+
+    if (is.null(var) | type == "venn") {
+
+      ## Form a character list & plot
+      l <- lapply(
+        nm, function(x) as.character(gr)[mcols(gr)[[x]]]
+      )
+      names(l) <- nm
+      plotOverlaps(l, type = type, set_col = set_col, ...)
+
+    } else {
+
+      if (!is.numeric(mcols(x[[1]])[[var]]))
+        stop(var, " must contain numeric values")
+
+      ## Setup the df
+      tbl <- as_tibble(gr)
+      f <- match.arg(f)
+      f <- match.fun(f)
+      if (is(tbl[[var]], "list"))
+        tbl[[var]] <- vapply(tbl[[var]], f, numeric(1))
+
+      ## Setup the boxplot & key inputs
+      ann <- list2(
+        "{var}" := list(
+          aes = aes(x = intersection, y = !!sym(var)),
+          geom = geom_boxplot(na.rm = TRUE)
+        )
+      )
+      ip <- list(data = tbl, intersect = nm, annotations = ann)
+
+      ## Add default arguments, respecting any supplied
+      dotArgs <- list(...)
+      allowed <- unique(names(c(formals(upset), formals(upset_data))))
+      dotArgs <- dotArgs[names(dotArgs) %in% allowed]
+      if (!"set_sizes" %in% names(dotArgs)) {
+        dotArgs$set_sizes <- upset_set_size() +
+          geom_text(
+            aes(label = comma(after_stat(count))),
+            hjust = 1.15, stat = 'count'
+          ) +
+          scale_y_reverse(expand = expansion(c(0.25, 0)))
+      }
+      if (!'themes' %in% dotArgs) {
+        dotArgs$themes <- upset_default_themes(
+          panel.grid = element_blank()
+        )
+      }
+      if (!is.null(set_col)) {
+        ## Respect any existing set queries
+        existing_sets <- unlist(
+          lapply(dotArgs$queries, function(x) x$set)
+        )
+        set_col <- rep(set_col, n)
+        names(set_col)[seq_len(n)] <- nm
+        ql <- lapply(
+          setdiff(nm, existing_sets),
+          function(i) {
+            upset_query(set = i, fill = set_col[[i]])
+          }
+        )
+        dotArgs$queries <- c(dotArgs$queries, ql)
+      }
+      dotArgs$sort_sets <- .sort_sets
+      p <- do.call("upset", c(ip, dotArgs))
+      return(p)
+    }
+
+  }
 )
 #'
 #' @importFrom methods is
@@ -176,111 +177,115 @@ setMethod(
 #' @aliases plotOverlaps
 #' @export
 setMethod(
-    "plotOverlaps",
-    signature = "list",
-    function(
-        x, type = c("auto", "venn", "upset"), set_col = NULL, ...,
-        .sort_sets = 'ascending'
-    ) {
+  "plotOverlaps",
+  signature = "list",
+  function(
+    x, type = c("auto", "venn", "upset"), set_col = NULL, ...,
+    .sort_sets = 'ascending'
+  ) {
 
-        stopifnot(length(names(x)) == length(x))
-        n <- length(x)
-        nm <- names(x)
-        type <- match.arg(type)
-        if (type == "auto") type <- ifelse(n > 3, "upset", "venn")
-        x <- lapply(x, as.character)
-        x <- lapply(x, unique)
+    stopifnot(length(names(x)) == length(x))
+    n <- length(x)
+    nm <- names(x)
+    type <- match.arg(type)
+    if (type == "auto") type <- ifelse(n > 3, "upset", "venn")
+    x <- lapply(x, as.character)
+    x <- lapply(x, unique)
 
-        if (type == "upset") {
-            count <- c()
-            if (n == 1)
-                stop("UpSet plots can only be drawn using more than one group")
-            ## Setup the df
-            all_vals <- unique(unlist(x))
-            df <- lapply(
-                x, function(i) as.integer(all_vals %in% i)
-            )
-            df <- as.data.frame(df, row.names = all_vals)
-            ip <- list(data = df, intersect = names(df))
-            ## Add defaults
-            dotArgs <- list(...)
-            allowed <- unique(names(c(formals(upset), formals(upset_data))))
-            dotArgs <- dotArgs[names(dotArgs) %in% allowed]
-            if (!"set_sizes" %in% names(dotArgs)) {
-                dotArgs$set_sizes <- upset_set_size() +
-                    geom_text(
-                        aes(label = comma(stat(count))),
-                        hjust = 1.15, stat = 'count'
-                    )
-            }
-            if (!'themes' %in% dotArgs) {
-                dotArgs$themes <- upset_default_themes(
-                    panel.grid = element_blank()
-                )
-            }
-            if (!is.null(set_col)) {
-                ## Respect any existing set queries
-                existing_sets <- unlist(
-                    lapply(dotArgs$queries, function(x) x$set)
-                )
-                set_col <- rep(set_col, n)
-                names(set_col)[seq_len(n)] <- nm
-                ql <- lapply(
-                    setdiff(nm, existing_sets),
-                    function(i) {
-                        upset_query(set = i, fill = set_col[[i]])
-                    }
-                )
-                dotArgs$queries <- c(dotArgs$queries, ql)
-            }
-            dotArgs$sort_sets <- .sort_sets
-            p <- do.call("upset", c(ip, dotArgs))
-            return(p)
-        }
-
-        if (type == "venn") {
-            grid.newpage()
-            if (n == 1) p <- .plotSingleVenn(x, fill = set_col, ...)
-            if (n == 2) p <- .plotDoubleVenn(x, fill = set_col, ...)
-            if (n == 3) p <- .plotTripleVenn(x, fill = set_col, ...)
-        }
-        invisible(p)
-
+    if (type == "upset") {
+      count <- c()
+      if (n == 1)
+        stop("UpSet plots can only be drawn using more than one group")
+      ## Setup the df
+      all_vals <- unique(unlist(x))
+      df <- lapply(
+        x, function(i) as.integer(all_vals %in% i)
+      )
+      ## Ensure colnames are respected
+      col_names <- names(df)
+      df <- as.data.frame(df, row.names = all_vals)
+      colnames(df) <- col_names
+      ip <- list(data = df, intersect = names(df))
+      ## Add defaults
+      dotArgs <- list(...)
+      allowed <- unique(names(c(formals(upset), formals(upset_data))))
+      dotArgs <- dotArgs[names(dotArgs) %in% allowed]
+      if (!"set_sizes" %in% names(dotArgs)) {
+        dotArgs$set_sizes <- upset_set_size() +
+          geom_text(
+            aes(label = comma(after_stat(count))),
+            hjust = 1.15, stat = 'count'
+          ) +
+          scale_y_reverse(expand = expansion(c(0.25, 0)))
+      }
+      if (!'themes' %in% dotArgs) {
+        dotArgs$themes <- upset_default_themes(
+          panel.grid = element_blank()
+        )
+      }
+      if (!is.null(set_col)) {
+        ## Respect any existing set queries
+        existing_sets <- unlist(
+          lapply(dotArgs$queries, function(x) x$set)
+        )
+        set_col <- rep(set_col, n)
+        names(set_col)[seq_len(n)] <- nm
+        ql <- lapply(
+          setdiff(nm, existing_sets),
+          function(i) {
+            upset_query(set = i, fill = set_col[[i]])
+          }
+        )
+        dotArgs$queries <- c(dotArgs$queries, ql)
+      }
+      dotArgs$sort_sets <- .sort_sets
+      p <- do.call("upset", c(ip, dotArgs))
+      return(p)
     }
+
+    if (type == "venn") {
+      grid.newpage()
+      if (n == 1) p <- .plotSingleVenn(x, fill = set_col, ...)
+      if (n == 2) p <- .plotDoubleVenn(x, fill = set_col, ...)
+      if (n == 3) p <- .plotTripleVenn(x, fill = set_col, ...)
+    }
+    invisible(p)
+
+  }
 )
 
 #' @importFrom VennDiagram draw.single.venn
 .plotSingleVenn <- function(x, ...) {
-    stopifnot(length(x) == 1)
-    draw.single.venn(area = length(x[[1]]), category = names(x)[[1]], ...)
+  stopifnot(length(x) == 1)
+  draw.single.venn(area = length(x[[1]]), category = names(x)[[1]], ...)
 }
 
 #' @importFrom VennDiagram draw.pairwise.venn
 .plotDoubleVenn <- function(x, ...) {
-    stopifnot(length(x) == 2)
-    plotArgs <- setNames(lapply(x, length), c("area1", "area2"))
-    plotArgs$cross.area <- sum(duplicated(unlist(x)))
-    plotArgs$category <- names(x)
-    allowed <- c("gList1", "margin", names(formals(draw.pairwise.venn)))
-    dotArgs <- list(...)
-    dotArgs <- dotArgs[names(dotArgs) %in% allowed]
-    do.call("draw.pairwise.venn", c(plotArgs, dotArgs))
+  stopifnot(length(x) == 2)
+  plotArgs <- setNames(lapply(x, length), c("area1", "area2"))
+  plotArgs$cross.area <- sum(duplicated(unlist(x)))
+  plotArgs$category <- names(x)
+  allowed <- c("gList1", "margin", names(formals(draw.pairwise.venn)))
+  dotArgs <- list(...)
+  dotArgs <- dotArgs[names(dotArgs) %in% allowed]
+  do.call("draw.pairwise.venn", c(plotArgs, dotArgs))
 
 }
 
 #' @importFrom VennDiagram draw.triple.venn
 .plotTripleVenn <- function(x, ...) {
-    stopifnot(length(x) == 3)
-    plotArgs <- setNames(lapply(x, length), paste0("area", seq_len(3)))
-    plotArgs$n12 <- sum(duplicated(unlist(x[c(1, 2)])))
-    plotArgs$n13 <- sum(duplicated(unlist(x[c(1, 3)])))
-    plotArgs$n23 <- sum(duplicated(unlist(x[c(2, 3)])))
-    plotArgs$n123 <- sum(table(unlist(x)) == 3)
-    plotArgs$category <- names(x)
-    plotArgs$overrideTriple <- TRUE
-    allowed <- c("gList1", "margin", names(formals(draw.triple.venn)))
-    dotArgs <- list(...)
-    dotArgs <- dotArgs[names(dotArgs) %in% allowed]
-    do.call("draw.triple.venn", c(plotArgs, dotArgs))
+  stopifnot(length(x) == 3)
+  plotArgs <- setNames(lapply(x, length), paste0("area", seq_len(3)))
+  plotArgs$n12 <- sum(duplicated(unlist(x[c(1, 2)])))
+  plotArgs$n13 <- sum(duplicated(unlist(x[c(1, 3)])))
+  plotArgs$n23 <- sum(duplicated(unlist(x[c(2, 3)])))
+  plotArgs$n123 <- sum(table(unlist(x)) == 3)
+  plotArgs$category <- names(x)
+  plotArgs$overrideTriple <- TRUE
+  allowed <- c("gList1", "margin", names(formals(draw.triple.venn)))
+  dotArgs <- list(...)
+  dotArgs <- dotArgs[names(dotArgs) %in% allowed]
+  do.call("draw.triple.venn", c(plotArgs, dotArgs))
 }
 

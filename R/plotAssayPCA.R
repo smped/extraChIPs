@@ -118,6 +118,7 @@ setMethod(
         if (show_points) p <- p + geom_point()
         if (!is.null(label)) {
             lab_fun <- ifelse(show_points, geom_text_repel, geom_text)
+            if (show_points) formals(lab_fun)$show.legend <- FALSE
             p <- p +
                 lab_fun(
                     aes(x = {{ x }}, y = {{ y }}, label = {{ label }}), ...
