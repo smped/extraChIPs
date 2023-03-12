@@ -13,6 +13,10 @@ test_that("mergedByHMP behaves correctly for GRanges",{
   expect_s4_class(mergeBySig(x, df, pval = "p")$keyval_range, "GRanges")
   expect_equal(as.character(new_gr$keyval_range), as.character(x)[-1])
   expect_true(all(c("hmp", "hmp_fdr") %in% colnames(mcols(new_gr))))
+  expect_equal(
+    new_gr$hmp[[1]],
+    as.numeric(harmonicmeanp::p.hmp(x$p[1:2], L = 2, multilevel = FALSE))
+  )
 })
 
 
@@ -30,4 +34,15 @@ test_that(".ec_HMP returns correct values",{
     as.numeric(harmonicmeanp::p.hmp(p, w = w, L = 10, multilevel = FALSE)),
     extraChIPs:::.ec_HMP(p, w)
   )
-} )
+})
+
+test_that(".ec_HMP_adj returns correct values",{
+  # Doesn't matter if these are random every time. It's probs better actually
+  p <- runif(10)
+  w <- runif(10)
+  w <- w / sum(w)
+  expect_equal(
+    as.numeric(harmonicmeanp::p.hmp(p, w = w, L = 100)) / sum(w),
+    extraChIPs:::.ec_HMP_adj(p, w, 100)
+  )
+})

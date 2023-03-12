@@ -55,7 +55,10 @@ the significance from statistical testing (pval)}
 \code{df} to return. Values will correspond to the range in the \code{keyval_range}
 column}
 
-\item{p_adj_method}{One of \code{p.adjust.methods}}
+\item{p_adj_method}{One of \code{p.adjust.methods} or "fwer". If "fwer" is
+specified the adjusted harmonic-mean p-value will be returned in a form
+which strictly controls the experiment-wide FWER. Please see
+vignette("harmonicmeanp") for more details}
 
 \item{merge_within}{Merge any non-overlapping windows within this distance}
 
@@ -104,6 +107,6 @@ df <- DataFrame(logFC = rnorm(3), logCPM = rnorm(3,8), p = rexp(3, 10))
 mergeByHMP(x, df, pval = "p")
 mcols(x) <- df
 x
-mergeByHMP(x, pval = "p")
+mergeByHMP(x, pval = "p", p_adj_method = "fwer")
 
 }

@@ -40,7 +40,10 @@
 #' @param inc_cols (Optional) Character vector of any additional columns in
 #' `df` to return. Values will correspond to the range in the `keyval_range`
 #' column
-#' @param p_adj_method One of `p.adjust.methods`
+#' @param p_adj_method One of `p.adjust.methods` or "fwer". If "fwer" is
+#' specified the adjusted harmonic-mean p-value will be returned in a form
+#' which strictly controls the experiment-wide FWER. Please see
+#' vignette("harmonicmeanp") for more details
 #' @param merge_within Merge any non-overlapping windows within this distance
 #' @param ignore_strand Passed internally to \link[GenomicRanges]{reduce} and
 #' \link[GenomicRanges]{findOverlaps}
@@ -58,7 +61,7 @@
 #' mergeByHMP(x, df, pval = "p")
 #' mcols(x) <- df
 #' x
-#' mergeByHMP(x, pval = "p")
+#' mergeByHMP(x, pval = "p", p_adj_method = "fwer")
 #'
 #' @name mergeByHMP
 #' @rdname mergeByHMP-methods
@@ -90,11 +93,12 @@ setMethod(
     logfc <- match.arg(logfc, df_cols)
     pval <- match.arg(pval, df_cols)
     cpm <- match.arg(cpm, df_cols)
-    p_adj_method <- match.arg(p_adj_method, p.adjust.methods)
+    p_adj_method <- match.arg(p_adj_method, c(p.adjust.methods, "fwer"))
     if (is.null(w)) {
-      df[["weights"]] <- 1
+      ## Need to sum \leq one using the HMP algorithms
+      df[["weights"]] <- 1 / nrow(df)
     } else {
-      df[["weights"]] <- w
+      df[["weights"]] <- w / sum(w)
     }
 
     ## Define the columns to return
@@ -144,7 +148,16 @@ setMethod(
     ret_df <- left_join(ret_df, inc_df, by = "subjectHits")
     ret_df <- ret_df[c(n_cols, ret_cols)]
     adj_col <- paste0("hmp_", p_adj_method)
-    ret_df[[adj_col]] <- p.adjust(ret_df$hmp, p_adj_method)
+    if (p_adj_method != "fwer") {
+      ret_df[[adj_col]] <- p.adjust(ret_df$hmp, p_adj_method)
+    } else {
+      ## Apply the FWER adjusted version if requested
+      L <- length(x)
+      adj_df <- summarise(
+        grp_df, adjp = .ec_HMP_adj(!!sym(pval), !!sym("weights"), L)
+      )
+      ret_df[[adj_col]] <- adj_df[["adjp"]]
+    }
     mcols(ranges_out) <- as.data.frame(ret_df)
     ranges_out$keyval_range <- GRanges(
       ranges_out$keyval_range, seqinfo = seqinfo(ranges_out)
@@ -202,3 +215,25 @@ setMethod(
   )
   Rcout$cF
 }
+
+#' Similar to the above, this produces the FWER-controlled version in a
+#' streamlined way
+#' @param p vector of p-values
+#' @param w vector of weights
+#' @param L Number of global tests
+#' @useDynLib extraChIPs, .registration = TRUE
+#' @keywords internal
+.ec_HMP_adj <- function(p, w, L) {
+  hmp <- sum(w) / sum(w / p)
+  w.sum <- sum(w)
+  loc <- log(L[[1]]) + 1 + digamma(1) - log(2/pi)
+  dbl <- double(1)
+  Rcout <- .C(
+    "my_RtailsMSS", loc, w.sum/hmp, d = dbl, logd = dbl, `F` = dbl, logF = dbl,
+    cF = dbl, logcF = dbl,
+    COPY = rep(c(FALSE, TRUE), c(2, 6)), PACKAGE = "extraChIPs"
+  )
+  Rcout$cF
+}
+
+
