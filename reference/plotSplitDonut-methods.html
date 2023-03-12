@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.6</span>
       </span>
     </div>
 
@@ -90,8 +90,14 @@
 <span>  inner_label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"label"</span>, <span class="st">"text"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
 <span>  outer_label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"label"</span>, <span class="st">"text"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
 <span>  label_alpha <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  inner_label_alpha <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  outer_label_alpha <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  label_size <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  inner_label_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  outer_label_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  min_p <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>  inner_min_p <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  outer_min_p <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  explode_inner <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  explode_outer <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  explode_query <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AND"</span>, <span class="st">"OR"</span><span class="op">)</span>,</span>
@@ -102,6 +108,8 @@
 <span>  expand <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>  inner_palette <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  outer_palette <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  inner_legend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  outer_legend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  layout <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>main <span class="op">=</span> <span class="fu">area</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">6</span>, <span class="fl">6</span><span class="op">)</span>, lg1 <span class="op">=</span> <span class="fu">area</span><span class="op">(</span><span class="fl">2</span>, <span class="fl">7</span><span class="op">)</span>, lg2 <span class="op">=</span> <span class="fu">area</span><span class="op">(</span><span class="fl">4</span>, <span class="fl">7</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -155,7 +163,8 @@ calculated and as such, this value should appear within this argument.</p></dd>
 <dd><p><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a>-syntax for formatting labels
 which appear on each inner/outer segment Internally, the values <code>n</code> and <code>p</code>
 will be calculated as totals and proportions of the total. As such, these
-values can appear within this argument.</p></dd>
+values can appear within this argument, as well as the fields described in
+the details</p></dd>
 
 
 <dt>inner_label, outer_label</dt>
@@ -164,17 +173,19 @@ If setting one the first two values, the labelling function <code>geom_*</code> 
 called, otherwise no label will be drawn</p></dd>
 
 
-<dt>label_alpha</dt>
-<dd><p>transparency for labels in the inner ring only</p></dd>
+<dt>label_alpha, inner_label_alpha, outer_label_alpha</dt>
+<dd><p>transparency for
+labels</p></dd>
 
 
-<dt>label_size</dt>
+<dt>label_size, inner_label_size, outer_label_size</dt>
 <dd><p>Size of all text labels</p></dd>
 
 
-<dt>min_p</dt>
-<dd><p>only display labels for segments representing greater than this
-proportion of the total</p></dd>
+<dt>min_p, inner_min_p, outer_min_p</dt>
+<dd><p>only display labels for segments
+representing greater than this proportion of the total. If inner/outer values
+are specified, the values in <code>min_p</code> will be ignored for that layer</p></dd>
 
 
 <dt>explode_inner, explode_outer</dt>
@@ -209,6 +220,10 @@ and outer ring will require matches in both categories</p></dd>
 
 <dt>outer_palette</dt>
 <dd><p>Optional colour palette for the outer ring</p></dd>
+
+
+<dt>inner_legend, outer_legend</dt>
+<dd><p>logical(1). Show legends for either layer</p></dd>
 
 
 <dt>layout</dt>
@@ -246,8 +261,9 @@ additional text, such as 'kb' if scaling GenomicRanges by width. The same
 approach can be taken for the inner and outer labels, where totals are
 held in the value <code>n</code>, proportions are held in the value <code>p</code> and the values
 corresponding to each segment can be accessed using <code>.data[[inner]]</code> or
-<code>.data[[outer]]</code>. Values from the inner segments can be added to the outer
-labels using this strategy enabling a wide variety of labellinf approaches
+<code>.data[[outer]]</code>. Column titles can be added using <code>{inner}</code>/<code>{outer}</code>.
+Values from the inner segments can be added to the outer
+labels using this strategy enabling a wide variety of labelling approaches
 to be utilised.</p>
     </div>
 
@@ -262,13 +278,13 @@ to be utilised.</p>
 <span class="r-in"><span>  TF2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Up"</span>, <span class="st">"Down"</span>, <span class="st">"Unchanged"</span><span class="op">)</span>, <span class="fl">200</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co">## The standard plot</span></span></span>
-<span class="r-in"><span><span class="fu">plotSplitDonut</span><span class="op">(</span><span class="va">df</span>, inner <span class="op">=</span> <span class="st">"TF1"</span>, outer <span class="op">=</span> <span class="st">"TF2"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plotSplitDonut</span><span class="op">(</span><span class="va">df</span>, inner <span class="op">=</span> <span class="st">"TF1"</span>, outer <span class="op">=</span> <span class="st">"TF2"</span>, inner_legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotSplitDonut-methods-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Adding an exploded section along with an outer palette &amp; customisation</span></span></span>
 <span class="r-in"><span><span class="fu">plotSplitDonut</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">df</span>, inner <span class="op">=</span> <span class="st">"TF1"</span>, outer <span class="op">=</span> <span class="st">"feature"</span>, total_size <span class="op">=</span> <span class="cn">NA</span>,</span></span>
-<span class="r-in"><span>  label_alpha <span class="op">=</span> <span class="fl">0.5</span>, r_centre <span class="op">=</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>  inner_label_alpha <span class="op">=</span> <span class="fl">0.5</span>, r_centre <span class="op">=</span> <span class="fl">0</span>,</span></span>
 <span class="r-in"><span>  outer_glue <span class="op">=</span> <span class="st">"{.data[[outer]]}\n(n = {n})"</span>, outer_label <span class="op">=</span> <span class="st">"text"</span>,</span></span>
 <span class="r-in"><span>  explode_inner <span class="op">=</span> <span class="st">"Up"</span>, explode_outer <span class="op">=</span> <span class="st">"Prom|Enh"</span>,</span></span>
 <span class="r-in"><span>  explode_query <span class="op">=</span> <span class="st">"AND"</span>, explode_r <span class="op">=</span> <span class="fl">0.4</span>,</span></span>

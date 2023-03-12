@@ -43,6 +43,12 @@
     <loc>/reference/distinctMC.html</loc>
   </url>
   <url>
+    <loc>/reference/dot-ec_HMP.html</loc>
+  </url>
+  <url>
+    <loc>/reference/dot-ec_HMP_adj.html</loc>
+  </url>
+  <url>
     <loc>/reference/dot-makeFinalProfileHeatmap.html</loc>
   </url>
   <url>
@@ -83,6 +89,9 @@
   </url>
   <url>
     <loc>/reference/mergeByCol-methods.html</loc>
+  </url>
+  <url>
+    <loc>/reference/mergeByHMP-methods.html</loc>
   </url>
   <url>
     <loc>/reference/mergeBySig-methods.html</loc>
