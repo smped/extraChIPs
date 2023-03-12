@@ -430,7 +430,7 @@ plotHFGC <- function(
             GRCg6a = "galGal6"
         )
         if (gen %in% names(grc2ucsc)) gen <- grc2ucsc[gen]
-        ## Now check for a valid UCSC name & set to NULL for an automatic download
+        ## Now check for a valid UCSC name & set to NULL for an auto download
         avail <- ucscGenomes()[,"db"]
         if (gen %in% avail) {
             .bands <- NULL
@@ -487,7 +487,8 @@ plotHFGC <- function(
 #' @importFrom methods is
 #' @importFrom stringr str_trim
 .addAnnotations <- function(
-        .annotation, .gr, .cov_tracks, .coverage, .fill, .size, .col.title, .bg.title
+        .annotation, .gr, .cov_tracks, .coverage, .fill, .size, .col.title,
+        .bg.title
 ) {
     if (missing(.annotation) | is.null(.cov_tracks)) return(.cov_tracks)
     ## Set everything grey if no colour is specified
@@ -535,8 +536,8 @@ plotHFGC <- function(
 #' @importFrom IRanges subsetByOverlaps
 #' @importFrom Gviz AnnotationTrack
 .makeFeatureTrack <- function(
-        .features, .gr, .fontsize, .fill, .tracksize, .cex, .rot, .name, .stacking,
-        .col.title, .bg.title
+        .features, .gr, .fontsize, .fill, .tracksize, .cex, .rot, .name,
+        .stacking, .col.title, .bg.title
 ) {
 
     if (missing(.features)) return(NULL)
@@ -573,8 +574,8 @@ plotHFGC <- function(
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom methods is
 .makeGeneTracks <- function(
-        .genes, .gr, .collapse, .fontsize, .col, .tracksize, .cex, .rot, .col.title,
-        .bg.title, .max_trans
+        .genes, .gr, .collapse, .fontsize, .col, .tracksize, .cex, .rot,
+        .col.title, .bg.title, .max_trans
 ) {
 
     if (missing(.genes)) return(list(NULL))
@@ -583,29 +584,28 @@ plotHFGC <- function(
     if (is(.genes, "GRanges")) {
         ## If a single GRanges object, just return a single track
         if (missing(.col)) .col <- "#FFD58A"
-        ids <- subsetByOverlaps(.genes, .gr)$gene
-        if (length(ids) == 0) return(list(NULL))
-        .genes <- subset(.genes, gene %in% ids)
+                ids <- subsetByOverlaps(.genes, .gr)$gene
+                if (length(ids) == 0) return(list(NULL))
+                .genes <- subset(.genes, gene %in% ids)
 
-        if (.collapse == "auto") {
-            ## Check for the maximum at every genomic position to be plotted
-            n_trans <- max(max(coverage(.genes)))
-            if (n_trans > .max_trans) {
-                .collapse <- "meta"
-            } else {
-                .collapse = FALSE
-            }
-        }
+                if (.collapse == "auto") {
+                    ## Check for the maximum at every genomic position
+                    n_trans <- max(max(coverage(.genes)))
+                    if (n_trans > .max_trans) {
+                        .collapse <- "meta"
+                    } else {
+                        .collapse = FALSE
+                    }
+                }
 
-        trackList <- GeneRegionTrack(
-            .genes, name = "Genes",
-            transcriptAnnotation = "symbol", collapseTranscripts = .collapse,
-            size = .tracksize, fontsize = .fontsize,
-            col = "transparent", fill = .col[[1]],
-            cex.title = .cex, rotation.title = .rot, col.title = .col.title,
-            background.title = .bg.title
-        )
-        return(trackList)
+                trackList <- GeneRegionTrack(
+                    .genes, name = "Genes", transcriptAnnotation = "symbol",
+                    collapseTranscripts = .collapse, size = .tracksize,
+                    fontsize = .fontsize, col = "transparent", fill = .col[[1]],
+                    cex.title = .cex, rotation.title = .rot,
+                    col.title = .col.title, background.title = .bg.title
+                )
+                return(trackList)
     }
 
     ## Below will only execute if .genes is a GRangesList
@@ -943,8 +943,8 @@ plotHFGC <- function(
                     msg <- c(
                         msg,
                         paste(
-                            "ylim can be a named list or numeric vector of length",
-                            ">= 2\n"
+                            "ylim can be a named list or numeric vector of",
+                            "length >= 2\n"
                         )
                     )
             } else {

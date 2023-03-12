@@ -28,8 +28,14 @@ plotSplitDonut(object, ...)
   inner_label = c("label", "text", "none"),
   outer_label = c("label", "text", "none"),
   label_alpha = 1,
+  inner_label_alpha = NULL,
+  outer_label_alpha = NULL,
   label_size = 3,
+  inner_label_size = NULL,
+  outer_label_size = NULL,
   min_p = 0.05,
+  inner_min_p = NULL,
+  outer_min_p = NULL,
   explode_inner = NULL,
   explode_outer = NULL,
   explode_query = c("AND", "OR"),
@@ -40,6 +46,8 @@ plotSplitDonut(object, ...)
   expand = 0.1,
   inner_palette = NULL,
   outer_palette = NULL,
+  inner_legend = TRUE,
+  outer_legend = TRUE,
   layout = c(main = area(1, 1, 6, 6), lg1 = area(2, 7), lg2 = area(4, 7)),
   ...
 )
@@ -72,18 +80,21 @@ calculated and as such, this value should appear within this argument.}
 \item{inner_glue, outer_glue}{\link[glue]{glue}-syntax for formatting labels
 which appear on each inner/outer segment Internally, the values \code{n} and \code{p}
 will be calculated as totals and proportions of the total. As such, these
-values can appear within this argument.}
+values can appear within this argument, as well as the fields described in
+the details}
 
 \item{inner_label, outer_label}{Can take values 'text', 'label' or 'none'.
 If setting one the first two values, the labelling function \verb{geom_*} will be
 called, otherwise no label will be drawn}
 
-\item{label_alpha}{transparency for labels in the inner ring only}
+\item{label_alpha, inner_label_alpha, outer_label_alpha}{transparency for
+labels}
 
-\item{label_size}{Size of all text labels}
+\item{label_size, inner_label_size, outer_label_size}{Size of all text labels}
 
-\item{min_p}{only display labels for segments representing greater than this
-proportion of the total}
+\item{min_p, inner_min_p, outer_min_p}{only display labels for segments
+representing greater than this proportion of the total. If inner/outer values
+are specified, the values in \code{min_p} will be ignored for that layer}
 
 \item{explode_inner, explode_outer}{Regular expressions from either the inner
 or outer ring for which segments will be 'exploded'}
@@ -102,6 +113,8 @@ and outer ring will require matches in both categories}
 \item{inner_palette}{Colour palette for the inner ring}
 
 \item{outer_palette}{Optional colour palette for the outer ring}
+
+\item{inner_legend, outer_legend}{logical(1). Show legends for either layer}
 
 \item{layout}{Passed to \link[patchwork]{plot_layout}}
 }
@@ -138,8 +151,9 @@ additional text, such as 'kb' if scaling GenomicRanges by width. The same
 approach can be taken for the inner and outer labels, where totals are
 held in the value \code{n}, proportions are held in the value \code{p} and the values
 corresponding to each segment can be accessed using \code{.data[[inner]]} or
-\code{.data[[outer]]}. Values from the inner segments can be added to the outer
-labels using this strategy enabling a wide variety of labellinf approaches
+\code{.data[[outer]]}. Column titles can be added using \code{{inner}}/\code{{outer}}.
+Values from the inner segments can be added to the outer
+labels using this strategy enabling a wide variety of labelling approaches
 to be utilised.
 }
 \examples{
@@ -152,12 +166,12 @@ df <- data.frame(
   TF2 = sample(c("Up", "Down", "Unchanged"), 200, replace = TRUE)
 )
 ## The standard plot
-plotSplitDonut(df, inner = "TF1", outer = "TF2")
+plotSplitDonut(df, inner = "TF1", outer = "TF2", inner_legend = FALSE)
 
 ## Adding an exploded section along with an outer palette & customisation
 plotSplitDonut(
   df, inner = "TF1", outer = "feature", total_size = NA,
-  label_alpha = 0.5, r_centre = 0,
+  inner_label_alpha = 0.5, r_centre = 0,
   outer_glue = "{.data[[outer]]}\n(n = {n})", outer_label = "text",
   explode_inner = "Up", explode_outer = "Prom|Enh",
   explode_query = "AND", explode_r = 0.4,

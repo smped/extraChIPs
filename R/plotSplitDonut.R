@@ -29,8 +29,9 @@
 #' approach can be taken for the inner and outer labels, where totals are
 #' held in the value `n`, proportions are held in the value `p` and the values
 #' corresponding to each segment can be accessed using `.data[[inner]]` or
-#' `.data[[outer]]`. Values from the inner segments can be added to the outer
-#' labels using this strategy enabling a wide variety of labellinf approaches
+#' `.data[[outer]]`. Column titles can be added using `{inner}`/`{outer}`.
+#' Values from the inner segments can be added to the outer
+#' labels using this strategy enabling a wide variety of labelling approaches
 #' to be utilised.
 #'
 #' @return
@@ -53,14 +54,17 @@
 #' @param inner_glue,outer_glue \link[glue]{glue}-syntax for formatting labels
 #' which appear on each inner/outer segment Internally, the values `n` and `p`
 #' will be calculated as totals and proportions of the total. As such, these
-#' values can appear within this argument.
+#' values can appear within this argument, as well as the fields described in
+#' the details
 #' @param inner_label,outer_label Can take values 'text', 'label' or 'none'.
 #' If setting one the first two values, the labelling function `geom_*` will be
 #' called, otherwise no label will be drawn
-#' @param label_size Size of all text labels
-#' @param label_alpha transparency for labels in the inner ring only
-#' @param min_p only display labels for segments representing greater than this
-#' proportion of the total
+#' @param label_size,inner_label_size,outer_label_size Size of all text labels
+#' @param label_alpha,inner_label_alpha,outer_label_alpha transparency for
+#' labels
+#' @param min_p,inner_min_p,outer_min_p only display labels for segments
+#' representing greater than this proportion of the total. If inner/outer values
+#' are specified, the values in `min_p` will be ignored for that layer
 #' @param explode_inner,explode_outer Regular expressions from either the inner
 #' or outer ring for which segments will be 'exploded'
 #' @param explode_query Setting to AND and specifying values for both the inner
@@ -71,6 +75,7 @@
 #' @param expand Passed to \link[ggplot2]{expansion} for both x and y axes
 #' @param inner_palette Colour palette for the inner ring
 #' @param outer_palette Optional colour palette for the outer ring
+#' @param inner_legend,outer_legend logical(1). Show legends for either layer
 #' @param layout Passed to \link[patchwork]{plot_layout}
 #' @param ... Not used
 #'
@@ -84,12 +89,12 @@
 #'   TF2 = sample(c("Up", "Down", "Unchanged"), 200, replace = TRUE)
 #' )
 #' ## The standard plot
-#' plotSplitDonut(df, inner = "TF1", outer = "TF2")
+#' plotSplitDonut(df, inner = "TF1", outer = "TF2", inner_legend = FALSE)
 #'
 #' ## Adding an exploded section along with an outer palette & customisation
 #' plotSplitDonut(
 #'   df, inner = "TF1", outer = "feature", total_size = NA,
-#'   label_alpha = 0.5, r_centre = 0,
+#'   inner_label_alpha = 0.5, r_centre = 0,
 #'   outer_glue = "{.data[[outer]]}\n(n = {n})", outer_label = "text",
 #'   explode_inner = "Up", explode_outer = "Prom|Enh",
 #'   explode_query = "AND", explode_r = 0.4,
@@ -148,11 +153,14 @@ setMethod(
         outer_glue = "{outer} {.data[[outer]]}\n{percent(p,0.1)}",
         inner_label = c("label", "text", "none"),
         outer_label = c("label", "text", "none"),
-        label_alpha = 1, label_size = 3, min_p = 0.05,
+        label_alpha = 1, inner_label_alpha = NULL, outer_label_alpha = NULL,
+        label_size = 3, inner_label_size = NULL, outer_label_size = NULL,
+        min_p = 0.05, inner_min_p = NULL, outer_min_p = NULL,
         explode_inner = NULL, explode_outer = NULL,
         explode_query = c("AND", "OR"), explode_x = 0, explode_y = 0,
         explode_r = 0, nudge_r = 0.5,
         expand = 0.1, inner_palette = NULL, outer_palette = NULL,
+        inner_legend = TRUE, outer_legend = TRUE,
         layout = c(main = area(1, 1, 6, 6), lg1 = area(2, 7), lg2 = area(4, 7)),
         ...
     ) {
@@ -171,6 +179,12 @@ setMethod(
         if (is.null(explode_inner)) explode_inner <- "^$"
         if (is.null(explode_outer)) explode_outer <- "^$"
         if (any(c(explode_inner, explode_outer) == "^$")) explode_query <- "OR"
+        if (is.null(inner_min_p)) inner_min_p <- min_p
+        if (is.null(outer_min_p)) outer_min_p <- min_p
+        if (is.null(inner_label_alpha)) inner_label_alpha <- label_alpha
+        if (is.null(outer_label_alpha)) outer_label_alpha <- label_alpha
+        if (is.null(inner_label_size)) inner_label_size <- label_size
+        if (is.null(outer_label_size)) outer_label_size <- label_size
 
         summ_df <- group_by(object, !!!syms(c(inner, outer)))
         if (is.null(scale_by)) {
@@ -250,40 +264,46 @@ setMethod(
                 inner_palette[seq_along(lev_inner)], lev_inner
             )
         ## Make up a legend for the inner ring
-        inner_leg <- ggplot(
-            tibble("{inner}" := factor(lev_inner, levels = lev_inner)),
-            aes(x = 1, y = .data[[inner]], fill = .data[[inner]])
-        ) +
-            geom_raster() +
-            scale_fill_manual(values = inner_palette)
-        inner_gr <- ggplot_gtable(ggplot_build(inner_leg))
-        ind <- vapply(
-            inner_gr$grobs, function(x) x$name == "guide-box", logical(1)
-        )
-        lg1 <- inner_gr$grobs[[which(ind)[[1]]]]
-        lg2 <- plot_spacer()
+        lg1 <- plot_spacer()
+        if (inner_legend) {
+            inner_leg <- ggplot(
+                tibble("{inner}" := factor(lev_inner, levels = lev_inner)),
+                aes(x = 1, y = .data[[inner]], fill = .data[[inner]])
+            ) +
+                geom_raster() +
+                scale_fill_manual(values = inner_palette)
+            inner_gr <- ggplot_gtable(ggplot_build(inner_leg))
+            ind <- vapply(
+                inner_gr$grobs, function(x) x$name == "guide-box", logical(1)
+            )
+            lg1 <- inner_gr$grobs[[which(ind)[[1]]]]
+        }
         ## Rename for the actual plotting palette
         names(inner_palette) <- paste(inner, names(inner_palette))
         full_palette <- inner_palette
 
         ## Repeat for the outer ring if required
+        lg2 <- plot_spacer()
         if (!is.null(outer_palette)) {
             stopifnot(length(outer_palette) >= length(lev_outer))
             if (is.null(names(outer_palette)))
                 outer_palette <- setNames(
                     outer_palette[seq_along(lev_outer)], lev_outer
                 )
-            outer_leg <- ggplot(
-                tibble("{outer}" := factor(lev_outer, levels = lev_outer)),
-                aes(x = 1, y = .data[[outer]], fill = .data[[outer]])
-            ) +
-                geom_raster() +
-                scale_fill_manual(values = outer_palette)
-            outer_gr <- ggplot_gtable(ggplot_build(outer_leg))
-            ind <- vapply(
-                outer_gr$grobs, function(x) x$name == "guide-box", logical(1)
-            )
-            lg2 <- outer_gr$grobs[[which(ind)[[1]]]]
+            if (outer_legend) {
+                outer_leg <- ggplot(
+                    tibble("{outer}" := factor(lev_outer, levels = lev_outer)),
+                    aes(x = 1, y = .data[[outer]], fill = .data[[outer]])
+                ) +
+                    geom_raster() +
+                    scale_fill_manual(values = outer_palette)
+                outer_gr <- ggplot_gtable(ggplot_build(outer_leg))
+                ind <- vapply(
+                    outer_gr$grobs, function(x) x$name == "guide-box",
+                    logical(1)
+                )
+                lg2 <- outer_gr$grobs[[which(ind)[[1]]]]
+            }
             names(outer_palette) <- paste(outer, names(outer_palette))
             full_palette <- c(inner_palette, outer_palette)
             ## Tidy up the main data.frame for the two palette style
@@ -318,8 +338,8 @@ setMethod(
                     x = sin(mid) * (x + 0.5 * r_inner) + x0,
                     y = cos(mid) * (x + 0.5 * r_inner) + y0, label = lab
                 ),
-                data = dplyr::filter(plot_df, ring == "inner", p > min_p),
-                size = label_size, alpha = label_alpha
+                data = dplyr::filter(plot_df, ring == "inner", p > inner_min_p),
+                size = inner_label_size, alpha = inner_label_alpha
             )
         }
         if (outer_label != "none") {
@@ -329,8 +349,8 @@ setMethod(
                     x = sin(mid) * (x1 + nudge_r) + x0 ,
                     y = cos(mid) * (x1 + nudge_r) + y0, label = lab
                 ),
-                data = dplyr::filter(plot_df, ring == "outer", p > min_p),
-                size = label_size, alpha = label_alpha
+                data = dplyr::filter(plot_df, ring == "outer", p > outer_min_p),
+                size = outer_label_size, alpha = outer_label_alpha
             )
         }
 
@@ -345,7 +365,7 @@ setMethod(
             labs(fill = NULL) +
             guides(alpha = "none", fill = "none")
 
-        p + lg1 + lg2 +  plot_layout(design = layout)
+        p + lg1 + lg2 + plot_layout(design = layout)
 
     }
 

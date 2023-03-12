@@ -67,8 +67,8 @@
 #' @rdname mergeByHMP-methods
 #' @export
 setGeneric(
-  "mergeByHMP",
-  function(x, ...){standardGeneric("mergeByHMP")}
+    "mergeByHMP",
+    function(x, ...){standardGeneric("mergeByHMP")}
 )
 #' @importFrom S4Vectors DataFrame mcols 'mcols<-' subjectHits
 #' @importFrom GenomicRanges findOverlaps
@@ -77,113 +77,113 @@ setGeneric(
 #' @rdname mergeByHMP-methods
 #' @export
 setMethod(
-  "mergeByHMP",
-  signature = signature(x = "GenomicRanges"),
-  function(
-    x, df = NULL, w = NULL,
-    logfc = "logFC", pval = "P", cpm = "logCPM", inc_cols = NULL,
-    p_adj_method = "fdr", merge_within = 1L, ignore_strand = TRUE, ...
-  ){
+    "mergeByHMP",
+    signature = signature(x = "GenomicRanges"),
+    function(
+        x, df = NULL, w = NULL,
+        logfc = "logFC", pval = "P", cpm = "logCPM", inc_cols = NULL,
+        p_adj_method = "fdr", merge_within = 1L, ignore_strand = TRUE, ...
+    ){
 
-    ## Checks & defining the key columns
-    if (is.null(df)) df <- mcols(x)
-    stopifnot(nrow(df) == length(x))
-    df <- as.data.frame(df)
-    df_cols <- colnames(df)
-    logfc <- match.arg(logfc, df_cols)
-    pval <- match.arg(pval, df_cols)
-    cpm <- match.arg(cpm, df_cols)
-    p_adj_method <- match.arg(p_adj_method, c(p.adjust.methods, "fwer"))
-    if (is.null(w)) {
-      ## Need to sum \leq one using the HMP algorithms
-      df[["weights"]] <- 1 / nrow(df)
-    } else {
-      df[["weights"]] <- w / sum(w)
+        ## Checks & defining the key columns
+        if (is.null(df)) df <- mcols(x)
+        stopifnot(nrow(df) == length(x))
+        df <- as.data.frame(df)
+        df_cols <- colnames(df)
+        logfc <- match.arg(logfc, df_cols)
+        pval <- match.arg(pval, df_cols)
+        cpm <- match.arg(cpm, df_cols)
+        p_adj_method <- match.arg(p_adj_method, c(p.adjust.methods, "fwer"))
+        if (is.null(w)) {
+            ## Need to sum \leq one using the HMP algorithms
+            df[["weights"]] <- 1 / nrow(df)
+        } else {
+            df[["weights"]] <- w / sum(w)
+        }
+
+        ## Define the columns to return
+        ret_cols <- c("keyval_range", cpm, logfc, pval)
+        if (!is.null(inc_cols)) {
+            inc_cols <- vapply(
+                inc_cols, match.arg, character(1), choices = df_cols
+            )
+            ret_cols <- unique(c(ret_cols, inc_cols))
+        }
+        ## Always return the columns counting the total, up & down windows
+        n_cols <- c("n_windows", "n_up", "n_down")
+        if ("index" %in% inc_cols)
+            warning("The column named 'index' will not be returned")
+
+        ## Merge the ranges and get the map back to the original windows
+        ranges_out <- GenomicRanges::reduce(
+            x, min.gapwidth = merge_within, ignore.strand = ignore_strand
+        )
+        ol <- findOverlaps(x, ranges_out, ignore.strand = ignore_strand)
+        stopifnot(length(ol) == length(x))
+
+        ## Summarise the key values
+        df[["subjectHits"]] <- subjectHits(ol)
+        grp_df <- group_by(df, subjectHits)
+        ret_df <- summarise(
+            grp_df,
+            hmp = .ec_HMP(!!sym(pval), !!sym("weights")),
+            n_windows = dplyr::n(),
+            n_up = sum(!!sym(logfc) > 0 & !!sym(pval) < !!sym("hmp")),
+            n_down = sum(!!sym(logfc) < 0 & !!sym(pval) < !!sym("hmp")),
+            "{cpm}" := sum(!!sym(cpm) / !!sym(pval)) / sum(1 / !!sym(pval)),
+            "{logfc}" :=  sum(!!sym(logfc) / !!sym(pval)) / sum(1 / !!sym(pval))
+        )
+        ## Replace the 'pval' column in the return columns with 'hmp'
+        ret_cols[ret_cols == pval] <- "hmp"
+
+        ## Remaining columns, including the keyval range are based on the
+        ## minimal p-value. Form a separate df with these columns, then merge
+        inc_df <- as.data.frame(df[c(pval, inc_cols)])
+        inc_df[["keyval_range"]] <- as.character(x)
+        inc_df[["subjectHits"]] <- subjectHits(ol)
+        inc_df <- arrange(inc_df, !!sym("subjectHits"), !!sym(pval))
+        inc_df <- distinct(inc_df, !!sym("subjectHits"), .keep_all = TRUE)
+        inc_df <- inc_df[!names(inc_df) %in% pval]
+        ## Merge the two, select the final columns, adjust p & return
+        ret_df <- left_join(ret_df, inc_df, by = "subjectHits")
+        ret_df <- ret_df[c(n_cols, ret_cols)]
+        adj_col <- paste0("hmp_", p_adj_method)
+        if (p_adj_method != "fwer") {
+            ret_df[[adj_col]] <- p.adjust(ret_df$hmp, p_adj_method)
+        } else {
+            ## Apply the FWER adjusted version if requested
+            L <- length(x)
+            adj_df <- summarise(
+                grp_df, adjp = .ec_HMP_adj(!!sym(pval), !!sym("weights"), L)
+            )
+            ret_df[[adj_col]] <- adj_df[["adjp"]]
+        }
+        mcols(ranges_out) <- as.data.frame(ret_df)
+        ranges_out$keyval_range <- GRanges(
+            ranges_out$keyval_range, seqinfo = seqinfo(ranges_out)
+        )
+        ranges_out
     }
-
-    ## Define the columns to return
-    ret_cols <- c("keyval_range", cpm, logfc, pval)
-    if (!is.null(inc_cols)) {
-      inc_cols <- vapply(
-        inc_cols, match.arg, character(1), choices = df_cols
-      )
-      ret_cols <- unique(c(ret_cols, inc_cols))
-    }
-    ## Always return the columns counting the total, up & down windows
-    n_cols <- c("n_windows", "n_up", "n_down")
-    if ("index" %in% inc_cols)
-      warning("The column named 'index' will not be returned")
-
-    ## Merge the ranges and get the map back to the original windows
-    ranges_out <- GenomicRanges::reduce(
-      x, min.gapwidth = merge_within, ignore.strand = ignore_strand
-    )
-    ol <- findOverlaps(x, ranges_out, ignore.strand = ignore_strand)
-    stopifnot(length(ol) == length(x))
-
-    ## Summarise the key values
-    df[["subjectHits"]] <- subjectHits(ol)
-    grp_df <- group_by(df, subjectHits)
-    ret_df <- summarise(
-      grp_df,
-      hmp = .ec_HMP(!!sym(pval), !!sym("weights")),
-      n_windows = dplyr::n(),
-      n_up = sum(!!sym(logfc) > 0 & !!sym(pval) < !!sym("hmp")),
-      n_down = sum(!!sym(logfc) < 0 & !!sym(pval) < !!sym("hmp")),
-      "{cpm}" := sum(!!sym(cpm) / !!sym(pval)) / sum(1 / !!sym(pval)),
-      "{logfc}" :=  sum(!!sym(logfc) / !!sym(pval)) / sum(1 / !!sym(pval))
-    )
-    ## Replace the P-Value column in the return columns with 'hmp' for clarity
-    ret_cols[ret_cols == pval] <- "hmp"
-
-    ## Remaining columns, including the keyval range are based on the
-    ## minimal p-value. Form a separate df with these columns, then merge
-    inc_df <- as.data.frame(df[c(pval, inc_cols)])
-    inc_df[["keyval_range"]] <- as.character(x)
-    inc_df[["subjectHits"]] <- subjectHits(ol)
-    inc_df <- arrange(inc_df, !!sym("subjectHits"), !!sym(pval))
-    inc_df <- distinct(inc_df, !!sym("subjectHits"), .keep_all = TRUE)
-    inc_df <- inc_df[!names(inc_df) %in% pval]
-    ## Merge the two, select the final columns, adjust p & return
-    ret_df <- left_join(ret_df, inc_df, by = "subjectHits")
-    ret_df <- ret_df[c(n_cols, ret_cols)]
-    adj_col <- paste0("hmp_", p_adj_method)
-    if (p_adj_method != "fwer") {
-      ret_df[[adj_col]] <- p.adjust(ret_df$hmp, p_adj_method)
-    } else {
-      ## Apply the FWER adjusted version if requested
-      L <- length(x)
-      adj_df <- summarise(
-        grp_df, adjp = .ec_HMP_adj(!!sym(pval), !!sym("weights"), L)
-      )
-      ret_df[[adj_col]] <- adj_df[["adjp"]]
-    }
-    mcols(ranges_out) <- as.data.frame(ret_df)
-    ranges_out$keyval_range <- GRanges(
-      ranges_out$keyval_range, seqinfo = seqinfo(ranges_out)
-    )
-    ranges_out
-  }
 )
 #' @rdname mergeByHMP-methods
 #' @export
 setMethod(
-  "mergeByHMP",
-  signature = signature(x = "RangedSummarizedExperiment"),
-  function(
-    x, df = NULL, w = NULL,
-    logfc = "logFC", pval = "P", cpm = "logCPM", inc_cols = NULL,
-    p_adj_method = "fdr", merge_within = 1L, ignore_strand = FALSE,
-    ...
-  ) {
+    "mergeByHMP",
+    signature = signature(x = "RangedSummarizedExperiment"),
+    function(
+        x, df = NULL, w = NULL,
+        logfc = "logFC", pval = "P", cpm = "logCPM", inc_cols = NULL,
+        p_adj_method = "fdr", merge_within = 1L, ignore_strand = FALSE,
+        ...
+    ) {
 
-    gr <- rowRanges(x)
-    mergeByHMP(
-      gr, df, w, logfc, pval, cpm, inc_cols, p_adj_method, merge_within,
-      ignore_strand, ...
-    )
+        gr <- rowRanges(x)
+        mergeByHMP(
+            gr, df, w, logfc, pval, cpm, inc_cols, p_adj_method, merge_within,
+            ignore_strand, ...
+        )
 
-  }
+    }
 
 )
 
@@ -197,23 +197,23 @@ setMethod(
 #' @useDynLib extraChIPs, .registration = TRUE
 #' @keywords internal
 .ec_HMP <- function(p, w) {
-  n <- length(p)
-  hmp <- sum(w) / sum(w / p)
-  loc <- log(n) + 1 + digamma(1) - log(2/pi)
-  dbl <- double(1)
-  # cout <- .C(
-  #     "RtailsMSS", 1, 0, 1, loc, log(pi/2), 1.0, 1/hmp,
-  #     out1 = dbl, out2 = dbl, out3 = dbl, out4 = dbl,
-  #     out5 = dbl, out6 = dbl, COPY = rep(c(FALSE, TRUE), c(7, 6)),
-  #     PACKAGE = "FMStable"
-  # )
-  # Still need to figure out if all of those outputs above can be dropped
-  Rcout <- .C(
-    "my_RtailsMSS", loc, 1/hmp, d = dbl, logd = dbl, `F` = dbl, logF = dbl,
-    cF = dbl, logcF = dbl,
-    COPY = rep(c(FALSE, TRUE), c(2, 6)), PACKAGE = "extraChIPs"
-  )
-  Rcout$cF
+    n <- length(p)
+    hmp <- sum(w) / sum(w / p)
+    loc <- log(n) + 1 + digamma(1) - log(2/pi)
+    dbl <- double(1)
+    # cout <- .C(
+    #     "RtailsMSS", 1, 0, 1, loc, log(pi/2), 1.0, 1/hmp,
+    #     out1 = dbl, out2 = dbl, out3 = dbl, out4 = dbl,
+    #     out5 = dbl, out6 = dbl, COPY = rep(c(FALSE, TRUE), c(7, 6)),
+    #     PACKAGE = "FMStable"
+    # )
+    # Still need to figure out if all of those outputs above can be dropped
+    Rcout <- .C(
+        "my_RtailsMSS", loc, 1/hmp, d = dbl, logd = dbl, `F` = dbl, logF = dbl,
+        cF = dbl, logcF = dbl,
+        COPY = rep(c(FALSE, TRUE), c(2, 6)), PACKAGE = "extraChIPs"
+    )
+    Rcout$cF
 }
 
 #' Similar to the above, this produces the FWER-controlled version in a
@@ -224,16 +224,16 @@ setMethod(
 #' @useDynLib extraChIPs, .registration = TRUE
 #' @keywords internal
 .ec_HMP_adj <- function(p, w, L) {
-  hmp <- sum(w) / sum(w / p)
-  w.sum <- sum(w)
-  loc <- log(L[[1]]) + 1 + digamma(1) - log(2/pi)
-  dbl <- double(1)
-  Rcout <- .C(
-    "my_RtailsMSS", loc, w.sum/hmp, d = dbl, logd = dbl, `F` = dbl, logF = dbl,
-    cF = dbl, logcF = dbl,
-    COPY = rep(c(FALSE, TRUE), c(2, 6)), PACKAGE = "extraChIPs"
-  )
-  Rcout$cF
+    hmp <- sum(w) / sum(w / p)
+    w.sum <- sum(w)
+    loc <- log(L[[1]]) + 1 + digamma(1) - log(2/pi)
+    dbl <- double(1)
+    Rcout <- .C(
+        "my_RtailsMSS", loc, w.sum/hmp, d = dbl, logd = dbl, `F` = dbl,
+        logF = dbl, cF = dbl, logcF = dbl,
+        COPY = rep(c(FALSE, TRUE), c(2, 6)), PACKAGE = "extraChIPs"
+    )
+    Rcout$cF
 }
 
 

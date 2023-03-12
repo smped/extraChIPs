@@ -46,52 +46,56 @@
 #' @aliases plotAssayRle
 #' @export
 setMethod(
-  "plotAssayRle",
-  signature = signature(x = "SummarizedExperiment"),
-  function(
-    x, assay = "counts", colour = NULL, fill = NULL, rle_group = NULL,
-    by_x = NULL, n_max = Inf, trans = NULL, ...
-  ) {
+    "plotAssayRle",
+    signature = signature(x = "SummarizedExperiment"),
+    function(
+        x, assay = "counts", colour = NULL, fill = NULL, rle_group = NULL,
+        by_x = NULL, n_max = Inf, trans = NULL, ...
+    ) {
 
-    if (is.null(colnames(x))) colnames(x) <- as.character(seq_len(ncol(x)))
-    df <- as.data.frame(colData(x))
-    df$colnames <- colnames(x)
-    args <- colnames(df)
-    if (!is.null(colour)) colour <- sym(match.arg(colour, args))
-    if (!is.null(fill)) fill <- sym(match.arg(fill, args))
-    if (!is.null(rle_group)) rle_group <- sym(match.arg(rle_group, args))
-    if (!is.null(by_x)) {
-      by_x <- match.arg(by_x, args)
-    } else {
-      by_x <- "colnames"
+        if (is.null(colnames(x))) colnames(x) <- as.character(seq_len(ncol(x)))
+        df <- as.data.frame(colData(x))
+        df$colnames <- colnames(x)
+        args <- colnames(df)
+        if (!is.null(colour)) colour <- sym(match.arg(colour, args))
+        if (!is.null(fill)) fill <- sym(match.arg(fill, args))
+        if (!is.null(rle_group)) rle_group <- sym(match.arg(rle_group, args))
+        if (!is.null(by_x)) {
+            by_x <- match.arg(by_x, args)
+        } else {
+            by_x <- "colnames"
+        }
+
+        n_max <- min(nrow(x), n_max)
+        ind <- seq_len(n_max)
+        if (n_max < nrow(x)) ind <- sample.int(nrow(x), n_max, replace = FALSE)
+
+        mat <- assay(x, assay)[ind,]
+        if (!is.null(trans)) {
+            mat <- match.fun(trans)(mat)
+            trans_ok <- all(
+                is.matrix(mat), nrow(mat) == length(ind),
+                colnames(mat) == colnames(x)
+            )
+            if (!trans_ok) stop("This transformation is not applicable")
+        }
+
+        df$vals <- split(t(mat), seq_len(ncol(x)))
+        df <- unnest(df, all_of("vals"))
+        if (!is.null(rle_group)) df <- group_by(df, !!rle_group)
+        df <- mutate(df, rle = !!sym("vals") - median(!!sym("vals")))
+        df <- ungroup(df)
+
+        xlab <- ifelse(by_x == "colnames", "Sample", by_x)
+        ggplot(
+            df,
+            aes(
+                .data[[by_x]], .data[["rle"]],
+                fill = {{ fill }}, colour = {{ colour }}
+            )
+        ) +
+            geom_boxplot(...) +
+            labs(x = xlab, y = "RLE")
+
     }
-
-    n_max <- min(nrow(x), n_max)
-    ind <- seq_len(n_max)
-    if (n_max < nrow(x)) ind <- sample.int(nrow(x), n_max, replace = FALSE)
-
-    mat <- assay(x, assay)[ind,]
-    if (!is.null(trans)) {
-      mat <- match.fun(trans)(mat)
-      trans_ok <- all(
-        is.matrix(mat), nrow(mat) == length(ind), colnames(mat) == colnames(x)
-      )
-      if (!trans_ok) stop("This transformation is not applicable")
-    }
-
-    df$vals <- split(t(mat), seq_len(ncol(x)))
-    df <- unnest(df, all_of("vals"))
-    if (!is.null(rle_group)) df <- group_by(df, !!rle_group)
-    df <- mutate(df, rle = !!sym("vals") - median(!!sym("vals")))
-    df <- ungroup(df)
-
-    xlab <- ifelse(by_x == "colnames", "Sample", by_x)
-    ggplot(
-      df,
-      aes(.data[[by_x]], .data[["rle"]], fill = {{ fill }}, colour = {{ colour }})
-    ) +
-      geom_boxplot(...) +
-      labs(x = xlab, y = "RLE")
-
-  }
 )
