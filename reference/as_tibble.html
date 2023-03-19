@@ -76,7 +76,10 @@
 <span><span class="fu">as_tibble</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for GInteractions</span></span>
-<span><span class="fu">as_tibble</span><span class="op">(</span><span class="va">x</span>, rangeAsChar <span class="op">=</span> <span class="cn">TRUE</span>, suffix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".x"</span>, <span class="st">".y"</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">as_tibble</span><span class="op">(</span><span class="va">x</span>, rangeAsChar <span class="op">=</span> <span class="cn">TRUE</span>, suffix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".x"</span>, <span class="st">".y"</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for SummarizedExperiment</span></span>
+<span><span class="fu">as_tibble</span><span class="op">(</span><span class="va">x</span>, rangeAsChar <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -124,6 +127,9 @@ these can be simply parsed by setting <code>rownames = "id"</code> in the call t
 to S3 list columns.
 Any GRanges columns will be returned as a character column, losing any
 additional mcols from these secondary ranges</p>
+<p>Coercion of SummarizedExperiment objects will be performed on the
+<code>rowRanges()</code> element, whilst for a <a href="https://rdrr.io/pkg/InteractionSet/man/GInteractions-class.html" class="external-link">GInteractions</a>
+object, both anchors will returned with the default suffixes <code>.x</code> and <code>.y</code></p>
 <p>Defined as an S3 method for consistency with existing tidy methods</p>
     </div>
 
@@ -136,24 +142,24 @@ additional mcols from these secondary ranges</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 1 range and 1 metadata column:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          seqnames    ranges strand |   p_value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;numeric&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   range1     chr1      1-10      * | 0.0024035</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   range1     chr1      1-10      * |  0.191602</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
 <span class="r-in"><span><span class="fu">as_tibble</span><span class="op">(</span><span class="va">gr</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   range     p_value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> chr1:1-10 0.002<span style="text-decoration: underline;">40</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> chr1:1-10   0.192</span>
 <span class="r-in"><span><span class="fu">as_tibble</span><span class="op">(</span><span class="va">gr</span>, rownames <span class="op">=</span> <span class="st">"id"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 3</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   range     id     p_value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> chr1:1-10 range1 0.002<span style="text-decoration: underline;">40</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> chr1:1-10 range1   0.192</span>
 <span class="r-in"><span><span class="fu">as_tibble</span><span class="op">(</span><span class="fu">mcols</span><span class="op">(</span><span class="va">gr</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 1</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   p_value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> 0.002<span style="text-decoration: underline;">40</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>   0.192</span>
 <span class="r-in"><span><span class="fu">as_tibble</span><span class="op">(</span><span class="fu">seqinfo</span><span class="op">(</span><span class="va">gr</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 4</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqnames seqlengths is_circular genome</span>
@@ -166,7 +172,7 @@ additional mcols from these secondary ranges</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1 × 4</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   anchor1   anchor2      anchor1.p_value id          </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> chr1:1-10 chr1:201-210         0.002<span style="text-decoration: underline;">40</span> interaction1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> chr1:1-10 chr1:201-210           0.192 interaction1</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
