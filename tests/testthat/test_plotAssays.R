@@ -106,3 +106,21 @@ test_that("plotAssayRle creates a plot", {
   p <- plotAssayRle(se, "counts", by_x = "treat")
   expect_equal(unlist(p$labels)[["x"]], "treat")
 })
+
+test_that("plotAssayHeatmap creates a plot", {
+
+    p <- plotAssayHeatmap(se[1:10,], trans = "log10")
+    expect_equal(c("index", "colnames", "value", "treat"), colnames(p$data))
+    expect_equal(dim(p$data), c(40, 4))
+    rowRanges(se) <- GRanges(paste0("chr:", seq_len(nrow(se))))
+    p <- plotAssayHeatmap(se[1:10,], trans = "log10")
+    expect_equal(c("range", "colnames", "value", "treat"), colnames(p$data))
+    expect_true(is(p, "gg"))
+    p <- plotAssayHeatmap(se[1:10,], trans = "log10", ysideline = TRUE)
+    expect_true(is(p, "ggside"))
+    expect_error(
+        plotAssayHeatmap(se, n_max = 1),
+        "Only 1 ranges can be drawn. Please change the n_max parameter if you wish to draw more."
+    )
+
+})

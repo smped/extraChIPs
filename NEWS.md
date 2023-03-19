@@ -29,3 +29,8 @@
 
 - Added `plotSplitDonut()`
 - Bugfix in `plotAssayDensities()` and `plotAssayRle()` along with enabling plotting by group
+
+# Changes in 1.3.6 (23-03-12)
+
+- Expanded arguments for `plotSpliDonut()`
+- Added `mergeByHMP()` for merging overlapping windows using the harmonic mean p

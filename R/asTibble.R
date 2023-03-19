@@ -18,6 +18,10 @@
 #' Any GRanges columns will be returned as a character column, losing any
 #' additional mcols from these secondary ranges
 #'
+#' Coercion of SummarizedExperiment objects will be performed on the
+#' `rowRanges()` element, whilst for a \link[InteractionSet]{GInteractions}
+#' object, both anchors will returned with the default suffixes `.x` and `.y`
+#'
 #' Defined as an S3 method for consistency with existing tidy methods
 #'
 #' @param x A Genomic Ranges or DataFrame object
@@ -122,5 +126,16 @@ as_tibble.GInteractions <- function(
     }
     gi_list[["mcols"]] <- as_tibble(mcols(x), rangeAsChar = rangeAsChar, ...)
     bind_cols(gi_list)
+
+}
+#' @importFrom tibble as_tibble
+#' @importFrom SummarizedExperiment rowRanges
+#' @rdname as_tibble
+#' @export
+as_tibble.SummarizedExperiment <- function(
+        x, rangeAsChar = TRUE, ...
+) {
+    rng <- rowRanges(x)
+    as_tibble(rng, rangeAsChar = rangeAsChar, ...)
 
 }

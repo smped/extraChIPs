@@ -6,6 +6,7 @@
 \alias{as_tibble.GenomicRanges}
 \alias{as_tibble.Seqinfo}
 \alias{as_tibble.GInteractions}
+\alias{as_tibble.SummarizedExperiment}
 \title{Convert to a tibble}
 \usage{
 \method{as_tibble}{DataFrame}(x, rangeAsChar = TRUE, ...)
@@ -15,6 +16,8 @@
 \method{as_tibble}{Seqinfo}(x, ...)
 
 \method{as_tibble}{GInteractions}(x, rangeAsChar = TRUE, suffix = c(".x", ".y"), ...)
+
+\method{as_tibble}{SummarizedExperiment}(x, rangeAsChar = TRUE, ...)
 }
 \arguments{
 \item{x}{A Genomic Ranges or DataFrame object}
@@ -50,6 +53,10 @@ When coercing a DataFrame, any Compressed/SimpleList columns will be coerced
 to S3 list columns.
 Any GRanges columns will be returned as a character column, losing any
 additional mcols from these secondary ranges
+
+Coercion of SummarizedExperiment objects will be performed on the
+\code{rowRanges()} element, whilst for a \link[InteractionSet]{GInteractions}
+object, both anchors will returned with the default suffixes \code{.x} and \code{.y}
 
 Defined as an S3 method for consistency with existing tidy methods
 }
