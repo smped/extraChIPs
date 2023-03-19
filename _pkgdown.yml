@@ -25,6 +25,7 @@ reference:
   contents:
     - dualFilter
     - importPeaks
+    - fitAssayDiff
     - getProfileData
     - grlToSE
     - mapByFeature

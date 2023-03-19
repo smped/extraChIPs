@@ -139,3 +139,9 @@ as_tibble.SummarizedExperiment <- function(
     as_tibble(rng, rangeAsChar = rangeAsChar, ...)
 
 }
+#' @importFrom tibble as_tibble
+#' @rdname as_tibble
+#' @export
+as_tibble.TopTags <- function(x, ...) {
+    as_tibble(x$table, ...)
+}

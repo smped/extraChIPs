@@ -34,3 +34,8 @@
 
 - Expanded arguments for `plotSpliDonut()`
 - Added `mergeByHMP()` for merging overlapping windows using the harmonic mean p
+
+# Changes in 1.3.7 (23-03-20)
+
+- Added `plotAssayHeatmap()`
+- Added `fitAssayDiff()` and added coercion of `TopTags` objects

@@ -7,6 +7,7 @@
 \alias{as_tibble.Seqinfo}
 \alias{as_tibble.GInteractions}
 \alias{as_tibble.SummarizedExperiment}
+\alias{as_tibble.TopTags}
 \title{Convert to a tibble}
 \usage{
 \method{as_tibble}{DataFrame}(x, rangeAsChar = TRUE, ...)
@@ -18,6 +19,8 @@
 \method{as_tibble}{GInteractions}(x, rangeAsChar = TRUE, suffix = c(".x", ".y"), ...)
 
 \method{as_tibble}{SummarizedExperiment}(x, rangeAsChar = TRUE, ...)
+
+\method{as_tibble}{TopTags}(x, ...)
 }
 \arguments{
 \item{x}{A Genomic Ranges or DataFrame object}
