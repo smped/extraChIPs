@@ -21,7 +21,7 @@
 #' propOverlap(x, y)
 #' propOverlap(y, x)
 #'
-#' @importFrom GenomicRanges intersect findOverlaps width pintersect reduce
+#' @import GenomicRanges
 #' @importFrom S4Vectors queryHits subjectHits splitAsList
 #' @export
 #' @rdname propOverlap-methods

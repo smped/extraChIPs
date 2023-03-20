@@ -43,8 +43,8 @@
 #'
 #' @importFrom Rsamtools BamFileList ScanBamParam countBam
 #' @importFrom BiocIO path
-#' @importFrom methods is
 #' @importFrom IRanges overlapsAny
+#' @importFrom methods is
 #' @importFrom csaw windowCounts readParam scaleControlFilter
 #' @importFrom csaw filterWindowsControl filterWindowsProportion
 #' @importFrom BiocParallel bpparam bplapply bpisup bpstart bpstop

@@ -30,8 +30,7 @@
 #' peaks
 #'
 #' @importFrom GenomeInfoDb seqinfo seqnames
-#' @importFrom IRanges overlapsAny
-#' @importFrom GenomicRanges GRangesList
+#' @import GenomicRanges
 #' @export
 importPeaks <- function(
         x, type = c("narrow", "broad"), blacklist,
@@ -59,7 +58,8 @@ importPeaks <- function(
 
 }
 
-#' @importFrom GenomicRanges makeGRangesFromDataFrame GRanges
+#' @import GenomicRanges
+#' @importFrom IRanges overlapsAny
 #' @importFrom methods is
 #' @importFrom utils read.table
 .importPeakFile <- function(x, type, seqinfo, blacklist, pruning.mode) {

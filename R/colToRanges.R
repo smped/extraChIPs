@@ -31,7 +31,7 @@
 #' @param ... Used to pass arguments to lower-level functions
 #'
 #' @importFrom methods as
-#' @importFrom GenomicRanges 'mcols<-' GRanges
+#' @import GenomicRanges
 #' @importFrom GenomeInfoDb 'seqinfo<-' seqlevels
 #' @rdname colToRanges-methods
 #' @aliases colToRanges
@@ -50,7 +50,7 @@ setMethod(
         gr
     }
 )
-#' @importFrom GenomicRanges mcols
+#' @import GenomicRanges
 #' @importFrom GenomeInfoDb seqinfo
 #' @rdname colToRanges-methods
 #' @aliases colToRanges
@@ -62,7 +62,7 @@ setMethod(
         colToRanges(df, var, ...)
     }
 )
-#' @importFrom GenomicRanges 'mcols<-' GRanges
+#' @import GenomicRanges
 #' @importFrom GenomeInfoDb "seqinfo<-" seqlevels
 #' @importFrom S4Vectors DataFrame
 #' @importClassesFrom IRanges CompressedList

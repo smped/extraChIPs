@@ -39,3 +39,7 @@
 
 - Added `plotAssayHeatmap()`
 - Added `fitAssayDiff()` and added coercion of `TopTags` objects
+
+# Changes in 1.3.8 (23-03-20)
+
+- Added using coverage to makeConsensus()

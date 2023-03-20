@@ -51,9 +51,10 @@
 #'
 #'
 #' @importClassesFrom IRanges CompressedList
-#' @importFrom GenomicRanges setdiff findOverlaps
+#' @importFrom IRanges overlapsAny
 #' @importFrom S4Vectors mcols queryHits subjectHits DataFrame
 #' @importFrom BiocParallel bplapply bpparam
+#' @import GenomicRanges
 #'
 #' @export
 #' @rdname setoptsMC-methods
@@ -79,7 +80,7 @@ setMethod(
 
     }
 )
-#' @importClassesFrom GenomicRanges GRangesList
+#' @import GenomicRanges
 #' @export
 #' @rdname setoptsMC-methods
 #' @aliases unionMC
@@ -93,9 +94,7 @@ setMethod(
     }
 )
 
-#' @importClassesFrom GenomicRanges GRangesList
-#' @importFrom IRanges overlapsAny
-#' @importFrom GenomicRanges findOverlaps
+#' @import GenomicRanges
 #' @importFrom S4Vectors mcols queryHits subjectHits DataFrame
 #' @keywords internal
 .mapMcols2Ranges <- function(.gr, .x, .ignore.strand, .simplify) {

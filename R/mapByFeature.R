@@ -61,7 +61,7 @@
 #' anchor (provided in `gi`) and a gene
 #' @param gr2gene The maximum permissible distance between a query range and
 #' genes (for ranges not otherwise mapped)
-#' @param ... Passed to findOverlaps nad overlapsAny internally
+#' @param ... Passed to findOverlaps and overlapsAny internally
 #'
 #' @examples
 #' ## Define some genes
@@ -85,12 +85,13 @@
 #'
 #' @importFrom S4Vectors mcols subjectHits 'mcols<-'
 #' @importClassesFrom IRanges CompressedList
+#' @importFrom IRanges overlapsAny
 #' @importFrom dplyr bind_rows distinct across left_join
 #' @importFrom tidyr chop
 #' @importFrom tidyselect all_of
-#' @importFrom GenomicRanges findOverlaps GRanges granges
 #' @importFrom methods as
 #' @importFrom stats setNames
+#' @import GenomicRanges
 #'
 #' @export
 mapByFeature <- function(
@@ -167,12 +168,12 @@ mapByFeature <- function(
 #' @param ... Passed to findOverlaps and subsetByOverlaps
 #' @return A data.frame
 #' @importFrom S4Vectors mcols
-#' @importFrom GenomicRanges findOverlaps
-#' @importFrom IRanges subsetByOverlaps
 #' @importFrom dplyr inner_join mutate_all
 #' @importFrom vctrs vec_proxy
 #' @importFrom tidyr unnest
 #' @importFrom tidyselect everything
+#' @import GenomicRanges
+#' @importFrom IRanges subsetByOverlaps
 #' @keywords internal
 .mapFeatures <- function(.gr, .feat, .genes, .cols, .gr2feat, .feat2gene, ...) {
 
@@ -248,12 +249,12 @@ mapByFeature <- function(
 #' @return data.frame of mapped ranges
 #' @importFrom S4Vectors mcols
 #' @importFrom vctrs vec_proxy
-#' @importFrom GenomicRanges findOverlaps
-#' @importFrom IRanges subsetByOverlaps
 #' @importFrom InteractionSet anchors
+#' @importFrom IRanges subsetByOverlaps
 #' @importFrom dplyr inner_join mutate_all
 #' @importFrom tidyr unnest
 #' @importFrom tidyselect everything
+#' @import GenomicRanges
 #' @keywords internal
 .mapGi <- function(.gr, .gi, .genes, .cols, .gr2gi, .gi2gene , ...) {
 
@@ -333,10 +334,10 @@ mapByFeature <- function(
 #' @return A data.frame
 #' @importFrom S4Vectors mcols
 #' @importFrom vctrs vec_proxy
-#' @importFrom GenomicRanges findOverlaps distanceToNearest
 #' @importFrom dplyr inner_join mutate_all across distinct bind_rows
 #' @importFrom tidyr unnest
 #' @importFrom tidyselect everything ends_with
+#' @import GenomicRanges
 #' @keywords internal
 .mapWithin <- function(.gr, .genes, .cols, .within, ...) {
     distance <- c() ## R CMD error avoidance

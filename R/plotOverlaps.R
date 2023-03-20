@@ -53,8 +53,7 @@
 #' grl$b$score <- rnorm(3)
 #' plotOverlaps(grl, type = 'upset', var = 'score')
 #'
-#' @importFrom GenomicRanges reduce granges
-#' @importFrom IRanges overlapsAny subsetByOverlaps
+#' @import GenomicRanges
 #' @importFrom S4Vectors endoapply mcols
 #' @importFrom dplyr bind_cols
 #' @importFrom rlang list2 ':=' '!!' sym

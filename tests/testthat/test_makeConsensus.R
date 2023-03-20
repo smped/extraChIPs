@@ -17,3 +17,9 @@ test_that("makeConsensus returns correct output", {
     gr <- makeConsensus(grl, var = "score")
     expect_true(is(gr$score, "CompressedNumericList"))
 })
+
+test_that("using method = 'coverage' returns correct output", {
+    gr <- makeConsensus(grl, var = "score", p = 1, method = "coverage")
+    expect_equal(length(gr), 1)
+    expect_equal(width(gr), 3)
+})

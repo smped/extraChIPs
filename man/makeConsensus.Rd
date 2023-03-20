@@ -8,8 +8,10 @@ makeConsensus(
   x,
   p = 0,
   var = NULL,
+  method = c("union", "coverage"),
   ignore.strand = TRUE,
   simplify = FALSE,
+  min_width = 0,
   ...
 )
 }
@@ -22,21 +24,41 @@ be returned}
 
 \item{var}{Additional columns in the \code{mcols} element to retain}
 
-\item{ignore.strand, simplify, ...}{Passed to \code{reduceMC()}}
+\item{method}{Either return the union of all overlapping ranges, or the
+regions within the overlapping ranges which are covered by the specified
+proportion of relicates. When using p = 0, both methods will return identical
+results}
+
+\item{ignore.strand, simplify, ...}{Passed to \link{reduceMC} or
+\link{intersectMC} internally}
+
+\item{min_width}{Discard any regions below this width}
 }
 \value{
 \code{GRanges} object with mcols containing a logical vector for every element of
-x, along with the column \code{n} which adds all logical columns.
+x, along with the column \code{n} which adds all logical columns. These columns
+denote which replicates contain an overlapping peak for each range
 
 If any additional columns have been requested using \code{var}, these will be
-returned as CompressedList objects as produced by \code{reduceMC()}.
+returned as CompressedList objects as produced by \code{reduceMC()} or
+\code{intersectMC()}.
 }
 \description{
 Make a set of consensus peaks based on umber of replicates
 }
 \details{
-This takes a list of GRanges objects and forms a set of consensus peaks
-using the minimum proportion of replicates specified
+This takes a list of GRanges objects and forms a set of consensus peaks.
+
+When using method = "union" the union ranges of all overlapping peaks will
+be returned, using the minimum proportion of replicates specified.
+When using method = "coverage", only the regions within each overlapping
+range which are 'covered' by the minimum proportion of replicates specified
+are returned. This will return narrower peaks in general, although some
+artefactual very small ranges may be included (e.g. 10bp). Careful setting
+of the min_width parameter may be very helpful for these instances. It is
+also expected that setting method = "coverage" should return the region
+within each range which is more likely to contain the true binding site for
+the relevant ChIP targets
 }
 \examples{
 a <- GRanges("chr1:11-20")
@@ -47,8 +69,10 @@ grl <- GRangesList(a = a, b = b)
 makeConsensus(grl)
 makeConsensus(grl, p = 1)
 makeConsensus(grl, p = 1, var = "score")
+makeConsensus(grl, p = 1, var = "score", method = "coverage")
+
 
 }
 \seealso{
-\link{reduceMC}
+\link{reduceMC} \link{intersectMC}
 }

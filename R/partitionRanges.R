@@ -32,8 +32,7 @@
 #'
 #' @importFrom S4Vectors mcols queryHits subjectHits DataFrame splitAsList
 #' @importFrom S4Vectors endoapply 'mcols<-'
-#' @importFrom GenomicRanges findOverlaps sort GRangesList 'strand<-' strand
-#' @importFrom GenomicRanges sort pintersect
+#' @import GenomicRanges
 #'
 #' @export
 #' @rdname partitionRanges-methods

@@ -26,7 +26,7 @@
 #' @importFrom tidyr chop all_of
 #' @importFrom S4Vectors mcols 'mcols<-'
 #' @importFrom GenomeInfoDb seqinfo
-#' @importFrom GenomicRanges GRanges
+#' @import GenomicRanges
 #'
 #' @export
 chopMC <- function(x, simplify = TRUE) {

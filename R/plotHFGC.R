@@ -287,10 +287,9 @@
 #' @importFrom methods slot
 #' @importFrom InteractionSet anchors
 #' @importFrom GenomicInteractions calculateDistances
-#' @importFrom GenomicRanges GRangesList resize shift
 #' @importFrom grDevices hcl.colors
 #' @importFrom Gviz HighlightTrack GenomeAxisTrack plotTracks
-#' @importFrom IRanges start end width
+#' @import GenomicRanges
 #'
 #' @export
 plotHFGC <- function(
@@ -448,8 +447,8 @@ plotHFGC <- function(
 
 #' @importFrom GenomicInteractions anchorOne anchorTwo
 #' @importFrom GenomicInteractions GenomicInteractions InteractionTrack
-#' @importFrom GenomeInfoDb seqnames
 #' @importFrom IRanges subsetByOverlaps
+#' @importFrom GenomeInfoDb seqnames
 .makeHiCTrack <- function(
         .hic, .gr, .fontsize, .tracksize, .cex, .rot, .col, .name, .col.title,
         .bg.title
@@ -532,7 +531,7 @@ plotHFGC <- function(
 
 }
 
-#' @importFrom GenomicRanges granges
+#' @import GenomicRanges
 #' @importFrom IRanges subsetByOverlaps
 #' @importFrom Gviz AnnotationTrack
 .makeFeatureTrack <- function(
@@ -567,12 +566,12 @@ plotHFGC <- function(
 
 }
 
-#' @importFrom IRanges subsetByOverlaps
+#' @import GenomicRanges
 #' @importFrom Gviz GeneRegionTrack
-#' @importFrom GenomicRanges coverage
 #' @importFrom stringr str_to_title str_pad str_count
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom methods is
+#' @importFrom IRanges subsetByOverlaps
 .makeGeneTracks <- function(
         .genes, .gr, .collapse, .fontsize, .col, .tracksize, .cex, .rot,
         .col.title, .bg.title, .max_trans
@@ -664,8 +663,8 @@ plotHFGC <- function(
 #' @importFrom Gviz DataTrack
 #' @importFrom rtracklayer import.bw
 #' @importFrom S4Vectors mcols
-#' @importFrom GenomicRanges GRangesList
 #' @importFrom stringr str_count str_pad
+#' @import GenomicRanges
 .makeCoverageTracks <- function(
         .coverage, .gr, .fontsize, .type = c("l", "heatmap"), .linecol,
         .gradient, .tracksize, .cex, .rot, .ylim, .col.title, .bg.title, ...

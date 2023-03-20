@@ -44,7 +44,7 @@
 #' assay(se, "p")
 #' rowRanges(se)
 #'
-#' @importFrom GenomicRanges reduce
+#' @import GenomicRanges
 #' @importFrom S4Vectors mcols
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' @rdname grlToSE-methods

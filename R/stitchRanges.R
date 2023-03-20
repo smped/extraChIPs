@@ -26,7 +26,8 @@
 #'
 #' @importFrom forcats fct_explicit_na
 #' @importFrom S4Vectors splitAsList subjectHits
-#' @importFrom GenomicRanges `strand<-` precede resize shift
+#' @importFrom IRanges overlapsAny
+#' @import GenomicRanges
 #' @export
 stitchRanges <- function(x, exclude, maxgap = 12500L, ignore.strand = TRUE) {
 

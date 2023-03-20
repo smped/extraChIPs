@@ -26,7 +26,7 @@
 #' reduceMC(x)
 #' reduceMC(x, ignore.strand = TRUE)
 #'
-#' @importFrom GenomicRanges reduce findOverlaps
+#' @import GenomicRanges
 #' @importFrom S4Vectors mcols queryHits subjectHits
 #' @importFrom S4Vectors DataFrame
 #' @importFrom BiocParallel bplapply bpparam

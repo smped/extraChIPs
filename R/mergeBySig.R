@@ -59,7 +59,7 @@ setGeneric(
     function(x, ...){standardGeneric("mergeBySig")}
 )
 #' @importFrom S4Vectors DataFrame mcols 'mcols<-'
-#' @importFrom GenomicRanges findOverlaps
+#' @import GenomicRanges
 #' @rdname mergeBySig-methods
 #' @export
 setMethod(
@@ -143,7 +143,7 @@ setMethod(
 )
 
 
-#' @importFrom GenomicRanges granges
+#' @import GenomicRanges
 #' @importFrom S4Vectors subjectHits DataFrame
 #' @importFrom csaw combineTests
 #' @keywords internal
@@ -165,7 +165,7 @@ setMethod(
     cbind(DF, rc)
 }
 
-#' @importFrom GenomicRanges granges
+#' @import GenomicRanges
 #' @importFrom S4Vectors subjectHits DataFrame
 #' @importFrom csaw getBestTest
 #' @keywords internal
@@ -190,7 +190,7 @@ setMethod(
 
 #' @importFrom csaw minimalTests
 #' @importFrom S4Vectors subjectHits DataFrame
-#' @importFrom GenomicRanges granges
+#' @import GenomicRanges
 #' @keywords internal
 .ec_minTest <- function(x, ol, df, pval, logfc, alpha, ...) {
     ## Just use the standard csaw function here for simplicity

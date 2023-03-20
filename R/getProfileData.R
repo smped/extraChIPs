@@ -46,9 +46,8 @@
 #' pd
 #' pd$profile_data
 #'
-#' @importFrom GenomicRanges resize promoters
-#' @importFrom rtracklayer import.bw
-#' @importFrom rtracklayer BigWigFile BigWigFileList
+#' @import GenomicRanges
+#' @importFrom rtracklayer import.bw BigWigFile BigWigFileList
 #' @importFrom EnrichedHeatmap normalizeToMatrix
 #' @importFrom tibble as_tibble
 #' @importFrom tidyr pivot_longer nest

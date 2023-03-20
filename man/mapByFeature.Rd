@@ -60,7 +60,7 @@ in \code{enh} and a gene}
 \item{gi2gene}{The maximum permissible distance between a GInteractions
 anchor (provided in \code{gi}) and a gene}
 
-\item{...}{Passed to findOverlaps nad overlapsAny internally}
+\item{...}{Passed to findOverlaps and overlapsAny internally}
 }
 \value{
 A GRanges object with added mcols as specified

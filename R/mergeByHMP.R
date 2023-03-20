@@ -71,9 +71,9 @@ setGeneric(
     function(x, ...){standardGeneric("mergeByHMP")}
 )
 #' @importFrom S4Vectors DataFrame mcols 'mcols<-' subjectHits
-#' @importFrom GenomicRanges findOverlaps
 #' @importFrom dplyr group_by summarise arrange distinct left_join bind_rows
 #' @importFrom rlang ":=" "!!" sym
+#' @import GenomicRanges
 #' @rdname mergeByHMP-methods
 #' @export
 setMethod(
