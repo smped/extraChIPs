@@ -147,8 +147,7 @@ as a grouping factor. Ignored when using method = "lt"</p></dd>
 Any existing columns not contained in the differential ChIP results will be
 retained.
 Results from testing will contain logCPM, logFC, PValue and the t/F
-statistic as appropriate. No p-value adjustment is performed as this can be
-simply added <em>post-hoc</em> if results are stand-alone</p>
+statistic as appropriate, along with an FDR-adjusted p-value</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -192,22 +191,21 @@ individually as conventionally specified.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating experiment-wide normalisation factors...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Estimating dispersions...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Running glmQLFit...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Zero log2-FC threshold detected. Switch to glmQLFTest() instead. </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> DataFrame with 200 rows and 4 columns</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          logFC    logCPM           F     PValue</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;numeric&gt; &lt;numeric&gt;   &lt;numeric&gt;  &lt;numeric&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    4.3066445   11.7022 10.49754627 0.00343434</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    0.0834143   12.2407  0.00648834 0.93645603</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    1.6794989   11.6748  1.97631431 0.17237281</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   -1.1910934   12.0523  1.27000858 0.27071483</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    0.5179779   12.0443  0.22968366 0.63602144</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ...        ...       ...         ...        ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 196  0.0907533   12.7686   0.0264131   0.872233</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 197  1.0952803   12.3007   1.1504058   0.293947</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 198 -1.1430290   12.6072   2.8331979   0.105075</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 199  0.1461144   12.3253   0.0242015   0.877652</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 200  0.0463688   11.8591   0.0010982   0.973833</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> DataFrame with 200 rows and 5 columns</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          logFC    logCPM           F     PValue       FDR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;numeric&gt; &lt;numeric&gt;   &lt;numeric&gt;  &lt;numeric&gt; &lt;numeric&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    4.3066445   11.7022 10.49754627 0.00343434  0.686868</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    0.0834143   12.2407  0.00648834 0.93645603  0.996343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    1.6794989   11.6748  1.97631431 0.17237281  0.996343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   -1.1910934   12.0523  1.27000858 0.27071483  0.996343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    0.5179779   12.0443  0.22968366 0.63602144  0.996343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ...        ...       ...         ...        ...       ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 196  0.0907533   12.7686   0.0264131   0.872233  0.996343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 197  1.0952803   12.3007   1.1504058   0.293947  0.996343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 198 -1.1430290   12.6072   2.8331979   0.105075  0.996343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 199  0.1461144   12.3253   0.0242015   0.877652  0.996343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 200  0.0463688   11.8591   0.0010982   0.973833  0.996343</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
