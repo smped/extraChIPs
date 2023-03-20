@@ -60,8 +60,7 @@ A SummarizedExperiment object with results set as the \code{rowData} element.
 Any existing columns not contained in the differential ChIP results will be
 retained.
 Results from testing will contain logCPM, logFC, PValue and the t/F
-statistic as appropriate. No p-value adjustment is performed as this can be
-simply added \emph{post-hoc} if results are stand-alone
+statistic as appropriate, along with an FDR-adjusted p-value
 }
 \description{
 Detect differential ChIP signal using one of many approaches

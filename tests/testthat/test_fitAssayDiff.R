@@ -7,7 +7,7 @@ se <- SummarizedExperiment(
     assays = SimpleList(counts = counts), colData = df
 )
 X <- model.matrix(~treat, colData(se))
-assay(se, "logCPM") <- cpm(counts, log = TRUE)
+assay(se, "logCPM") <- edgeR::cpm(counts, log = TRUE)
 
 test_that("Incorrect assay types error correctly", {
 
@@ -21,14 +21,19 @@ test_that("Results appear correct", {
 
     ## glmFits
     new_se <- suppressMessages(
-        fitAssayDiff(se, design = X, lib.size = NULL)
+        fitAssayDiff(se, design = X, lib.size = NULL, fc = 1.2)
     )
     row_data <- rowData(new_se)
-    expect_equal(colnames(row_data), c("logFC", "logCPM", "F", "PValue"))
+    expect_equal(colnames(row_data), c("logFC", "logCPM", "PValue", "FDR"))
+    new_se <- suppressMessages(
+        fitAssayDiff(se, design = X, lib.size = NULL, fc = 1)
+    )
+    row_data <- rowData(new_se)
+    expect_equal(colnames(row_data), c("logFC", "logCPM", "F", "PValue", "FDR"))
     # Limma Fits
     new_se <- fitAssayDiff(se, assay = "logCPM", method = "lt", design = X)
     row_data <- rowData(new_se)
-    expect_equal(colnames(row_data), c("logFC", "logCPM", "t", "PValue"))
+    expect_equal(colnames(row_data), c("logFC", "logCPM", "t", "PValue", "FDR"))
 
 })
 

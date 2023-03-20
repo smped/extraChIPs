@@ -35,8 +35,7 @@
 #' Any existing columns not contained in the differential ChIP results will be
 #' retained.
 #' Results from testing will contain logCPM, logFC, PValue and the t/F
-#' statistic as appropriate. No p-value adjustment is performed as this can be
-#' simply added *post-hoc* if results are stand-alone
+#' statistic as appropriate, along with an FDR-adjusted p-value
 #'
 #' @param x a SummarizedExperiment object
 #' @param assay The assay to use for analysis
@@ -84,7 +83,7 @@ setGeneric(
     "fitAssayDiff", function(x, ...){standardGeneric("fitAssayDiff")}
 )
 #' @importFrom SummarizedExperiment colData rowData "rowData<-"
-#' @importFrom edgeR glmTreat topTags
+#' @importFrom edgeR glmTreat topTags glmQLFTest
 #' @importFrom limma eBayes treat topTable topTreat
 #' @importFrom stats model.matrix
 #' @rdname fitAssayDiff-methods
@@ -112,7 +111,11 @@ setMethod(
             if (!is.null(groups)) groups <- match.arg(groups, args)
             if (!is.null(lib.size)) lib.size <- match.arg(lib.size, args)
             fit <- .se2DGEGLM(x, assay, design, lib.size, norm, groups, ...)
-            fit <- glmTreat(fit, coef, lfc = lfc)
+            if (lfc == 0) {
+                fit <- glmQLFTest(fit, coef = coef)
+            } else {
+                fit <- glmTreat(fit, coef, lfc = lfc)
+            }
             res <- topTags(
                 fit, n = nrow(x), adjust.method = "none", sort.by = "none"
             )$table
@@ -139,6 +142,7 @@ setMethod(
         }
         keep_cols <- setdiff(colnames(rowData(x)), colnames(res))
         orig <- as_tibble(rowData(x))[,keep_cols]
+        res[["FDR"]] <- p.adjust(res[["PValue"]], "fdr")
         rowData(x) <- cbind(orig, res)
         x
     }
