@@ -83,10 +83,12 @@
 <span>  r_centre <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  r_inner <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  r_outer <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  total_size <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  total_glue <span class="op">=</span> <span class="st">"{comma(N)}"</span>,</span>
+<span>  total_size <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  total_colour <span class="op">=</span> <span class="st">"black"</span>,</span>
 <span>  inner_glue <span class="op">=</span> <span class="st">"{inner} {.data[[inner]]}\n{percent(p,0.1)}"</span>,</span>
 <span>  outer_glue <span class="op">=</span> <span class="st">"{outer} {.data[[outer]]}\n{percent(p,0.1)}"</span>,</span>
+<span>  total_label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"label"</span>, <span class="st">"text"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
 <span>  inner_label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"label"</span>, <span class="st">"text"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
 <span>  outer_label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"label"</span>, <span class="st">"text"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
 <span>  label_alpha <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -95,6 +97,9 @@
 <span>  label_size <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  inner_label_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  outer_label_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  label_colour <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  inner_label_colour <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  outer_label_colour <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  min_p <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  inner_min_p <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  outer_min_p <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -148,15 +153,19 @@ create a Pie chart</p></dd>
 <dd><p>The radii of the inner/outer rings</p></dd>
 
 
-<dt>total_size</dt>
-<dd><p>Label size total number of entries in the centre of the
-plot. Set to <code>NA</code> to hide the label itself</p></dd>
-
-
 <dt>total_glue</dt>
 <dd><p><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a>-syntax for formatting the total which
 appears in the centre of the plot. Internally, the value <code>N</code> will be
 calculated and as such, this value should appear within this argument.</p></dd>
+
+
+<dt>total_size</dt>
+<dd><p>Label size total number of entries in the centre of the
+plot.</p></dd>
+
+
+<dt>total_colour</dt>
+<dd><p>Label colour for the summary total in the centre</p></dd>
 
 
 <dt>inner_glue, outer_glue</dt>
@@ -167,10 +176,10 @@ values can appear within this argument, as well as the fields described in
 the details</p></dd>
 
 
-<dt>inner_label, outer_label</dt>
-<dd><p>Can take values 'text', 'label' or 'none'.
-If setting one the first two values, the labelling function <code>geom_*</code> will be
-called, otherwise no label will be drawn</p></dd>
+<dt>total_label, inner_label, outer_label</dt>
+<dd><p>Can take values 'text', 'label'
+or 'none'. If setting one the first two values, the labelling function
+<code>geom_*</code> will be called, otherwise no label will be drawn</p></dd>
 
 
 <dt>label_alpha, inner_label_alpha, outer_label_alpha</dt>
@@ -180,6 +189,12 @@ labels</p></dd>
 
 <dt>label_size, inner_label_size, outer_label_size</dt>
 <dd><p>Size of all text labels</p></dd>
+
+
+<dt>label_colour, inner_label_colour, outer_label_colour</dt>
+<dd><p>Takes any colour
+specification, with the additional option of 'palette'. In this special case,
+the same palette as is used for each segment will be applied.</p></dd>
 
 
 <dt>min_p, inner_min_p, outer_min_p</dt>
