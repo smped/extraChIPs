@@ -24,7 +24,7 @@
 #' @param var Additional columns in the `mcols` element to retain
 #' @param method Either return the union of all overlapping ranges, or the
 #' regions within the overlapping ranges which are covered by the specified
-#' proportion of relicates. When using p = 0, both methods will return identical
+#' proportion of replicates. When using p = 0, both methods will return identical
 #' results
 #' @param ignore.strand,simplify,... Passed to \link{reduceMC} or
 #' \link{intersectMC} internally

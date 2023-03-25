@@ -40,7 +40,7 @@ stitchRanges <- function(x, exclude, maxgap = 12500L, ignore.strand = TRUE) {
 
     if (any(overlapsAny(x, exclude))) {
         warning("Ranges provided in 'x' overlap barrier ranges")
-        x <- setdiff(x, exclude, ignore.strand = ignore.strand)
+        x <- GenomicRanges::setdiff(x, exclude, ignore.strand = ignore.strand)
     }
 
     ## Add point ranges to the end of the `exclude` object to ensure no NA

@@ -47,7 +47,8 @@
 #' create a Pie chart
 #' @param r_inner,r_outer The radii of the inner/outer rings
 #' @param total_size Label size total number of entries in the centre of the
-#' plot. Set to `NA` to hide the label itself
+#' plot.
+#' @param total_colour Label colour for the summary total in the centre
 #' @param total_glue \link[glue]{glue}-syntax for formatting the total which
 #' appears in the centre of the plot. Internally, the value `N` will be
 #' calculated and as such, this value should appear within this argument.
@@ -56,12 +57,15 @@
 #' will be calculated as totals and proportions of the total. As such, these
 #' values can appear within this argument, as well as the fields described in
 #' the details
-#' @param inner_label,outer_label Can take values 'text', 'label' or 'none'.
-#' If setting one the first two values, the labelling function `geom_*` will be
-#' called, otherwise no label will be drawn
+#' @param total_label,inner_label,outer_label Can take values 'text', 'label'
+#' or 'none'. If setting one the first two values, the labelling function
+#' `geom_*` will be called, otherwise no label will be drawn
 #' @param label_size,inner_label_size,outer_label_size Size of all text labels
 #' @param label_alpha,inner_label_alpha,outer_label_alpha transparency for
 #' labels
+#' @param label_colour,inner_label_colour,outer_label_colour Takes any colour
+#' specification, with the additional option of 'palette'. In this special case,
+#' the same palette as is used for each segment will be applied.
 #' @param min_p,inner_min_p,outer_min_p only display labels for segments
 #' representing greater than this proportion of the total. If inner/outer values
 #' are specified, the values in `min_p` will be ignored for that layer
@@ -148,13 +152,17 @@ setMethod(
     function(
         object, inner, outer, scale_by = NULL,
         r_centre = 0.5, r_inner = 1, r_outer = 1,
-        total_size = 5, total_glue = "{comma(N)}",
+        total_glue = "{comma(N)}",
+        total_size = 5, total_colour = "black",
         inner_glue = "{inner} {.data[[inner]]}\n{percent(p,0.1)}",
         outer_glue = "{outer} {.data[[outer]]}\n{percent(p,0.1)}",
+        total_label = c("label", "text", "none"),
         inner_label = c("label", "text", "none"),
         outer_label = c("label", "text", "none"),
         label_alpha = 1, inner_label_alpha = NULL, outer_label_alpha = NULL,
         label_size = 3, inner_label_size = NULL, outer_label_size = NULL,
+        label_colour = "black", inner_label_colour = NULL,
+        outer_label_colour = NULL,
         min_p = 0.05, inner_min_p = NULL, outer_min_p = NULL,
         explode_inner = NULL, explode_outer = NULL,
         explode_query = c("AND", "OR"), explode_x = 0, explode_y = 0,
@@ -174,6 +182,7 @@ setMethod(
         object[[inner]] <- as.factor(object[[inner]])
         object[[outer]] <- as.factor(object[[outer]])
         explode_query <- match.arg(explode_query)
+        total_label <- match.arg(total_label)
         inner_label <- match.arg(inner_label)
         outer_label <- match.arg(outer_label)
         if (is.null(explode_inner)) explode_inner <- "^$"
@@ -185,6 +194,8 @@ setMethod(
         if (is.null(outer_label_alpha)) outer_label_alpha <- label_alpha
         if (is.null(inner_label_size)) inner_label_size <- label_size
         if (is.null(outer_label_size)) outer_label_size <- label_size
+        if (is.null(inner_label_colour)) inner_label_colour <- label_colour
+        if (is.null(outer_label_colour)) outer_label_colour <- label_colour
 
         summ_df <- group_by(object, !!!syms(c(inner, outer)))
         if (is.null(scale_by)) {
@@ -325,33 +336,74 @@ setMethod(
             )
         )
 
-        ## Add the centre total if required
-        if (!is.na(total_size)) p <- p + geom_label(
-            x = 0 , y = 0, size = total_size, label = glue(total_glue)
-        )
+        ## Add the centre label if required
+        if (total_label != "none") {
+            lab_fun <- match.fun(paste0("geom_", total_label))
+            p <- p + lab_fun(
+                aes(x, y, label = lab),
+                data = tibble(x = 0, y = 0, lab = glue(total_glue)),
+                size = total_size, inherit.aes = FALSE, colour = total_colour
+            )
+        }
 
         ## Add segment labels
         if (inner_label != "none") {
             lab_fun <- match.fun(paste0("geom_", inner_label))
-            p <- p + lab_fun(
-                aes(
-                    x = sin(mid) * (x + 0.5 * r_inner) + x0,
-                    y = cos(mid) * (x + 0.5 * r_inner) + y0, label = lab
-                ),
-                data = dplyr::filter(plot_df, ring == "inner", p > inner_min_p),
-                size = inner_label_size, alpha = inner_label_alpha
-            )
+            if (inner_label_colour != "palette") {
+                p <- p + lab_fun(
+                    aes(
+                        x = sin(mid) * (x + 0.5 * r_inner) + x0,
+                        y = cos(mid) * (x + 0.5 * r_inner) + y0, label = lab
+                    ),
+                    data = dplyr::filter(
+                        plot_df, ring == "inner", p > inner_min_p
+                    ),
+                    size = inner_label_size, alpha = inner_label_alpha,
+                    colour = inner_label_colour
+                )
+            } else {
+                p <- p + lab_fun(
+                    aes(
+                        x = sin(mid) * (x + 0.5 * r_inner) + x0,
+                        y = cos(mid) * (x + 0.5 * r_inner) + y0,
+                        colour = colour, label = lab
+                    ),
+                    data = dplyr::filter(
+                        plot_df, ring == "inner", p > inner_min_p
+                    ),
+                    size = inner_label_size, alpha = inner_label_alpha,
+                    show.legend = FALSE
+                )
+            }
         }
         if (outer_label != "none") {
             lab_fun <- match.fun(paste0("geom_", outer_label))
-            p <- p + lab_fun(
-                aes(
-                    x = sin(mid) * (x1 + nudge_r) + x0 ,
-                    y = cos(mid) * (x1 + nudge_r) + y0, label = lab
-                ),
-                data = dplyr::filter(plot_df, ring == "outer", p > outer_min_p),
-                size = outer_label_size, alpha = outer_label_alpha
-            )
+            if (outer_label_colour != "palette") {
+                p <- p + lab_fun(
+                    aes(
+                        x = sin(mid) * (x1 + nudge_r) + x0 ,
+                        y = cos(mid) * (x1 + nudge_r) + y0, label = lab
+                    ),
+                    data = dplyr::filter(
+                        plot_df, ring == "outer", p > outer_min_p
+                    ),
+                    size = outer_label_size, alpha = outer_label_alpha,
+                    colour = outer_label_colour
+                )
+            } else {
+                p <- p + lab_fun(
+                    aes(
+                        x = sin(mid) * (x1 + nudge_r) + x0 ,
+                        y = cos(mid) * (x1 + nudge_r) + y0,
+                        colour = colour, label = lab
+                    ),
+                    data = dplyr::filter(
+                        plot_df, ring == "outer", p > outer_min_p
+                    ),
+                    size = outer_label_size, alpha = outer_label_alpha,
+                    show.legend = FALSE
+                )
+            }
         }
 
         ## Add all remaining elements & formatting
@@ -361,6 +413,7 @@ setMethod(
             scale_x_continuous(expand = expansion(expand)) +
             scale_y_continuous(expand = expansion(expand)) +
             scale_fill_manual(values = full_palette) +
+            scale_colour_manual(values = full_palette) +
             scale_alpha_continuous(limits = c(0, 1)) +
             labs(fill = NULL) +
             guides(alpha = "none", fill = "none")

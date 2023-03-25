@@ -75,3 +75,18 @@ test_that("DataFrame objects work as expected", {
     expect_true(is(p[[2]], "wrapped_patch"))
     expect_true(is(p[[3]], "spacer"))
 })
+
+test_that("label types are handled correctly",{
+    p <- plotSplitDonut(df, inner = "TF1", outer = "TF2")
+    p_build <- ggplot_build(p[[1]])
+    expect_true(length(p_build$data) == 4)
+    expect_true(
+        all(vapply(p_build$data, is, logical(1), "data.frame"))
+    )
+    p <- plotSplitDonut(
+        df, inner = "TF1", outer = "TF2", total_label = "none",
+        inner_label = "none", outer_label = "none"
+    )
+    p_build <-ggplot_build(p[[1]])
+    expect_true(length(p_build$data) == 1)
+})

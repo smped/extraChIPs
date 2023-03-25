@@ -21,10 +21,12 @@ plotSplitDonut(object, ...)
   r_centre = 0.5,
   r_inner = 1,
   r_outer = 1,
-  total_size = 5,
   total_glue = "{comma(N)}",
+  total_size = 5,
+  total_colour = "black",
   inner_glue = "{inner} {.data[[inner]]}\\n{percent(p,0.1)}",
   outer_glue = "{outer} {.data[[outer]]}\\n{percent(p,0.1)}",
+  total_label = c("label", "text", "none"),
   inner_label = c("label", "text", "none"),
   outer_label = c("label", "text", "none"),
   label_alpha = 1,
@@ -33,6 +35,9 @@ plotSplitDonut(object, ...)
   label_size = 3,
   inner_label_size = NULL,
   outer_label_size = NULL,
+  label_colour = "black",
+  inner_label_colour = NULL,
+  outer_label_colour = NULL,
   min_p = 0.05,
   inner_min_p = NULL,
   outer_min_p = NULL,
@@ -70,12 +75,14 @@ create a Pie chart}
 
 \item{r_inner, r_outer}{The radii of the inner/outer rings}
 
-\item{total_size}{Label size total number of entries in the centre of the
-plot. Set to \code{NA} to hide the label itself}
-
 \item{total_glue}{\link[glue]{glue}-syntax for formatting the total which
 appears in the centre of the plot. Internally, the value \code{N} will be
 calculated and as such, this value should appear within this argument.}
+
+\item{total_size}{Label size total number of entries in the centre of the
+plot.}
+
+\item{total_colour}{Label colour for the summary total in the centre}
 
 \item{inner_glue, outer_glue}{\link[glue]{glue}-syntax for formatting labels
 which appear on each inner/outer segment Internally, the values \code{n} and \code{p}
@@ -83,14 +90,18 @@ will be calculated as totals and proportions of the total. As such, these
 values can appear within this argument, as well as the fields described in
 the details}
 
-\item{inner_label, outer_label}{Can take values 'text', 'label' or 'none'.
-If setting one the first two values, the labelling function \verb{geom_*} will be
-called, otherwise no label will be drawn}
+\item{total_label, inner_label, outer_label}{Can take values 'text', 'label'
+or 'none'. If setting one the first two values, the labelling function
+\verb{geom_*} will be called, otherwise no label will be drawn}
 
 \item{label_alpha, inner_label_alpha, outer_label_alpha}{transparency for
 labels}
 
 \item{label_size, inner_label_size, outer_label_size}{Size of all text labels}
+
+\item{label_colour, inner_label_colour, outer_label_colour}{Takes any colour
+specification, with the additional option of 'palette'. In this special case,
+the same palette as is used for each segment will be applied.}
 
 \item{min_p, inner_min_p, outer_min_p}{only display labels for segments
 representing greater than this proportion of the total. If inner/outer values
