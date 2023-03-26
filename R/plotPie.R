@@ -36,9 +36,13 @@
 #' object this defaults to the count (scale_by = "n") but can also be specified
 #' as being width of each range (scale_by = "width"). If choosing width, width
 #' will be displayed in Kb
+#' @param total_geom The geom_* to use for the totals at the centre of each pie.
+#' Setting this to 'none' will disable totals
+#' @param total_glue \link[glue]{glue} syntax to use for the totals in the
+#' centre of each pie. The column 'N' will produce the totals and any other
+#' values or formatting may be added here.
 #' @param width Scale the width of all pies
-#' @param show_total logical(1) Show labels on each pie chart with the tally for
-#' that complete chart
+#' @param label_colour Text colour for labels
 #' @param label_fill The background colour for tally labels
 #' @param label_alpha Transparency for tally labels
 #' @param label_size Size of the tally labels. Passed to
@@ -49,12 +53,12 @@
 #' around the edge of the plot
 #' @param show_category Show category labels around the edge of the plot if only
 #' one category/column is specified
-#' @param category_size The size of category labels if only one category/column
-#' is specified
+#' @param category_size The size of category labels around the edge of the plot
+#' if only one category/column is specified
 #' @param category_colour The colour of category labels if only one column is
 #' specified
-#' @param category_width Width at which category labels will wrap onto a new
-#' line
+#' @param category_width Text width at which category labels will wrap onto a
+#' new line
 #' @param ... Not used
 #'
 #' @examples
@@ -67,7 +71,7 @@
 #'   TF2 = sample(c("Up", "Down", "Unchanged"), 200, replace = TRUE),
 #'   w = rexp(200)
 #' )
-#' plotPie(df, fill = "feature")
+#' plotPie(df, fill = "feature", total_glue = "N = {comma(N)}")
 #' plotPie(df, fill = "feature", scale_by = "w")
 #' plotPie(df, fill = "feature", x = "TF1")
 #' plotPie(df, fill = "feature", x = "TF1", y = "TF2") +
@@ -129,20 +133,24 @@ setMethod(
     "plotPie",
     signature = signature(object = "data.frame"),
     function(
-        object, fill, x, y, scale_by, width = 0.8, show_total = TRUE,
-        label_fill = "white", label_alpha = 1, label_size = 3, min_p = 0.01,
-        show_category = TRUE, category_size = 3, category_colour = "black",
-        category_width = 15, ...
+        object, fill, x, y, scale_by, width = 0.8,
+        total_geom = c("label", "text", "none"), total_glue = "{comma(N)}",
+        label_colour = "black", label_fill = "white", label_alpha = 1,
+        label_size = 3, min_p = 0.01, show_category = TRUE, category_size = 3,
+        category_colour = NULL, category_width = 15, ...
     ) {
 
         if (missing(fill)) stop("The initial category must be defined as 'fill'\n")
+        total_geom <- match.arg(total_geom)
+        if (is.null(category_colour)) category_colour <- label_colour
 
         if (missing(x) & missing(y)) {
             p <- .plotSinglePie(
-                df = object, fill = fill, width = width, show_total = show_total,
-                .lab_fill = label_fill, .lab_alpha = label_alpha,
-                .lab_size = label_size, .text_size = category_size,
-                .text_col = category_colour, .min_p = min_p,
+                df = object, fill = fill, width = width,
+                .total_geom = total_geom, .total_glue = total_glue,
+                .total_size = label_size, .total_colour = label_colour,
+                .total_fill = label_fill, .total_alpha = label_alpha,
+                .text_size = category_size, .text_col = category_colour, .min_p = min_p,
                 .show_cat = show_category, .text_width = category_width,
                 .scale_by = scale_by
             )
@@ -153,17 +161,20 @@ setMethod(
 
         if (!missing(x) & missing(y))
             p <- .plotDoublePie(
-                df = object, x = x, fill = fill, width = width, show_total = show_total,
-                .lab_fill = label_fill, .lab_alpha = label_alpha,
-                .lab_size = label_size, .min_p = min_p, .scale_by = scale_by
+                df = object, x = x, fill = fill, width = width,
+                .total_geom = total_geom, .total_glue = total_glue,
+                .total_size = label_size, .total_colour = label_colour,
+                .total_fill = label_fill, .total_alpha = label_alpha,
+                .min_p = min_p, .scale_by = scale_by
             )
 
         if (!missing(x) & !missing(y))
             p <- .plotTriplePie(
                 df = object, x = x, y = y, fill = fill, width = width,
-                show_total = show_total, .lab_fill = label_fill,
-                .lab_alpha = label_alpha, .lab_size = label_size, .min_p = min_p,
-                .scale_by = scale_by
+                .total_geom = total_geom, .total_glue = total_glue,
+                .total_size = label_size, .total_colour = label_colour,
+                .total_fill = label_fill, .total_alpha = label_alpha,
+                .min_p = min_p, .scale_by = scale_by
             )
 
         p
@@ -171,22 +182,24 @@ setMethod(
     }
 )
 
-#' @importFrom dplyr group_by summarise mutate arrange filter
+#' @importFrom dplyr group_by summarise mutate arrange
+#' @importFrom glue glue
 #' @importFrom scales comma percent
 #' @importFrom rlang '!!' sym
 #' @importFrom stringr str_wrap
 #' @importFrom tidyr complete
 #' @import ggplot2
 .plotSinglePie <- function(
-        df, fill, width , show_total, .lab_fill, .lab_alpha, .lab_size, .text_size,
-        .text_col, .min_p, .show_cat, .text_width, .scale_by
+        df, fill, width, .total_geom, .total_glue, .total_size, .total_colour,
+        .total_fill, .total_alpha, .text_size, .text_col, .min_p, .show_cat,
+        .text_width, .scale_by
 ) {
 
     fill <- fill[[1]]
     stopifnot(fill %in% colnames(df))
     df[[fill]] <- as.factor(df[[fill]])
     if (!missing(.scale_by)) stopifnot(is.numeric(df[[.scale_by]]))
-    y <- lab <- c() # R CMD check error avoidance
+    x <- y <- lab <- c() # R CMD check error avoidance
 
     grp_df <- group_by(df, !!sym(fill))
     if (missing(.scale_by)) {
@@ -202,6 +215,7 @@ setMethod(
         summ_df[[fill]], " (", percent(summ_df$p, 0.1), ")"
     )
     summ_df$lab <- str_wrap(summ_df$lab, width = .text_width)
+    N <- sum(summ_df$n)
 
     p <- ggplot(data = summ_df, aes(1, p, fill = !!sym(fill))) +
         geom_col(width = width)
@@ -221,16 +235,22 @@ setMethod(
             )
     }
 
-    if (show_total)
-        p <- p + geom_label(
-            x = 1 - width / 2, y = 0, label = comma(sum(summ_df$n), 1),
-            alpha = 0.5, fill = "white", size = .lab_size
+    if (.total_geom != "none"){
+        lab_fun <- match.fun(paste0("geom_", .total_geom))
+        p <- p + lab_fun(
+            aes(x, y, label = lab),
+            data = tibble(x = 1 - width / 2, y = 0, lab = glue(.total_glue)),
+            fill = .total_fill, colour = .total_colour,
+            size = .total_size, alpha = .total_alpha,
+            inherit.aes = FALSE
         )
+    }
 
     p + coord_polar("y", start = 0) + theme_void()
 }
 
-#' @importFrom dplyr group_by summarise mutate filter ungroup distinct
+#' @importFrom dplyr group_by summarise mutate ungroup distinct
+#' @importFrom glue glue
 #' @importFrom tidyr pivot_wider complete
 #' @importFrom tidyselect all_of
 #' @importFrom scales comma
@@ -238,8 +258,8 @@ setMethod(
 #' @importFrom ggforce stat_pie
 #' @import ggplot2
 .plotDoublePie <- function(
-        df, x, fill, width, show_total, .lab_fill, .lab_alpha, .lab_size, .min_p,
-        .scale_by
+        df, x, fill, width, .total_geom, .total_glue, .total_size,
+        .total_colour, .total_fill, .total_alpha, .min_p, .scale_by
 ) {
 
     fill <- fill[[1]]
@@ -248,7 +268,7 @@ setMethod(
     df[[x]] <- as.factor(df[[x]])
     df[[fill]] <- as.factor(df[[fill]])
     if (!missing(.scale_by)) stopifnot(is.numeric(df[[.scale_by]]))
-    r <- N <- value <- p <- c() # R CMD check error avoidance
+    y <- lab <- r <- N <- value <- p <- c() # R CMD check error avoidance
 
     grp_df <- group_by(df, !!sym(x), !!sym(fill))
     if (missing(.scale_by)) {
@@ -288,12 +308,18 @@ setMethod(
             axis.text.y = element_blank(), axis.title.y = element_blank(),
             axis.ticks.y = element_blank()
         )
-    if (show_total) {
+
+    if (.total_geom != "none"){
+        lab_fun <- match.fun(paste0("geom_", .total_geom))
         lab_df <- dplyr::filter(summ_df, N > .min_p * sum(N))
         lab_df <- distinct(lab_df, x, N, .keep_all = TRUE)
-        p <- p + geom_label(
-            aes(x, 1, label = comma(N, 1)), data = lab_df,
-            size = .lab_size, alpha = .lab_alpha, fill = .lab_fill
+        lab_df <- mutate(lab_df, y = 1, lab = glue(.total_glue))
+        p <- p + lab_fun(
+            aes(x, y, label = lab),
+            data = lab_df,
+            fill = .total_fill, colour = .total_colour,
+            size = .total_size, alpha = .total_alpha,
+            inherit.aes = FALSE
         )
     }
 
@@ -301,16 +327,17 @@ setMethod(
 
 }
 
-#' @importFrom dplyr group_by summarise mutate filter ungroup distinct
+#' @importFrom dplyr group_by summarise mutate ungroup distinct
 #' @importFrom tidyr pivot_wider complete
 #' @importFrom tidyselect all_of
 #' @importFrom scales comma
 #' @importFrom rlang '!!' sym
 #' @importFrom ggforce stat_pie
+#' @importFrom glue glue
 #' @import ggplot2
 .plotTriplePie <- function(
-        df, x, y, fill, width, show_total, .lab_fill, .lab_alpha, .lab_size, .min_p,
-        .scale_by
+        df, x, y, fill, width, .total_geom, .total_glue, .total_size,
+        .total_colour, .total_fill, .total_alpha, .min_p, .scale_by
 ) {
 
     fill <- fill[[1]]
@@ -322,7 +349,7 @@ setMethod(
     df[[y]] <- as.factor(df[[y]])
     df[[fill]] <- as.factor(df[[fill]])
     if (!missing(.scale_by)) stopifnot(is.numeric(df[[.scale_by]]))
-    r <- N <- p <- value <- c() # R CMD check error avoidance
+    lab <- r <- N <- p <- value <- c() # R CMD check error avoidance
 
     grp_df <- group_by(df, !!sym(x), !!sym(y), !!sym(fill))
     if (missing(.scale_by)) {
@@ -360,16 +387,21 @@ setMethod(
         scale_y_continuous(
             breaks = seq_along(levels(df[[y]])), labels = levels(df[[y]])
         )
-    if (show_total) {
+
+    if (.total_geom != "none"){
+        lab_fun <- match.fun(paste0("geom_", .total_geom))
         lab_df <- dplyr::filter(summ_df, N > .min_p * sum(N))
         lab_df <- distinct(lab_df, x, y, N, .keep_all = TRUE)
-        p <- p + geom_label(
-            aes(x, y, label = comma(N, 1)), data = lab_df,
-            size = .lab_size, alpha = .lab_alpha, fill = .lab_fill
+        lab_df <- mutate(lab_df, lab = glue(.total_glue))
+        p <- p + lab_fun(
+            aes(x, y, label = lab),
+            data = lab_df,
+            fill = .total_fill, colour = .total_colour,
+            size = .total_size, alpha = .total_alpha,
+            inherit.aes = FALSE
         )
     }
 
     p + labs(x = x, y = y, fill = fill)
 
 }
-

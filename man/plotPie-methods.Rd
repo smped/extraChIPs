@@ -20,14 +20,16 @@ plotPie(object, ...)
   y,
   scale_by,
   width = 0.8,
-  show_total = TRUE,
+  total_geom = c("label", "text", "none"),
+  total_glue = "{comma(N)}",
+  label_colour = "black",
   label_fill = "white",
   label_alpha = 1,
   label_size = 3,
   min_p = 0.01,
   show_category = TRUE,
   category_size = 3,
-  category_colour = "black",
+  category_colour = NULL,
   category_width = 15,
   ...
 )
@@ -50,8 +52,14 @@ will be displayed in Kb}
 
 \item{width}{Scale the width of all pies}
 
-\item{show_total}{logical(1) Show labels on each pie chart with the tally for
-that complete chart}
+\item{total_geom}{The geom_* to use for the totals at the centre of each pie.
+Setting this to 'none' will disable totals}
+
+\item{total_glue}{\link[glue]{glue} syntax to use for the totals in the
+centre of each pie. The column 'N' will produce the totals and any other
+values or formatting may be added here.}
+
+\item{label_colour}{Text colour for labels}
 
 \item{label_fill}{The background colour for tally labels}
 
@@ -68,14 +76,14 @@ around the edge of the plot}
 \item{show_category}{Show category labels around the edge of the plot if only
 one category/column is specified}
 
-\item{category_size}{The size of category labels if only one category/column
-is specified}
+\item{category_size}{The size of category labels around the edge of the plot
+if only one category/column is specified}
 
 \item{category_colour}{The colour of category labels if only one column is
 specified}
 
-\item{category_width}{Width at which category labels will wrap onto a new
-line}
+\item{category_width}{Text width at which category labels will wrap onto a
+new line}
 }
 \value{
 A ggplot2 object able to be customised with colour scales and themes.
@@ -116,7 +124,7 @@ df <- data.frame(
   TF2 = sample(c("Up", "Down", "Unchanged"), 200, replace = TRUE),
   w = rexp(200)
 )
-plotPie(df, fill = "feature")
+plotPie(df, fill = "feature", total_glue = "N = {comma(N)}")
 plotPie(df, fill = "feature", scale_by = "w")
 plotPie(df, fill = "feature", x = "TF1")
 plotPie(df, fill = "feature", x = "TF1", y = "TF2") +

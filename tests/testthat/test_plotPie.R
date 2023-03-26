@@ -25,7 +25,7 @@ test_that(".plotSinglePie creates expected data structures", {
     expect_equal(length(p$data$feature), 3)
     expect_equal(sum(vapply(p$layers, is, TRUE, "LayerInstance")), 4)
 
-    p <- plotPie(df, "feature", show_total = FALSE)
+    p <- plotPie(df, "feature", total_geom = "none")
     expect_equal(sum(vapply(p$layers, is, TRUE, "LayerInstance")), 3)
 
     p <- plotPie(df, "feature", show_category = FALSE)
@@ -46,11 +46,11 @@ test_that(".plotDoublePie creates the expected data structures", {
         p$labels[c("x", "y", "fill", "r", "label")],
         list(
             x = "TF1", y = "y", fill = "feature", r = "width * r",
-            label = "comma(N, 1)"
+            label = "lab"
         )
     )
 
-    p <- plotPie(df, "feature", "TF1", show_total = FALSE)
+    p <- plotPie(df, "feature", "TF1", total_geom = "none")
     expect_equal(sum(vapply(p$layers, is, TRUE, "LayerInstance")), 1)
 
 })
@@ -69,12 +69,11 @@ test_that(".plotDoublePie creates the expected data structures", {
     expect_equal(
         p$labels[c("x", "y", "fill", "r", "label")],
         list(
-            x = "TF1", y = "TF2", fill = "feature", r = "width * r",
-            label = "comma(N, 1)"
+            x = "TF1", y = "TF2", fill = "feature", r = "width * r", label = "lab"
         )
     )
 
-    p <- plotPie(df, "feature", "TF1", "TF2", show_total = FALSE)
+    p <- plotPie(df, "feature", "TF1", "TF2", total_geom = "none")
     expect_equal(sum(vapply(p$layers, is, TRUE, "LayerInstance")), 1)
 
 })
