@@ -82,14 +82,16 @@
 <span>  <span class="va">y</span>,</span>
 <span>  <span class="va">scale_by</span>,</span>
 <span>  width <span class="op">=</span> <span class="fl">0.8</span>,</span>
-<span>  show_total <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  total_geom <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"label"</span>, <span class="st">"text"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
+<span>  total_glue <span class="op">=</span> <span class="st">"{comma(N)}"</span>,</span>
+<span>  label_colour <span class="op">=</span> <span class="st">"black"</span>,</span>
 <span>  label_fill <span class="op">=</span> <span class="st">"white"</span>,</span>
 <span>  label_alpha <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  label_size <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  min_p <span class="op">=</span> <span class="fl">0.01</span>,</span>
 <span>  show_category <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  category_size <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>  category_colour <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  category_colour <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  category_width <span class="op">=</span> <span class="fl">15</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -128,9 +130,19 @@ will be displayed in Kb</p></dd>
 <dd><p>Scale the width of all pies</p></dd>
 
 
-<dt>show_total</dt>
-<dd><p>logical(1) Show labels on each pie chart with the tally for
-that complete chart</p></dd>
+<dt>total_geom</dt>
+<dd><p>The geom_* to use for the totals at the centre of each pie.
+Setting this to 'none' will disable totals</p></dd>
+
+
+<dt>total_glue</dt>
+<dd><p><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a> syntax to use for the totals in the
+centre of each pie. The column 'N' will produce the totals and any other
+values or formatting may be added here.</p></dd>
+
+
+<dt>label_colour</dt>
+<dd><p>Text colour for labels</p></dd>
 
 
 <dt>label_fill</dt>
@@ -159,8 +171,8 @@ one category/column is specified</p></dd>
 
 
 <dt>category_size</dt>
-<dd><p>The size of category labels if only one category/column
-is specified</p></dd>
+<dd><p>The size of category labels around the edge of the plot
+if only one category/column is specified</p></dd>
 
 
 <dt>category_colour</dt>
@@ -169,8 +181,8 @@ specified</p></dd>
 
 
 <dt>category_width</dt>
-<dd><p>Width at which category labels will wrap onto a new
-line</p></dd>
+<dd><p>Text width at which category labels will wrap onto a
+new line</p></dd>
 
 </dl></div>
     <div id="value">
@@ -216,7 +228,7 @@ Parameters for these labels are customisable</p>
 <span class="r-in"><span>  TF2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Up"</span>, <span class="st">"Down"</span>, <span class="st">"Unchanged"</span><span class="op">)</span>, <span class="fl">200</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  w <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Exponential.html" class="external-link">rexp</a></span><span class="op">(</span><span class="fl">200</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">plotPie</span><span class="op">(</span><span class="va">df</span>, fill <span class="op">=</span> <span class="st">"feature"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plotPie</span><span class="op">(</span><span class="va">df</span>, fill <span class="op">=</span> <span class="st">"feature"</span>, total_glue <span class="op">=</span> <span class="st">"N = {comma(N)}"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotPie-methods-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu">plotPie</span><span class="op">(</span><span class="va">df</span>, fill <span class="op">=</span> <span class="st">"feature"</span>, scale_by <span class="op">=</span> <span class="st">"w"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotPie-methods-2.png" alt="" width="700" height="433"></span>
