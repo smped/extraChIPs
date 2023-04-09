@@ -22,15 +22,17 @@ plotPie(object, ...)
   width = 0.8,
   total_geom = c("label", "text", "none"),
   total_glue = "{comma(N)}",
-  label_colour = "black",
-  label_fill = "white",
-  label_alpha = 1,
-  label_size = 3,
+  total_colour = "black",
+  total_fill = "white",
+  total_alpha = 1,
+  total_size = 3,
   min_p = 0.01,
-  show_category = TRUE,
-  category_size = 3,
-  category_colour = NULL,
-  category_width = 15,
+  cat_geom = c("label", "text", "none"),
+  cat_glue = "{.data[[fill]]}\\n{comma(n, 1)}\\n({percent(p, 0.1)})",
+  cat_colour = "black",
+  cat_fill = "white",
+  cat_size = 3,
+  cat_alpha = 1,
   ...
 )
 }
@@ -59,31 +61,23 @@ Setting this to 'none' will disable totals}
 centre of each pie. The column 'N' will produce the totals and any other
 values or formatting may be added here.}
 
-\item{label_colour}{Text colour for labels}
-
-\item{label_fill}{The background colour for tally labels}
-
-\item{label_alpha}{Transparency for tally labels}
-
-\item{label_size}{Size of the tally labels. Passed to
-\link[ggplot2]{geom_label}}
+\item{total_colour, total_fill, total_alpha, total_size}{Colour, fill, alpha and
+size for the main totals in the centre of each pie chart}
 
 \item{min_p}{The minimum proportion of the total required for adding labels.
 Effectively removes labels from pie charts with few members. Alternatively
 when only one column is specified, categories below this will not be shown
 around the edge of the plot}
 
-\item{show_category}{Show category labels around the edge of the plot if only
-one category/column is specified}
+\item{cat_geom}{The geom_* to use for category labels corresponding to each
+slice of the pie. Setting this to 'none' will disable category labels}
 
-\item{category_size}{The size of category labels around the edge of the plot
-if only one category/column is specified}
+\item{cat_glue}{\link[glue]{glue} syntax to use for the category labels
+corresponding to each slice of the pie charts. The columns 'n' and 'p' can
+be used to print totals and proportions for each slice.}
 
-\item{category_colour}{The colour of category labels if only one column is
-specified}
-
-\item{category_width}{Text width at which category labels will wrap onto a
-new line}
+\item{cat_colour, cat_fill, cat_size, cat_alpha}{Colour, fill, size and alpha
+for category labels}
 }
 \value{
 A ggplot2 object able to be customised with colour scales and themes.
@@ -125,32 +119,29 @@ df <- data.frame(
   w = rexp(200)
 )
 plotPie(df, fill = "feature", total_glue = "N = {comma(N)}")
-plotPie(df, fill = "feature", scale_by = "w")
+plotPie(
+  df, fill = "feature", scale_by = "w", total_geom = "none",
+  cat_glue = "{percent(p)}", cat_size = 5
+)
 plotPie(df, fill = "feature", x = "TF1")
-plotPie(df, fill = "feature", x = "TF1", y = "TF2") +
+plotPie(
+  df, fill = "feature", x = "TF1", y = "TF2", min_p = 0.02,
+  total_geom = "none", cat_glue = "{n} / {N}"
+ ) +
  scale_fill_viridis_d() +
  theme_bw()
 
-## Manually adding percentages
-plotPie(df, fill = "feature", x = "TF1", label_size = 5) +
-  geom_label(
-   aes(x_lab, y_lab, label = lab),
-   data = . \%>\%
-     dplyr::mutate(
-       x_lab = x + 0.5*r*sin(label_radians),
-       y_lab = 1 + 0.5*r*cos(label_radians),
-       lab = scales::percent(p, 0.1)
-     ),
-   size = 3.5
- )
 
 ## And using a GRanges object
 data("ex_prom")
 gr <- ex_prom
 mcols(gr) <- df[seq_along(gr),]
 ## Show values by counts
-plotPie(gr, fill = "feature")
+plotPie(gr, fill = "feature", total_size = 5)
 ## Show values scaled by width of each range
-plotPie(gr, fill = "feature", scale_by = "width")
+plotPie(
+  gr, fill = "feature", scale_by = "width", total_glue = "{round(N, 1)}kb",
+  cat_glue = "{percent(p, 0.1)}", cat_size = 5, total_size = 5
+)
 
 }
