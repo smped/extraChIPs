@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.9</span>
       </span>
     </div>
 
@@ -161,7 +161,7 @@ scale_colour_\* for any groupings along the y-axis</p>
 <span class="r-in"><span>  assays <span class="op">=</span> <span class="fu">SimpleList</span><span class="op">(</span>counts <span class="op">=</span> <span class="va">counts</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  colData <span class="op">=</span> <span class="va">df</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/MatrixGenerics/man/rowRanges.html" class="external-link">rowRanges</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"chr1:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">nrows</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">rowRanges</span><span class="op">(</span><span class="va">se</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"chr1:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">nrows</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">plotAssayHeatmap</span><span class="op">(</span><span class="va">se</span>, facet_x <span class="op">=</span> <span class="st">"treat"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAssayHeatmap-methods-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>

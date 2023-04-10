@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.9</span>
       </span>
     </div>
 
@@ -84,15 +84,17 @@
 <span>  width <span class="op">=</span> <span class="fl">0.8</span>,</span>
 <span>  total_geom <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"label"</span>, <span class="st">"text"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
 <span>  total_glue <span class="op">=</span> <span class="st">"{comma(N)}"</span>,</span>
-<span>  label_colour <span class="op">=</span> <span class="st">"black"</span>,</span>
-<span>  label_fill <span class="op">=</span> <span class="st">"white"</span>,</span>
-<span>  label_alpha <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  label_size <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  total_colour <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  total_fill <span class="op">=</span> <span class="st">"white"</span>,</span>
+<span>  total_alpha <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  total_size <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  min_p <span class="op">=</span> <span class="fl">0.01</span>,</span>
-<span>  show_category <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  category_size <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>  category_colour <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  category_width <span class="op">=</span> <span class="fl">15</span>,</span>
+<span>  cat_geom <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"label"</span>, <span class="st">"text"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
+<span>  cat_glue <span class="op">=</span> <span class="st">"{.data[[fill]]}\n{comma(n, 1)}\n({percent(p, 0.1)})"</span>,</span>
+<span>  cat_colour <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  cat_fill <span class="op">=</span> <span class="st">"white"</span>,</span>
+<span>  cat_size <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  cat_alpha <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -141,21 +143,9 @@ centre of each pie. The column 'N' will produce the totals and any other
 values or formatting may be added here.</p></dd>
 
 
-<dt>label_colour</dt>
-<dd><p>Text colour for labels</p></dd>
-
-
-<dt>label_fill</dt>
-<dd><p>The background colour for tally labels</p></dd>
-
-
-<dt>label_alpha</dt>
-<dd><p>Transparency for tally labels</p></dd>
-
-
-<dt>label_size</dt>
-<dd><p>Size of the tally labels. Passed to
-<a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></p></dd>
+<dt>total_colour, total_fill, total_alpha, total_size</dt>
+<dd><p>Colour, fill, alpha and
+size for the main totals in the centre of each pie chart</p></dd>
 
 
 <dt>min_p</dt>
@@ -165,24 +155,20 @@ when only one column is specified, categories below this will not be shown
 around the edge of the plot</p></dd>
 
 
-<dt>show_category</dt>
-<dd><p>Show category labels around the edge of the plot if only
-one category/column is specified</p></dd>
+<dt>cat_geom</dt>
+<dd><p>The geom_* to use for category labels corresponding to each
+slice of the pie. Setting this to 'none' will disable category labels</p></dd>
 
 
-<dt>category_size</dt>
-<dd><p>The size of category labels around the edge of the plot
-if only one category/column is specified</p></dd>
+<dt>cat_glue</dt>
+<dd><p><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a> syntax to use for the category labels
+corresponding to each slice of the pie charts. The columns 'n' and 'p' can
+be used to print totals and proportions for each slice.</p></dd>
 
 
-<dt>category_colour</dt>
-<dd><p>The colour of category labels if only one column is
-specified</p></dd>
-
-
-<dt>category_width</dt>
-<dd><p>Text width at which category labels will wrap onto a
-new line</p></dd>
+<dt>cat_colour, cat_fill, cat_size, cat_alpha</dt>
+<dd><p>Colour, fill, size and alpha
+for category labels</p></dd>
 
 </dl></div>
     <div id="value">
@@ -230,39 +216,35 @@ Parameters for these labels are customisable</p>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">plotPie</span><span class="op">(</span><span class="va">df</span>, fill <span class="op">=</span> <span class="st">"feature"</span>, total_glue <span class="op">=</span> <span class="st">"N = {comma(N)}"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotPie-methods-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="fu">plotPie</span><span class="op">(</span><span class="va">df</span>, fill <span class="op">=</span> <span class="st">"feature"</span>, scale_by <span class="op">=</span> <span class="st">"w"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plotPie</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">df</span>, fill <span class="op">=</span> <span class="st">"feature"</span>, scale_by <span class="op">=</span> <span class="st">"w"</span>, total_geom <span class="op">=</span> <span class="st">"none"</span>,</span></span>
+<span class="r-in"><span>  cat_glue <span class="op">=</span> <span class="st">"{percent(p)}"</span>, cat_size <span class="op">=</span> <span class="fl">5</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotPie-methods-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu">plotPie</span><span class="op">(</span><span class="va">df</span>, fill <span class="op">=</span> <span class="st">"feature"</span>, x <span class="op">=</span> <span class="st">"TF1"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotPie-methods-3.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="fu">plotPie</span><span class="op">(</span><span class="va">df</span>, fill <span class="op">=</span> <span class="st">"feature"</span>, x <span class="op">=</span> <span class="st">"TF1"</span>, y <span class="op">=</span> <span class="st">"TF2"</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span><span class="fu">plotPie</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">df</span>, fill <span class="op">=</span> <span class="st">"feature"</span>, x <span class="op">=</span> <span class="st">"TF1"</span>, y <span class="op">=</span> <span class="st">"TF2"</span>, min_p <span class="op">=</span> <span class="fl">0.02</span>,</span></span>
+<span class="r-in"><span>  total_geom <span class="op">=</span> <span class="st">"none"</span>, cat_glue <span class="op">=</span> <span class="st">"{n} / {N}"</span></span></span>
+<span class="r-in"><span> <span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_fill_viridis_d</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotPie-methods-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Manually adding percentages</span></span></span>
-<span class="r-in"><span><span class="fu">plotPie</span><span class="op">(</span><span class="va">df</span>, fill <span class="op">=</span> <span class="st">"feature"</span>, x <span class="op">=</span> <span class="st">"TF1"</span>, label_size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">+</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">x_lab</span>, <span class="va">y_lab</span>, label <span class="op">=</span> <span class="va">lab</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>   data <span class="op">=</span> <span class="va">.</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
-<span class="r-in"><span>     <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>       x_lab <span class="op">=</span> <span class="va">x</span> <span class="op">+</span> <span class="fl">0.5</span><span class="op">*</span><span class="va">r</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">sin</a></span><span class="op">(</span><span class="va">label_radians</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>       y_lab <span class="op">=</span> <span class="fl">1</span> <span class="op">+</span> <span class="fl">0.5</span><span class="op">*</span><span class="va">r</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">cos</a></span><span class="op">(</span><span class="va">label_radians</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>       lab <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/percent_format.html" class="external-link">percent</a></span><span class="op">(</span><span class="va">p</span>, <span class="fl">0.1</span><span class="op">)</span></span></span>
-<span class="r-in"><span>     <span class="op">)</span>,</span></span>
-<span class="r-in"><span>   size <span class="op">=</span> <span class="fl">3.5</span></span></span>
-<span class="r-in"><span> <span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plotPie-methods-5.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## And using a GRanges object</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"ex_prom"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">gr</span> <span class="op">&lt;-</span> <span class="va">ex_prom</span></span></span>
 <span class="r-in"><span><span class="fu">mcols</span><span class="op">(</span><span class="va">gr</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">df</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">gr</span><span class="op">)</span>,<span class="op">]</span></span></span>
 <span class="r-in"><span><span class="co">## Show values by counts</span></span></span>
-<span class="r-in"><span><span class="fu">plotPie</span><span class="op">(</span><span class="va">gr</span>, fill <span class="op">=</span> <span class="st">"feature"</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plotPie-methods-6.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu">plotPie</span><span class="op">(</span><span class="va">gr</span>, fill <span class="op">=</span> <span class="st">"feature"</span>, total_size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plotPie-methods-5.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co">## Show values scaled by width of each range</span></span></span>
-<span class="r-in"><span><span class="fu">plotPie</span><span class="op">(</span><span class="va">gr</span>, fill <span class="op">=</span> <span class="st">"feature"</span>, scale_by <span class="op">=</span> <span class="st">"width"</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plotPie-methods-7.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu">plotPie</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">gr</span>, fill <span class="op">=</span> <span class="st">"feature"</span>, scale_by <span class="op">=</span> <span class="st">"width"</span>, total_glue <span class="op">=</span> <span class="st">"{round(N, 1)}kb"</span>,</span></span>
+<span class="r-in"><span>  cat_glue <span class="op">=</span> <span class="st">"{percent(p, 0.1)}"</span>, cat_size <span class="op">=</span> <span class="fl">4</span>, total_size <span class="op">=</span> <span class="fl">5</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plotPie-methods-6.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
