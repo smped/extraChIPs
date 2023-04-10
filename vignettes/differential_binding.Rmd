@@ -45,9 +45,10 @@ be installed.
 ```{r install, eval = FALSE}
 if (!"BiocManager" %in% rownames(installed.packages()))
   install.packages("BiocManager")
-pkg <- c("tidyverse", "Rsamtools", "csaw", "BiocParallel", "rtracklayer")
-BiocManager::install(pkg)
-BiocManager::install("extraChIPs")
+pkg <- c(
+  "tidyverse", "Rsamtools", "csaw", "BiocParallel", "rtracklayer", "extraChIPs"
+)
+BiocManager::install(pkg, update = FALSE)
 ```
 
 # Differential Binding and ChIP-Seq Analysis
