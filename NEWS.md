@@ -43,3 +43,7 @@
 # Changes in 1.3.8 (23-03-20)
 
 - Added using coverage to makeConsensus()
+
+# Changes in 1.3.9 (23-04-10)
+
+- Changed labelling strategy for `plotPie()`

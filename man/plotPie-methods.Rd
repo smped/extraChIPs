@@ -141,7 +141,7 @@ plotPie(gr, fill = "feature", total_size = 5)
 ## Show values scaled by width of each range
 plotPie(
   gr, fill = "feature", scale_by = "width", total_glue = "{round(N, 1)}kb",
-  cat_glue = "{percent(p, 0.1)}", cat_size = 5, total_size = 5
+  cat_glue = "{percent(p, 0.1)}", cat_size = 4, total_size = 5
 )
 
 }

@@ -200,7 +200,7 @@ setMethod(
     stopifnot(fill %in% colnames(df))
     df[[fill]] <- as.factor(df[[fill]])
     if (!missing(.scale_by)) stopifnot(is.numeric(df[[.scale_by]]))
-    y <- lab <- c() # R CMD check error avoidance
+    x <- y <- lab <- c() # R CMD check error avoidance
 
     grp_df <- group_by(df, !!sym(fill))
     if (missing(.scale_by)) {
@@ -218,13 +218,14 @@ setMethod(
         geom_col(width = width)
 
     if (.cat_geom != "none") {
-        f <- match.fun(paste0("geom_", .cat_geom))
-        p <- p + f(
-            aes(x = 1, y = y - 0.5 * p, label = lab),
-            data = dplyr::filter(summ_df, p > .min_p),
-            colour = .cat_colour, fill = .cat_fill, alpha = .cat_alpha,
-            size = .cat_size, show.legend = FALSE
+        geom <- paste0("geom_", .cat_geom)
+        args <- list(
+            mapping = aes(x = 1, y = y - 0.5 * p, label = lab),
+            data = dplyr::filter(summ_df, p > .min_p), colour = .cat_colour,
+            alpha = .cat_alpha, size = .cat_size, show.legend = FALSE
         )
+        if (.cat_geom == "label") args$fill <- .cat_fill
+        p <- p + do.call(geom, args)
     }
 
     if (.total_geom != "none"){
@@ -246,7 +247,7 @@ setMethod(
 #' @importFrom tidyr pivot_wider complete
 #' @importFrom tidyselect all_of
 #' @importFrom scales comma
-#' @importFrom rlang '!!' sym
+#' @importFrom rlang '!!' sym .data
 #' @importFrom ggforce stat_pie
 #' @import ggplot2
 .plotDoublePie <- function(
@@ -285,8 +286,8 @@ setMethod(
         n = value, lab = glue(.cat_glue),
         r = N / sum(N), r = 0.5 * r / max(r),
         x = as.integer(!!sym(x)),
-        lab_x = x + 0.5 * r * sin(label_radians),
-        lab_y = 1 + 0.5 * r * cos(label_radians)
+        lab_x = x + 0.5 * r * sin(!!sym("label_radians")),
+        lab_y = 1 + 0.5 * r * cos(!!sym("label_radians"))
     )
 
     p <- ggplot(data = summ_df) +
@@ -312,7 +313,7 @@ setMethod(
         lab_df <- distinct(lab_df, x, N, .keep_all = TRUE)
         lab_df <- mutate(lab_df, y = 1, lab = glue(.total_glue))
         p <- p + lab_fun(
-            aes(x, y, label = lab),
+            aes(x = .data[["x"]], y = .data[["y"]], label = .data[["lab"]]),
             data = lab_df,
             fill = .total_fill, colour = .total_colour, size = .total_size,
             alpha = .total_alpha, inherit.aes = FALSE
@@ -320,13 +321,16 @@ setMethod(
     }
 
     if (.cat_geom != "none") {
-        f <-  match.fun(paste0("geom_", .cat_geom))
-        p <- p + f(
-            aes(lab_x, lab_y, label = lab),
-            data = dplyr::filter(summ_df, n / sum(n) > .min_p),
-            colour = .cat_colour, fill = .cat_fill, alpha = .cat_alpha,
-            size = .cat_size, show.legend = FALSE
+        geom <- paste0("geom_", .cat_geom)
+        args <- list(
+            mapping = aes(
+                .data[["lab_x"]], .data[["lab_y"]], label = .data[["lab"]]
+            ), data = dplyr::filter(summ_df, n / sum(n) > .min_p),
+            colour = .cat_colour, alpha = .cat_alpha, size = .cat_size,
+            show.legend = FALSE
         )
+        if (.cat_geom == "label") args$fill <- .cat_fill
+        p <- p + do.call(geom, args)
     }
 
     p + labs(x = x, fill = fill)
@@ -379,8 +383,8 @@ setMethod(
         n = value, lab = glue(.cat_glue),
         r = N / sum(N), r = 0.5 * r / max(r),
         x = as.integer(!!sym(x)), y = as.integer(!!sym(y)),
-        lab_x = x + 0.5 * r * sin(label_radians),
-        lab_y = y + 0.5 * r * cos(label_radians)
+        lab_x = x + 0.5 * r * sin(!!sym("label_radians")),
+        lab_y = y + 0.5 * r * cos(!!sym("label_radians"))
     )
 
     p <- ggplot(data = summ_df) +
@@ -404,7 +408,7 @@ setMethod(
         lab_df <- dplyr::filter(lab_df, N > .min_p * sum(N))
         lab_df <- mutate(lab_df, lab = glue(.total_glue))
         p <- p + lab_fun(
-            aes(x, y, label = lab),
+            aes(x, y, label = !!sym("lab")),
             data = lab_df,
             fill = .total_fill, colour = .total_colour,
             size = .total_size, alpha = .total_alpha,
@@ -413,13 +417,15 @@ setMethod(
     }
 
     if (.cat_geom != "none") {
-        f <-  match.fun(paste0("geom_", .cat_geom))
-        p <- p + f(
-            aes(lab_x, lab_y, label = lab),
+        geom <- paste0("geom_", .cat_geom)
+        args <- list(
+            mapping = aes(!!sym("lab_x"), !!sym("lab_y"), label = !!sym("lab")),
             data = dplyr::filter(summ_df, n / sum(n) > .min_p),
-            colour = .cat_colour, fill = .cat_fill, alpha = .cat_alpha,
-            size = .cat_size, show.legend = FALSE
+            colour = .cat_colour, alpha = .cat_alpha, size = .cat_size,
+            show.legend = FALSE
         )
+        if (.cat_geom == "label") args$fill <- .cat_fill
+        p <- p + do.call(geom, args)
     }
 
     p + labs(x = x, y = y, fill = fill)
