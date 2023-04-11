@@ -22,7 +22,7 @@ knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 # Introduction
 
 This package is designed to enable the Gene Regulatory Analysis using Variable 
-IP ([GRAVI](https://github.com/steveped/GRAVI)) workflow, as a method for
+IP ([GRAVI](https://github.com/smped/GRAVI)) workflow, as a method for
 detecting differential binding in ChIP-Seq datasets.
 As a workflow focussed on data integration, most functions provided by the
 package `extraChIPs` are designed to enable comparison across datasets.

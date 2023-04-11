@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-The [GRAVI](https://github.com/steveped/GRAVI) workflow, for which this package 
+The [GRAVI](https://github.com/smped/GRAVI) workflow, for which this package 
 is designed, uses sliding windows for differential binding analysis in a manner 
 similar to the package `csaw`, but also incorporating `macs2` peaks.
 The workflow itself extends to integrating multiple ChIP targets and external 
