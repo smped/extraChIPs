@@ -12,4 +12,5 @@ colnames(chr10) <- colData(chr10)$label
 colData(chr10)$bam.files <- file.path("../data/bam", paste0(colnames(chr10), ".bam"))
 colData(chr10)$input <- rep("../data/bam/input.bam", 6)
 colData(chr10)$design <- NULL
-write_rds(chr10[1:20000,], here::here("data/chr10.rds"), compress = "gz")
+chr10 <- chr10[1:20000]
+save(chr10, file = here::here("data/chr10.rda"))
