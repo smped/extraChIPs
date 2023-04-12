@@ -62,7 +62,7 @@ samtools index fileout.bam
 ## BigWig Files
 
 BigWig files were created by taking bedGraph files as output by `macs2 callpeak`,
-converting to BigWig using the [GRAVI](https://github.com/steveped/GRAVI) workflow,
+converting to BigWig using the [GRAVI](https://github.com/smped/GRAVI) workflow,
 loading into R then exporting using
 
 ```r
