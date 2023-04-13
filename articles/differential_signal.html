@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>extraChIPs: Differential Binding Analysis • extraChIPs</title>
+<title>extraChIPs: Differential Signal Analysis • extraChIPs</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="extraChIPs: Differential Binding Analysis">
+<script src="../pkgdown.js"></script><meta property="og:title" content="extraChIPs: Differential Signal Analysis">
 <meta property="og:description" content="extraChIPs">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -53,7 +53,7 @@
       <a href="../articles/range_based_functions.html">Range-based Operations</a>
     </li>
     <li>
-      <a href="../articles/differential_binding.html">Differential Binding</a>
+      <a href="../articles/differential_signal.html">Differential Binding</a>
     </li>
   </ul>
 </li>
@@ -81,17 +81,19 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>extraChIPs: Differential Binding Analysis</h1>
+      <h1 data-toc-skip>extraChIPs: Differential Signal Analysis</h1>
                         <h4 data-toc-skip class="author">Stevie
 Pederson</h4>
             <address class="author_afil">
-      Black Ochre Data Laboratories, Telethon Kids
-Institute<br><a class="author_email" href="mailto:#"></a><a href="mailto:stephen.pederson.au@gmail.com" class="email">stephen.pederson.au@gmail.com</a>
+      Black Ochre Data Laboratories, Telethon Kids Institute, Adelaide,
+AustraliaDame Roma Mitchell Cancer Researc Laboratories, University of
+AdelaideJohn Curtin School of Medical Research, Australian National
+University<br><a class="author_email" href="mailto:#"></a><a href="mailto:stephen.pederson.au@gmail.com" class="email">stephen.pederson.au@gmail.com</a>
       </address>
                   
       
-      <small class="dont-index">Source: <a href="https://github.com/smped/extraChIPs/blob/HEAD/vignettes/differential_binding.Rmd" class="external-link"><code>vignettes/differential_binding.Rmd</code></a></small>
-      <div class="hidden name"><code>differential_binding.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/smped/extraChIPs/blob/HEAD/vignettes/differential_signal.Rmd" class="external-link"><code>vignettes/differential_signal.Rmd</code></a></small>
+      <div class="hidden name"><code>differential_signal.Rmd</code></div>
 
     </div>
 
@@ -102,12 +104,15 @@ Institute<br><a class="author_email" href="mailto:#"></a><a href="mailto:stephen
 </h2>
 <p>The <a href="https://github.com/smped/GRAVI" class="external-link">GRAVI</a> workflow, for
 which this package is designed, uses sliding windows for differential
-binding analysis in a manner similar to the package <code>csaw</code>,
+signal analysis in a manner similar to the package <code>csaw</code>,
 but also incorporating <code>macs2</code> peaks. The workflow itself
 extends to integrating multiple ChIP targets and external data sources,
-and as such, this package introduces a handful of functions to enable
-these analyses.</p>
-<p>The majority of examples below use extremely simplified datasets to
+and as such, this package introduces a handful of functions to simplify
+and enable these analyses. Whilst many existing approaches refer to this
+type of analysis as Differential Binding analysis, we prefer the term
+<em>Differential Signal Analysis</em> as this more accurately captures
+the range of ChIP targets which are likely to be investigated.</p>
+<p>The majority of examples below use heavily reduced datasets to
 provide general guidance on using the functions. Some results may appear
 trivial as a result, but will hopefully prove far more useful in a true
 experimental context.</p>
@@ -125,34 +130,54 @@ this vignette (<code>tidyverse</code>, <code>Rsamtools</code>,
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="st">"BiocManager"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html" class="external-link">installed.packages</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
 <span><span class="va">pkg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>  <span class="st">"tidyverse"</span>, <span class="st">"Rsamtools"</span>, <span class="st">"csaw"</span>, <span class="st">"BiocParallel"</span>, <span class="st">"rtracklayer"</span>, <span class="st">"extraChIPs"</span></span>
+<span>  <span class="st">"tidyverse"</span>, <span class="st">"Rsamtools"</span>, <span class="st">"csaw"</span>, <span class="st">"BiocParallel"</span>, <span class="st">"rtracklayer"</span>, <span class="st">"edgeR"</span>, </span>
+<span>  <span class="st">"patchwork"</span>, <span class="st">"extraChIPs"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="va">pkg</span>, update <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="differential-binding-and-chip-seq-analysis">Differential Binding and ChIP-Seq Analysis<a class="anchor" aria-label="anchor" href="#differential-binding-and-chip-seq-analysis"></a>
+<h2 id="differential-signal-analysis">Differential Signal Analysis<a class="anchor" aria-label="anchor" href="#differential-signal-analysis"></a>
 </h2>
 <div class="section level3">
 <h3 id="sliding-windows">Sliding Windows<a class="anchor" aria-label="anchor" href="#sliding-windows"></a>
 </h3>
-<p>The starting point for differential binding analysis using sliding
-windows is to define windows, then count reads within each window using
-the bam files. Commonly one or IP input/control samples is also produced
-during a ChIP-Seq experiment. The example files provided here contain a
-small subset of reads from chromosome 10 across two experimental and one
-input sample.</p>
-<p>The approach taken below is to define a set of sliding windows, using
-the capabilities of <code>csaw</code>, but to then use <code>macs</code>
-peaks to define regions of most likely signal. First we can define our
-windows and count the alignments using existing tools. In the following,
-we’ll use a sliding window of 180bp and a step size of 60bp, meaning
-each nucleotide is covered by 3 windows.</p>
+<p>The starting point for differential signal analyses using
+<code>extraChIPs</code> is to define a set of sliding windows across the
+genome, then count reads from a set of bam files, defined as a
+<code>BamFileList.</code> Commonly one or more IP input/control samples
+is also produced during a ChIP-Seq experiment, and these should be
+included at this stage of the analysis. The example files provided here
+contain a small subset of reads from chromosome 10 across two
+experimental conditions and one input sample. For the subsequent
+analysis, we’ll instead use a pre-prepared set of windows, however this
+code serves as an excellent example of how to structure your code. It
+should also be noted that counting all reads across a
+<code>BamFileList</code> using sliding windows, <strong>will require a
+significant amount of RAM</strong> and will be beyond the capacity of
+most laptops as of the time of writing. When working with complete
+datasets, this step is best performed on an HPC or a similar interactive
+server.</p>
+<p>The approach taken below is to first define a set of sliding windows
+across the genome, using the capabilities of <code>csaw</code>. After
+counting reads across all windows, a set of pre-defined regions is then
+used guide the function <code><a href="../reference/dualFilter.html">dualFilter()</a></code> which will discard
+low-signal windows, retaining only those a) above a minimum signal level
+and b) with signal notably above that of any input samples. These
+regions can be obtained from any external resource, or can even be taken
+from <code>macs2</code>-defined peaks from the same samples.</p>
+<p>First we can define our windows and count the alignments using the
+existing capabilities and functions provided in the <code>csaw</code>
+package <span class="citation">(Lun and Smyth 2016)</span>. In the
+following, we’ll use a sliding window of 120bp and a step size of 40bp,
+meaning each nucleotide is covered by 3 windows.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/Rsamtools" class="external-link">Rsamtools</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">csaw</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Bioconductor/BiocParallel" class="external-link">BiocParallel</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">rtracklayer</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioinf.wehi.edu.au/edgeR/" class="external-link">edgeR</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span></span>
 <span><span class="va">bfl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
 <span>  <span class="st">"extdata"</span>, <span class="st">"bam"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ex1.bam"</span>, <span class="st">"ex2.bam"</span>, <span class="st">"input.bam"</span><span class="op">)</span>, package <span class="op">=</span> <span class="st">"extraChIPs"</span></span>
 <span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -165,25 +190,45 @@ each nucleotide is covered by 3 windows.</p>
 <span><span class="op">)</span></span>
 <span><span class="va">wincounts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/csaw/man/windowCounts.html" class="external-link">windowCounts</a></span><span class="op">(</span></span>
 <span>  bam.files <span class="op">=</span> <span class="va">bfl</span>,</span>
-<span>  spacing <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  width <span class="op">=</span> <span class="fl">180</span>,</span>
+<span>  spacing <span class="op">=</span> <span class="fl">40</span>,</span>
+<span>  width <span class="op">=</span> <span class="fl">120</span>,</span>
 <span>  ext <span class="op">=</span> <span class="fl">200</span>,</span>
 <span>  filter <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  param <span class="op">=</span> <span class="va">rp</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>This produces a <code>RangesSummarizedExperiment</code> with windows
-included which passed the minimum threshold of 1 total read. As we’ve
-only counted reads within a very small window, the complete library
-sizes will be highly inaccurate. The true library sizes can be added
-here noting that <em>this step is not normally</em> <em>required</em>,
-but given these values are essential for accurate CPM values, they will
-be added here.</p>
+included which passed the minimum threshold of 1 total read. We can
+check which windows had more than one read by checking the ranges
+retained in the object.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">rowRanges</span><span class="op">(</span><span class="va">wincounts</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## GRanges object with 1507 ranges and 0 metadata columns:</span></span>
+<span><span class="co">##          seqnames              ranges strand</span></span>
+<span><span class="co">##             &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt;</span></span>
+<span><span class="co">##      [1]    chr10 103859841-103859960      *</span></span>
+<span><span class="co">##      [2]    chr10 103859881-103860000      *</span></span>
+<span><span class="co">##      [3]    chr10 103859921-103860040      *</span></span>
+<span><span class="co">##      [4]    chr10 103859961-103860080      *</span></span>
+<span><span class="co">##      [5]    chr10 103860001-103860120      *</span></span>
+<span><span class="co">##      ...      ...                 ...    ...</span></span>
+<span><span class="co">##   [1503]    chr10 103920001-103920120      *</span></span>
+<span><span class="co">##   [1504]    chr10 103920041-103920160      *</span></span>
+<span><span class="co">##   [1505]    chr10 103920081-103920200      *</span></span>
+<span><span class="co">##   [1506]    chr10 103920121-103920240      *</span></span>
+<span><span class="co">##   [1507]    chr10 103920161-103920280      *</span></span>
+<span><span class="co">##   -------</span></span>
+<span><span class="co">##   seqinfo: 1 sequence from an unspecified genome</span></span></code></pre>
+<p>As we’ve only counted reads within a very small window, the complete
+library sizes will be highly inaccurate. The true library sizes can be
+added here noting that <em>this step is not normally</em>
+<em>required</em>, but given these values are essential for accurate CPM
+values, they will be added here.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wincounts</span><span class="op">$</span><span class="va">totals</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">964076L</span>, <span class="fl">989543L</span>, <span class="fl">1172179L</span><span class="op">)</span></span></code></pre></div>
 <p>We can also add some key information to the <code>colData</code>
 element of this object, which will also be propagated to all downstream
 objects.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">wincounts</span><span class="op">$</span><span class="va">sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">)</span></span>
 <span><span class="va">wincounts</span><span class="op">$</span><span class="va">treat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ctrl"</span>, <span class="st">"treat"</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">)</span></span></code></pre></div>
@@ -199,29 +244,32 @@ transcription factor binding, where long stretches are unbound. The
 windows with higher counts tend to be associated with the samples
 targeting a transcription factor (TF), as seen in the two treatment
 group samples.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/smped/extraChIPs" class="external-link">extraChIPs</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/plotAssayDensities-methods.html">plotAssayDensities</a></span><span class="op">(</span><span class="va">wincounts</span>, colour <span class="op">=</span> <span class="st">"treat"</span>, trans <span class="op">=</span> <span class="st">"log1p"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="differential_binding_files/figure-html/plot-densities-1.png" width="960"></p>
+<span><span class="fu"><a href="../reference/plotAssayDensities-methods.html">plotAssayDensities</a></span><span class="op">(</span><span class="va">wincounts</span>, colour <span class="op">=</span> <span class="st">"treat"</span>, trans <span class="op">=</span> <span class="st">"log1p"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="differential_signal_files/figure-html/plot-densities-1.png" width="960"></p>
 </div>
 <div class="section level3">
 <h3 id="filtering-of-sliding-windows">Filtering of Sliding Windows<a class="anchor" aria-label="anchor" href="#filtering-of-sliding-windows"></a>
 </h3>
-<p>After counting all reads in the sliding windows, the next step is to
-discard windows for which counts are unlikely to represent TF binding.
-The package <code>extraChIPs</code> uses a set of consensus peaks to
-automatically set a threshold based on 1) counts strongly above the
-counts from the input sample, and 2) the windows with the overall
-highest signal. Thresholds are determined such that <code>q = 0.5</code>
-of the retained windows overlap on of the supplied consensus peaks.
-Higher values for <code>q</code> will return more windows, however many
-of these will tend to only marginally overlap a peak. Experience has
-shown that values such as <code>q = 0.5</code> tend to return a
-considerable proportion of windows containing true TF binding
-signal.</p>
+<p>After counting all reads in the sliding genomic windows, the next
+step is to discard windows for which counts are unlikely to represent
+true signal from our ChIP target. The package <code>extraChIPs</code>
+uses a set of consensus peaks to automatically set a threshold based on
+1) counts strongly above the counts from the input sample, and 2) the
+windows with the overall highest signal. Thresholds are determined such
+that a proportion (e.g. <code>q = 0.5</code>) of the windows which
+overlap one of the supplied consensus peaks will be returned. Higher
+values for <code>q</code> will return more windows, however many of
+these will tend to only marginally overlap a peak in one of the tail
+regions, and these will most likely be covered by neighbouring windows.
+Experience has shown that values such as <code>q = 0.5</code> tend to
+return a considerable proportion of windows containing true signal from
+the ChIP target.</p>
 <p>First we can load the peaks, supplied here as a simple
 <code>bed</code> file.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/BEDFile-class.html" class="external-link">import.bed</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"peaks.bed.gz"</span>, package <span class="op">=</span> <span class="st">"extraChIPs"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
@@ -231,7 +279,7 @@ utilises the strategy described above. On large datasets, this can be
 quite time-consuming, as can the initial counting step. Due to the small
 example dataset, a more inclusive threshold for <code>q</code> will be
 used here.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">filtcounts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dualFilter.html">dualFilter</a></span><span class="op">(</span></span>
 <span>  x <span class="op">=</span> <span class="va">wincounts</span><span class="op">[</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">$</span><span class="va">treat</span><span class="op">)</span><span class="op">]</span>,</span>
 <span>  bg <span class="op">=</span> <span class="va">wincounts</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">$</span><span class="va">treat</span><span class="op">)</span><span class="op">]</span>, </span>
@@ -241,64 +289,134 @@ used here.</p>
 <p>The returned object will by default contain <code>counts</code> and
 <code>logCPM</code> assays, with the complete library sizes used for the
 calculation of <code>logCPM</code> values.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotAssayDensities-methods.html">plotAssayDensities</a></span><span class="op">(</span><span class="va">filtcounts</span>, assay <span class="op">=</span> <span class="st">"logCPM"</span>, colour <span class="op">=</span> <span class="st">"treat"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="differential_binding_files/figure-html/plotcpm-1.png" width="960"></p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotAssayPCA-methods.html">plotAssayPCA</a></span><span class="op">(</span><span class="va">filtcounts</span>, assay <span class="op">=</span> <span class="st">"logCPM"</span>, colour <span class="op">=</span> <span class="st">"treat"</span>, label <span class="op">=</span> <span class="st">"sample"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="differential_binding_files/figure-html/plotcpm-2.png" width="960"></p>
-<p>Whilst the initial set of counts contained 1007 windows, these have
-now been reduced to 108 windows. Similarly, the input sample is no
-longer included in the data object.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 1007    3</span></span></code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotAssayDensities-methods.html">plotAssayDensities</a></span><span class="op">(</span><span class="va">filtcounts</span>, assay <span class="op">=</span> <span class="st">"logCPM"</span>, colour <span class="op">=</span> <span class="st">"treat"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="differential_signal_files/figure-html/plotcpm-1.png" width="960"></p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># plotAssayPCA(filtcounts, assay = "logCPM", colour = "treat", label = "sample")</span></span></code></pre></div>
+<p>Whilst the initial set of counts contained 1507 windows, these have
+now been reduced to 166 windows. Similarly, <em>the input sample is no
+longer included</em> in the data object, although additional columns can
+easily be added to the returned object using any number of
+strategies.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 1507    3</span></span></code></pre>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">filtcounts</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 108   2</span></span></code></pre>
+<pre><code><span><span class="co">## [1] 166   2</span></span></code></pre>
 <p>The <code>rowData</code> element of the returned object will contain
 a logical column indicating where each specific retained window
 overlapped one of the supplied consensus peaks.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">rowRanges</span><span class="op">(</span><span class="va">filtcounts</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## GRanges object with 108 ranges and 1 metadata column:</span></span>
+<pre><code><span><span class="co">## GRanges object with 166 ranges and 1 metadata column:</span></span>
 <span><span class="co">##         seqnames              ranges strand | overlaps_ref</span></span>
 <span><span class="co">##            &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt; |    &lt;logical&gt;</span></span>
-<span><span class="co">##     [1]    chr10 103865521-103865700      * |         TRUE</span></span>
-<span><span class="co">##     [2]    chr10 103865581-103865760      * |         TRUE</span></span>
-<span><span class="co">##     [3]    chr10 103865641-103865820      * |         TRUE</span></span>
-<span><span class="co">##     [4]    chr10 103865701-103865880      * |         TRUE</span></span>
-<span><span class="co">##     [5]    chr10 103874161-103874340      * |        FALSE</span></span>
+<span><span class="co">##     [1]    chr10 103865521-103865640      * |         TRUE</span></span>
+<span><span class="co">##     [2]    chr10 103865561-103865680      * |         TRUE</span></span>
+<span><span class="co">##     [3]    chr10 103865601-103865720      * |         TRUE</span></span>
+<span><span class="co">##     [4]    chr10 103865641-103865760      * |         TRUE</span></span>
+<span><span class="co">##     [5]    chr10 103865681-103865800      * |         TRUE</span></span>
 <span><span class="co">##     ...      ...                 ...    ... .          ...</span></span>
-<span><span class="co">##   [104]    chr10 103911901-103912080      * |        FALSE</span></span>
-<span><span class="co">##   [105]    chr10 103911961-103912140      * |        FALSE</span></span>
-<span><span class="co">##   [106]    chr10 103912021-103912200      * |        FALSE</span></span>
-<span><span class="co">##   [107]    chr10 103912081-103912260      * |        FALSE</span></span>
-<span><span class="co">##   [108]    chr10 103912261-103912440      * |        FALSE</span></span>
+<span><span class="co">##   [162]    chr10 103912001-103912120      * |        FALSE</span></span>
+<span><span class="co">##   [163]    chr10 103912041-103912160      * |        FALSE</span></span>
+<span><span class="co">##   [164]    chr10 103912081-103912200      * |        FALSE</span></span>
+<span><span class="co">##   [165]    chr10 103912201-103912320      * |        FALSE</span></span>
+<span><span class="co">##   [166]    chr10 103912401-103912520      * |        FALSE</span></span>
 <span><span class="co">##   -------</span></span>
 <span><span class="co">##   seqinfo: 1 sequence from an unspecified genome</span></span></code></pre>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu">rowRanges</span><span class="op">(</span><span class="va">filtcounts</span><span class="op">)</span><span class="op">$</span><span class="va">overlaps_ref</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 0.7314815</span></span></code></pre>
+<pre><code><span><span class="co">## [1] 0.6927711</span></span></code></pre>
 </div>
 <div class="section level3">
-<h3 id="using-voom">Using Voom<a class="anchor" aria-label="anchor" href="#using-voom"></a>
+<h3 id="differential-binding-analysis">Differential Binding Analysis<a class="anchor" aria-label="anchor" href="#differential-binding-analysis"></a>
 </h3>
-<p>Multiple approaches are available for analysis of differential
-binding, and given the small example dataset, only a brief example of
-conventional results will be used. <code>extraChIPs</code> does provide
-a simple coercion function to convert <code>logCPM</code> to a
-<code>voom</code> object, which requires the relationship between
-<strong>library sizes</strong> and <strong><code>logCPM</code>
-values</strong> to be intact. Whist this will not be discussed further
-here should this be a viable approach for an analysis, the following
-code may prove helpful.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">v</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/voomWeightsFromCPM.html">voomWeightsFromCPM</a></span><span class="op">(</span></span>
-<span>  cpm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">filtcounts</span>, <span class="st">"logCPM"</span><span class="op">)</span>, </span>
-<span>  lib.size <span class="op">=</span> <span class="va">filtcounts</span><span class="op">$</span><span class="va">totals</span>, </span>
-<span>  isLogCPM <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<p>Now that the counting filtering steps have been demonstrated, we’ll
+use an object containing H3K27ac signal for 6 samples, across two
+treatments, but restricted to a subset of Chromosome 10. This data was
+prepared using the above steps and contains reads from the MDA-MB-453
+breast cancer cell line, under Vehicle and DHT-treated conditions. The
+original samples are included in the GEO dataset
+<code>GSE176010</code></p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"h3k_chr10"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">h3k_chr10</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## DataFrame with 6 rows and 11 columns</span></span>
+<span><span class="co">##                   bam.files    totals       ext      rlen      target</span></span>
+<span><span class="co">##                 &lt;character&gt; &lt;integer&gt; &lt;integer&gt; &lt;integer&gt; &lt;character&gt;</span></span>
+<span><span class="co">## Veh_1 ../data/bam/Veh_1.bam  13186662       247        74     H3K27ac</span></span>
+<span><span class="co">## Veh_2 ../data/bam/Veh_2.bam  14957918       247        74     H3K27ac</span></span>
+<span><span class="co">## Veh_3 ../data/bam/Veh_3.bam  15687303       247        74     H3K27ac</span></span>
+<span><span class="co">## DHT_1 ../data/bam/DHT_1.bam  13112419       247        74     H3K27ac</span></span>
+<span><span class="co">## DHT_2 ../data/bam/DHT_2.bam  15615886       247        74     H3K27ac</span></span>
+<span><span class="co">## DHT_3 ../data/bam/DHT_3.bam  15647861       247        74     H3K27ac</span></span>
+<span><span class="co">##             label    treat  passage                 input        type</span></span>
+<span><span class="co">##       &lt;character&gt; &lt;factor&gt; &lt;factor&gt;           &lt;character&gt; &lt;character&gt;</span></span>
+<span><span class="co">## Veh_1       Veh_1      Veh        1 ../data/bam/input.bam     H3K27ac</span></span>
+<span><span class="co">## Veh_2       Veh_2      Veh        2 ../data/bam/input.bam     H3K27ac</span></span>
+<span><span class="co">## Veh_3       Veh_3      Veh        3 ../data/bam/input.bam     H3K27ac</span></span>
+<span><span class="co">## DHT_1       DHT_1      DHT        1 ../data/bam/input.bam     H3K27ac</span></span>
+<span><span class="co">## DHT_2       DHT_2      DHT        2 ../data/bam/input.bam     H3K27ac</span></span>
+<span><span class="co">## DHT_3       DHT_3      DHT        3 ../data/bam/input.bam     H3K27ac</span></span>
+<span><span class="co">##                qc</span></span>
+<span><span class="co">##       &lt;character&gt;</span></span>
+<span><span class="co">## Veh_1        pass</span></span>
+<span><span class="co">## Veh_2        pass</span></span>
+<span><span class="co">## Veh_3        pass</span></span>
+<span><span class="co">## DHT_1        pass</span></span>
+<span><span class="co">## DHT_2        pass</span></span>
+<span><span class="co">## DHT_3        pass</span></span></code></pre>
+</div>
+<div class="section level3">
+<h3 id="initial-visualisation">Initial Visualisation<a class="anchor" aria-label="anchor" href="#initial-visualisation"></a>
+</h3>
+<p>As logCPM transformed values can be helpful, let’s add this assay,
+then look at our densities once again.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">h3k_chr10</span>, <span class="st">"logCPM"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/edgeR/man/cpm.html" class="external-link">cpm</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">h3k_chr10</span>, <span class="st">"counts"</span><span class="op">)</span>, lib.size <span class="op">=</span> <span class="va">h3k_chr10</span><span class="op">$</span><span class="va">totals</span>, log <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/plotAssayDensities-methods.html">plotAssayDensities</a></span><span class="op">(</span><span class="va">h3k_chr10</span>, assay <span class="op">=</span> <span class="st">"logCPM"</span>, colour <span class="op">=</span> <span class="st">"treat"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_colour_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="differential_signal_files/figure-html/unnamed-chunk-2-1.png" width="960"></p>
+<p>We can also perform some basic QC using RLE plots. In the following,
+we first inspect the RLE across the entire dataset, followed by RLE
+grouping within treatments. This can be particularly useful when
+distributions vary significantly between treatment groups, such as may
+occur with a cytoplasmic to nuclear shift by a given ChIP target. Here,
+however, there is minimal difference between the two approaches as
+H3K27ac signal tends to be broadly consistent between these treatment
+groups.</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotAssayRle-methods.html">plotAssayRle</a></span><span class="op">(</span><span class="va">h3k_chr10</span>, assay <span class="op">=</span> <span class="st">"logCPM"</span>, fill <span class="op">=</span> <span class="st">"treat"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_hline</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0</span>, linetype <span class="op">=</span> <span class="fl">2</span>, colour <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotAssayRle-methods.html">plotAssayRle</a></span><span class="op">(</span></span>
+<span>    <span class="va">h3k_chr10</span>, assay <span class="op">=</span> <span class="st">"logCPM"</span>, fill <span class="op">=</span> <span class="st">"treat"</span>, rle_group <span class="op">=</span> <span class="st">"treat"</span></span>
+<span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_hline</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0</span>, linetype <span class="op">=</span> <span class="fl">2</span>, colour <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">a</span> <span class="op">+</span> <span class="va">b</span> <span class="op">+</span> <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_layout.html" class="external-link">plot_layout</a></span><span class="op">(</span>guides <span class="op">=</span> <span class="st">"collect"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span>tag_levels <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure">
+<img src="differential_signal_files/figure-html/plot-assay-rle-1.png" alt="RLE plots across all samples (A) and with values calculated within treatment groups (B)." width="960"><p class="caption">
+RLE plots across all samples (A) and with values calculated within
+treatment groups (B).
+</p>
+</div>
+<p>We can also check the samples using a PCA plot, again colouring the
+points by treatment group and adding labels, which will repel by default
+if the points are shown.</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotAssayPCA-methods.html">plotAssayPCA</a></span><span class="op">(</span><span class="va">h3k_chr10</span>, <span class="st">"logCPM"</span>, colour <span class="op">=</span> <span class="st">"treat"</span>, label <span class="op">=</span> <span class="st">"label"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_colour_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="differential_signal_files/figure-html/plot-pca-1.png" width="960"></p>
 </div>
 <div class="section level3">
 <h3 id="merging-windows">Merging Windows<a class="anchor" aria-label="anchor" href="#merging-windows"></a>
@@ -310,7 +428,7 @@ dependency of neighbouring windows, any adjusted p-values will not be
 appropriate and a merging of overlapping windows will be performed.</p>
 <p>For our example dataset we’ll add these manually, however this is
 just for demonstration purposes for the eventual merging of windows.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">rowRanges</span><span class="op">(</span><span class="va">filtcounts</span><span class="op">)</span><span class="op">$</span><span class="va">logCPM</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">filtcounts</span>,<span class="st">"logCPM"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu">rowRanges</span><span class="op">(</span><span class="va">filtcounts</span><span class="op">)</span><span class="op">$</span><span class="va">logFC</span> <span class="op">&lt;-</span> <span class="fu">rowDiffs</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">filtcounts</span>,<span class="st">"logCPM"</span><span class="op">)</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span></span>
 <span><span class="fu">rowRanges</span><span class="op">(</span><span class="va">filtcounts</span><span class="op">)</span><span class="op">$</span><span class="va">PValue</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Chisquare.html" class="external-link">pchisq</a></span><span class="op">(</span><span class="fu">rowRanges</span><span class="op">(</span><span class="va">filtcounts</span><span class="op">)</span><span class="op">$</span><span class="va">logFC</span><span class="op">^</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
@@ -320,7 +438,7 @@ are merged into a single range with representative values taken from one
 of the initial sliding windows. The recommended approach for retaining
 statistical independence between windows is to choose the window with
 the largest signal as representative of the entire merged window.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res_gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mergeByCol-methods.html">mergeByCol</a></span><span class="op">(</span><span class="va">filtcounts</span>, col <span class="op">=</span> <span class="st">"logCPM"</span>, pval <span class="op">=</span> <span class="st">"PValue"</span><span class="op">)</span></span>
 <span><span class="va">res_gr</span><span class="op">$</span><span class="va">overlaps_ref</span> <span class="op">&lt;-</span> <span class="fu">overlapsAny</span><span class="op">(</span><span class="va">res_gr</span>, <span class="va">peaks</span><span class="op">)</span></span></code></pre></div>
 <p>A <code>GRanges</code> object is returned with representative values
@@ -386,51 +504,57 @@ all genes will be mapped to peaks using step 4</p>
 contained in the example dataset <code>ex_genes</code>. This contains
 the two <code>mcols</code> <em>gene</em> and <em>symbol</em>, and we can
 ask for both in the returned object.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"ex_genes"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"ex_prom"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/mapByFeature.html">mapByFeature</a></span><span class="op">(</span></span>
 <span>  <span class="va">res_gr</span>, genes <span class="op">=</span> <span class="va">ex_genes</span>, prom <span class="op">=</span> <span class="va">ex_prom</span>, cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gene"</span>, <span class="st">"symbol"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## GRanges object with 9 ranges and 11 metadata columns:</span></span>
-<span><span class="co">##       seqnames              ranges strand | n_windows      n_up    n_down</span></span>
-<span><span class="co">##          &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;</span></span>
-<span><span class="co">##   [1]    chr10 103865521-103865880      * |         4         0         3</span></span>
-<span><span class="co">##   [2]    chr10 103874161-103874940      * |         8         1         6</span></span>
-<span><span class="co">##   [3]    chr10 103876921-103878000      * |        16         0         6</span></span>
-<span><span class="co">##   [4]    chr10 103878601-103878840      * |         2         1         1</span></span>
-<span><span class="co">##   [5]    chr10 103878961-103881060      * |        33         0        17</span></span>
-<span><span class="co">##   [6]    chr10 103881181-103881540      * |         4         1         2</span></span>
-<span><span class="co">##   [7]    chr10 103892161-103893420      * |        19         5        12</span></span>
-<span><span class="co">##   [8]    chr10 103899841-103900560      * |        10         2         5</span></span>
-<span><span class="co">##   [9]    chr10 103911481-103912440      * |        12         3         7</span></span>
-<span><span class="co">##                    keyval_range    logCPM      logFC    PValue PValue_fdr</span></span>
-<span><span class="co">##                       &lt;GRanges&gt; &lt;numeric&gt;  &lt;numeric&gt; &lt;numeric&gt;  &lt;numeric&gt;</span></span>
-<span><span class="co">##   [1] chr10:103865521-103865700   3.46979 -0.5610608  0.574756   0.975993</span></span>
-<span><span class="co">##   [2] chr10:103874641-103874820   4.24295 -0.1115489  0.911181   0.975993</span></span>
-<span><span class="co">##   [3] chr10:103877281-103877460   5.61526 -1.4816426  0.138435   0.975993</span></span>
-<span><span class="co">##   [4] chr10:103878661-103878840   3.35589 -0.0300928  0.975993   0.975993</span></span>
-<span><span class="co">##   [5] chr10:103880281-103880460   7.72879 -0.6250501  0.531938   0.975993</span></span>
-<span><span class="co">##   [6] chr10:103881241-103881420   3.73440 -0.0318288  0.974609   0.975993</span></span>
-<span><span class="co">##   [7] chr10:103892581-103892760   7.40460 -0.0633132  0.949517   0.975993</span></span>
-<span><span class="co">##   [8] chr10:103900141-103900320   4.64587  0.1423445  0.886808   0.975993</span></span>
-<span><span class="co">##   [9] chr10:103911901-103912080   4.81325 -0.1924133  0.847419   0.975993</span></span>
-<span><span class="co">##       overlaps_ref            gene          symbol</span></span>
-<span><span class="co">##          &lt;logical&gt; &lt;CharacterList&gt; &lt;CharacterList&gt;</span></span>
-<span><span class="co">##   [1]         TRUE ENSG00000198728            LDB1</span></span>
-<span><span class="co">##   [2]        FALSE ENSG00000198728            LDB1</span></span>
-<span><span class="co">##   [3]         TRUE ENSG00000198728            LDB1</span></span>
-<span><span class="co">##   [4]        FALSE ENSG00000198728            LDB1</span></span>
-<span><span class="co">##   [5]         TRUE ENSG00000198728            LDB1</span></span>
-<span><span class="co">##   [6]         TRUE ENSG00000198728            LDB1</span></span>
-<span><span class="co">##   [7]         TRUE ENSG00000148840           PPRC1</span></span>
-<span><span class="co">##   [8]         TRUE ENSG00000148840           PPRC1</span></span>
-<span><span class="co">##   [9]        FALSE ENSG00000166197           NOLC1</span></span>
+<pre><code><span><span class="co">## GRanges object with 13 ranges and 11 metadata columns:</span></span>
+<span><span class="co">##        seqnames              ranges strand | n_windows      n_up    n_down</span></span>
+<span><span class="co">##           &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;</span></span>
+<span><span class="co">##    [1]    chr10 103865521-103865880      * |         6         0         3</span></span>
+<span><span class="co">##    [2]    chr10 103872121-103872280      * |         2         2         0</span></span>
+<span><span class="co">##    [3]    chr10 103874201-103874920      * |        12         0        11</span></span>
+<span><span class="co">##    [4]    chr10 103875681-103875840      * |         2         0         2</span></span>
+<span><span class="co">##    [5]    chr10 103876241-103876360      * |         1         0         1</span></span>
+<span><span class="co">##    ...      ...                 ...    ... .       ...       ...       ...</span></span>
+<span><span class="co">##    [9]    chr10 103881161-103881520      * |         7         1         3</span></span>
+<span><span class="co">##   [10]    chr10 103892161-103893400      * |        29         7        18</span></span>
+<span><span class="co">##   [11]    chr10 103899881-103900480      * |        13         2         8</span></span>
+<span><span class="co">##   [12]    chr10 103911521-103912320      * |        16         4        10</span></span>
+<span><span class="co">##   [13]    chr10 103912401-103912520      * |         1         0         1</span></span>
+<span><span class="co">##                     keyval_range    logCPM      logFC    PValue PValue_fdr</span></span>
+<span><span class="co">##                        &lt;GRanges&gt; &lt;numeric&gt;  &lt;numeric&gt; &lt;numeric&gt;  &lt;numeric&gt;</span></span>
+<span><span class="co">##    [1] chr10:103865681-103865800   3.38509 -0.7304650  0.465106   0.975993</span></span>
+<span><span class="co">##    [2] chr10:103872121-103872240   3.05473  0.8465515  0.397245   0.975993</span></span>
+<span><span class="co">##    [3] chr10:103874721-103874840   4.20389 -0.0334363  0.973327   0.975993</span></span>
+<span><span class="co">##    [4] chr10:103875681-103875800   3.26432 -0.4889297  0.624892   0.975993</span></span>
+<span><span class="co">##    [5] chr10:103876241-103876360   3.28010 -0.1816791  0.855835   0.975993</span></span>
+<span><span class="co">##    ...                       ...       ...        ...       ...        ...</span></span>
+<span><span class="co">##    [9] chr10:103881241-103881360   3.55630 -0.1565932  0.875565   0.975993</span></span>
+<span><span class="co">##   [10] chr10:103892601-103892720   7.34224 -0.0644482  0.948613   0.975993</span></span>
+<span><span class="co">##   [11] chr10:103900121-103900240   4.52272 -0.2269025  0.820500   0.975993</span></span>
+<span><span class="co">##   [12] chr10:103911881-103912000   4.70398 -0.2045804  0.837900   0.975993</span></span>
+<span><span class="co">##   [13] chr10:103912401-103912520   3.28010 -0.1816791  0.855835   0.975993</span></span>
+<span><span class="co">##        overlaps_ref            gene          symbol</span></span>
+<span><span class="co">##           &lt;logical&gt; &lt;CharacterList&gt; &lt;CharacterList&gt;</span></span>
+<span><span class="co">##    [1]         TRUE ENSG00000198728            LDB1</span></span>
+<span><span class="co">##    [2]        FALSE ENSG00000198728            LDB1</span></span>
+<span><span class="co">##    [3]        FALSE ENSG00000198728            LDB1</span></span>
+<span><span class="co">##    [4]        FALSE ENSG00000198728            LDB1</span></span>
+<span><span class="co">##    [5]        FALSE ENSG00000198728            LDB1</span></span>
+<span><span class="co">##    ...          ...             ...             ...</span></span>
+<span><span class="co">##    [9]         TRUE ENSG00000198728            LDB1</span></span>
+<span><span class="co">##   [10]         TRUE ENSG00000148840           PPRC1</span></span>
+<span><span class="co">##   [11]         TRUE ENSG00000148840           PPRC1</span></span>
+<span><span class="co">##   [12]        FALSE ENSG00000166197           NOLC1</span></span>
+<span><span class="co">##   [13]        FALSE ENSG00000166197           NOLC1</span></span>
 <span><span class="co">##   -------</span></span>
 <span><span class="co">##   seqinfo: 1 sequence from an unspecified genome</span></span></code></pre>
 <p>For this dataset, we have an example HiC interaction, which we can
 now pass to the mapping process. (This time we’ll save the object)</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"ex_hic"</span><span class="op">)</span></span>
 <span><span class="va">res_gr_mapped</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mapByFeature.html">mapByFeature</a></span><span class="op">(</span></span>
 <span>  <span class="va">res_gr</span>, </span>
@@ -440,40 +564,46 @@ now pass to the mapping process. (This time we’ll save the object)</p>
 <span>  cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gene"</span>, <span class="st">"symbol"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">res_gr_mapped</span></span></code></pre></div>
-<pre><code><span><span class="co">## GRanges object with 9 ranges and 11 metadata columns:</span></span>
-<span><span class="co">##       seqnames              ranges strand | n_windows      n_up    n_down</span></span>
-<span><span class="co">##          &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;</span></span>
-<span><span class="co">##   [1]    chr10 103865521-103865880      * |         4         0         3</span></span>
-<span><span class="co">##   [2]    chr10 103874161-103874940      * |         8         1         6</span></span>
-<span><span class="co">##   [3]    chr10 103876921-103878000      * |        16         0         6</span></span>
-<span><span class="co">##   [4]    chr10 103878601-103878840      * |         2         1         1</span></span>
-<span><span class="co">##   [5]    chr10 103878961-103881060      * |        33         0        17</span></span>
-<span><span class="co">##   [6]    chr10 103881181-103881540      * |         4         1         2</span></span>
-<span><span class="co">##   [7]    chr10 103892161-103893420      * |        19         5        12</span></span>
-<span><span class="co">##   [8]    chr10 103899841-103900560      * |        10         2         5</span></span>
-<span><span class="co">##   [9]    chr10 103911481-103912440      * |        12         3         7</span></span>
-<span><span class="co">##                    keyval_range    logCPM      logFC    PValue PValue_fdr</span></span>
-<span><span class="co">##                       &lt;GRanges&gt; &lt;numeric&gt;  &lt;numeric&gt; &lt;numeric&gt;  &lt;numeric&gt;</span></span>
-<span><span class="co">##   [1] chr10:103865521-103865700   3.46979 -0.5610608  0.574756   0.975993</span></span>
-<span><span class="co">##   [2] chr10:103874641-103874820   4.24295 -0.1115489  0.911181   0.975993</span></span>
-<span><span class="co">##   [3] chr10:103877281-103877460   5.61526 -1.4816426  0.138435   0.975993</span></span>
-<span><span class="co">##   [4] chr10:103878661-103878840   3.35589 -0.0300928  0.975993   0.975993</span></span>
-<span><span class="co">##   [5] chr10:103880281-103880460   7.72879 -0.6250501  0.531938   0.975993</span></span>
-<span><span class="co">##   [6] chr10:103881241-103881420   3.73440 -0.0318288  0.974609   0.975993</span></span>
-<span><span class="co">##   [7] chr10:103892581-103892760   7.40460 -0.0633132  0.949517   0.975993</span></span>
-<span><span class="co">##   [8] chr10:103900141-103900320   4.64587  0.1423445  0.886808   0.975993</span></span>
-<span><span class="co">##   [9] chr10:103911901-103912080   4.81325 -0.1924133  0.847419   0.975993</span></span>
-<span><span class="co">##       overlaps_ref                            gene          symbol</span></span>
-<span><span class="co">##          &lt;logical&gt;                 &lt;CharacterList&gt; &lt;CharacterList&gt;</span></span>
-<span><span class="co">##   [1]         TRUE                 ENSG00000198728            LDB1</span></span>
-<span><span class="co">##   [2]        FALSE                 ENSG00000198728            LDB1</span></span>
-<span><span class="co">##   [3]         TRUE                 ENSG00000198728            LDB1</span></span>
-<span><span class="co">##   [4]        FALSE                 ENSG00000198728            LDB1</span></span>
-<span><span class="co">##   [5]         TRUE ENSG00000198728,ENSG00000148840      LDB1,PPRC1</span></span>
-<span><span class="co">##   [6]         TRUE ENSG00000198728,ENSG00000148840      LDB1,PPRC1</span></span>
-<span><span class="co">##   [7]         TRUE ENSG00000148840,ENSG00000198728      PPRC1,LDB1</span></span>
-<span><span class="co">##   [8]         TRUE                 ENSG00000148840           PPRC1</span></span>
-<span><span class="co">##   [9]        FALSE                 ENSG00000166197           NOLC1</span></span>
+<pre><code><span><span class="co">## GRanges object with 13 ranges and 11 metadata columns:</span></span>
+<span><span class="co">##        seqnames              ranges strand | n_windows      n_up    n_down</span></span>
+<span><span class="co">##           &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;</span></span>
+<span><span class="co">##    [1]    chr10 103865521-103865880      * |         6         0         3</span></span>
+<span><span class="co">##    [2]    chr10 103872121-103872280      * |         2         2         0</span></span>
+<span><span class="co">##    [3]    chr10 103874201-103874920      * |        12         0        11</span></span>
+<span><span class="co">##    [4]    chr10 103875681-103875840      * |         2         0         2</span></span>
+<span><span class="co">##    [5]    chr10 103876241-103876360      * |         1         0         1</span></span>
+<span><span class="co">##    ...      ...                 ...    ... .       ...       ...       ...</span></span>
+<span><span class="co">##    [9]    chr10 103881161-103881520      * |         7         1         3</span></span>
+<span><span class="co">##   [10]    chr10 103892161-103893400      * |        29         7        18</span></span>
+<span><span class="co">##   [11]    chr10 103899881-103900480      * |        13         2         8</span></span>
+<span><span class="co">##   [12]    chr10 103911521-103912320      * |        16         4        10</span></span>
+<span><span class="co">##   [13]    chr10 103912401-103912520      * |         1         0         1</span></span>
+<span><span class="co">##                     keyval_range    logCPM      logFC    PValue PValue_fdr</span></span>
+<span><span class="co">##                        &lt;GRanges&gt; &lt;numeric&gt;  &lt;numeric&gt; &lt;numeric&gt;  &lt;numeric&gt;</span></span>
+<span><span class="co">##    [1] chr10:103865681-103865800   3.38509 -0.7304650  0.465106   0.975993</span></span>
+<span><span class="co">##    [2] chr10:103872121-103872240   3.05473  0.8465515  0.397245   0.975993</span></span>
+<span><span class="co">##    [3] chr10:103874721-103874840   4.20389 -0.0334363  0.973327   0.975993</span></span>
+<span><span class="co">##    [4] chr10:103875681-103875800   3.26432 -0.4889297  0.624892   0.975993</span></span>
+<span><span class="co">##    [5] chr10:103876241-103876360   3.28010 -0.1816791  0.855835   0.975993</span></span>
+<span><span class="co">##    ...                       ...       ...        ...       ...        ...</span></span>
+<span><span class="co">##    [9] chr10:103881241-103881360   3.55630 -0.1565932  0.875565   0.975993</span></span>
+<span><span class="co">##   [10] chr10:103892601-103892720   7.34224 -0.0644482  0.948613   0.975993</span></span>
+<span><span class="co">##   [11] chr10:103900121-103900240   4.52272 -0.2269025  0.820500   0.975993</span></span>
+<span><span class="co">##   [12] chr10:103911881-103912000   4.70398 -0.2045804  0.837900   0.975993</span></span>
+<span><span class="co">##   [13] chr10:103912401-103912520   3.28010 -0.1816791  0.855835   0.975993</span></span>
+<span><span class="co">##        overlaps_ref                            gene          symbol</span></span>
+<span><span class="co">##           &lt;logical&gt;                 &lt;CharacterList&gt; &lt;CharacterList&gt;</span></span>
+<span><span class="co">##    [1]         TRUE                 ENSG00000198728            LDB1</span></span>
+<span><span class="co">##    [2]        FALSE                 ENSG00000198728            LDB1</span></span>
+<span><span class="co">##    [3]        FALSE                 ENSG00000198728            LDB1</span></span>
+<span><span class="co">##    [4]        FALSE                 ENSG00000198728            LDB1</span></span>
+<span><span class="co">##    [5]        FALSE                 ENSG00000198728            LDB1</span></span>
+<span><span class="co">##    ...          ...                             ...             ...</span></span>
+<span><span class="co">##    [9]         TRUE ENSG00000198728,ENSG00000148840      LDB1,PPRC1</span></span>
+<span><span class="co">##   [10]         TRUE ENSG00000148840,ENSG00000198728      PPRC1,LDB1</span></span>
+<span><span class="co">##   [11]         TRUE                 ENSG00000148840           PPRC1</span></span>
+<span><span class="co">##   [12]        FALSE                 ENSG00000166197           NOLC1</span></span>
+<span><span class="co">##   [13]        FALSE                 ENSG00000166197           NOLC1</span></span>
 <span><span class="co">##   -------</span></span>
 <span><span class="co">##   seqinfo: 1 sequence from an unspecified genome</span></span></code></pre>
 <p>The 5<sup>th</sup> to 7<sup>th</sup> windows are now mapped to both
@@ -493,21 +623,21 @@ binding characteristics of any given transcription factor. We have
 already defined the association of the merged windows with consensus
 peaks identified by <code>macs2</code>. We can easily visualise these
 using <code><a href="../reference/plotPie-methods.html">plotPie()</a></code></p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res_gr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/plotPie-methods.html">plotPie</a></span><span class="op">(</span><span class="st">"overlaps_ref"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="differential_binding_files/figure-html/plot-pie-1.png" width="960"></p>
+<p><img src="differential_signal_files/figure-html/plot-pie-1.png" width="960"></p>
 <p>These distribution charts can be drawn across three separate
 categories. Let’s include promoters.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res_gr</span><span class="op">$</span><span class="va">Feature</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bestOverlap-methods.html">bestOverlap</a></span><span class="op">(</span></span>
 <span>  <span class="va">res_gr</span>, <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRangesList-class.html" class="external-link">GRangesList</a></span><span class="op">(</span>Promoter <span class="op">=</span> <span class="va">ex_prom</span><span class="op">)</span>, missing <span class="op">=</span> <span class="st">"None"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">res_gr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/plotPie-methods.html">plotPie</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Feature"</span>, fill <span class="op">=</span> <span class="st">"overlaps_ref"</span><span class="op">)</span> </span></code></pre></div>
-<p><img src="differential_binding_files/figure-html/plot-dual-pie-1.png" width="960"></p>
+<p><img src="differential_signal_files/figure-html/plot-dual-pie-1.png" width="960"></p>
 <p>In a real world context where we’re dealing with thousands of ranges
 and multiple features, this represents a quick an easy way to asses
 binding characteristics. As these are all <code>ggplot2</code> objects,
@@ -529,7 +659,7 @@ desired.</p>
 conventionally very large files which shouldn’t be retained in memory,
 but are just accessed to import the key regions for a particular
 process.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bwfl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span></span>
 <span>  <span class="st">"extdata"</span>, <span class="st">"bigwig"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ex1.bw"</span>, <span class="st">"ex2.bw"</span><span class="op">)</span>, package <span class="op">=</span> <span class="st">"extraChIPs"</span></span>
 <span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -537,105 +667,121 @@ process.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ex1"</span>, <span class="st">"ex2"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Now we have our <code>BigWigFileList</code> we can define the profile
 data</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getProfileData-methods.html">getProfileData</a></span><span class="op">(</span><span class="va">bwfl</span>, <span class="va">res_gr</span><span class="op">)</span></span>
 <span><span class="va">pd</span></span></code></pre></div>
 <pre><code><span><span class="co">## GRangesList object of length 2:</span></span>
 <span><span class="co">## $ex1</span></span>
-<span><span class="co">## GRanges object with 9 ranges and 11 metadata columns:</span></span>
-<span><span class="co">##       seqnames              ranges strand | n_windows      n_up    n_down</span></span>
-<span><span class="co">##          &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;</span></span>
-<span><span class="co">##   [1]    chr10 103863200-103868199      * |         4         0         3</span></span>
-<span><span class="co">##   [2]    chr10 103872050-103877049      * |         8         1         6</span></span>
-<span><span class="co">##   [3]    chr10 103874960-103879959      * |        16         0         6</span></span>
-<span><span class="co">##   [4]    chr10 103876220-103881219      * |         2         1         1</span></span>
-<span><span class="co">##   [5]    chr10 103877510-103882509      * |        33         0        17</span></span>
-<span><span class="co">##   [6]    chr10 103878860-103883859      * |         4         1         2</span></span>
-<span><span class="co">##   [7]    chr10 103890290-103895289      * |        19         5        12</span></span>
-<span><span class="co">##   [8]    chr10 103897700-103902699      * |        10         2         5</span></span>
-<span><span class="co">##   [9]    chr10 103909460-103914459      * |        12         3         7</span></span>
-<span><span class="co">##                    keyval_range    logCPM      logFC    PValue PValue_fdr</span></span>
-<span><span class="co">##                       &lt;GRanges&gt; &lt;numeric&gt;  &lt;numeric&gt; &lt;numeric&gt;  &lt;numeric&gt;</span></span>
-<span><span class="co">##   [1] chr10:103865521-103865700   3.46979 -0.5610608  0.574756   0.975993</span></span>
-<span><span class="co">##   [2] chr10:103874641-103874820   4.24295 -0.1115489  0.911181   0.975993</span></span>
-<span><span class="co">##   [3] chr10:103877281-103877460   5.61526 -1.4816426  0.138435   0.975993</span></span>
-<span><span class="co">##   [4] chr10:103878661-103878840   3.35589 -0.0300928  0.975993   0.975993</span></span>
-<span><span class="co">##   [5] chr10:103880281-103880460   7.72879 -0.6250501  0.531938   0.975993</span></span>
-<span><span class="co">##   [6] chr10:103881241-103881420   3.73440 -0.0318288  0.974609   0.975993</span></span>
-<span><span class="co">##   [7] chr10:103892581-103892760   7.40460 -0.0633132  0.949517   0.975993</span></span>
-<span><span class="co">##   [8] chr10:103900141-103900320   4.64587  0.1423445  0.886808   0.975993</span></span>
-<span><span class="co">##   [9] chr10:103911901-103912080   4.81325 -0.1924133  0.847419   0.975993</span></span>
-<span><span class="co">##       overlaps_ref     Feature</span></span>
-<span><span class="co">##          &lt;logical&gt; &lt;character&gt;</span></span>
-<span><span class="co">##   [1]         TRUE        None</span></span>
-<span><span class="co">##   [2]        FALSE    Promoter</span></span>
-<span><span class="co">##   [3]         TRUE        None</span></span>
-<span><span class="co">##   [4]        FALSE        None</span></span>
-<span><span class="co">##   [5]         TRUE    Promoter</span></span>
-<span><span class="co">##   [6]         TRUE    Promoter</span></span>
-<span><span class="co">##   [7]         TRUE    Promoter</span></span>
-<span><span class="co">##   [8]         TRUE    Promoter</span></span>
-<span><span class="co">##   [9]        FALSE    Promoter</span></span>
-<span><span class="co">##                                                profile_data</span></span>
-<span><span class="co">##                                        &lt;SplitDataFrameList&gt;</span></span>
-<span><span class="co">##   [1]    1.00187:u1:-2475,1.00187:u2:-2425,1.06043:u3:-2375</span></span>
-<span><span class="co">##   [2]    1.85871:u1:-2475,2.20896:u2:-2425,2.22185:u3:-2375</span></span>
-<span><span class="co">##   [3]    3.26607:u1:-2475,2.95830:u2:-2425,2.66373:u3:-2375</span></span>
-<span><span class="co">##   [4]    3.03047:u1:-2475,3.11206:u2:-2425,2.86452:u3:-2375</span></span>
-<span><span class="co">##   [5]    4.72896:u1:-2475,4.40612:u2:-2425,3.89254:u3:-2375</span></span>
-<span><span class="co">##   [6]    2.37756:u1:-2475,2.42493:u2:-2425,2.16787:u3:-2375</span></span>
-<span><span class="co">##   [7]    2.32493:u1:-2475,2.11877:u2:-2425,2.14454:u3:-2375</span></span>
-<span><span class="co">##   [8]    2.15401:u1:-2475,1.60407:u2:-2425,1.58746:u3:-2375</span></span>
-<span><span class="co">##   [9] 0.306696:u1:-2475,1.165839:u2:-2425,1.587461:u3:-2375</span></span>
+<span><span class="co">## GRanges object with 13 ranges and 11 metadata columns:</span></span>
+<span><span class="co">##        seqnames              ranges strand | n_windows      n_up    n_down</span></span>
+<span><span class="co">##           &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;</span></span>
+<span><span class="co">##    [1]    chr10 103863200-103868199      * |         6         0         3</span></span>
+<span><span class="co">##    [2]    chr10 103869700-103874699      * |         2         2         0</span></span>
+<span><span class="co">##    [3]    chr10 103872060-103877059      * |        12         0        11</span></span>
+<span><span class="co">##    [4]    chr10 103873260-103878259      * |         2         0         2</span></span>
+<span><span class="co">##    [5]    chr10 103873800-103878799      * |         1         0         1</span></span>
+<span><span class="co">##    ...      ...                 ...    ... .       ...       ...       ...</span></span>
+<span><span class="co">##    [9]    chr10 103878840-103883839      * |         7         1         3</span></span>
+<span><span class="co">##   [10]    chr10 103890280-103895279      * |        29         7        18</span></span>
+<span><span class="co">##   [11]    chr10 103897680-103902679      * |        13         2         8</span></span>
+<span><span class="co">##   [12]    chr10 103909420-103914419      * |        16         4        10</span></span>
+<span><span class="co">##   [13]    chr10 103909960-103914959      * |         1         0         1</span></span>
+<span><span class="co">##                     keyval_range    logCPM      logFC    PValue PValue_fdr</span></span>
+<span><span class="co">##                        &lt;GRanges&gt; &lt;numeric&gt;  &lt;numeric&gt; &lt;numeric&gt;  &lt;numeric&gt;</span></span>
+<span><span class="co">##    [1] chr10:103865681-103865800   3.38509 -0.7304650  0.465106   0.975993</span></span>
+<span><span class="co">##    [2] chr10:103872121-103872240   3.05473  0.8465515  0.397245   0.975993</span></span>
+<span><span class="co">##    [3] chr10:103874721-103874840   4.20389 -0.0334363  0.973327   0.975993</span></span>
+<span><span class="co">##    [4] chr10:103875681-103875800   3.26432 -0.4889297  0.624892   0.975993</span></span>
+<span><span class="co">##    [5] chr10:103876241-103876360   3.28010 -0.1816791  0.855835   0.975993</span></span>
+<span><span class="co">##    ...                       ...       ...        ...       ...        ...</span></span>
+<span><span class="co">##    [9] chr10:103881241-103881360   3.55630 -0.1565932  0.875565   0.975993</span></span>
+<span><span class="co">##   [10] chr10:103892601-103892720   7.34224 -0.0644482  0.948613   0.975993</span></span>
+<span><span class="co">##   [11] chr10:103900121-103900240   4.52272 -0.2269025  0.820500   0.975993</span></span>
+<span><span class="co">##   [12] chr10:103911881-103912000   4.70398 -0.2045804  0.837900   0.975993</span></span>
+<span><span class="co">##   [13] chr10:103912401-103912520   3.28010 -0.1816791  0.855835   0.975993</span></span>
+<span><span class="co">##        overlaps_ref     Feature</span></span>
+<span><span class="co">##           &lt;logical&gt; &lt;character&gt;</span></span>
+<span><span class="co">##    [1]         TRUE        None</span></span>
+<span><span class="co">##    [2]        FALSE    Promoter</span></span>
+<span><span class="co">##    [3]        FALSE    Promoter</span></span>
+<span><span class="co">##    [4]        FALSE    Promoter</span></span>
+<span><span class="co">##    [5]        FALSE        None</span></span>
+<span><span class="co">##    ...          ...         ...</span></span>
+<span><span class="co">##    [9]         TRUE    Promoter</span></span>
+<span><span class="co">##   [10]         TRUE    Promoter</span></span>
+<span><span class="co">##   [11]         TRUE    Promoter</span></span>
+<span><span class="co">##   [12]        FALSE    Promoter</span></span>
+<span><span class="co">##   [13]        FALSE    Promoter</span></span>
+<span><span class="co">##                                                 profile_data</span></span>
+<span><span class="co">##                                         &lt;SplitDataFrameList&gt;</span></span>
+<span><span class="co">##    [1]    1.00187:u1:-2475,1.00187:u2:-2425,1.06043:u3:-2375</span></span>
+<span><span class="co">##    [2]    2.57358:u1:-2475,2.91848:u2:-2425,3.00328:u3:-2375</span></span>
+<span><span class="co">##    [3]    1.93635:u1:-2475,2.20896:u2:-2425,2.28627:u3:-2375</span></span>
+<span><span class="co">##    [4]    2.57751:u1:-2475,2.49253:u2:-2425,2.32493:u3:-2375</span></span>
+<span><span class="co">##    [5]    2.32493:u1:-2475,2.48808:u2:-2425,2.58808:u3:-2375</span></span>
+<span><span class="co">##    ...                                                   ...</span></span>
+<span><span class="co">##    [9]    2.37756:u1:-2475,2.32493:u2:-2425,2.39671:u3:-2375</span></span>
+<span><span class="co">##   [10]    2.32493:u1:-2475,2.18320:u2:-2425,2.08012:u3:-2375</span></span>
+<span><span class="co">##   [11]    2.18030:u1:-2475,1.77021:u2:-2425,1.58746:u3:-2375</span></span>
+<span><span class="co">##   [12] 0.000000:u1:-2475,0.500937:u2:-2425,1.282956:u3:-2375</span></span>
+<span><span class="co">##   [13]    2.58808:u1:-2475,2.58808:u2:-2425,2.57674:u3:-2375</span></span>
 <span><span class="co">##   -------</span></span>
 <span><span class="co">##   seqinfo: 1 sequence from an unspecified genome</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## $ex2</span></span>
-<span><span class="co">## GRanges object with 9 ranges and 11 metadata columns:</span></span>
-<span><span class="co">##       seqnames              ranges strand | n_windows      n_up    n_down</span></span>
-<span><span class="co">##          &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;</span></span>
-<span><span class="co">##   [1]    chr10 103863200-103868199      * |         4         0         3</span></span>
-<span><span class="co">##   [2]    chr10 103872050-103877049      * |         8         1         6</span></span>
-<span><span class="co">##   [3]    chr10 103874960-103879959      * |        16         0         6</span></span>
-<span><span class="co">##   [4]    chr10 103876220-103881219      * |         2         1         1</span></span>
-<span><span class="co">##   [5]    chr10 103877510-103882509      * |        33         0        17</span></span>
-<span><span class="co">##   [6]    chr10 103878860-103883859      * |         4         1         2</span></span>
-<span><span class="co">##   [7]    chr10 103890290-103895289      * |        19         5        12</span></span>
-<span><span class="co">##   [8]    chr10 103897700-103902699      * |        10         2         5</span></span>
-<span><span class="co">##   [9]    chr10 103909460-103914459      * |        12         3         7</span></span>
-<span><span class="co">##                    keyval_range    logCPM      logFC    PValue PValue_fdr</span></span>
-<span><span class="co">##                       &lt;GRanges&gt; &lt;numeric&gt;  &lt;numeric&gt; &lt;numeric&gt;  &lt;numeric&gt;</span></span>
-<span><span class="co">##   [1] chr10:103865521-103865700   3.46979 -0.5610608  0.574756   0.975993</span></span>
-<span><span class="co">##   [2] chr10:103874641-103874820   4.24295 -0.1115489  0.911181   0.975993</span></span>
-<span><span class="co">##   [3] chr10:103877281-103877460   5.61526 -1.4816426  0.138435   0.975993</span></span>
-<span><span class="co">##   [4] chr10:103878661-103878840   3.35589 -0.0300928  0.975993   0.975993</span></span>
-<span><span class="co">##   [5] chr10:103880281-103880460   7.72879 -0.6250501  0.531938   0.975993</span></span>
-<span><span class="co">##   [6] chr10:103881241-103881420   3.73440 -0.0318288  0.974609   0.975993</span></span>
-<span><span class="co">##   [7] chr10:103892581-103892760   7.40460 -0.0633132  0.949517   0.975993</span></span>
-<span><span class="co">##   [8] chr10:103900141-103900320   4.64587  0.1423445  0.886808   0.975993</span></span>
-<span><span class="co">##   [9] chr10:103911901-103912080   4.81325 -0.1924133  0.847419   0.975993</span></span>
-<span><span class="co">##       overlaps_ref     Feature</span></span>
-<span><span class="co">##          &lt;logical&gt; &lt;character&gt;</span></span>
-<span><span class="co">##   [1]         TRUE        None</span></span>
-<span><span class="co">##   [2]        FALSE    Promoter</span></span>
-<span><span class="co">##   [3]         TRUE        None</span></span>
-<span><span class="co">##   [4]        FALSE        None</span></span>
-<span><span class="co">##   [5]         TRUE    Promoter</span></span>
-<span><span class="co">##   [6]         TRUE    Promoter</span></span>
-<span><span class="co">##   [7]         TRUE    Promoter</span></span>
-<span><span class="co">##   [8]         TRUE    Promoter</span></span>
-<span><span class="co">##   [9]        FALSE    Promoter</span></span>
-<span><span class="co">##                                             profile_data</span></span>
-<span><span class="co">##                                     &lt;SplitDataFrameList&gt;</span></span>
-<span><span class="co">##   [1] 1.02067:u1:-2475,1.02067:u2:-2425,1.02067:u3:-2375</span></span>
-<span><span class="co">##   [2] 2.25568:u1:-2475,2.63016:u2:-2425,3.03597:u3:-2375</span></span>
-<span><span class="co">##   [3] 2.94322:u1:-2475,2.34584:u2:-2425,2.27413:u3:-2375</span></span>
-<span><span class="co">##   [4] 2.70412:u1:-2475,2.76219:u2:-2425,2.71305:u3:-2375</span></span>
-<span><span class="co">##   [5] 3.40304:u1:-2475,3.25003:u2:-2425,2.86175:u3:-2375</span></span>
-<span><span class="co">##   [6] 2.85034:u1:-2475,2.58624:u2:-2425,2.64676:u3:-2375</span></span>
-<span><span class="co">##   [7] 1.61245:u1:-2475,1.32840:u2:-2425,1.61245:u3:-2375</span></span>
-<span><span class="co">##   [8]    0.6249:u1:-2475,0.0000:u2:-2425,0.0000:u3:-2375</span></span>
-<span><span class="co">##   [9] 2.35485:u1:-2475,2.08272:u2:-2425,2.03089:u3:-2375</span></span>
+<span><span class="co">## GRanges object with 13 ranges and 11 metadata columns:</span></span>
+<span><span class="co">##        seqnames              ranges strand | n_windows      n_up    n_down</span></span>
+<span><span class="co">##           &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;</span></span>
+<span><span class="co">##    [1]    chr10 103863200-103868199      * |         6         0         3</span></span>
+<span><span class="co">##    [2]    chr10 103869700-103874699      * |         2         2         0</span></span>
+<span><span class="co">##    [3]    chr10 103872060-103877059      * |        12         0        11</span></span>
+<span><span class="co">##    [4]    chr10 103873260-103878259      * |         2         0         2</span></span>
+<span><span class="co">##    [5]    chr10 103873800-103878799      * |         1         0         1</span></span>
+<span><span class="co">##    ...      ...                 ...    ... .       ...       ...       ...</span></span>
+<span><span class="co">##    [9]    chr10 103878840-103883839      * |         7         1         3</span></span>
+<span><span class="co">##   [10]    chr10 103890280-103895279      * |        29         7        18</span></span>
+<span><span class="co">##   [11]    chr10 103897680-103902679      * |        13         2         8</span></span>
+<span><span class="co">##   [12]    chr10 103909420-103914419      * |        16         4        10</span></span>
+<span><span class="co">##   [13]    chr10 103909960-103914959      * |         1         0         1</span></span>
+<span><span class="co">##                     keyval_range    logCPM      logFC    PValue PValue_fdr</span></span>
+<span><span class="co">##                        &lt;GRanges&gt; &lt;numeric&gt;  &lt;numeric&gt; &lt;numeric&gt;  &lt;numeric&gt;</span></span>
+<span><span class="co">##    [1] chr10:103865681-103865800   3.38509 -0.7304650  0.465106   0.975993</span></span>
+<span><span class="co">##    [2] chr10:103872121-103872240   3.05473  0.8465515  0.397245   0.975993</span></span>
+<span><span class="co">##    [3] chr10:103874721-103874840   4.20389 -0.0334363  0.973327   0.975993</span></span>
+<span><span class="co">##    [4] chr10:103875681-103875800   3.26432 -0.4889297  0.624892   0.975993</span></span>
+<span><span class="co">##    [5] chr10:103876241-103876360   3.28010 -0.1816791  0.855835   0.975993</span></span>
+<span><span class="co">##    ...                       ...       ...        ...       ...        ...</span></span>
+<span><span class="co">##    [9] chr10:103881241-103881360   3.55630 -0.1565932  0.875565   0.975993</span></span>
+<span><span class="co">##   [10] chr10:103892601-103892720   7.34224 -0.0644482  0.948613   0.975993</span></span>
+<span><span class="co">##   [11] chr10:103900121-103900240   4.52272 -0.2269025  0.820500   0.975993</span></span>
+<span><span class="co">##   [12] chr10:103911881-103912000   4.70398 -0.2045804  0.837900   0.975993</span></span>
+<span><span class="co">##   [13] chr10:103912401-103912520   3.28010 -0.1816791  0.855835   0.975993</span></span>
+<span><span class="co">##        overlaps_ref     Feature</span></span>
+<span><span class="co">##           &lt;logical&gt; &lt;character&gt;</span></span>
+<span><span class="co">##    [1]         TRUE        None</span></span>
+<span><span class="co">##    [2]        FALSE    Promoter</span></span>
+<span><span class="co">##    [3]        FALSE    Promoter</span></span>
+<span><span class="co">##    [4]        FALSE    Promoter</span></span>
+<span><span class="co">##    [5]        FALSE        None</span></span>
+<span><span class="co">##    ...          ...         ...</span></span>
+<span><span class="co">##    [9]         TRUE    Promoter</span></span>
+<span><span class="co">##   [10]         TRUE    Promoter</span></span>
+<span><span class="co">##   [11]         TRUE    Promoter</span></span>
+<span><span class="co">##   [12]        FALSE    Promoter</span></span>
+<span><span class="co">##   [13]        FALSE    Promoter</span></span>
+<span><span class="co">##                                                    profile_data</span></span>
+<span><span class="co">##                                            &lt;SplitDataFrameList&gt;</span></span>
+<span><span class="co">##    [1]       1.02067:u1:-2475,1.02067:u2:-2425,1.02067:u3:-2375</span></span>
+<span><span class="co">##    [2]       1.49168:u1:-2475,1.61245:u2:-2425,1.61245:u3:-2375</span></span>
+<span><span class="co">##    [3]       2.31598:u1:-2475,2.76638:u2:-2425,3.04279:u3:-2375</span></span>
+<span><span class="co">##    [4]       2.35485:u1:-2475,1.91778:u2:-2425,1.98068:u3:-2375</span></span>
+<span><span class="co">##    [5]       3.03597:u1:-2475,3.04279:u2:-2425,2.91222:u3:-2375</span></span>
+<span><span class="co">##    ...                                                      ...</span></span>
+<span><span class="co">##    [9]       2.92769:u1:-2475,2.67558:u2:-2425,2.57648:u3:-2375</span></span>
+<span><span class="co">##   [10]       1.61245:u1:-2475,1.32840:u2:-2425,1.61245:u3:-2375</span></span>
+<span><span class="co">##   [11] 1.2501359:u1:-2475,0.0204134:u2:-2425,0.0000000:u3:-2375</span></span>
+<span><span class="co">##   [12]       2.29535:u1:-2475,2.34189:u2:-2425,2.03089:u3:-2375</span></span>
+<span><span class="co">##   [13]       0.00000:u1:-2475,1.52166:u2:-2425,2.12808:u3:-2375</span></span>
 <span><span class="co">##   -------</span></span>
 <span><span class="co">##   seqinfo: 1 sequence from an unspecified genome</span></span></code></pre>
 <p>This produces a <code>GRangesList</code> with a <code>GRanges</code>
@@ -647,32 +793,32 @@ plot this data by specifying this column in the function
 <code><a href="../reference/plotProfileHeatmap-methods.html">plotProfileHeatmap()</a></code>, which produces a <code>ggplot2</code>
 object able to be customised in the conventional manner. Here, we’ll add
 a colour scale and <code><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw()</a></code></p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotProfileHeatmap-methods.html">plotProfileHeatmap</a></span><span class="op">(</span><span class="va">pd</span>, <span class="st">"profile_data"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_fill_viridis_c</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"CPM"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="differential_binding_files/figure-html/profile-heatmap-1.png" width="960"></p>
+<p><img src="differential_signal_files/figure-html/profile-heatmap-1.png" width="960"></p>
 <p>In our initial merging of sliding windows we chose our representative
 values to be from the sliding window with the highest signal. This may
 not be at the centre of the final merged window, but having retained
 this in the <code>keyval_range</code> column, we can use this range for
 generation of the profile data, ensuring we have our profile heatmaps
 centred at the point of the highest signal.</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/getProfileData-methods.html">getProfileData</a></span><span class="op">(</span><span class="va">bwfl</span>, <span class="fu"><a href="../reference/colToRanges-methods.html">colToRanges</a></span><span class="op">(</span><span class="va">res_gr</span>, <span class="st">"keyval_range"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plotProfileHeatmap-methods.html">plotProfileHeatmap</a></span><span class="op">(</span><span class="va">pd</span>, <span class="st">"profile_data"</span><span class="op">)</span>  <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_fill_viridis_c</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"CPM"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="differential_binding_files/figure-html/centred-heatmap-1.png" width="960"></p>
+<p><img src="differential_signal_files/figure-html/centred-heatmap-1.png" width="960"></p>
 <p>As we’re using <code>ggplot2</code> we can also separate peaks by any
 of the categorical columns in our initial ranges, such as the
 <code>overlaps_ref</code> column. This will not only create facets along
 the y-axis, but the traces for each panel are drawn separately for each
 facet, and these can be simply assigned colours or linetype using
 standard <code>ggplot2</code> syntax.</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotProfileHeatmap-methods.html">plotProfileHeatmap</a></span><span class="op">(</span></span>
 <span>  <span class="va">pd</span>, <span class="st">"profile_data"</span>, facetY <span class="op">=</span> <span class="st">"overlaps_ref"</span>, linetype <span class="op">=</span> <span class="st">"overlaps_ref"</span></span>
 <span><span class="op">)</span>  <span class="op">+</span></span>
@@ -680,7 +826,7 @@ standard <code>ggplot2</code> syntax.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_colour_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="st">"black"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"CPM"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="differential_binding_files/figure-html/facet-heatmap-1.png" width="960"></p>
+<p><img src="differential_signal_files/figure-html/facet-heatmap-1.png" width="960"></p>
 </div>
 <div class="section level3">
 <h3 id="inspection-of-ranges">Inspection of Ranges<a class="anchor" aria-label="anchor" href="#inspection-of-ranges"></a>
@@ -701,31 +847,31 @@ other tracks being optional.</p>
 <p>Let’s start by plotting the entire region contained in
 <code>res_gr</code> using the minimal data possible, a
 <code>GRanges</code> object and some cytogenetic bands.</p>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"grch37.cytobands"</span><span class="op">)</span></span>
 <span><span class="va">gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="va">res_gr</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plotHFGC.html">plotHFGC</a></span><span class="op">(</span><span class="va">gr</span>, cytobands <span class="op">=</span> <span class="va">grch37.cytobands</span><span class="op">)</span></span></code></pre></div>
-<p><img src="differential_binding_files/figure-html/plot-empty-hfgc-1.png" width="960"></p>
+<p><img src="differential_signal_files/figure-html/plot-empty-hfgc-1.png" width="960"></p>
 <p>This is clearly of minimal interest, so let’s add some transcript
 models. These are supplied here in the layout required by the defaults
 of the <code>GeneRegionTrack()</code> function, with all exons and
 transcripts annotated.</p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"ex_trans"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plotHFGC.html">plotHFGC</a></span><span class="op">(</span><span class="va">gr</span>, genes <span class="op">=</span> <span class="va">ex_trans</span>, cytobands <span class="op">=</span> <span class="va">grch37.cytobands</span><span class="op">)</span></span></code></pre></div>
-<p><img src="differential_binding_files/figure-html/add-genes-1.png" width="960"></p>
+<p><img src="differential_signal_files/figure-html/add-genes-1.png" width="960"></p>
 <p>As these are collapsed into <em>meta-transcripts</em> by default,
 let’s 1) add colour, 2) expand transcripts, and 3) zoom out a little.
 The initial range is highlighted by default, but this can also be turned
 off if preferred.</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotHFGC.html">plotHFGC</a></span><span class="op">(</span></span>
 <span>  <span class="va">gr</span>, </span>
 <span>  genes <span class="op">=</span> <span class="va">ex_trans</span>, genecol <span class="op">=</span> <span class="st">"wheat"</span>,</span>
 <span>  collapseTranscripts <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  cytobands <span class="op">=</span> <span class="va">grch37.cytobands</span>, zoom <span class="op">=</span> <span class="fl">1.2</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="differential_binding_files/figure-html/plot-trans-1.png" width="960"></p>
+<p><img src="differential_signal_files/figure-html/plot-trans-1.png" width="960"></p>
 <p>The object <code>ex_trans</code> contains the column
 <code>status</code>, and we might like to use this to display these
 genes on separate tracks. In this case, we would pass a
@@ -740,7 +886,7 @@ colour</li>
 (`<em>named</em>) list with each element being applied to the respective
 track, or as a single value</li>
 </ul>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">status_trans</span> <span class="op">&lt;-</span> <span class="fu">splitAsList</span><span class="op">(</span><span class="va">ex_trans</span>, <span class="va">ex_trans</span><span class="op">$</span><span class="va">status</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plotHFGC.html">plotHFGC</a></span><span class="op">(</span></span>
 <span>  <span class="va">gr</span>, </span>
@@ -749,7 +895,7 @@ track, or as a single value</li>
 <span>  collapseTranscripts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Up <span class="op">=</span> <span class="cn">FALSE</span>, Unchanged <span class="op">=</span> <span class="cn">FALSE</span>, Undetected <span class="op">=</span> <span class="st">"meta"</span><span class="op">)</span>,</span>
 <span>  cytobands <span class="op">=</span> <span class="va">grch37.cytobands</span>, zoom <span class="op">=</span> <span class="fl">1.2</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="differential_binding_files/figure-html/split-trans-1.png" width="960"></p>
+<p><img src="differential_signal_files/figure-html/split-trans-1.png" width="960"></p>
 <p>This idea of providing a matching <em>named</em> list is applied
 across the genes, features and coverage tracks in the sections
 below.</p>
@@ -762,7 +908,7 @@ promoters. Unlike the genes track, features must <strong>always</strong>
 be a <code>GRangesList</code>, with each element defining a different
 type of feature. Given that we only have promoters, we’ll still need to
 set this up as a <code>GRangesList</code></p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"ex_prom"</span><span class="op">)</span></span>
 <span><span class="va">feat_grl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRangesList-class.html" class="external-link">GRangesList</a></span><span class="op">(</span>Promoters <span class="op">=</span> <span class="va">ex_prom</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plotHFGC.html">plotHFGC</a></span><span class="op">(</span></span>
@@ -773,14 +919,14 @@ set this up as a <code>GRangesList</code></p>
 <span>  collapseTranscripts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Up <span class="op">=</span> <span class="cn">FALSE</span>, Unchanged <span class="op">=</span> <span class="cn">FALSE</span>, Undetected <span class="op">=</span> <span class="st">"meta"</span><span class="op">)</span>,</span>
 <span>  cytobands <span class="op">=</span> <span class="va">grch37.cytobands</span>, zoom <span class="op">=</span> <span class="fl">1.2</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="differential_binding_files/figure-html/plot-hfgc-1.png" width="960"></p>
+<p><img src="differential_signal_files/figure-html/plot-hfgc-1.png" width="960"></p>
 </div>
 <div class="section level4">
 <h4 id="adding-hic-interactions">Adding HiC Interactions<a class="anchor" aria-label="anchor" href="#adding-hic-interactions"></a>
 </h4>
 <p>Adding the HiC Interactions becomes very simple. All that we need is
 a GInteractions object.</p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotHFGC.html">plotHFGC</a></span><span class="op">(</span></span>
 <span>  <span class="va">gr</span>, </span>
 <span>  hic <span class="op">=</span> <span class="va">ex_hic</span>,</span>
@@ -790,7 +936,7 @@ a GInteractions object.</p>
 <span>  collapseTranscripts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Up <span class="op">=</span> <span class="cn">FALSE</span>, Unchanged <span class="op">=</span> <span class="cn">FALSE</span>, Undetected <span class="op">=</span> <span class="st">"meta"</span><span class="op">)</span>,</span>
 <span>  cytobands <span class="op">=</span> <span class="va">grch37.cytobands</span>, zoom <span class="op">=</span> <span class="fl">1.2</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="differential_binding_files/figure-html/plot-with-hic-1.png" width="960"></p>
+<p><img src="differential_signal_files/figure-html/plot-with-hic-1.png" width="960"></p>
 <p>If interactions extend beyond the plot range (<code>gr</code>), the
 plotting range will be automatically extended to incorporate all
 interactions. Given these can extend to a very long distance, only
@@ -805,7 +951,7 @@ single <code>BigWigFileList</code>. In this scenario, each individual
 file will be drawn on a separate track. Colours for lines are passed as
 a simple vector/list with names matching the names of the
 <code>BigWigFileList</code>.</p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotHFGC.html">plotHFGC</a></span><span class="op">(</span></span>
 <span>  <span class="va">gr</span>, </span>
 <span>  hic <span class="op">=</span> <span class="va">ex_hic</span>,</span>
@@ -816,13 +962,13 @@ a simple vector/list with names matching the names of the
 <span>  collapseTranscripts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Up <span class="op">=</span> <span class="cn">FALSE</span>, Unchanged <span class="op">=</span> <span class="cn">FALSE</span>, Undetected <span class="op">=</span> <span class="st">"meta"</span><span class="op">)</span>,</span>
 <span>  cytobands <span class="op">=</span> <span class="va">grch37.cytobands</span>, zoom <span class="op">=</span> <span class="fl">1.2</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="differential_binding_files/figure-html/plot-with-coverage-1.png" width="960"></p>
+<p><img src="differential_signal_files/figure-html/plot-with-coverage-1.png" width="960"></p>
 <p>Alternatively, by providing a list of <code>BigWigFileList</code>
 objects, each list element will be drawn as a single overlaid track. In
 this way, unlimited coverage tracks can effectively be drawn.</p>
 <p>If choosing this option, colours must again be passed as a matching,
 <em>named</em> list.</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cov_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>TF1 <span class="op">=</span> <span class="va">bwfl</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plotHFGC.html">plotHFGC</a></span><span class="op">(</span></span>
 <span>  <span class="va">gr</span>, </span>
@@ -835,31 +981,31 @@ this way, unlimited coverage tracks can effectively be drawn.</p>
 <span>  collapseTranscripts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Up <span class="op">=</span> <span class="cn">FALSE</span>, Unchanged <span class="op">=</span> <span class="cn">FALSE</span>, Undetected <span class="op">=</span> <span class="st">"meta"</span><span class="op">)</span>,</span>
 <span>  cytobands <span class="op">=</span> <span class="va">grch37.cytobands</span>, zoom <span class="op">=</span> <span class="fl">1.2</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="differential_binding_files/figure-html/plot-with-tracks-1.png" width="960"></p>
+<p><img src="differential_signal_files/figure-html/plot-with-tracks-1.png" width="960"></p>
 </div>
 <div class="section level4">
 <h4 id="adding-annotations-to-coverage">Adding Annotations To Coverage<a class="anchor" aria-label="anchor" href="#adding-annotations-to-coverage"></a>
 </h4>
 <p>An indication of which regions are associated with increased or
-decreased binding can also be a useful annotation to add to plots such
-as the above. Although we technically performed no statistical testing,
-let’s consider a window with logFC below -1 to be showing decreased
-binding.</p>
+decreased ChIP signal can also be a useful annotation to add to plots
+such as the above. Although we technically performed no statistical
+testing, let’s consider a window with logFC below -1 to be showing
+decreased signal.</p>
 <p>Similar to the features track, where the names of
 <code>GRangesList</code> elements denote the different feature types,
 able to then assigned a colour, coverage annotation tracks follow these
 same rules. For each coverage track being annotated, a
 <code>GRangesList</code> object can denote the ranges which can be
 assigned different colours.</p>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cov_annot</span> <span class="op">&lt;-</span> <span class="fu">splitAsList</span><span class="op">(</span><span class="va">res_gr</span>, <span class="va">res_gr</span><span class="op">$</span><span class="va">logFC</span> <span class="op">&lt;</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Unchanged"</span>, <span class="st">"Decreased"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu">endoapply</span><span class="op">(</span><span class="va">granges</span><span class="op">)</span></span></code></pre></div>
-<p>In the above, we have Unchanged and Decreased binding denoted as
+<p>In the above, we have Unchanged and Decreased signal denoted as
 annotations. In keeping with the approach of having a matching list
 element for every coverage track, we would need to pass this as a list
 which matched the coverage track</p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotHFGC.html">plotHFGC</a></span><span class="op">(</span></span>
 <span>  <span class="va">gr</span>, </span>
 <span>  hic <span class="op">=</span> <span class="va">ex_hic</span>,</span>
@@ -873,7 +1019,7 @@ which matched the coverage track</p>
 <span>  collapseTranscripts <span class="op">=</span> <span class="st">"meta"</span>,</span>
 <span>  cytobands <span class="op">=</span> <span class="va">grch37.cytobands</span>, zoom <span class="op">=</span> <span class="fl">1.2</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="differential_binding_files/figure-html/plot-annot-1.png" width="960"></p>
+<p><img src="differential_signal_files/figure-html/plot-annot-1.png" width="960"></p>
 <p>Plots are able to be tweaked considerably further via multiple
 parameters, however these basic approaches cover the elemental
 functionality of <code>plotHFCG()</code> for enabling simple &amp;
@@ -889,7 +1035,7 @@ or even sets of results, can form an important part of many analysis. In
 the case of comparing replicates, two options are possible using
 <code><a href="../reference/plotOverlaps-methods.html">plotOverlaps()</a></code>. For 1-3 replicates Venn Diagrams are
 enabled, whilst UpSet plots are possible for 2 or more replicates.</p>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span>
 <span><span class="va">grl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRangesList-class.html" class="external-link">GRangesList</a></span><span class="op">(</span></span>
 <span>  a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chr1:1-10"</span>, <span class="st">"chr1:21-30"</span>, <span class="st">"chr1:31-40"</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -900,41 +1046,54 @@ enabled, whilst UpSet plots are possible for 2 or more replicates.</p>
 <p>During generation of these plots, ranges are reduced using
 <code><a href="https://rdrr.io/pkg/IRanges/man/inter-range-methods.html" class="external-link">GenomicRanges::reduce()</a></code> to ensure common ranges between
 replicates.</p>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotOverlaps-methods.html">plotOverlaps</a></span><span class="op">(</span><span class="va">grl</span><span class="op">)</span></span></code></pre></div>
-<p><img src="differential_binding_files/figure-html/ex-plotoverlaps-1.png" width="960"></p>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<p><img src="differential_signal_files/figure-html/ex-plotoverlaps-1.png" width="960"></p>
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotOverlaps-methods.html">plotOverlaps</a></span><span class="op">(</span><span class="va">grl</span>, type <span class="op">=</span> <span class="st">"upset"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="differential_binding_files/figure-html/ex-plotoverlaps-2.png" width="960"></p>
+<p><img src="differential_signal_files/figure-html/ex-plotoverlaps-2.png" width="960"></p>
 <p>The gap width used for range reduction can also be passed through
 <code><a href="../reference/plotOverlaps-methods.html">plotOverlaps()</a></code>, with the default being
 <code>min.gapwidth = 1L</code>.</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotOverlaps-methods.html">plotOverlaps</a></span><span class="op">(</span><span class="va">grl</span>, type <span class="op">=</span> <span class="st">"upset"</span>, min.gapwidth <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="differential_binding_files/figure-html/ex-plotoverlaps-gapwidth-1.png" width="960"></p>
+<p><img src="differential_signal_files/figure-html/ex-plotoverlaps-gapwidth-1.png" width="960"></p>
 <p>In the case of UpSet plots, a common value across replicates
 (e.g. logCPM, score) can be averaged and a boxplot added as an
 additional panel above the conventional UpSet plot.</p>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotOverlaps-methods.html">plotOverlaps</a></span><span class="op">(</span><span class="va">grl</span>, type <span class="op">=</span> <span class="st">"upset"</span>, var <span class="op">=</span> <span class="st">"score"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="differential_binding_files/figure-html/ex-plotoverlaps-upset-1.png" width="960"></p>
+<p><img src="differential_signal_files/figure-html/ex-plotoverlaps-upset-1.png" width="960"></p>
 <p>When comparing results, it may simpler to pass character vectors of
 genes.</p>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    mapped_to_target <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">res_gr_mapped</span><span class="op">$</span><span class="va">symbol</span><span class="op">)</span>,</span>
 <span>    de_genes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LDB1"</span>, <span class="st">"FOXA1"</span>, <span class="st">"ESR2"</span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>    <span class="fu"><a href="../reference/plotOverlaps-methods.html">plotOverlaps</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="differential_binding_files/figure-html/ex-plotoverlaps-genes-1.png" width="960"></p>
+<p><img src="differential_signal_files/figure-html/ex-plotoverlaps-genes-1.png" width="960"></p>
 <p>Whilst this example is simple, larger datasets with multiple elements
 can be easily explored in this manner.</p>
+</div>
+<div class="section level3">
+<h3 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-csaw2016" class="csl-entry">
+Lun, Aaron T L, and Gordon K Smyth. 2016. <span>“Csaw: A
+<span>B</span>ioconductor Package for Differential Binding Analysis of
+<span>C</span>h<span>I</span><span>P</span>-Seq Data Using Sliding
+Windows.”</span> <em>Nucleic Acids Res.</em> 44 (5): e45.
+</div>
+</div>
+<p><br></p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="session-info">Session Info<a class="anchor" aria-label="anchor" href="#session-info"></a>
 </h2>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## R version 4.3.0 beta (2023-04-06 r84184)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
@@ -960,95 +1119,95 @@ can be easily explored in this manner.</p>
 <span><span class="co">## [8] base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">##  [1] extraChIPs_1.3.10           rtracklayer_1.59.1         </span></span>
-<span><span class="co">##  [3] BiocParallel_1.33.12        csaw_1.33.1                </span></span>
-<span><span class="co">##  [5] SummarizedExperiment_1.29.1 Biobase_2.59.0             </span></span>
-<span><span class="co">##  [7] MatrixGenerics_1.11.1       matrixStats_0.63.0         </span></span>
-<span><span class="co">##  [9] Rsamtools_2.15.3            Biostrings_2.67.2          </span></span>
-<span><span class="co">## [11] XVector_0.39.0              GenomicRanges_1.51.4       </span></span>
-<span><span class="co">## [13] GenomeInfoDb_1.35.16        IRanges_2.33.1             </span></span>
-<span><span class="co">## [15] S4Vectors_0.37.5            BiocGenerics_0.45.3        </span></span>
-<span><span class="co">## [17] lubridate_1.9.2             forcats_1.0.0              </span></span>
-<span><span class="co">## [19] stringr_1.5.0               dplyr_1.1.1                </span></span>
-<span><span class="co">## [21] purrr_1.0.1                 readr_2.1.4                </span></span>
-<span><span class="co">## [23] tidyr_1.3.0                 tibble_3.2.1               </span></span>
-<span><span class="co">## [25] ggplot2_3.4.2               tidyverse_2.0.0            </span></span>
-<span><span class="co">## [27] BiocStyle_2.27.1           </span></span>
+<span><span class="co">##  [1] extraChIPs_1.3.10           patchwork_1.1.2            </span></span>
+<span><span class="co">##  [3] edgeR_3.41.6                limma_3.55.7               </span></span>
+<span><span class="co">##  [5] rtracklayer_1.59.1          BiocParallel_1.33.12       </span></span>
+<span><span class="co">##  [7] csaw_1.33.1                 SummarizedExperiment_1.29.1</span></span>
+<span><span class="co">##  [9] Biobase_2.59.0              MatrixGenerics_1.11.1      </span></span>
+<span><span class="co">## [11] matrixStats_0.63.0          Rsamtools_2.15.3           </span></span>
+<span><span class="co">## [13] Biostrings_2.67.2           XVector_0.39.0             </span></span>
+<span><span class="co">## [15] GenomicRanges_1.51.4        GenomeInfoDb_1.35.16       </span></span>
+<span><span class="co">## [17] IRanges_2.33.1              S4Vectors_0.37.5           </span></span>
+<span><span class="co">## [19] BiocGenerics_0.45.3         lubridate_1.9.2            </span></span>
+<span><span class="co">## [21] forcats_1.0.0               stringr_1.5.0              </span></span>
+<span><span class="co">## [23] dplyr_1.1.1                 purrr_1.0.1                </span></span>
+<span><span class="co">## [25] readr_2.1.4                 tidyr_1.3.0                </span></span>
+<span><span class="co">## [27] tibble_3.2.1                ggplot2_3.4.2              </span></span>
+<span><span class="co">## [29] tidyverse_2.0.0             BiocStyle_2.27.1           </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
 <span><span class="co">##   [1] BiocIO_1.9.2               bitops_1.0-7              </span></span>
 <span><span class="co">##   [3] filelock_1.0.2             polyclip_1.10-4           </span></span>
 <span><span class="co">##   [5] XML_3.99-0.14              rpart_4.1.19              </span></span>
-<span><span class="co">##   [7] lifecycle_1.0.3            edgeR_3.41.6              </span></span>
-<span><span class="co">##   [9] doParallel_1.0.17          rprojroot_2.0.3           </span></span>
-<span><span class="co">##  [11] MASS_7.3-58.4              lattice_0.21-8            </span></span>
-<span><span class="co">##  [13] ensembldb_2.23.2           backports_1.4.1           </span></span>
-<span><span class="co">##  [15] magrittr_2.0.3             limma_3.55.7              </span></span>
-<span><span class="co">##  [17] Hmisc_5.0-1                sass_0.4.5                </span></span>
-<span><span class="co">##  [19] rmarkdown_2.21             jquerylib_0.1.4           </span></span>
-<span><span class="co">##  [21] yaml_2.3.7                 metapod_1.7.0             </span></span>
-<span><span class="co">##  [23] ggside_0.2.2               Gviz_1.43.2               </span></span>
-<span><span class="co">##  [25] DBI_1.1.3                  RColorBrewer_1.1-3        </span></span>
-<span><span class="co">##  [27] zlibbioc_1.45.0            AnnotationFilter_1.23.0   </span></span>
-<span><span class="co">##  [29] biovizBase_1.47.0          RCurl_1.98-1.12           </span></span>
-<span><span class="co">##  [31] nnet_7.3-18                tweenr_2.0.2              </span></span>
-<span><span class="co">##  [33] VariantAnnotation_1.45.1   rappdirs_0.3.3            </span></span>
-<span><span class="co">##  [35] circlize_0.4.15            GenomeInfoDbData_1.2.10   </span></span>
-<span><span class="co">##  [37] ggrepel_0.9.3              pkgdown_2.0.7.9000        </span></span>
-<span><span class="co">##  [39] codetools_0.2-19           DelayedArray_0.25.0       </span></span>
-<span><span class="co">##  [41] ggforce_0.4.1              xml2_1.3.3                </span></span>
-<span><span class="co">##  [43] tidyselect_1.2.0           shape_1.4.6               </span></span>
-<span><span class="co">##  [45] futile.logger_1.4.3        farver_2.1.1              </span></span>
-<span><span class="co">##  [47] ComplexUpset_1.3.3         BiocFileCache_2.7.2       </span></span>
-<span><span class="co">##  [49] base64enc_0.1-3            GenomicAlignments_1.35.1  </span></span>
-<span><span class="co">##  [51] jsonlite_1.8.4             GetoptLong_1.0.5          </span></span>
-<span><span class="co">##  [53] Formula_1.2-5              iterators_1.0.14          </span></span>
-<span><span class="co">##  [55] systemfonts_1.0.4          foreach_1.5.2             </span></span>
-<span><span class="co">##  [57] tools_4.3.0                progress_1.2.2            </span></span>
-<span><span class="co">##  [59] ragg_1.2.5                 Rcpp_1.0.10               </span></span>
-<span><span class="co">##  [61] glue_1.6.2                 gridExtra_2.3             </span></span>
-<span><span class="co">##  [63] xfun_0.38                  withr_2.5.0               </span></span>
-<span><span class="co">##  [65] formatR_1.14               BiocManager_1.30.20       </span></span>
-<span><span class="co">##  [67] fastmap_1.1.1              latticeExtra_0.6-30       </span></span>
-<span><span class="co">##  [69] fansi_1.0.4                digest_0.6.31             </span></span>
-<span><span class="co">##  [71] timechange_0.2.0           R6_2.5.1                  </span></span>
-<span><span class="co">##  [73] textshaping_0.3.6          colorspace_2.1-0          </span></span>
-<span><span class="co">##  [75] jpeg_0.1-10                dichromat_2.0-0.1         </span></span>
-<span><span class="co">##  [77] biomaRt_2.55.4             RSQLite_2.3.1             </span></span>
-<span><span class="co">##  [79] utf8_1.2.3                 generics_0.1.3            </span></span>
-<span><span class="co">##  [81] data.table_1.14.8          prettyunits_1.1.1         </span></span>
-<span><span class="co">##  [83] InteractionSet_1.27.0      httr_1.4.5                </span></span>
-<span><span class="co">##  [85] htmlwidgets_1.6.2          pkgconfig_2.0.3           </span></span>
-<span><span class="co">##  [87] gtable_0.3.3               blob_1.2.4                </span></span>
-<span><span class="co">##  [89] ComplexHeatmap_2.15.3      htmltools_0.5.5           </span></span>
-<span><span class="co">##  [91] bookdown_0.33              ProtGenerics_1.31.0       </span></span>
-<span><span class="co">##  [93] clue_0.3-64                scales_1.2.1              </span></span>
-<span><span class="co">##  [95] png_0.1-8                  knitr_1.42                </span></span>
-<span><span class="co">##  [97] lambda.r_1.2.4             rstudioapi_0.14           </span></span>
-<span><span class="co">##  [99] tzdb_0.3.0                 rjson_0.2.21              </span></span>
-<span><span class="co">## [101] checkmate_2.1.0            curl_5.0.0                </span></span>
-<span><span class="co">## [103] cachem_1.0.7               GlobalOptions_0.1.2       </span></span>
-<span><span class="co">## [105] parallel_4.3.0             foreign_0.8-84            </span></span>
-<span><span class="co">## [107] AnnotationDbi_1.61.2       restfulr_0.0.15           </span></span>
-<span><span class="co">## [109] desc_1.4.2                 pillar_1.9.0              </span></span>
-<span><span class="co">## [111] grid_4.3.0                 vctrs_0.6.1               </span></span>
-<span><span class="co">## [113] dbplyr_2.3.2               cluster_2.1.4             </span></span>
-<span><span class="co">## [115] htmlTable_2.4.1            evaluate_0.20             </span></span>
-<span><span class="co">## [117] VennDiagram_1.7.3          EnrichedHeatmap_1.29.3    </span></span>
-<span><span class="co">## [119] GenomicFeatures_1.51.4     cli_3.6.1                 </span></span>
-<span><span class="co">## [121] locfit_1.5-9.7             compiler_4.3.0            </span></span>
-<span><span class="co">## [123] futile.options_1.0.1       rlang_1.1.0               </span></span>
-<span><span class="co">## [125] crayon_1.5.2               labeling_0.4.2            </span></span>
-<span><span class="co">## [127] interp_1.1-4               fs_1.6.1                  </span></span>
-<span><span class="co">## [129] stringi_1.7.12             viridisLite_0.4.1         </span></span>
-<span><span class="co">## [131] deldir_1.0-6               munsell_0.5.0             </span></span>
-<span><span class="co">## [133] lazyeval_0.2.2             Matrix_1.5-4              </span></span>
-<span><span class="co">## [135] BSgenome_1.67.4            hms_1.1.3                 </span></span>
-<span><span class="co">## [137] patchwork_1.1.2            bit64_4.0.5               </span></span>
-<span><span class="co">## [139] KEGGREST_1.39.0            highr_0.10                </span></span>
-<span><span class="co">## [141] broom_1.0.4                igraph_1.4.2              </span></span>
-<span><span class="co">## [143] memoise_2.0.1              bslib_0.4.2               </span></span>
-<span><span class="co">## [145] bit_4.0.5                  GenomicInteractions_1.33.0</span></span></code></pre>
+<span><span class="co">##   [7] lifecycle_1.0.3            doParallel_1.0.17         </span></span>
+<span><span class="co">##   [9] rprojroot_2.0.3            MASS_7.3-58.4             </span></span>
+<span><span class="co">##  [11] lattice_0.21-8             ensembldb_2.23.2          </span></span>
+<span><span class="co">##  [13] backports_1.4.1            magrittr_2.0.3            </span></span>
+<span><span class="co">##  [15] Hmisc_5.0-1                sass_0.4.5                </span></span>
+<span><span class="co">##  [17] rmarkdown_2.21             jquerylib_0.1.4           </span></span>
+<span><span class="co">##  [19] yaml_2.3.7                 metapod_1.7.0             </span></span>
+<span><span class="co">##  [21] ggside_0.2.2               Gviz_1.43.2               </span></span>
+<span><span class="co">##  [23] DBI_1.1.3                  RColorBrewer_1.1-3        </span></span>
+<span><span class="co">##  [25] zlibbioc_1.45.0            AnnotationFilter_1.23.0   </span></span>
+<span><span class="co">##  [27] biovizBase_1.47.0          RCurl_1.98-1.12           </span></span>
+<span><span class="co">##  [29] nnet_7.3-18                tweenr_2.0.2              </span></span>
+<span><span class="co">##  [31] VariantAnnotation_1.45.1   rappdirs_0.3.3            </span></span>
+<span><span class="co">##  [33] circlize_0.4.15            GenomeInfoDbData_1.2.10   </span></span>
+<span><span class="co">##  [35] ggrepel_0.9.3              pkgdown_2.0.7.9000        </span></span>
+<span><span class="co">##  [37] codetools_0.2-19           DelayedArray_0.25.0       </span></span>
+<span><span class="co">##  [39] ggforce_0.4.1              xml2_1.3.3                </span></span>
+<span><span class="co">##  [41] tidyselect_1.2.0           shape_1.4.6               </span></span>
+<span><span class="co">##  [43] futile.logger_1.4.3        farver_2.1.1              </span></span>
+<span><span class="co">##  [45] ComplexUpset_1.3.3         BiocFileCache_2.7.2       </span></span>
+<span><span class="co">##  [47] base64enc_0.1-3            GenomicAlignments_1.35.1  </span></span>
+<span><span class="co">##  [49] jsonlite_1.8.4             GetoptLong_1.0.5          </span></span>
+<span><span class="co">##  [51] Formula_1.2-5              iterators_1.0.14          </span></span>
+<span><span class="co">##  [53] systemfonts_1.0.4          foreach_1.5.2             </span></span>
+<span><span class="co">##  [55] tools_4.3.0                progress_1.2.2            </span></span>
+<span><span class="co">##  [57] ragg_1.2.5                 Rcpp_1.0.10               </span></span>
+<span><span class="co">##  [59] glue_1.6.2                 gridExtra_2.3             </span></span>
+<span><span class="co">##  [61] xfun_0.38                  withr_2.5.0               </span></span>
+<span><span class="co">##  [63] formatR_1.14               BiocManager_1.30.20       </span></span>
+<span><span class="co">##  [65] fastmap_1.1.1              latticeExtra_0.6-30       </span></span>
+<span><span class="co">##  [67] fansi_1.0.4                digest_0.6.31             </span></span>
+<span><span class="co">##  [69] timechange_0.2.0           R6_2.5.1                  </span></span>
+<span><span class="co">##  [71] textshaping_0.3.6          colorspace_2.1-0          </span></span>
+<span><span class="co">##  [73] jpeg_0.1-10                dichromat_2.0-0.1         </span></span>
+<span><span class="co">##  [75] biomaRt_2.55.4             RSQLite_2.3.1             </span></span>
+<span><span class="co">##  [77] utf8_1.2.3                 generics_0.1.3            </span></span>
+<span><span class="co">##  [79] data.table_1.14.8          prettyunits_1.1.1         </span></span>
+<span><span class="co">##  [81] InteractionSet_1.27.0      httr_1.4.5                </span></span>
+<span><span class="co">##  [83] htmlwidgets_1.6.2          pkgconfig_2.0.3           </span></span>
+<span><span class="co">##  [85] gtable_0.3.3               blob_1.2.4                </span></span>
+<span><span class="co">##  [87] ComplexHeatmap_2.15.3      htmltools_0.5.5           </span></span>
+<span><span class="co">##  [89] bookdown_0.33              ProtGenerics_1.31.0       </span></span>
+<span><span class="co">##  [91] clue_0.3-64                scales_1.2.1              </span></span>
+<span><span class="co">##  [93] png_0.1-8                  knitr_1.42                </span></span>
+<span><span class="co">##  [95] lambda.r_1.2.4             rstudioapi_0.14           </span></span>
+<span><span class="co">##  [97] tzdb_0.3.0                 rjson_0.2.21              </span></span>
+<span><span class="co">##  [99] checkmate_2.1.0            curl_5.0.0                </span></span>
+<span><span class="co">## [101] cachem_1.0.7               GlobalOptions_0.1.2       </span></span>
+<span><span class="co">## [103] parallel_4.3.0             foreign_0.8-84            </span></span>
+<span><span class="co">## [105] AnnotationDbi_1.61.2       restfulr_0.0.15           </span></span>
+<span><span class="co">## [107] desc_1.4.2                 pillar_1.9.0              </span></span>
+<span><span class="co">## [109] grid_4.3.0                 vctrs_0.6.1               </span></span>
+<span><span class="co">## [111] dbplyr_2.3.2               cluster_2.1.4             </span></span>
+<span><span class="co">## [113] htmlTable_2.4.1            evaluate_0.20             </span></span>
+<span><span class="co">## [115] VennDiagram_1.7.3          EnrichedHeatmap_1.29.3    </span></span>
+<span><span class="co">## [117] GenomicFeatures_1.51.4     cli_3.6.1                 </span></span>
+<span><span class="co">## [119] locfit_1.5-9.7             compiler_4.3.0            </span></span>
+<span><span class="co">## [121] futile.options_1.0.1       rlang_1.1.0               </span></span>
+<span><span class="co">## [123] crayon_1.5.2               labeling_0.4.2            </span></span>
+<span><span class="co">## [125] interp_1.1-4               fs_1.6.1                  </span></span>
+<span><span class="co">## [127] stringi_1.7.12             viridisLite_0.4.1         </span></span>
+<span><span class="co">## [129] deldir_1.0-6               munsell_0.5.0             </span></span>
+<span><span class="co">## [131] lazyeval_0.2.2             Matrix_1.5-4              </span></span>
+<span><span class="co">## [133] BSgenome_1.67.4            hms_1.1.3                 </span></span>
+<span><span class="co">## [135] bit64_4.0.5                KEGGREST_1.39.0           </span></span>
+<span><span class="co">## [137] highr_0.10                 broom_1.0.4               </span></span>
+<span><span class="co">## [139] igraph_1.4.2               memoise_2.0.1             </span></span>
+<span><span class="co">## [141] bslib_0.4.2                bit_4.0.5                 </span></span>
+<span><span class="co">## [143] GenomicInteractions_1.33.0</span></span></code></pre>
 </div>
   </div>
 
