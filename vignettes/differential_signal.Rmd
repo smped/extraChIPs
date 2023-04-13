@@ -1,14 +1,18 @@
 ---
-title: "extraChIPs: Differential Binding Analysis"
+title: "extraChIPs: Differential Signal Analysis"
 author:
 - name: Stevie Pederson
-  affiliation: Black Ochre Data Laboratories, Telethon Kids Institute
+  affiliation: 
+  - Black Ochre Data Laboratories, Telethon Kids Institute, Adelaide, Australia
+  - Dame Roma Mitchell Cancer Researc Laboratories, University of Adelaide
+  - John Curtin School of Medical Research, Australian National University
   email: stephen.pederson.au@gmail.com
 package: extraChIPs
+bibliography: '`r system.file("references.bib", package = "extraChIPs")`'
 output:
   BiocStyle::html_document
 vignette: >
-  %\VignetteIndexEntry{Differential Binding Analysis}
+  %\VignetteIndexEntry{Differential Signal Analysis}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -23,13 +27,17 @@ knitr::opts_chunk$set(
 # Introduction
 
 The [GRAVI](https://github.com/smped/GRAVI) workflow, for which this package 
-is designed, uses sliding windows for differential binding analysis in a manner 
+is designed, uses sliding windows for differential signal analysis in a manner 
 similar to the package `csaw`, but also incorporating `macs2` peaks.
 The workflow itself extends to integrating multiple ChIP targets and external 
 data sources, and as such, this package introduces a handful of functions to 
-enable these analyses.
+simplify and enable these analyses.
+Whilst many existing approaches refer to this type of analysis as Differential
+Binding analysis, we prefer the term *Differential Signal Analysis* as this more
+accurately captures the range of ChIP targets which are likely to be 
+investigated.
 
-The majority of examples below use extremely simplified datasets to provide
+The majority of examples below use heavily reduced datasets to provide
 general guidance on using the functions.
 Some results may appear trivial as a result, but will hopefully prove far more
 useful in a true experimental context.
@@ -46,27 +54,43 @@ be installed.
 if (!"BiocManager" %in% rownames(installed.packages()))
   install.packages("BiocManager")
 pkg <- c(
-  "tidyverse", "Rsamtools", "csaw", "BiocParallel", "rtracklayer", "extraChIPs"
+  "tidyverse", "Rsamtools", "csaw", "BiocParallel", "rtracklayer", "edgeR", 
+  "patchwork", "extraChIPs"
 )
 BiocManager::install(pkg, update = FALSE)
 ```
 
-# Differential Binding and ChIP-Seq Analysis
+# Differential Signal Analysis
 
 ## Sliding Windows
 
-The starting point for differential binding analysis using sliding windows is
-to define windows, then count reads within each window using the bam files.
-Commonly one or IP input/control samples is also produced during a ChIP-Seq
-experiment.
+The starting point for differential signal analyses using `extraChIPs` is to 
+define a set of sliding windows across the genome, then count reads from a set 
+of bam files, defined as a `BamFileList.`
+Commonly one or more IP input/control samples is also produced during a ChIP-Seq
+experiment, and these should be included at this stage of the analysis.
 The example files provided here contain a small subset of reads from chromosome 
-10 across two experimental and one input sample.
+10 across two experimental conditions and one input sample.
+For the subsequent analysis, we'll instead use a pre-prepared set of windows, 
+however this code serves as an excellent example of how to structure your code.
+It should also be noted that counting all reads across a `BamFileList` using 
+sliding windows, **will require a significant amount of RAM** and will be 
+beyond the capacity of most laptops as of the time of writing.
+When working with complete datasets, this step is best performed on an HPC or 
+a similar interactive server.
 
-The approach taken below is to define a set of sliding windows, using the 
-capabilities of `csaw`, but to then use `macs` peaks to define regions of most 
-likely signal.
-First we can define our windows and count the alignments using existing tools.
-In the following, we'll use a sliding window of 180bp and a step size of 60bp,
+The approach taken below is to first define a set of sliding windows across the 
+genome, using the capabilities of `csaw`. 
+After counting reads across all windows, a set of pre-defined regions is then 
+used guide the function `dualFilter()` which will discard low-signal windows, 
+retaining only those a) above a minimum signal level and b) with signal notably 
+above that of any input samples.
+These regions can be obtained from any external resource, or can even be taken 
+from `macs2`-defined peaks from the same samples.
+
+First we can define our windows and count the alignments using the existing 
+capabilities and functions provided in the `csaw` package [@csaw2016].
+In the following, we'll use a sliding window of 120bp and a step size of 40bp,
 meaning each nucleotide is covered by 3 windows.
 
 ```{r wincounts}
@@ -75,6 +99,8 @@ library(Rsamtools)
 library(csaw)
 library(BiocParallel)
 library(rtracklayer)
+library(edgeR)
+library(patchwork)
 bfl <- system.file(
   "extdata", "bam", c("ex1.bam", "ex2.bam", "input.bam"), package = "extraChIPs"
 ) %>% 
@@ -87,8 +113,8 @@ rp <- readParam(
 )
 wincounts <- windowCounts(
   bam.files = bfl,
-  spacing = 60,
-  width = 180,
+  spacing = 40,
+  width = 120,
   ext = 200,
   filter = 1,
   param = rp
@@ -97,6 +123,13 @@ wincounts <- windowCounts(
 
 This produces a `RangesSummarizedExperiment` with windows included which passed 
 the minimum threshold of 1 total read.
+We can check which windows had more than one read by checking the ranges 
+retained in the object.
+
+```{r show-ranges}
+rowRanges(wincounts)
+```
+
 As we've only counted reads within a very small window, the complete library 
 sizes will be highly inaccurate.
 The true library sizes can be added here noting that *this step is not normally* 
@@ -116,6 +149,7 @@ wincounts$treat <- as.factor(c("ctrl", "treat", NA))
 colData(wincounts)
 ```
 
+
 A density plot can be simply drawn of these counts, with the vast majority of 
 windows receiving very low counts, due to the nature of transcription factor 
 binding, where long stretches are unbound.
@@ -124,23 +158,26 @@ a transcription factor (TF), as seen in the two treatment group samples.
 
 ```{r plot-densities}
 library(extraChIPs)
-plotAssayDensities(wincounts, colour = "treat", trans = "log1p")
+plotAssayDensities(wincounts, colour = "treat", trans = "log1p") +
+  theme_bw()
 ```
 
 
 ## Filtering of Sliding Windows
 
-After counting all reads in the sliding windows, the next step is to discard 
-windows for which counts are unlikely to represent TF binding.
+After counting all reads in the sliding genomic windows, the next step is to 
+discard windows for which counts are unlikely to represent true signal from our 
+ChIP target.
 The package `extraChIPs` uses a set of consensus peaks to automatically 
 set a threshold based on 1) counts strongly above the counts from the input 
 sample, and 2) the windows with the overall highest signal.
-Thresholds are determined such that `q = 0.5` of the retained windows overlap
-on of the supplied consensus peaks.
+Thresholds are determined such that a proportion (e.g. `q = 0.5`) of the 
+windows which overlap one of the supplied consensus peaks will be returned.
 Higher values for `q` will return more windows, however many of these will 
-tend to only marginally overlap a peak.
+tend to only marginally overlap a peak in one of the tail regions, and these 
+will most likely be covered by neighbouring windows.
 Experience has shown that values such as `q = 0.5` tend to return a considerable
-proportion of windows containing true TF binding signal.
+proportion of windows containing true signal from the ChIP target.
 
 First we can load the peaks, supplied here as a simple `bed` file.
 
@@ -172,12 +209,14 @@ the complete library sizes used for the calculation of `logCPM` values.
 
 ```{r plotcpm}
 plotAssayDensities(filtcounts, assay = "logCPM", colour = "treat")
-plotAssayPCA(filtcounts, assay = "logCPM", colour = "treat", label = "sample")
+# plotAssayPCA(filtcounts, assay = "logCPM", colour = "treat", label = "sample")
 ```
 
 Whilst the initial set of counts contained `r nrow(wincounts)` windows, these
 have now been reduced to `r nrow(filtcounts)` windows.
-Similarly, the input sample is no longer included in the data object.
+Similarly, *the input sample is no longer included* in the data object, 
+although additional columns can easily be added to the returned object using 
+any number of strategies.
 
 ```{r dims}
 dim(wincounts)
@@ -193,25 +232,67 @@ rowRanges(filtcounts)
 mean(rowRanges(filtcounts)$overlaps_ref)
 ```
 
+## Differential Binding Analysis
 
-## Using Voom
+Now that the counting filtering steps have been demonstrated, we'll use an 
+object containing H3K27ac signal for 6 samples, across two treatments, but 
+restricted to a subset of Chromosome 10.
+This data was prepared using the above steps and contains reads from the 
+MDA-MB-453 breast cancer cell line, under Vehicle and DHT-treated conditions.
+The original samples are included in the GEO dataset `GSE176010`
 
-Multiple approaches are available for analysis of differential binding, and 
-given the small example dataset, only a brief example of conventional results
-will be used.
-`extraChIPs` does provide a simple coercion function to convert `logCPM` to a 
-`voom` object, which requires the relationship between **library sizes** and
-**`logCPM` values** to be intact.
-Whist this will not be discussed further here should this be a viable approach 
-for an analysis, the following code may prove helpful.
-
-```{r voom}
-v <- voomWeightsFromCPM(
-  cpm = assay(filtcounts, "logCPM"), 
-  lib.size = filtcounts$totals, 
-  isLogCPM = TRUE
-)
+```{r}
+data("h3k_chr10")
+colData(h3k_chr10)
 ```
+
+## Initial Visualisation
+
+As logCPM transformed values can be helpful, let's add this assay, then look at our densities once again.
+
+```{r}
+assay(h3k_chr10, "logCPM") <- cpm(
+    assay(h3k_chr10, "counts"), lib.size = h3k_chr10$totals, log = TRUE
+)
+plotAssayDensities(h3k_chr10, assay = "logCPM", colour = "treat") +
+  scale_colour_brewer(palette = "Set1") +
+  theme_bw()
+```
+
+We can also perform some basic QC using RLE plots.
+In the following, we first inspect the RLE across the entire dataset, followed 
+by RLE grouping within treatments.
+This can be particularly useful when distributions vary significantly between 
+treatment groups, such as may occur with a cytoplasmic to nuclear shift by a 
+given ChIP target.
+Here, however, there is minimal difference between the two approaches as H3K27ac 
+signal tends to be broadly consistent between these treatment groups.
+
+```{r plot-assay-rle, fig.cap = "RLE plots across all samples (A) and with values calculated within treatment groups (B)."}
+a <- plotAssayRle(h3k_chr10, assay = "logCPM", fill = "treat") +
+  geom_hline(yintercept = 0, linetype = 2, colour = "grey") +
+  scale_fill_brewer(palette = "Set1") +
+  theme_bw()
+b <- plotAssayRle(
+    h3k_chr10, assay = "logCPM", fill = "treat", rle_group = "treat"
+) +
+  geom_hline(yintercept = 0, linetype = 2, colour = "grey") +
+  scale_fill_brewer(palette = "Set1") +
+  theme_bw()
+a + b + plot_layout(guides = "collect") + 
+    plot_annotation(tag_levels = "A")
+```
+
+We can also check the samples using a PCA plot, again colouring the points by 
+treatment group and adding labels, which will repel by default if the points are 
+shown.
+
+```{r plot-pca}
+plotAssayPCA(h3k_chr10, "logCPM", colour = "treat", label = "label") +
+  scale_colour_brewer(palette = "Set1") +
+  theme_bw()
+```
+
 
 ## Merging Windows
 
@@ -598,9 +679,9 @@ plotHFGC(
 ### Adding Annotations To Coverage
 
 An indication of which regions are associated with increased or decreased 
-binding can also be a useful annotation to add to plots such as the above.
+ChIP signal can also be a useful annotation to add to plots such as the above.
 Although we technically performed no statistical testing, let's consider a
-window with logFC below -1 to be showing decreased binding.
+window with logFC below -1 to be showing decreased signal.
 
 Similar to the features track, where the names of `GRangesList` elements denote
 the different feature types, able to then assigned a colour, coverage annotation
@@ -614,7 +695,7 @@ cov_annot <- splitAsList(res_gr, res_gr$logFC < -1) %>%
   endoapply(granges)
 ```
 
-In the above, we have Unchanged and Decreased binding denoted as annotations.
+In the above, we have Unchanged and Decreased signal denoted as annotations.
 In keeping with the approach of having a matching list element for every 
 coverage track, we would need to pass this as a list which matched the 
 coverage track
@@ -694,6 +775,11 @@ list(
 
 Whilst this example is simple, larger datasets with multiple elements can be 
 easily explored in this manner.
+
+## References
+
+<div id="refs"></div>
+<br>
 
 # Session Info
 

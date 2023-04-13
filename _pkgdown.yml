@@ -56,7 +56,7 @@ navbar:
     - text: Range-based Operations
       href: articles/range_based_functions.html
     - text: Differential Binding
-      href: articles/differential_binding.html
+      href: articles/differential_signal.html
   - text: News
     href: news/index.html
   right:
