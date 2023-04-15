@@ -11,7 +11,8 @@
 #' window-level tests. This tests the Null Hypothesis that there is no
 #' significance amongst the initial set of p-values, and returns a summarised
 #' value which controls the FDR within a set of tests (Wilson, PNAS, 2019).
-#' No multilevel testing across the set of results is currently implemented.
+#' Multilevel testing across the set of results is currently implemented using
+#' `p_adj_method = "fwer"`
 #'
 #' Given that the harmonic mean p-value is calculated from the inverse p-values,
 #' these are used to provide a *weighted average* of expression and logFC values
@@ -107,7 +108,7 @@ setMethod(
             inc_cols <- vapply(
                 inc_cols, match.arg, character(1), choices = df_cols
             )
-            ret_cols <- unique(c(ret_cols, inc_cols))
+            ret_cols <- unique(c(inc_cols, ret_cols))
         }
         ## Always return the columns counting the total, up & down windows
         n_cols <- c("n_windows", "n_up", "n_down")

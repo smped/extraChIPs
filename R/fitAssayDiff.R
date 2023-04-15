@@ -56,6 +56,10 @@
 #' as a grouping factor. Ignored when using method = "lt"
 #' @param fc,lfc Thresholds passed to \link[limma]{treat} or
 #' \link[edgeR]{glmTreat}
+#' @param asRanges logical(1). By default, the returned object will be a
+#' `SummarizedExperiment` object with the results added to the `rowData`
+#' element. Setting `asRanges = TRUE` will only return the GRanges object from
+#' this element
 #' @param ... Passed to \link[edgeR]{calcNormFactors}, \link[edgeR]{estimateDisp}
 #' and \link[edgeR]{glmQLFit} when method = "qlf".
 #' If method = "lt", instead passed to \link[limma]{lmFit}, \link[limma]{treat},
@@ -95,7 +99,7 @@ setMethod(
         x, assay = "counts", design = NULL, coef = NULL,
         lib.size = "totals", method = c("qlf", "lt"),
         norm = c("none", "TMM", "RLE", "TMMwsp", "upperquartile"),
-        groups = NULL, fc = 1, lfc = log2(fc), ...
+        groups = NULL, fc = 1, lfc = log2(fc), asRanges = FALSE, ...
     ) {
         method <- match.arg(method)
         norm <- match.arg(norm)
@@ -144,6 +148,16 @@ setMethod(
         orig <- as_tibble(rowData(x))[,keep_cols]
         res[["FDR"]] <- p.adjust(res[["PValue"]], "fdr")
         rowData(x) <- cbind(orig, res)
+        if (asRanges) {
+            if (is.null(rowRanges(x))) {
+                warning(
+                    "No ranges found. Results will be returned in the rowData",
+                     "element of the original object"
+                )
+            } else {
+                return(rowRanges(x))
+            }
+        }
         x
     }
 )

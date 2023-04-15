@@ -104,7 +104,7 @@ setMethod(
         nm, function(x) as.character(gr)[mcols(gr)[[x]]]
       )
       names(l) <- nm
-      plotOverlaps(l, type = type, set_col = set_col, ...)
+      plotOverlaps(l, type, set_col = set_col, .sort_sets = .sort_sets, ...)
 
     } else {
 

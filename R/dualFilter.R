@@ -156,8 +156,14 @@ dualFilter <- function(
 
     ## TODO: Add a routine for when no Input sample is provided
     cuts <- list()
-    ## Apply the filter using control samples using the csaw method
-    bin_size <- 1e4
+    bin_size <- 10 * max(width(x))
+    ## Apply the filter using control samples using the csaw method which
+    ## counts all bam files across the entire genome again
+    ## This is currently very slow and an alternative method may be better
+    ## Maybe it's worth trying to restrict to a subset of chromosomes as the
+    ## steps are 1) Calculate the normalisation factor for bg counts, then
+    ## 2) recalculate the filter. Perhaps subsetting the genome will give
+    ## similar results. TODO...
     signal_counts <- windowCounts(
         bam.files = bfl,
         spacing = bin_size, filter = 0, param = rp, BPPARAM = BPPARAM
@@ -181,7 +187,7 @@ dualFilter <- function(
 
     ## Apply the filter using the expression percentile. This is quick already
     prop_filter <- filterWindowsProportion(x)$filter
-    cuts$prop <- quantile(prop_filter[ol], probs = 1 - sqrt(q))
+    cuts$prop <- quantile(prop_filter[ol & keep_control], probs = 1 - sqrt(q))
 
     keep <- keep_control & prop_filter > cuts$prop
     out <- x[keep,]

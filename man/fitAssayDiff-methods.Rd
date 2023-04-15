@@ -18,6 +18,7 @@ fitAssayDiff(x, ...)
   groups = NULL,
   fc = 1,
   lfc = log2(fc),
+  asRanges = FALSE,
   ...
 )
 }
@@ -54,6 +55,11 @@ as a grouping factor. Ignored when using method = "lt"}
 
 \item{fc, lfc}{Thresholds passed to \link[limma]{treat} or
 \link[edgeR]{glmTreat}}
+
+\item{asRanges}{logical(1). By default, the returned object will be a
+\code{SummarizedExperiment} object with the results added to the \code{rowData}
+element. Setting \code{asRanges = TRUE} will only return the GRanges object from
+this element}
 }
 \value{
 A SummarizedExperiment object with results set as the \code{rowData} element.

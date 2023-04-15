@@ -82,7 +82,8 @@ harmonic mean p-value \link[harmonicmeanp]{p.hmp} from the individual,
 window-level tests. This tests the Null Hypothesis that there is no
 significance amongst the initial set of p-values, and returns a summarised
 value which controls the FDR within a set of tests (Wilson, PNAS, 2019).
-No multilevel testing across the set of results is currently implemented.
+Multilevel testing across the set of results is currently implemented using
+\code{p_adj_method = "fwer"}
 
 Given that the harmonic mean p-value is calculated from the inverse p-values,
 these are used to provide a \emph{weighted average} of expression and logFC values
