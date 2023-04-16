@@ -53,7 +53,7 @@
       <a href="../articles/range_based_functions.html">Range-based Operations</a>
     </li>
     <li>
-      <a href="../articles/differential_signal.html">Differential Binding</a>
+      <a href="../articles/differential_signal.html">Differential Signal Analysis</a>
     </li>
   </ul>
 </li>
@@ -190,7 +190,7 @@ using <code>extraChIPs</code>.</p>
 <code class="sourceCode R"><span><span class="va">peakFiles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="st">"data"</span>, pattern <span class="op">=</span> <span class="st">"narrowPeak"</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/importPeaks.html">importPeaks</a></span><span class="op">(</span><span class="va">peakFiles</span>, seqinfo <span class="op">=</span> <span class="va">grch37</span><span class="op">)</span></span></code></pre></div>
 <p>This will import the peaks from all files as a single
-<code>GRangesList</code> object, adding the filename to each element by
+<code>GRangesList</code> object, adding the file-name to each element by
 default. We can easily modify these names if we so wish.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">peaks</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html" class="external-link">str_remove_all</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">peaks</span><span class="op">)</span>, <span class="st">"_peaks.narrowPeak"</span><span class="op">)</span></span></code></pre></div>
@@ -198,8 +198,8 @@ default. We can easily modify these names if we so wish.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotOverlaps-methods.html">plotOverlaps</a></span><span class="op">(</span><span class="va">peaks</span>, min_size <span class="op">=</span> <span class="fl">10</span>, .sort_sets <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="differential_signal_files/figure-gfm/plot-overlaps-1.png" alt=""><p class="caption">UpSet plot showing overlapping peaks across all
-replicates</p>
+<img src="differential_signal_files/figure-gfm/plot-overlaps-1.png" alt=""><p class="caption"><em>UpSet plot showing overlapping peaks across all
+replicates</em></p>
 </div>
 <p>Optionally, specifying a column and a suitable function will produce
 an additional panel summarising that value. In the following, we’ll show
@@ -209,9 +209,9 @@ lower.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotOverlaps-methods.html">plotOverlaps</a></span><span class="op">(</span><span class="va">peaks</span>, min_size <span class="op">=</span> <span class="fl">10</span>, .sort_sets <span class="op">=</span> <span class="cn">FALSE</span>, var <span class="op">=</span> <span class="st">"score"</span>, f <span class="op">=</span> <span class="st">"max"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="differential_signal_files/figure-gfm/plot-overlaps-score-1.png" alt=""><p class="caption">UpSet plot showing overlapping peaks across all
+<img src="differential_signal_files/figure-gfm/plot-overlaps-score-1.png" alt=""><p class="caption"><em>UpSet plot showing overlapping peaks across all
 replicates, with the maximum score across all replicates shown in the
-upper panel.</p>
+upper panel.</em></p>
 </div>
 <p>A common task at this point may be to define consensus peaks within
 each treatment group, by retaining only the peaks found in 2 of the 3
@@ -252,8 +252,8 @@ we use a <code>GRangesList</code> for the input.</p>
 <span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/plotOverlaps-methods.html">plotOverlaps</a></span><span class="op">(</span>set_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"grey70"</span>, <span class="st">"red"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="differential_signal_files/figure-gfm/venn-consensus-overlap-1.png" alt=""><p class="caption">Overlap between consensus peaks identified in a
-treatment-specific manner</p>
+<img src="differential_signal_files/figure-gfm/venn-consensus-overlap-1.png" alt=""><p class="caption"><em>Overlap between consensus peaks identified in a
+treatment-specific manner</em></p>
 </div>
 <p>We could go one step further and define the set of peaks found in
 either treatment. Given we’re being inclusive here, we can leave p = 0
@@ -271,16 +271,16 @@ so any peak found in either treatment is included.</p>
 <div class="section level3">
 <h3 id="sliding-windows">Sliding Windows<a class="anchor" aria-label="anchor" href="#sliding-windows"></a>
 </h3>
-<p>The standard approach of tools such as DiffBind
-(<strong>DiffBind?</strong>) is to take a set of peaks, re-centre them,
-then set all regions to be the same width. From there, data can be
-passed to <code>edgeR</code> (Chen, Lun, and Smyth 2016) or
-<code>DESeq2</code> (Love, Huber, and Anders 2014) for analysis. Whilst
-this approach can be replicated using the defined peaks above, the
-suggested approach for <code>extraChIPs</code> is to us sliding windows,
-as per <code>csaw</code>. The resultant variable width regions can be
+<p>The standard approach of tools such as DiffBind (Ross-Innes et
+al. 2012) is to take a set of peaks, re-centre them, then set all
+regions to be the same width. From there, data is passed to
+<code>edgeR</code> (Chen, Lun, and Smyth 2016) or <code>DESeq2</code>
+(Love, Huber, and Anders 2014) for analysis. Whilst this approach can be
+replicated using the defined peaks above, the suggested approach for
+<code>extraChIPs</code> is to us sliding windows, as per
+<code>csaw</code>. The resultant <em>variable width regions</em> can be
 particularly advantageous for ChIP targets such as H3K27ac where regions
-marked by histone-acetylation can vary greatly.</p>
+marked by histone-acetylation can vary greatly in size.</p>
 <p>The starting point for differential signal analyses using
 <code>extraChIPs</code> is to define a set of sliding windows across the
 genome, then count reads from a set of bam files, defined as a
@@ -383,8 +383,8 @@ group samples.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotAssayDensities-methods.html">plotAssayDensities</a></span><span class="op">(</span><span class="va">wincounts</span>, colour <span class="op">=</span> <span class="st">"treat"</span>, trans <span class="op">=</span> <span class="st">"log1p"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="differential_signal_files/figure-gfm/plot-densities-1.png" alt=""><p class="caption">Read Densities for all returned windows across all
-samples</p>
+<img src="differential_signal_files/figure-gfm/plot-densities-1.png" alt=""><p class="caption"><em>Read Densities for all returned windows across
+all samples</em></p>
 </div>
 </div>
 <div class="section level3">
@@ -443,9 +443,8 @@ logCPM values.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_colour_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="differential_signal_files/figure-gfm/plotcpm-1.png" alt=""><p class="caption">Densities for logCPM values across all samples after
-discarding windows less likely to contain signal from our ChIP
-target</p>
+<img src="differential_signal_files/figure-gfm/plotcpm-1.png" alt=""><p class="caption"><em>Densities for logCPM values across all samples
+after discarding windows less likely to contain H3K27ac signal</em></p>
 </div>
 <p>The <code>rowData</code> element of the returned object will contain
 a logical column indicating where each specific retained window
@@ -500,8 +499,8 @@ these treatment groups.</p>
 <span><span class="va">a</span> <span class="op">+</span> <span class="va">b</span> <span class="op">+</span> <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_layout.html" class="external-link">plot_layout</a></span><span class="op">(</span>guides <span class="op">=</span> <span class="st">"collect"</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span>tag_levels <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="differential_signal_files/figure-gfm/plot-assay-rle-1.png" alt=""><p class="caption">RLE plots across all samples (A) and with values
-calculated within treatment groups (B).</p>
+<img src="differential_signal_files/figure-gfm/plot-assay-rle-1.png" alt=""><p class="caption"><em>RLE plots across all samples (A) and with values
+calculated within treatment groups (B).</em></p>
 </div>
 <p>We can also check the samples using a PCA plot, again colouring the
 points by treatment group and adding labels, which will repel by default
@@ -510,7 +509,9 @@ if the points are shown.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotAssayPCA-methods.html">plotAssayPCA</a></span><span class="op">(</span><span class="va">filtcounts</span>, <span class="st">"logCPM"</span>, colour <span class="op">=</span> <span class="st">"treat"</span>, label <span class="op">=</span> <span class="st">"sample"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_colour_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="differential_signal_files/figure-gfm/plot-pca-1.png"><!-- --></p>
+<div class="figure">
+<img src="differential_signal_files/figure-gfm/plot-pca-1.png" alt=""><p class="caption"><em>PCA plot based on the logCPM assay</em></p>
+</div>
 </div>
 <div class="section level3">
 <h3 id="statistical-testing">Statistical Testing<a class="anchor" aria-label="anchor" href="#statistical-testing"></a>
@@ -616,8 +617,9 @@ signal, although this will not provide any specific genomic context.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/ggside/man/ggside-scales-continuous.html" class="external-link">scale_ysidex_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/expansion.html" class="external-link">expansion</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span>, minor_breaks <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="differential_signal_files/figure-gfm/plot-assay-heatmap-1.png" alt=""><p class="caption">Heatmap showing retained sliding windows whih
-correspond to the most highly-ranked region for differential signal.</p>
+<img src="differential_signal_files/figure-gfm/plot-assay-heatmap-1.png" alt=""><p class="caption"><em>Heatmap showing retained sliding windows whih
+correspond to the most highly-ranked region for differential
+signal.</em></p>
 </div>
 </div>
 <div class="section level3">
@@ -681,9 +683,7 @@ loaded as follows.</p>
 element as these are the regions directly overlapping a TSS for all
 transcripts within this region of the genome.</p>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">results_gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mapByFeature.html">mapByFeature</a></span><span class="op">(</span></span>
-<span>  gr <span class="op">=</span> <span class="va">results_gr</span>, genes <span class="op">=</span> <span class="va">genes</span>, prom <span class="op">=</span> <span class="va">regions</span><span class="op">$</span><span class="va">promoters</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">results_gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mapByFeature.html">mapByFeature</a></span><span class="op">(</span><span class="va">results_gr</span>, genes <span class="op">=</span> <span class="va">genes</span>, prom <span class="op">=</span> <span class="va">regions</span><span class="op">$</span><span class="va">promoters</span><span class="op">)</span></span></code></pre></div>
 <p>Now we have our regions showing changed signal along with the likely
 regulatory targets. Our top-ranked region is as follows, and this
 appears to be associated with the gene <em>KCNMA1</em>.</p>
@@ -749,18 +749,37 @@ labels.</p>
 <span>    cat_alpha <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>    cat_glue <span class="op">=</span> <span class="st">"{str_wrap(bestRegion, 10)}\n{n}\n{percent(p, 0.1)}"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p><img src="differential_signal_files/figure-gfm/plot-pie-1.png"><!-- --></p>
-<p>We can also scale by width, in which case returned values default to
-KB.</p>
+<div class="figure">
+<img src="differential_signal_files/figure-gfm/plot-pie-1.png" alt=""><p class="caption"><em>Pie chart showing the best overlapping region for
+each merged windows. The best overlap is determined simply by the region
+with the lergest amount of overlap.</em></p>
+</div>
+<p>We can also scale by additional columns. Here, we’ll find the
+proportion of each window which overlaps each type of region, providing
+a complete summary of the proportion of our ranges which overlaps each
+feature.</p>
 <div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">results_gr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<code class="sourceCode R"><span><span class="va">regions</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/propOverlap-methods.html">propOverlap</a></span><span class="op">(</span><span class="va">results_gr</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="../reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">results_gr</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">regions</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"region"</span>, values_to <span class="op">=</span> <span class="st">"p"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">p</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    region <span class="op">=</span> <span class="fu"><a href="https://forcats.tidyverse.org/reference/fct.html" class="external-link">fct</a></span><span class="op">(</span><span class="va">region_levels</span><span class="op">[</span><span class="va">region</span><span class="op">]</span>, levels <span class="op">=</span> <span class="va">region_levels</span><span class="op">)</span>,</span>
+<span>    w <span class="op">=</span> <span class="va">p</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/start.html" class="external-link">width</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="va">range</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> <span class="fl">1e3</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/plotPie-methods.html">plotPie</a></span><span class="op">(</span></span>
-<span>    scale_by <span class="op">=</span> <span class="st">"width"</span>, fill <span class="op">=</span> <span class="st">"bestRegion"</span>, min_p <span class="op">=</span> <span class="fl">0.05</span>,</span>
-<span>    total_glue <span class="op">=</span> <span class="st">"{N}kb"</span>, total_size <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>    cat_glue <span class="op">=</span> <span class="st">"{str_wrap(bestRegion, 10)}\n{percent(p, 0.1)}"</span>,</span>
+<span>    scale_by <span class="op">=</span> <span class="st">"w"</span>, fill <span class="op">=</span> <span class="st">"region"</span>, min_p <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>    total_glue <span class="op">=</span> <span class="st">"{round(N, 1)}kb"</span>, total_size <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>    cat_glue <span class="op">=</span> <span class="st">"{str_wrap(region, 10)}\n{percent(p, 0.1)}"</span>,</span>
 <span>    cat_alpha <span class="op">=</span> <span class="fl">0.5</span>, cat_size <span class="op">=</span> <span class="fl">4</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p><img src="differential_signal_files/figure-gfm/plot-pie-width-1.png"><!-- --></p>
+<div class="figure">
+<img src="differential_signal_files/figure-gfm/plot-pie-width-1.png" alt=""><p class="caption"><em>Pie chart with regions scaled by width to show
+the proportions of the total regions which overlap each type of
+annotated region.</em></p>
+</div>
 <p>These results can be extended further using
 <code><a href="../reference/plotSplitDonut-methods.html">plotSplitDonut()</a></code> to show more complex results.</p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
@@ -770,17 +789,21 @@ KB.</p>
 separate palettes for the inner and outer rings if preferred. Specific
 slices can also be <em>exploded</em> for emphasis.</p>
 <div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">results_gr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<code class="sourceCode R"><span><span class="va">region_col</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">hcl.colors</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">region_levels</span><span class="op">)</span>, <span class="st">"Viridis"</span>, rev <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">results_gr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">status</span> <span class="op">!=</span> <span class="st">"Unchanged"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/plotSplitDonut-methods.html">plotSplitDonut</a></span><span class="op">(</span></span>
 <span>    inner <span class="op">=</span> <span class="st">"status"</span>, outer <span class="op">=</span> <span class="st">"bestRegion"</span>, min_p <span class="op">=</span> <span class="fl">0.01</span>,</span>
-<span>    inner_palette <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/rgb.html" class="external-link">rgb</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">0.2</span>, <span class="fl">0.9</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/grDevices/rgb.html" class="external-link">rgb</a></span><span class="op">(</span><span class="fl">0.8</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    outer_palette <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">hcl.colors</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">region_levels</span><span class="op">)</span>, <span class="st">"Zissou1"</span><span class="op">)</span>,</span>
+<span>    inner_palette <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#3333E6"</span>, <span class="st">"#E6334D"</span><span class="op">)</span>,</span>
+<span>    outer_palette <span class="op">=</span> <span class="va">region_col</span>,</span>
 <span>    inner_glue <span class="op">=</span> <span class="st">"H3K27ac\n{status}\n{n}"</span>, inner_label_alpha <span class="op">=</span> <span class="fl">0.8</span>,</span>
 <span>    outer_glue <span class="op">=</span> <span class="st">"{str_wrap(bestRegion, 10)}\n{n}"</span>, outer_label <span class="op">=</span> <span class="st">"text"</span>,</span>
 <span>    explode_outer <span class="op">=</span> <span class="st">"Promoter"</span>, explode_r <span class="op">=</span> <span class="fl">0.2</span></span>
 <span>  <span class="op">)</span> </span></code></pre></div>
-<p><img src="differential_signal_files/figure-gfm/plot-split-donut-1.png"><!-- --></p>
+<div class="figure">
+<img src="differential_signal_files/figure-gfm/plot-split-donut-1.png" alt=""><p class="caption"><em>Summary of regions with changed signal and the
+annotated region with the largest overlap</em></p>
+</div>
 </div>
 <div class="section level3">
 <h3 id="profile-heatmaps">Profile Heatmaps<a class="anchor" aria-label="anchor" href="#profile-heatmaps"></a>
@@ -830,7 +853,7 @@ results before windows were merged, then return the original window with
 the maximal signal (i.e. logCPM). Note that we already had the windows
 in “keyval_range” which corresponded to the ranges with the most
 statistically significant change. Realistically we can choose any
-strategy for centering ranges that we wish.</p>
+strategy for centring ranges that we wish.</p>
 <div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gr_increase</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">results_gr</span>, <span class="va">status</span> <span class="op">==</span> <span class="st">"Increased"</span><span class="op">)</span></span>
 <span><span class="va">max_peaks</span> <span class="op">&lt;-</span> <span class="va">gr_increase</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -927,9 +950,9 @@ a colour scale and <code><a href="https://ggplot2.tidyverse.org/reference/ggthem
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"Counts"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="differential_signal_files/figure-gfm/profile-heatmap-1.png" alt=""><p class="caption">Profile Heatmap of the regions on chromosome 10
+<img src="differential_signal_files/figure-gfm/profile-heatmap-1.png" alt=""><p class="caption"><em>Profile Heatmap of the regions on chromosome 10
 showing evidence for increased H3K27ac signal. Regions are centred at
-the point of maximal signal.</p>
+the point of maximal signal.</em></p>
 </div>
 <p>Note that H3K27ac often contains regions with significantly lower
 signal where the transcriptional machinery is instead occupying the DNA
@@ -949,9 +972,9 @@ genes and any other feature of interest. The function
 visualisation tools from <code>Gviz</code>. If supplied, tracks will be
 drawn in the order 1) HiC; 2) Features; 3) Genes, and 4) Coverage. All
 tracks are optional, and if none are provided a simply cytogenetic plot
-will ber produced. Whilst a simple and intuitive function to use, it
-also provides a great deal of flexibility for advanced customisation.
-All plots require a <code>GRanges</code> object to define the plotting
+will be produced. Whilst a simple and intuitive function to use, it also
+provides a great deal of flexibility for advanced customisation. All
+plots require a <code>GRanges</code> object to define the plotting
 region along with a set of cytogenetic bands. These are provided in the
 package for GRCh37 and GRCh38.</p>
 <p>Let’s start by plotting the first promoter showing changed signal in
@@ -964,14 +987,17 @@ package for GRCh37 and GRCh38.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="va">gene_name</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="st">"PRXL2A"</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span> <span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">logCPM</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">logCPM</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plotHFGC.html">plotHFGC</a></span><span class="op">(</span><span class="va">gr</span>, cytobands <span class="op">=</span> <span class="va">grch37.cytobands</span><span class="op">)</span></span></code></pre></div>
-<p><img src="differential_signal_files/figure-gfm/plot-empty-hfgc-1.png"><!-- --></p>
+<div class="figure">
+<img src="differential_signal_files/figure-gfm/plot-empty-hfgc-1.png" alt=""><p class="caption"><em>Basic output from plotHFGC without any of the
+optional tracks</em></p>
+</div>
 <div class="section level4">
 <h4 id="including-coverage">Including Coverage<a class="anchor" aria-label="anchor" href="#including-coverage"></a>
 </h4>
 <p>In order to show our changed signal in context we can show the
 coverage using a <code>BigWigFileList</code> as for the Profile Heatmap.
 If providing a <code>BigWigFileList</code>, separate tracks will drawn
-for each element of the object. In more cmplex scenarios where multiple
+for each element of the object. In more complex scenarios where multiple
 targets are required a list of <code>BigWigFileList</code>s can be
 provided and each element will then be drawn as a track with overlapping
 coverage within each BigWigFileList. Colours need to be provided in the
@@ -985,9 +1011,9 @@ matching the names within the <code>BigWigFileList.</code></p>
 <span>  zoom <span class="op">=</span> <span class="fl">30</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="differential_signal_files/figure-gfm/plot-hfgc-coverge-1.png" alt=""><p class="caption">Coverage for our region of interest. Note how the
-counts are lower in the highlighted region for the merged Veh coverage
-track.</p>
+<img src="differential_signal_files/figure-gfm/plot-hfgc-coverge-1.png" alt=""><p class="caption"><em>Coverage for the region of interest, shown with a
+blue highlight. Note how the counts are lower in the highlighted region
+for the merged Veh coverage track.</em></p>
 </div>
 </div>
 <div class="section level4">
@@ -1006,8 +1032,8 @@ transcripts annotated.</p>
 <span>  zoom <span class="op">=</span> <span class="fl">30</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="differential_signal_files/figure-gfm/add-genes-1.png" alt=""><p class="caption">Coverage for our region showing the relationship of
-signal to annotated genes</p>
+<img src="differential_signal_files/figure-gfm/add-genes-1.png" alt=""><p class="caption"><em>Coverage for our region showing the relationship
+of signal to annotated genes</em></p>
 </div>
 </div>
 <div class="section level4">
@@ -1020,16 +1046,19 @@ defining a different type of feature, as we already have in our
 <code>regions_gr</code> object.</p>
 <div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">region_grl</span> <span class="op">&lt;-</span> <span class="fu">splitAsList</span><span class="op">(</span><span class="va">regions_gr</span>, <span class="va">regions_gr</span><span class="op">$</span><span class="va">region</span><span class="op">)</span><span class="op">[</span><span class="va">region_levels</span><span class="op">]</span></span>
-<span><span class="va">region_col</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/as.list.html" class="external-link">as.list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">hcl.colors</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">region_levels</span><span class="op">)</span>, <span class="st">"Viridis"</span>, rev <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">region_col</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">region_levels</span></span>
 <span><span class="fu"><a href="../reference/plotHFGC.html">plotHFGC</a></span><span class="op">(</span></span>
 <span>  <span class="va">gr</span>, cytobands <span class="op">=</span> <span class="va">grch37.cytobands</span>, </span>
-<span>  features <span class="op">=</span> <span class="va">region_grl</span>, featcol <span class="op">=</span> <span class="va">region_col</span>,</span>
+<span>  features <span class="op">=</span> <span class="va">region_grl</span>, featcol <span class="op">=</span> <span class="va">region_col</span>, featstack <span class="op">=</span> <span class="st">"dense"</span>,</span>
 <span>  coverage <span class="op">=</span> <span class="va">bwfl</span>, linecol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Veh"</span> <span class="op">=</span> <span class="st">"grey30"</span>, <span class="st">"DHT"</span> <span class="op">=</span> <span class="st">"darkred"</span><span class="op">)</span>,</span>
 <span>  genes <span class="op">=</span> <span class="va">gene_models</span>, gene_col <span class="op">=</span> <span class="st">"wheat"</span>,</span>
 <span>  zoom <span class="op">=</span> <span class="fl">30</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="differential_signal_files/figure-gfm/plot-hfgc-1.png"><!-- --></p>
+<div class="figure">
+<img src="differential_signal_files/figure-gfm/plot-hfgc-1.png" alt=""><p class="caption"><em>The same figure as previously, but with annotated
+regions added as features. Any type of feature can be added
+here.</em></p>
+</div>
 </div>
 <div class="section level4">
 <h4 id="adding-hic-interactions">Adding HiC Interactions<a class="anchor" aria-label="anchor" href="#adding-hic-interactions"></a>
@@ -1062,18 +1091,23 @@ which matched the coverage track</p>
 <div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotHFGC.html">plotHFGC</a></span><span class="op">(</span></span>
 <span>  <span class="va">gr</span>, </span>
-<span>  features <span class="op">=</span> <span class="va">region_grl</span>, featcol <span class="op">=</span> <span class="va">region_col</span>,</span>
+<span>  features <span class="op">=</span> <span class="va">region_grl</span>, featcol <span class="op">=</span> <span class="va">region_col</span>, featstack <span class="op">=</span> <span class="st">"dense"</span>,</span>
 <span>  genes <span class="op">=</span> <span class="va">gene_models</span>, genecol <span class="op">=</span> <span class="st">"wheat"</span>,</span>
 <span>  coverage <span class="op">=</span> <span class="va">bwfl</span>, linecol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Veh"</span> <span class="op">=</span> <span class="st">"grey30"</span>, <span class="st">"DHT"</span> <span class="op">=</span> <span class="st">"darkred"</span><span class="op">)</span>,</span>
 <span>  annotation <span class="op">=</span> <span class="va">cov_annot</span>, </span>
-<span>  annotcol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Unchanged <span class="op">=</span> <span class="st">"grey"</span>, Decreased <span class="op">=</span> <span class="st">"#3333CC"</span>, Increased <span class="op">=</span> <span class="st">"#EE0022"</span><span class="op">)</span>,</span>
+<span>  annotcol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Unchanged <span class="op">=</span> <span class="st">"grey"</span>, Decreased <span class="op">=</span> <span class="st">"#3333E6"</span>, Increased <span class="op">=</span> <span class="st">"#E6334D"</span><span class="op">)</span>,</span>
 <span>  cytobands <span class="op">=</span> <span class="va">grch37.cytobands</span>, zoom <span class="op">=</span> <span class="fl">30</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="differential_signal_files/figure-gfm/plot-annot-1.png"><!-- --></p>
+<div class="figure">
+<img src="differential_signal_files/figure-gfm/plot-annot-1.png" alt=""><p class="caption"><em>The addition of an annotation track for the
+coverage tracks shows which regions were retained during the analysis,
+as well as those which were considered as showing changed or unchanged
+signal.</em></p>
+</div>
 <p>Plots are able to be tweaked considerably further via multiple
-parameters, however these basic approaches cover the elemental
-functionality of <code>plotHFCG()</code> for enabling simple &amp;
-reproducible plotting across regions for multiple sites within a larger
+parameters, however these basic approaches cover the core functionality
+of <code>plotHFCG()</code> for enabling simple &amp; reproducible
+plotting across regions for multiple sites within a larger
 experiment.</p>
 </div>
 </div>
