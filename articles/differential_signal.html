@@ -295,7 +295,7 @@ calculation of <code>logCPM</code> values.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plotAssayPCA(filtcounts, assay = "logCPM", colour = "treat", label = "sample")</span></span></code></pre></div>
 <p>Whilst the initial set of counts contained 1507 windows, these have
-now been reduced to 166 windows. Similarly, <em>the input sample is no
+now been reduced to 147 windows. Similarly, <em>the input sample is no
 longer included</em> in the data object, although additional columns can
 easily be added to the returned object using any number of
 strategies.</p>
@@ -304,31 +304,31 @@ strategies.</p>
 <pre><code><span><span class="co">## [1] 1507    3</span></span></code></pre>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">filtcounts</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 166   2</span></span></code></pre>
+<pre><code><span><span class="co">## [1] 147   2</span></span></code></pre>
 <p>The <code>rowData</code> element of the returned object will contain
 a logical column indicating where each specific retained window
 overlapped one of the supplied consensus peaks.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">rowRanges</span><span class="op">(</span><span class="va">filtcounts</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## GRanges object with 166 ranges and 1 metadata column:</span></span>
+<pre><code><span><span class="co">## GRanges object with 147 ranges and 1 metadata column:</span></span>
 <span><span class="co">##         seqnames              ranges strand | overlaps_ref</span></span>
 <span><span class="co">##            &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt; |    &lt;logical&gt;</span></span>
-<span><span class="co">##     [1]    chr10 103865521-103865640      * |         TRUE</span></span>
-<span><span class="co">##     [2]    chr10 103865561-103865680      * |         TRUE</span></span>
-<span><span class="co">##     [3]    chr10 103865601-103865720      * |         TRUE</span></span>
-<span><span class="co">##     [4]    chr10 103865641-103865760      * |         TRUE</span></span>
-<span><span class="co">##     [5]    chr10 103865681-103865800      * |         TRUE</span></span>
+<span><span class="co">##     [1]    chr10 103865601-103865720      * |         TRUE</span></span>
+<span><span class="co">##     [2]    chr10 103865641-103865760      * |         TRUE</span></span>
+<span><span class="co">##     [3]    chr10 103865681-103865800      * |         TRUE</span></span>
+<span><span class="co">##     [4]    chr10 103865761-103865880      * |         TRUE</span></span>
+<span><span class="co">##     [5]    chr10 103874281-103874400      * |        FALSE</span></span>
 <span><span class="co">##     ...      ...                 ...    ... .          ...</span></span>
-<span><span class="co">##   [162]    chr10 103912001-103912120      * |        FALSE</span></span>
-<span><span class="co">##   [163]    chr10 103912041-103912160      * |        FALSE</span></span>
-<span><span class="co">##   [164]    chr10 103912081-103912200      * |        FALSE</span></span>
-<span><span class="co">##   [165]    chr10 103912201-103912320      * |        FALSE</span></span>
-<span><span class="co">##   [166]    chr10 103912401-103912520      * |        FALSE</span></span>
+<span><span class="co">##   [143]    chr10 103912001-103912120      * |        FALSE</span></span>
+<span><span class="co">##   [144]    chr10 103912041-103912160      * |        FALSE</span></span>
+<span><span class="co">##   [145]    chr10 103912081-103912200      * |        FALSE</span></span>
+<span><span class="co">##   [146]    chr10 103912201-103912320      * |        FALSE</span></span>
+<span><span class="co">##   [147]    chr10 103912401-103912520      * |        FALSE</span></span>
 <span><span class="co">##   -------</span></span>
 <span><span class="co">##   seqinfo: 1 sequence from an unspecified genome</span></span></code></pre>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu">rowRanges</span><span class="op">(</span><span class="va">filtcounts</span><span class="op">)</span><span class="op">$</span><span class="va">overlaps_ref</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 0.6927711</span></span></code></pre>
+<pre><code><span><span class="co">## [1] 0.7482993</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="differential-binding-analysis">Differential Binding Analysis<a class="anchor" aria-label="anchor" href="#differential-binding-analysis"></a>
@@ -513,21 +513,21 @@ ask for both in the returned object.</p>
 <pre><code><span><span class="co">## GRanges object with 13 ranges and 11 metadata columns:</span></span>
 <span><span class="co">##        seqnames              ranges strand | n_windows      n_up    n_down</span></span>
 <span><span class="co">##           &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;</span></span>
-<span><span class="co">##    [1]    chr10 103865521-103865880      * |         6         0         3</span></span>
-<span><span class="co">##    [2]    chr10 103872121-103872280      * |         2         2         0</span></span>
-<span><span class="co">##    [3]    chr10 103874201-103874920      * |        12         0        11</span></span>
+<span><span class="co">##    [1]    chr10 103865601-103865880      * |         4         0         3</span></span>
+<span><span class="co">##    [2]    chr10 103874281-103874440      * |         2         0         1</span></span>
+<span><span class="co">##    [3]    chr10 103874481-103874920      * |         8         0         7</span></span>
 <span><span class="co">##    [4]    chr10 103875681-103875840      * |         2         0         2</span></span>
 <span><span class="co">##    [5]    chr10 103876241-103876360      * |         1         0         1</span></span>
 <span><span class="co">##    ...      ...                 ...    ... .       ...       ...       ...</span></span>
-<span><span class="co">##    [9]    chr10 103881161-103881520      * |         7         1         3</span></span>
+<span><span class="co">##    [9]    chr10 103881161-103881440      * |         5         1         3</span></span>
 <span><span class="co">##   [10]    chr10 103892161-103893400      * |        29         7        18</span></span>
-<span><span class="co">##   [11]    chr10 103899881-103900480      * |        13         2         8</span></span>
-<span><span class="co">##   [12]    chr10 103911521-103912320      * |        16         4        10</span></span>
+<span><span class="co">##   [11]    chr10 103899921-103900480      * |        12         2         7</span></span>
+<span><span class="co">##   [12]    chr10 103911601-103912320      * |        14         3        10</span></span>
 <span><span class="co">##   [13]    chr10 103912401-103912520      * |         1         0         1</span></span>
 <span><span class="co">##                     keyval_range    logCPM      logFC    PValue PValue_fdr</span></span>
 <span><span class="co">##                        &lt;GRanges&gt; &lt;numeric&gt;  &lt;numeric&gt; &lt;numeric&gt;  &lt;numeric&gt;</span></span>
 <span><span class="co">##    [1] chr10:103865681-103865800   3.38509 -0.7304650  0.465106   0.975993</span></span>
-<span><span class="co">##    [2] chr10:103872121-103872240   3.05473  0.8465515  0.397245   0.975993</span></span>
+<span><span class="co">##    [2] chr10:103874321-103874440   3.32723 -0.6147461  0.538722   0.975993</span></span>
 <span><span class="co">##    [3] chr10:103874721-103874840   4.20389 -0.0334363  0.973327   0.975993</span></span>
 <span><span class="co">##    [4] chr10:103875681-103875800   3.26432 -0.4889297  0.624892   0.975993</span></span>
 <span><span class="co">##    [5] chr10:103876241-103876360   3.28010 -0.1816791  0.855835   0.975993</span></span>
@@ -567,21 +567,21 @@ now pass to the mapping process. (This time we’ll save the object)</p>
 <pre><code><span><span class="co">## GRanges object with 13 ranges and 11 metadata columns:</span></span>
 <span><span class="co">##        seqnames              ranges strand | n_windows      n_up    n_down</span></span>
 <span><span class="co">##           &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;</span></span>
-<span><span class="co">##    [1]    chr10 103865521-103865880      * |         6         0         3</span></span>
-<span><span class="co">##    [2]    chr10 103872121-103872280      * |         2         2         0</span></span>
-<span><span class="co">##    [3]    chr10 103874201-103874920      * |        12         0        11</span></span>
+<span><span class="co">##    [1]    chr10 103865601-103865880      * |         4         0         3</span></span>
+<span><span class="co">##    [2]    chr10 103874281-103874440      * |         2         0         1</span></span>
+<span><span class="co">##    [3]    chr10 103874481-103874920      * |         8         0         7</span></span>
 <span><span class="co">##    [4]    chr10 103875681-103875840      * |         2         0         2</span></span>
 <span><span class="co">##    [5]    chr10 103876241-103876360      * |         1         0         1</span></span>
 <span><span class="co">##    ...      ...                 ...    ... .       ...       ...       ...</span></span>
-<span><span class="co">##    [9]    chr10 103881161-103881520      * |         7         1         3</span></span>
+<span><span class="co">##    [9]    chr10 103881161-103881440      * |         5         1         3</span></span>
 <span><span class="co">##   [10]    chr10 103892161-103893400      * |        29         7        18</span></span>
-<span><span class="co">##   [11]    chr10 103899881-103900480      * |        13         2         8</span></span>
-<span><span class="co">##   [12]    chr10 103911521-103912320      * |        16         4        10</span></span>
+<span><span class="co">##   [11]    chr10 103899921-103900480      * |        12         2         7</span></span>
+<span><span class="co">##   [12]    chr10 103911601-103912320      * |        14         3        10</span></span>
 <span><span class="co">##   [13]    chr10 103912401-103912520      * |         1         0         1</span></span>
 <span><span class="co">##                     keyval_range    logCPM      logFC    PValue PValue_fdr</span></span>
 <span><span class="co">##                        &lt;GRanges&gt; &lt;numeric&gt;  &lt;numeric&gt; &lt;numeric&gt;  &lt;numeric&gt;</span></span>
 <span><span class="co">##    [1] chr10:103865681-103865800   3.38509 -0.7304650  0.465106   0.975993</span></span>
-<span><span class="co">##    [2] chr10:103872121-103872240   3.05473  0.8465515  0.397245   0.975993</span></span>
+<span><span class="co">##    [2] chr10:103874321-103874440   3.32723 -0.6147461  0.538722   0.975993</span></span>
 <span><span class="co">##    [3] chr10:103874721-103874840   4.20389 -0.0334363  0.973327   0.975993</span></span>
 <span><span class="co">##    [4] chr10:103875681-103875800   3.26432 -0.4889297  0.624892   0.975993</span></span>
 <span><span class="co">##    [5] chr10:103876241-103876360   3.28010 -0.1816791  0.855835   0.975993</span></span>
@@ -675,21 +675,21 @@ data</p>
 <span><span class="co">## GRanges object with 13 ranges and 11 metadata columns:</span></span>
 <span><span class="co">##        seqnames              ranges strand | n_windows      n_up    n_down</span></span>
 <span><span class="co">##           &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;</span></span>
-<span><span class="co">##    [1]    chr10 103863200-103868199      * |         6         0         3</span></span>
-<span><span class="co">##    [2]    chr10 103869700-103874699      * |         2         2         0</span></span>
-<span><span class="co">##    [3]    chr10 103872060-103877059      * |        12         0        11</span></span>
+<span><span class="co">##    [1]    chr10 103863240-103868239      * |         4         0         3</span></span>
+<span><span class="co">##    [2]    chr10 103871860-103876859      * |         2         0         1</span></span>
+<span><span class="co">##    [3]    chr10 103872200-103877199      * |         8         0         7</span></span>
 <span><span class="co">##    [4]    chr10 103873260-103878259      * |         2         0         2</span></span>
 <span><span class="co">##    [5]    chr10 103873800-103878799      * |         1         0         1</span></span>
 <span><span class="co">##    ...      ...                 ...    ... .       ...       ...       ...</span></span>
-<span><span class="co">##    [9]    chr10 103878840-103883839      * |         7         1         3</span></span>
+<span><span class="co">##    [9]    chr10 103878800-103883799      * |         5         1         3</span></span>
 <span><span class="co">##   [10]    chr10 103890280-103895279      * |        29         7        18</span></span>
-<span><span class="co">##   [11]    chr10 103897680-103902679      * |        13         2         8</span></span>
-<span><span class="co">##   [12]    chr10 103909420-103914419      * |        16         4        10</span></span>
+<span><span class="co">##   [11]    chr10 103897700-103902699      * |        12         2         7</span></span>
+<span><span class="co">##   [12]    chr10 103909460-103914459      * |        14         3        10</span></span>
 <span><span class="co">##   [13]    chr10 103909960-103914959      * |         1         0         1</span></span>
 <span><span class="co">##                     keyval_range    logCPM      logFC    PValue PValue_fdr</span></span>
 <span><span class="co">##                        &lt;GRanges&gt; &lt;numeric&gt;  &lt;numeric&gt; &lt;numeric&gt;  &lt;numeric&gt;</span></span>
 <span><span class="co">##    [1] chr10:103865681-103865800   3.38509 -0.7304650  0.465106   0.975993</span></span>
-<span><span class="co">##    [2] chr10:103872121-103872240   3.05473  0.8465515  0.397245   0.975993</span></span>
+<span><span class="co">##    [2] chr10:103874321-103874440   3.32723 -0.6147461  0.538722   0.975993</span></span>
 <span><span class="co">##    [3] chr10:103874721-103874840   4.20389 -0.0334363  0.973327   0.975993</span></span>
 <span><span class="co">##    [4] chr10:103875681-103875800   3.26432 -0.4889297  0.624892   0.975993</span></span>
 <span><span class="co">##    [5] chr10:103876241-103876360   3.28010 -0.1816791  0.855835   0.975993</span></span>
@@ -714,16 +714,16 @@ data</p>
 <span><span class="co">##   [13]        FALSE    Promoter</span></span>
 <span><span class="co">##                                                 profile_data</span></span>
 <span><span class="co">##                                         &lt;SplitDataFrameList&gt;</span></span>
-<span><span class="co">##    [1]    1.00187:u1:-2475,1.00187:u2:-2425,1.06043:u3:-2375</span></span>
-<span><span class="co">##    [2]    2.57358:u1:-2475,2.91848:u2:-2425,3.00328:u3:-2375</span></span>
-<span><span class="co">##    [3]    1.93635:u1:-2475,2.20896:u2:-2425,2.28627:u3:-2375</span></span>
+<span><span class="co">##    [1]    1.00187:u1:-2475,1.00187:u2:-2425,1.93662:u3:-2375</span></span>
+<span><span class="co">##    [2]    2.16058:u1:-2475,1.62900:u2:-2425,1.58746:u3:-2375</span></span>
+<span><span class="co">##    [3]    2.32493:u1:-2475,2.42493:u2:-2425,2.52492:u3:-2375</span></span>
 <span><span class="co">##    [4]    2.57751:u1:-2475,2.49253:u2:-2425,2.32493:u3:-2375</span></span>
 <span><span class="co">##    [5]    2.32493:u1:-2475,2.48808:u2:-2425,2.58808:u3:-2375</span></span>
 <span><span class="co">##    ...                                                   ...</span></span>
-<span><span class="co">##    [9]    2.37756:u1:-2475,2.32493:u2:-2425,2.39671:u3:-2375</span></span>
+<span><span class="co">##    [9]    2.59042:u1:-2475,2.37756:u2:-2425,2.37229:u3:-2375</span></span>
 <span><span class="co">##   [10]    2.32493:u1:-2475,2.18320:u2:-2425,2.08012:u3:-2375</span></span>
-<span><span class="co">##   [11]    2.18030:u1:-2475,1.77021:u2:-2425,1.58746:u3:-2375</span></span>
-<span><span class="co">##   [12] 0.000000:u1:-2475,0.500937:u2:-2425,1.282956:u3:-2375</span></span>
+<span><span class="co">##   [11]    2.15401:u1:-2475,1.60407:u2:-2425,1.58746:u3:-2375</span></span>
+<span><span class="co">##   [12] 0.306696:u1:-2475,1.165839:u2:-2425,1.587461:u3:-2375</span></span>
 <span><span class="co">##   [13]    2.58808:u1:-2475,2.58808:u2:-2425,2.57674:u3:-2375</span></span>
 <span><span class="co">##   -------</span></span>
 <span><span class="co">##   seqinfo: 1 sequence from an unspecified genome</span></span>
@@ -732,21 +732,21 @@ data</p>
 <span><span class="co">## GRanges object with 13 ranges and 11 metadata columns:</span></span>
 <span><span class="co">##        seqnames              ranges strand | n_windows      n_up    n_down</span></span>
 <span><span class="co">##           &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;</span></span>
-<span><span class="co">##    [1]    chr10 103863200-103868199      * |         6         0         3</span></span>
-<span><span class="co">##    [2]    chr10 103869700-103874699      * |         2         2         0</span></span>
-<span><span class="co">##    [3]    chr10 103872060-103877059      * |        12         0        11</span></span>
+<span><span class="co">##    [1]    chr10 103863240-103868239      * |         4         0         3</span></span>
+<span><span class="co">##    [2]    chr10 103871860-103876859      * |         2         0         1</span></span>
+<span><span class="co">##    [3]    chr10 103872200-103877199      * |         8         0         7</span></span>
 <span><span class="co">##    [4]    chr10 103873260-103878259      * |         2         0         2</span></span>
 <span><span class="co">##    [5]    chr10 103873800-103878799      * |         1         0         1</span></span>
 <span><span class="co">##    ...      ...                 ...    ... .       ...       ...       ...</span></span>
-<span><span class="co">##    [9]    chr10 103878840-103883839      * |         7         1         3</span></span>
+<span><span class="co">##    [9]    chr10 103878800-103883799      * |         5         1         3</span></span>
 <span><span class="co">##   [10]    chr10 103890280-103895279      * |        29         7        18</span></span>
-<span><span class="co">##   [11]    chr10 103897680-103902679      * |        13         2         8</span></span>
-<span><span class="co">##   [12]    chr10 103909420-103914419      * |        16         4        10</span></span>
+<span><span class="co">##   [11]    chr10 103897700-103902699      * |        12         2         7</span></span>
+<span><span class="co">##   [12]    chr10 103909460-103914459      * |        14         3        10</span></span>
 <span><span class="co">##   [13]    chr10 103909960-103914959      * |         1         0         1</span></span>
 <span><span class="co">##                     keyval_range    logCPM      logFC    PValue PValue_fdr</span></span>
 <span><span class="co">##                        &lt;GRanges&gt; &lt;numeric&gt;  &lt;numeric&gt; &lt;numeric&gt;  &lt;numeric&gt;</span></span>
 <span><span class="co">##    [1] chr10:103865681-103865800   3.38509 -0.7304650  0.465106   0.975993</span></span>
-<span><span class="co">##    [2] chr10:103872121-103872240   3.05473  0.8465515  0.397245   0.975993</span></span>
+<span><span class="co">##    [2] chr10:103874321-103874440   3.32723 -0.6147461  0.538722   0.975993</span></span>
 <span><span class="co">##    [3] chr10:103874721-103874840   4.20389 -0.0334363  0.973327   0.975993</span></span>
 <span><span class="co">##    [4] chr10:103875681-103875800   3.26432 -0.4889297  0.624892   0.975993</span></span>
 <span><span class="co">##    [5] chr10:103876241-103876360   3.28010 -0.1816791  0.855835   0.975993</span></span>
@@ -769,19 +769,19 @@ data</p>
 <span><span class="co">##   [11]         TRUE    Promoter</span></span>
 <span><span class="co">##   [12]        FALSE    Promoter</span></span>
 <span><span class="co">##   [13]        FALSE    Promoter</span></span>
-<span><span class="co">##                                                    profile_data</span></span>
-<span><span class="co">##                                            &lt;SplitDataFrameList&gt;</span></span>
-<span><span class="co">##    [1]       1.02067:u1:-2475,1.02067:u2:-2425,1.02067:u3:-2375</span></span>
-<span><span class="co">##    [2]       1.49168:u1:-2475,1.61245:u2:-2425,1.61245:u3:-2375</span></span>
-<span><span class="co">##    [3]       2.31598:u1:-2475,2.76638:u2:-2425,3.04279:u3:-2375</span></span>
-<span><span class="co">##    [4]       2.35485:u1:-2475,1.91778:u2:-2425,1.98068:u3:-2375</span></span>
-<span><span class="co">##    [5]       3.03597:u1:-2475,3.04279:u2:-2425,2.91222:u3:-2375</span></span>
-<span><span class="co">##    ...                                                      ...</span></span>
-<span><span class="co">##    [9]       2.92769:u1:-2475,2.67558:u2:-2425,2.57648:u3:-2375</span></span>
-<span><span class="co">##   [10]       1.61245:u1:-2475,1.32840:u2:-2425,1.61245:u3:-2375</span></span>
-<span><span class="co">##   [11] 1.2501359:u1:-2475,0.0204134:u2:-2425,0.0000000:u3:-2375</span></span>
-<span><span class="co">##   [12]       2.29535:u1:-2475,2.34189:u2:-2425,2.03089:u3:-2375</span></span>
-<span><span class="co">##   [13]       0.00000:u1:-2475,1.52166:u2:-2425,2.12808:u3:-2375</span></span>
+<span><span class="co">##                                                 profile_data</span></span>
+<span><span class="co">##                                         &lt;SplitDataFrameList&gt;</span></span>
+<span><span class="co">##    [1]    1.02067:u1:-2475,1.02067:u2:-2425,1.44675:u3:-2375</span></span>
+<span><span class="co">##    [2] 1.020669:u1:-2475,0.244961:u2:-2425,1.812705:u3:-2375</span></span>
+<span><span class="co">##    [3]    3.31303:u1:-2475,3.17413:u2:-2425,3.03597:u3:-2375</span></span>
+<span><span class="co">##    [4]    2.35485:u1:-2475,1.91778:u2:-2425,1.98068:u3:-2375</span></span>
+<span><span class="co">##    [5]    3.03597:u1:-2475,3.04279:u2:-2425,2.91222:u3:-2375</span></span>
+<span><span class="co">##    ...                                                   ...</span></span>
+<span><span class="co">##    [9]    2.92382:u1:-2475,2.88901:u2:-2425,2.63091:u3:-2375</span></span>
+<span><span class="co">##   [10]    1.61245:u1:-2475,1.32840:u2:-2425,1.61245:u3:-2375</span></span>
+<span><span class="co">##   [11]       0.6249:u1:-2475,0.0000:u2:-2425,0.0000:u3:-2375</span></span>
+<span><span class="co">##   [12]    2.35485:u1:-2475,2.08272:u2:-2425,2.03089:u3:-2375</span></span>
+<span><span class="co">##   [13]    0.00000:u1:-2475,1.52166:u2:-2425,2.12808:u3:-2375</span></span>
 <span><span class="co">##   -------</span></span>
 <span><span class="co">##   seqinfo: 1 sequence from an unspecified genome</span></span></code></pre>
 <p>This produces a <code>GRangesList</code> with a <code>GRanges</code>
@@ -1095,7 +1095,7 @@ Windows.”</span> <em>Nucleic Acids Res.</em> 44 (5): e45.
 </h2>
 <div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R version 4.3.0 beta (2023-04-06 r84184)</span></span>
+<pre><code><span><span class="co">## R version 4.3.0 beta (2023-04-12 r84240)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
 <span><span class="co">## Running under: Ubuntu 22.04.2 LTS</span></span>
 <span><span class="co">## </span></span>
@@ -1126,14 +1126,14 @@ Windows.”</span> <em>Nucleic Acids Res.</em> 44 (5): e45.
 <span><span class="co">##  [9] Biobase_2.59.0              MatrixGenerics_1.11.1      </span></span>
 <span><span class="co">## [11] matrixStats_0.63.0          Rsamtools_2.15.3           </span></span>
 <span><span class="co">## [13] Biostrings_2.67.2           XVector_0.39.0             </span></span>
-<span><span class="co">## [15] GenomicRanges_1.51.4        GenomeInfoDb_1.35.16       </span></span>
-<span><span class="co">## [17] IRanges_2.33.1              S4Vectors_0.37.5           </span></span>
+<span><span class="co">## [15] GenomicRanges_1.51.4        GenomeInfoDb_1.35.17       </span></span>
+<span><span class="co">## [17] IRanges_2.33.1              S4Vectors_0.37.6           </span></span>
 <span><span class="co">## [19] BiocGenerics_0.45.3         lubridate_1.9.2            </span></span>
 <span><span class="co">## [21] forcats_1.0.0               stringr_1.5.0              </span></span>
 <span><span class="co">## [23] dplyr_1.1.1                 purrr_1.0.1                </span></span>
 <span><span class="co">## [25] readr_2.1.4                 tidyr_1.3.0                </span></span>
 <span><span class="co">## [27] tibble_3.2.1                ggplot2_3.4.2              </span></span>
-<span><span class="co">## [29] tidyverse_2.0.0             BiocStyle_2.27.1           </span></span>
+<span><span class="co">## [29] tidyverse_2.0.0             BiocStyle_2.27.2           </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
 <span><span class="co">##   [1] BiocIO_1.9.2               bitops_1.0-7              </span></span>
