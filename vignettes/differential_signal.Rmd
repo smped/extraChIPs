@@ -17,13 +17,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, echo=FALSE}
-knitr::opts_chunk$set(
-  message = FALSE, warning = FALSE, fig.height = 8, fig.width = 10
-)
-```
-
-
 # Introduction
 
 The [GRAVI](https://github.com/smped/GRAVI) workflow, for which this
@@ -119,7 +112,7 @@ peaks <- importPeaks(peakFiles, seqinfo = grch37)
 ```
 
 This will import the peaks from all files as a single `GRangesList`
-object, adding the filename to each element by default. We can easily
+object, adding the file-name to each element by default. We can easily
 modify these names if we so wish.
 
 ``` r
@@ -132,8 +125,8 @@ Once loaded, we can easily check how similar our replicates are.
 plotOverlaps(peaks, min_size = 10, .sort_sets = FALSE)
 ```
 
-![UpSet plot showing overlapping peaks across all
-replicates](differential_signal_files/figure-gfm/plot-overlaps-1.png)
+![*UpSet plot showing overlapping peaks across all
+replicates*](differential_signal_files/figure-gfm/plot-overlaps-1.png)
 
 Optionally, specifying a column and a suitable function will produce an
 additional panel summarising that value. In the following, we’ll show
@@ -145,9 +138,9 @@ lower.
 plotOverlaps(peaks, min_size = 10, .sort_sets = FALSE, var = "score", f = "max")
 ```
 
-![UpSet plot showing overlapping peaks across all replicates, with the
+![*UpSet plot showing overlapping peaks across all replicates, with the
 maximum score across all replicates shown in the upper
-panel.](differential_signal_files/figure-gfm/plot-overlaps-score-1.png)
+panel.*](differential_signal_files/figure-gfm/plot-overlaps-score-1.png)
 
 A common task at this point may be to define consensus peaks within each
 treatment group, by retaining only the peaks found in 2 of the 3
@@ -197,8 +190,8 @@ GRangesList(
   plotOverlaps(set_col = c("grey70", "red"))
 ```
 
-![Overlap between consensus peaks identified in a treatment-specific
-manner](differential_signal_files/figure-gfm/venn-consensus-overlap-1.png)
+![*Overlap between consensus peaks identified in a treatment-specific
+manner*](differential_signal_files/figure-gfm/venn-consensus-overlap-1.png)
 
 We could go one step further and define the set of peaks found in either
 treatment. Given we’re being inclusive here, we can leave p = 0 so any
@@ -216,15 +209,15 @@ all_consensus <- GRangesList(
 
 ## Sliding Windows
 
-The standard approach of tools such as DiffBind (**DiffBind?**) is to
-take a set of peaks, re-centre them, then set all regions to be the same
-width. From there, data can be passed to `edgeR` (Chen, Lun, and Smyth
-2016) or `DESeq2` (Love, Huber, and Anders 2014) for analysis. Whilst
-this approach can be replicated using the defined peaks above, the
-suggested approach for `extraChIPs` is to us sliding windows, as per
-`csaw`. The resultant variable width regions can be particularly
+The standard approach of tools such as DiffBind (Ross-Innes et al. 2012)
+is to take a set of peaks, re-centre them, then set all regions to be
+the same width. From there, data is passed to `edgeR` (Chen, Lun, and
+Smyth 2016) or `DESeq2` (Love, Huber, and Anders 2014) for analysis.
+Whilst this approach can be replicated using the defined peaks above,
+the suggested approach for `extraChIPs` is to us sliding windows, as per
+`csaw`. The resultant *variable width regions* can be particularly
 advantageous for ChIP targets such as H3K27ac where regions marked by
-histone-acetylation can vary greatly.
+histone-acetylation can vary greatly in size.
 
 The starting point for differential signal analyses using `extraChIPs`
 is to define a set of sliding windows across the genome, then count
@@ -341,8 +334,8 @@ plotAssayDensities(wincounts, colour = "treat", trans = "log1p") +
   theme_bw()
 ```
 
-![Read Densities for all returned windows across all
-samples](differential_signal_files/figure-gfm/plot-densities-1.png)
+![*Read Densities for all returned windows across all
+samples*](differential_signal_files/figure-gfm/plot-densities-1.png)
 
 ## Filtering of Sliding Windows
 
@@ -352,7 +345,7 @@ signal from our ChIP target. The strategy employed in `extraChIPs` uses
 a set of consensus peaks to automatically set thresholds based on 1)
 counts strongly above the counts from the input sample, and 2) the
 windows with the overall highest signal. Thresholds are determined such
-that a proportion (e.g. `q = 0.5`) of the windows which overlap one of
+that a proportion (e.g. `q = 0.5`) of the windows which overlap one of
 the supplied consensus peaks will be returned. Higher values for `q`
 will return more windows, however many of these will tend to only
 marginally overlap a peak in one of the tail regions, and these will
@@ -411,9 +404,9 @@ plotAssayDensities(filtcounts, assay = "logCPM", colour = "treat") +
   theme_bw()
 ```
 
-![Densities for logCPM values across all samples after discarding
-windows less likely to contain signal from our ChIP
-target](differential_signal_files/figure-gfm/plotcpm-1.png)
+![*Densities for logCPM values across all samples after discarding
+windows less likely to contain H3K27ac
+signal*](differential_signal_files/figure-gfm/plotcpm-1.png)
 
 The `rowData` element of the returned object will contain a logical
 column indicating where each specific retained window overlapped one of
@@ -475,9 +468,9 @@ a + b + plot_layout(guides = "collect") +
   plot_annotation(tag_levels = "A")
 ```
 
-![RLE plots across all samples (A) and with values calculated within
+![*RLE plots across all samples (A) and with values calculated within
 treatment groups
-(B).](differential_signal_files/figure-gfm/plot-assay-rle-1.png)
+(B).*](differential_signal_files/figure-gfm/plot-assay-rle-1.png)
 
 We can also check the samples using a PCA plot, again colouring the
 points by treatment group and adding labels, which will repel by default
@@ -489,7 +482,8 @@ plotAssayPCA(filtcounts, "logCPM", colour = "treat", label = "sample") +
   theme_bw()
 ```
 
-![](differential_signal_files/figure-gfm/plot-pca-1.png)<!-- -->
+![*PCA plot based on the logCPM
+assay*](differential_signal_files/figure-gfm/plot-pca-1.png)
 
 ## Statistical Testing
 
@@ -600,9 +594,9 @@ filtcounts %>%
   theme_bw()
 ```
 
-![Heatmap showing retained sliding windows whih correspond to the most
+![*Heatmap showing retained sliding windows whih correspond to the most
 highly-ranked region for differential
-signal.](differential_signal_files/figure-gfm/plot-assay-heatmap-1.png)
+signal.*](differential_signal_files/figure-gfm/plot-assay-heatmap-1.png)
 
 ## Mapping of Windows To Genes
 
@@ -662,9 +656,7 @@ are the regions directly overlapping a TSS for all transcripts within
 this region of the genome.
 
 ``` r
-results_gr <- mapByFeature(
-  gr = results_gr, genes = genes, prom = regions$promoters
-)
+results_gr <- mapByFeature(results_gr, genes = genes, prom = regions$promoters)
 ```
 
 Now we have our regions showing changed signal along with the likely
@@ -736,21 +728,37 @@ results_gr %>%
   )
 ```
 
-![](differential_signal_files/figure-gfm/plot-pie-1.png)<!-- -->
+![*Pie chart showing the best overlapping region for each merged
+windows. The best overlap is determined simply by the region with the
+lergest amount of
+overlap.*](differential_signal_files/figure-gfm/plot-pie-1.png)
 
-We can also scale by width, in which case returned values default to KB.
+We can also scale by additional columns. Here, we’ll find the proportion
+of each window which overlaps each type of region, providing a complete
+summary of the proportion of our ranges which overlaps each feature.
 
 ``` r
-results_gr %>% 
+regions %>% 
+  lapply(function(x) propOverlap(results_gr, x)) %>% 
+  as_tibble() %>% 
+  mutate(range = as.character(results_gr)) %>% 
+  pivot_longer(cols = names(regions), names_to = "region", values_to = "p") %>% 
+  dplyr::filter(p > 0) %>% 
+  mutate(
+    region = fct(region_levels[region], levels = region_levels),
+    w = p * width(GRanges(range)) / 1e3
+  ) %>% 
   plotPie(
-    scale_by = "width", fill = "bestRegion", min_p = 0.05,
-    total_glue = "{N}kb", total_size = 5,
-    cat_glue = "{str_wrap(bestRegion, 10)}\n{percent(p, 0.1)}",
+    scale_by = "w", fill = "region", min_p = 0.05,
+    total_glue = "{round(N, 1)}kb", total_size = 5,
+    cat_glue = "{str_wrap(region, 10)}\n{percent(p, 0.1)}",
     cat_alpha = 0.5, cat_size = 4
   )
 ```
 
-![](differential_signal_files/figure-gfm/plot-pie-width-1.png)<!-- -->
+![*Pie chart with regions scaled by width to show the proportions of the
+total regions which overlap each type of annotated
+region.*](differential_signal_files/figure-gfm/plot-pie-width-1.png)
 
 These results can be extended further using `plotSplitDonut()` to show
 more complex results.
@@ -765,19 +773,22 @@ separate palettes for the inner and outer rings if preferred. Specific
 slices can also be *exploded* for emphasis.
 
 ``` r
+region_col <- hcl.colors(length(region_levels), "Viridis", rev = TRUE)
 results_gr %>% 
   subset(status != "Unchanged") %>% 
   plotSplitDonut(
     inner = "status", outer = "bestRegion", min_p = 0.01,
-    inner_palette = c(rgb(0.2, 0.2, 0.9), rgb(0.8, 0.2, 0.3)),
-    outer_palette = hcl.colors(length(region_levels), "Zissou1"),
+    inner_palette = c("#3333E6", "#E6334D"),
+    outer_palette = region_col,
     inner_glue = "H3K27ac\n{status}\n{n}", inner_label_alpha = 0.8,
     outer_glue = "{str_wrap(bestRegion, 10)}\n{n}", outer_label = "text",
     explode_outer = "Promoter", explode_r = 0.2
   ) 
 ```
 
-![](differential_signal_files/figure-gfm/plot-split-donut-1.png)<!-- -->
+![*Summary of regions with changed signal and the annotated region with
+the largest
+overlap*](differential_signal_files/figure-gfm/plot-split-donut-1.png)
 
 ## Profile Heatmaps
 
@@ -826,10 +837,10 @@ Now we have our `BigWigFileList` we can define the ranges to plot along
 with the profile data. In order to find the region within each range
 with the maximal signal, we’ll compare back to the original results
 before windows were merged, then return the original window with the
-maximal signal (i.e. logCPM). Note that we already had the windows in
+maximal signal (i.e. logCPM). Note that we already had the windows in
 “keyval_range” which corresponded to the ranges with the most
 statistically significant change. Realistically we can choose any
-strategy for centering ranges that we wish.
+strategy for centring ranges that we wish.
 
 ``` r
 gr_increase <- subset(results_gr, status == "Increased")
@@ -933,9 +944,9 @@ plotProfileHeatmap(pd, "profile_data") +
   theme_bw()
 ```
 
-![Profile Heatmap of the regions on chromosome 10 showing evidence for
+![*Profile Heatmap of the regions on chromosome 10 showing evidence for
 increased H3K27ac signal. Regions are centred at the point of maximal
-signal.](differential_signal_files/figure-gfm/profile-heatmap-1.png)
+signal.*](differential_signal_files/figure-gfm/profile-heatmap-1.png)
 
 Note that H3K27ac often contains regions with significantly lower signal
 where the transcriptional machinery is instead occupying the DNA and as
@@ -952,7 +963,7 @@ genes and any other feature of interest. The function `plotHFGC()`
 provides a simple, standardised layout using the visualisation tools
 from `Gviz`. If supplied, tracks will be drawn in the order 1) HiC; 2)
 Features; 3) Genes, and 4) Coverage. All tracks are optional, and if
-none are provided a simply cytogenetic plot will ber produced. Whilst a
+none are provided a simply cytogenetic plot will be produced. Whilst a
 simple and intuitive function to use, it also provides a great deal of
 flexibility for advanced customisation. All plots require a `GRanges`
 object to define the plotting region along with a set of cytogenetic
@@ -971,14 +982,15 @@ gr <- results_gr %>%
 plotHFGC(gr, cytobands = grch37.cytobands)
 ```
 
-![](differential_signal_files/figure-gfm/plot-empty-hfgc-1.png)<!-- -->
+![*Basic output from plotHFGC without any of the optional
+tracks*](differential_signal_files/figure-gfm/plot-empty-hfgc-1.png)
 
 ### Including Coverage
 
 In order to show our changed signal in context we can show the coverage
 using a `BigWigFileList` as for the Profile Heatmap. If providing a
 `BigWigFileList`, separate tracks will drawn for each element of the
-object. In more cmplex scenarios where multiple targets are required a
+object. In more complex scenarios where multiple targets are required a
 list of `BigWigFileList`s can be provided and each element will then be
 drawn as a track with overlapping coverage within each BigWigFileList.
 Colours need to be provided in the identical structure to match the
@@ -994,9 +1006,10 @@ plotHFGC(
 )
 ```
 
-![Coverage for our region of interest. Note how the counts are lower in
-the highlighted region for the merged Veh coverage
-track.](differential_signal_files/figure-gfm/plot-hfgc-coverge-1.png)
+![*Coverage for the region of interest, shown with a blue highlight.
+Note how the counts are lower in the highlighted region for the merged
+Veh coverage
+track.*](differential_signal_files/figure-gfm/plot-hfgc-coverge-1.png)
 
 ### Displaying Genes
 
@@ -1014,8 +1027,8 @@ plotHFGC(
 )
 ```
 
-![Coverage for our region showing the relationship of signal to
-annotated genes](differential_signal_files/figure-gfm/add-genes-1.png)
+![*Coverage for our region showing the relationship of signal to
+annotated genes*](differential_signal_files/figure-gfm/add-genes-1.png)
 
 ### Adding Features
 
@@ -1026,18 +1039,19 @@ as we already have in our `regions_gr` object.
 
 ``` r
 region_grl <- splitAsList(regions_gr, regions_gr$region)[region_levels]
-region_col <- as.list(hcl.colors(length(region_levels), "Viridis", rev = TRUE))
 names(region_col) <- region_levels
 plotHFGC(
   gr, cytobands = grch37.cytobands, 
-  features = region_grl, featcol = region_col,
+  features = region_grl, featcol = region_col, featstack = "dense",
   coverage = bwfl, linecol = list("Veh" = "grey30", "DHT" = "darkred"),
   genes = gene_models, gene_col = "wheat",
   zoom = 30
 )
 ```
 
-![](differential_signal_files/figure-gfm/plot-hfgc-1.png)<!-- -->
+![*The same figure as previously, but with annotated regions added as
+features. Any type of feature can be added
+here.*](differential_signal_files/figure-gfm/plot-hfgc-1.png)
 
 ### Adding HiC Interactions
 
@@ -1072,21 +1086,24 @@ which matched the coverage track
 ``` r
 plotHFGC(
   gr, 
-  features = region_grl, featcol = region_col,
+  features = region_grl, featcol = region_col, featstack = "dense",
   genes = gene_models, genecol = "wheat",
   coverage = bwfl, linecol = list("Veh" = "grey30", "DHT" = "darkred"),
   annotation = cov_annot, 
-  annotcol = c(Unchanged = "grey", Decreased = "#3333CC", Increased = "#EE0022"),
+  annotcol = c(Unchanged = "grey", Decreased = "#3333E6", Increased = "#E6334D"),
   cytobands = grch37.cytobands, zoom = 30
 )
 ```
 
-![](differential_signal_files/figure-gfm/plot-annot-1.png)<!-- -->
+![*The addition of an annotation track for the coverage tracks shows
+which regions were retained during the analysis, as well as those which
+were considered as showing changed or unchanged
+signal.*](differential_signal_files/figure-gfm/plot-annot-1.png)
 
 Plots are able to be tweaked considerably further via multiple
-parameters, however these basic approaches cover the elemental
-functionality of `plotHFCG()` for enabling simple & reproducible
-plotting across regions for multiple sites within a larger experiment.
+parameters, however these basic approaches cover the core functionality
+of `plotHFCG()` for enabling simple & reproducible plotting across
+regions for multiple sites within a larger experiment.
 
 # References
 
