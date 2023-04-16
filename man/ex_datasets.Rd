@@ -7,7 +7,6 @@
 \alias{ex_genes}
 \alias{ex_prom}
 \alias{ex_hic}
-\alias{h3k_chr10}
 \title{Datasets for an example region}
 \format{
 GRanges and GInteractions objects
@@ -19,8 +18,6 @@ An object of class \code{GRanges} of length 4.
 An object of class \code{GRanges} of length 9.
 
 An object of class \code{GInteractions} of length 1.
-
-An object of class \code{RangedSummarizedExperiment} with 20000 rows and 6 columns.
 }
 \usage{
 data(ex_trans)
@@ -30,8 +27,6 @@ data(ex_genes)
 data(ex_prom)
 
 data(ex_hic)
-
-data("h3k_chr10")
 }
 \description{
 Various example datasets for demonstrating analysis and
@@ -45,7 +40,6 @@ Generation of all datasets is documented in
 with \code{Gviz} or \code{plotHFGC()}}
 \item{ex_prom}{Regions defined as promoters}
 \item{ex_hic}{Example HiC interactions}
-\item{h3k_chr10}{SummarizedExperiment containing sliding windows for H3K27ac signal across a subset of regions on chr10}
 }
 }
 \examples{

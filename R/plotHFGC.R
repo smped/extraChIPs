@@ -534,6 +534,8 @@ plotHFGC <- function(
 #' @import GenomicRanges
 #' @importFrom IRanges subsetByOverlaps
 #' @importFrom Gviz AnnotationTrack
+#' @importFrom stats setNames
+#' @importFrom S4Vectors endoapply
 .makeFeatureTrack <- function(
         .features, .gr, .fontsize, .fill, .tracksize, .cex, .rot, .name,
         .stacking, .col.title, .bg.title
@@ -548,6 +550,7 @@ plotHFGC <- function(
     }
     .fill <- unlist(.fill)[names(.features)]
 
+    .features <- endoapply(.features, setNames, NULL) ## Makes the unlist safer
     .features <- granges(unlist(.features))
     .features$feature <- names(.features)
     .features <- subsetByOverlaps(.features, .gr)

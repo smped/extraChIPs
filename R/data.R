@@ -45,7 +45,6 @@
 #'   with `Gviz` or `plotHFGC()`}
 #'   \item{ex_prom}{Regions defined as promoters}
 #'   \item{ex_hic}{Example HiC interactions}
-#'   \item{h3k_chr10}{SummarizedExperiment containing sliding windows for H3K27ac signal across a subset of regions on chr10}
 #' }
 #'
 #' @format GRanges and GInteractions objects
@@ -70,7 +69,3 @@
 #' @rdname ex_datasets
 #' @usage data(ex_hic)
 "ex_hic"
-
-#' @rdname ex_datasets
-#' @usage data("h3k_chr10")
-"h3k_chr10"
