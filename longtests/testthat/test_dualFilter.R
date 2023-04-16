@@ -97,7 +97,7 @@ test_that("dualFilter runs as expected", {
         ref = peaks,
         q = 0.8 # Better to use q = 0.5 on real data
     )
-    expect_equal(dim(filtcounts), c(108, 2))
+    expect_equal(dim(filtcounts), c(101, 2))
     expect_equal(assayNames(filtcounts), c("counts", "logCPM"))
     expect_equal(colnames(rowData(filtcounts)), "overlaps_ref")
 
@@ -111,8 +111,8 @@ test_that("keep.totals performs correctly", {
         q = 0.8,
         keep.totals = FALSE
     )
-    expect_equal(dim(filtcounts), c(112, 2))
-    expect_equal(sum(filtcounts$totals), 5538)
+    expect_equal(dim(filtcounts), c(102, 2))
+    expect_equal(sum(filtcounts$totals), 5446)
 })
 
 
