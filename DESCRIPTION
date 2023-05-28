@@ -1,5 +1,5 @@
 Package: extraChIPs
-Version: 1.4.0
+Version: 1.4.1
 Title: Additional functions for working with ChIP-Seq data
 Authors@R: person("Stephen", "Pederson", 
   email = "stephen.pederson.au@gmail.com", 
@@ -7,7 +7,7 @@ Authors@R: person("Stephen", "Pederson",
   comment = c(ORCID = "0000-0001-8197-3303")
   )
 Description: This package builds on existing tools and adds some simple but
-   extremely useful capabilities for working with ChIP-Seq data. The focus is 
+   extremely useful capabilities for working wth ChIP-Seq data. The focus is 
    on detecting differential binding windows/regions. 
    One set of functions focusses on set-operations retaining mcols for GRanges
    objects, whilst another group of functions are to aid visualisation of 
