@@ -19,6 +19,7 @@ fitAssayDiff(x, ...)
   fc = 1,
   lfc = log2(fc),
   asRanges = FALSE,
+  offset = NULL,
   ...
 )
 }
@@ -60,6 +61,9 @@ as a grouping factor. Ignored when using method = "lt"}
 \code{SummarizedExperiment} object with the results added to the \code{rowData}
 element. Setting \code{asRanges = TRUE} will only return the GRanges object from
 this element}
+
+\item{offset}{If provided will be used as the offset when the DGEList object
+is created during model fitting}
 }
 \value{
 A SummarizedExperiment object with results set as the \code{rowData} element.

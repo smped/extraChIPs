@@ -60,6 +60,8 @@
 #' `SummarizedExperiment` object with the results added to the `rowData`
 #' element. Setting `asRanges = TRUE` will only return the GRanges object from
 #' this element
+#' @param offset If provided will be used as the offset when the DGEList object
+#' is created during model fitting
 #' @param ... Passed to \link[edgeR]{calcNormFactors}, \link[edgeR]{estimateDisp}
 #' and \link[edgeR]{glmQLFit} when method = "qlf".
 #' If method = "lt", instead passed to \link[limma]{lmFit}, \link[limma]{treat},
@@ -99,7 +101,8 @@ setMethod(
         x, assay = "counts", design = NULL, coef = NULL,
         lib.size = "totals", method = c("qlf", "lt"),
         norm = c("none", "TMM", "RLE", "TMMwsp", "upperquartile"),
-        groups = NULL, fc = 1, lfc = log2(fc), asRanges = FALSE, ...
+        groups = NULL, fc = 1, lfc = log2(fc), asRanges = FALSE,
+        offset = NULL, ...
     ) {
         method <- match.arg(method)
         norm <- match.arg(norm)
@@ -114,7 +117,9 @@ setMethod(
             ## Only required for GLM fits
             if (!is.null(groups)) groups <- match.arg(groups, args)
             if (!is.null(lib.size)) lib.size <- match.arg(lib.size, args)
-            fit <- .se2DGEGLM(x, assay, design, lib.size, norm, groups, ...)
+            fit <- .se2DGEGLM(
+                x, assay, design, lib.size, norm, groups, offset, ...
+            )
             if (lfc == 0) {
                 fit <- glmQLFTest(fit, coef = coef)
             } else {
@@ -175,7 +180,7 @@ setMethod(
 
 #' @importFrom SummarizedExperiment assay colData
 #' @importFrom edgeR DGEList calcNormFactors estimateDisp glmQLFit
-.se2DGEGLM <- function(x, assay, design, lib.size, norm, groups, ...) {
+.se2DGEGLM <- function(x, assay, design, lib.size, norm, groups, offset, ...) {
 
     ## 1. Create a DGE list
     ## 2. Normalise as requested
@@ -190,6 +195,7 @@ setMethod(
     if (!is.null(lib.size)) ls <- col_df[[lib.size]]
     message("Creating DGE list...")
     dge <- DGEList(counts = mat, lib.size = ls, samples = col_df)
+    if (!is.null(offset)) dge$offset <- offset
     if (!is.null(groups)) {
         grp_fac <- as.factor(col_df[[groups]])
         dge$samples$group <- grp_fac
