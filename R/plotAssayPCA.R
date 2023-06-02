@@ -22,6 +22,9 @@
 #' @param trans character(1). Any transformative function to be applied to the
 #' data before performing the PCA, e.g. `trans = "log2"`
 #' @param n_max Subsample the data to this many points before performing PCA
+#' @param tol Any rows with variance below this value will be excluded prior to
+#' passing to \link[stats]{prcomp}. All rows are scaled and centred by default
+#' @param rank Passed to \link[stats]{prcomp}
 #' @param ... Passed to \link[ggplot2]{geom_text}
 #'
 #' @examples
@@ -54,6 +57,7 @@ setGeneric(
 #' @importFrom scales percent
 #' @importFrom stats prcomp
 #' @importFrom ggrepel geom_text_repel
+#' @importFrom matrixStats rowSds
 #' @import ggplot2
 #'
 #' @rdname plotAssayPCA-methods
@@ -63,7 +67,8 @@ setMethod(
     signature = signature(x = "SummarizedExperiment"),
     function(
         x, assay = "counts", colour = NULL, shape = NULL, label = NULL,
-        show_points = TRUE, pc_x = 1, pc_y = 2, trans = NULL, n_max = Inf, ...
+        show_points = TRUE, pc_x = 1, pc_y = 2, trans = NULL, n_max = Inf,
+        tol = sqrt(.Machine$double.eps), rank = NULL, ...
     ) {
 
         if (is.null(colnames(x))) colnames(x) <- as.character(seq_len(ncol(x)))
@@ -88,9 +93,17 @@ setMethod(
             )
             if (!trans_ok) stop("This transformation is not applicable")
         }
+        if (!is.null(tol)) {
+            keep_rows <- rowSds(mat) >= tol
+            if (sum(keep_rows) == 0)
+                stop("Values are constant across all ranges")
+            mat <- mat[keep_rows,]
+        }
 
         PC <- c() # avoiding R CMD check errors
-        pca <- prcomp(t(mat), center = TRUE, scale. = TRUE)
+        pca <- prcomp(
+            x = t(mat), center = TRUE, scale. = TRUE, tol = tol, rank. = rank
+        )
         max_comp <- length(pca$sdev)
         if (max(c(pc_x, pc_y)) > max_comp)
             stop("The highest available PC is ", max_comp)

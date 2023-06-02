@@ -18,6 +18,8 @@ plotAssayPCA(x, ...)
   pc_y = 2,
   trans = NULL,
   n_max = Inf,
+  tol = sqrt(.Machine$double.eps),
+  rank = NULL,
   ...
 )
 }
@@ -45,6 +47,11 @@ repel. If \code{FALSE}, labels will appear at the exact points}
 data before performing the PCA, e.g. \code{trans = "log2"}}
 
 \item{n_max}{Subsample the data to this many points before performing PCA}
+
+\item{tol}{Any rows with variance below this value will be excluded prior to
+passing to \link[stats]{prcomp}. All rows are scaled and centred by default}
+
+\item{rank}{Passed to \link[stats]{prcomp}}
 }
 \value{
 A ggplot2 object
