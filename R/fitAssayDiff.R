@@ -149,9 +149,9 @@ setMethod(
             colnames(res) <- gsub("AveExpr", "logCPM", colnames(res))
             colnames(res) <- gsub("P.Value", "PValue", colnames(res))
         }
+        res[["FDR"]] <- p.adjust(res[["PValue"]], "fdr")
         keep_cols <- setdiff(colnames(rowData(x)), colnames(res))
         orig <- as_tibble(rowData(x))[,keep_cols]
-        res[["FDR"]] <- p.adjust(res[["PValue"]], "fdr")
         rowData(x) <- cbind(orig, res)
         if (asRanges) {
             if (is.null(rowRanges(x))) {
