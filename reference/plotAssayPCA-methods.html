@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.2</span>
       </span>
     </div>
 
@@ -80,6 +80,8 @@
 <span>  pc_y <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  trans <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  n_max <span class="op">=</span> <span class="cn">Inf</span>,</span>
+<span>  tol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">.Machine</span><span class="op">$</span><span class="va">double.eps</span><span class="op">)</span>,</span>
+<span>  rank <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -130,6 +132,15 @@ data before performing the PCA, e.g. <code>trans = "log2"</code></p></dd>
 
 <dt>n_max</dt>
 <dd><p>Subsample the data to this many points before performing PCA</p></dd>
+
+
+<dt>tol</dt>
+<dd><p>Any rows with variance below this value will be excluded prior to
+passing to <a href="https://rdrr.io/r/stats/prcomp.html" class="external-link">prcomp</a>. All rows are scaled and centred by default</p></dd>
+
+
+<dt>rank</dt>
+<dd><p>Passed to <a href="https://rdrr.io/r/stats/prcomp.html" class="external-link">prcomp</a></p></dd>
 
 </dl></div>
     <div id="value">
