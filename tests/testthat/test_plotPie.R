@@ -111,7 +111,7 @@ test_that("Scaling by columns works as expected", {
     p <- plotPie(gr, fill = "feature", scale_by = "width")
     expect_equal(sum(p$data$n), sum(width(gr) / 1e3))
     df$scale <- 0.5
-    p <- plotPie(df, fill = "feature", x = "TF1", scale_by = "scale")
+    p <- plotPie(df, fill = "feature", x = "TF1", scale_by = "scale", scale_factor = 1)
     expect_equal(sum(p$data$value), nrow(df) / 2)
     df$scale <- "a"
     expect_error(plotPie(df, fill = "feature", x = "TF1", scale_by = "scale"))

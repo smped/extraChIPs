@@ -26,7 +26,7 @@ test_that("plotSplitDonut Errors where expected", {
     )
     expect_error(
         plotSplitDonut(df, inner = "TF1", outer = "feature", scale_by = "TF1"),
-        "is.numeric\\(object\\[\\[scale_by\\]\\]\\) is not TRUE"
+        "is.numeric.+"
     )
 
 })

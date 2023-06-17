@@ -36,6 +36,9 @@
 #' object this defaults to the count (scale_by = "n") but can also be specified
 #' as being width of each range (scale_by = "width"). If choosing width, width
 #' will be displayed in Kb
+#' @param scale_factor When scaling by another column, such as width, totals
+#' will be divided by this value, with 1000 being the default to provide output
+#' in kb.
 #' @param total_geom The geom_* to use for the totals at the centre of each pie.
 #' Setting this to 'none' will disable totals
 #' @param total_glue \link[glue]{glue} syntax to use for the totals in the
@@ -48,6 +51,8 @@
 #' Effectively removes labels from pie charts with few members. Alternatively
 #' when only one column is specified, categories below this will not be shown
 #' around the edge of the plot
+#' @param max_p only display labels for segments representing less than this
+#' proportion of the total.
 #' @param cat_geom The geom_* to use for category labels corresponding to each
 #' slice of the pie. Setting this to 'none' will disable category labels
 #' @param cat_glue \link[glue]{glue} syntax to use for the category labels
@@ -55,6 +60,7 @@
 #' be used to print totals and proportions for each slice.
 #' @param cat_colour,cat_fill,cat_size,cat_alpha Colour, fill, size and alpha
 #' for category labels
+#' @param cat_adj Adjust category labels
 #' @param ... Not used
 #'
 #' @examples
@@ -104,7 +110,7 @@ setMethod(
         scale_by <- match.arg(scale_by)
         if (scale_by == "n") df[["n"]] <- 1
         ## Set width to be in Kb by default
-        if (scale_by == "width") df[["width"]] <- width(object) / 1e3
+        if (scale_by == "width") df[["width"]] <- width(object)
         plotPie(df, scale_by = scale_by, ...)
     }
 )
@@ -126,13 +132,14 @@ setMethod(
     "plotPie",
     signature = signature(object = "data.frame"),
     function(
-        object, fill, x, y, scale_by, width = 0.8,
+        object, fill, x, y, scale_by, scale_factor = 1e3, width = 0.8,
         total_geom = c("label", "text", "none"), total_glue = "{comma(N)}",
         total_colour = "black", total_fill = "white", total_alpha = 1,
-        total_size = 3, min_p = 0.01, cat_geom = c("label", "text", "none"),
+        total_size = 3, min_p = 0.01, max_p = 1,
+        cat_geom = c("label", "text", "none"),
         cat_glue = "{.data[[fill]]}\n{comma(n, 1)}\n({percent(p, 0.1)})",
         cat_colour = "black", cat_fill = "white", cat_size = 3, cat_alpha = 1,
-        ...
+        cat_adj = 0, ...
     ) {
 
         if (missing(fill)) stop("The initial category must be defined as 'fill'\n")
@@ -146,10 +153,12 @@ setMethod(
                 .total_geom = total_geom, .total_glue = total_glue,
                 .total_size = total_size, .total_colour = total_colour,
                 .total_fill = total_fill,.total_alpha = total_alpha,
-                .min_p = min_p, .cat_geom = cat_geom, .cat_glue = cat_glue,
+                .min_p = min_p, .max_p = max_p,
+                .cat_geom = cat_geom, .cat_glue = cat_glue,
                 .cat_colour = cat_colour, .cat_fill = cat_fill,
                 .cat_size = cat_size, .cat_alpha = cat_alpha,
-                .scale_by = scale_by
+                .cat_adj = cat_adj,
+                .scale_by = scale_by, .scale_factor = scale_factor
             )
         }
 
@@ -162,10 +171,11 @@ setMethod(
                 .total_geom = total_geom, .total_glue = total_glue,
                 .total_size = total_size, .total_colour = total_colour,
                 .total_fill = total_fill, .total_alpha = total_alpha,
-                .min_p = min_p, .cat_geom = cat_geom, .cat_glue = cat_glue,
-                .cat_colour = cat_colour, .cat_fill = cat_fill,
-                .cat_size = cat_size, .cat_alpha = cat_alpha,
-                .scale_by = scale_by
+                .min_p = min_p, .max_p = max_p, .cat_geom = cat_geom,
+                .cat_glue = cat_glue, .cat_colour = cat_colour,
+                .cat_fill = cat_fill, .cat_size = cat_size,
+                .cat_alpha = cat_alpha, .cat_adj = cat_adj,
+                .scale_by = scale_by, .scale_factor = scale_factor
             )
 
         if (!missing(x) & !missing(y))
@@ -174,10 +184,11 @@ setMethod(
                 .total_geom = total_geom, .total_glue = total_glue,
                 .total_size = total_size, .total_colour = total_colour,
                 .total_fill = total_fill, .total_alpha = total_alpha,
-                .min_p = min_p, .cat_geom = cat_geom, .cat_glue = cat_glue,
-                .cat_colour = cat_colour, .cat_fill = cat_fill,
-                .cat_size = cat_size, .cat_alpha = cat_alpha,
-                .scale_by = scale_by
+                .min_p = min_p, .max_p = max_p, .cat_geom = cat_geom,
+                .cat_glue = cat_glue, .cat_colour = cat_colour,
+                .cat_fill = cat_fill, .cat_size = cat_size,
+                .cat_alpha = cat_alpha, .cat_adj = cat_adj,
+                .scale_by = scale_by, .scale_factor = scale_factor
             )
 
         p
@@ -193,20 +204,22 @@ setMethod(
 #' @import ggplot2
 .plotSinglePie <- function(
         df, fill, width, .total_geom, .total_glue, .total_size, .total_colour,
-        .total_fill, .total_alpha, .min_p, .cat_geom, .cat_glue, .cat_colour,
-        .cat_fill, .cat_size, .cat_alpha, .text_width, .scale_by
+        .total_fill, .total_alpha, .min_p, .max_p, .cat_geom, .cat_glue,
+        .cat_colour, .cat_fill, .cat_size, .cat_alpha, .text_width, .cat_adj,
+        .scale_by, .scale_factor
 ) {
 
     stopifnot(fill %in% colnames(df))
     df[[fill]] <- as.factor(df[[fill]])
-    if (!missing(.scale_by)) stopifnot(is.numeric(df[[.scale_by]]))
     x <- y <- lab <- c() # R CMD check error avoidance
 
     grp_df <- group_by(df, !!sym(fill))
     if (missing(.scale_by)) {
         summ_df <- summarise(grp_df, n = dplyr::n(), .groups = "drop")
     } else {
-        summ_df <- summarise(grp_df, n = sum(!!sym(.scale_by)))
+        stopifnot(is.numeric(df[[.scale_by]]) & is.numeric(.scale_factor))
+        if (.scale_by == "n") .scale_factor <- 1
+        summ_df <- summarise(grp_df, n = sum(!!sym(.scale_by)) / .scale_factor)
     }
     summ_df <- complete(summ_df, !!sym(fill), fill = list(n = 0))
     summ_df <- mutate(summ_df, p = n / sum(n), lab = glue(.cat_glue))
@@ -220,15 +233,16 @@ setMethod(
     if (.cat_geom != "none") {
         geom <- paste0("geom_", .cat_geom)
         args <- list(
-            mapping = aes(x = 1, y = y - 0.5 * p, label = lab),
-            data = dplyr::filter(summ_df, p > .min_p), colour = .cat_colour,
-            alpha = .cat_alpha, size = .cat_size, show.legend = FALSE
+            mapping = aes(x = 1, y = y - p / 2, label = lab),
+            data = dplyr::filter(summ_df, p >= .min_p, p <= .max_p),
+            colour = .cat_colour, alpha = .cat_alpha, size = .cat_size,
+            nudge_x = .cat_adj, show.legend = FALSE
         )
         if (.cat_geom == "label") args$fill <- .cat_fill
         p <- p + do.call(geom, args)
     }
 
-    if (.total_geom != "none"){
+    if (.total_geom != "none") {
         lab_fun <- match.fun(paste0("geom_", .total_geom))
         p <- p + lab_fun(
             aes(x, y, label = lab),
@@ -252,15 +266,15 @@ setMethod(
 #' @import ggplot2
 .plotDoublePie <- function(
         df, x, fill, width, .total_geom, .total_glue, .total_size,
-        .total_colour, .total_fill, .total_alpha, .min_p, .cat_geom, .cat_glue,
-        .cat_colour, .cat_fill, .cat_size, .cat_alpha, .scale_by
+        .total_colour, .total_fill, .total_alpha, .min_p, .max_p, .cat_geom,
+        .cat_glue, .cat_colour, .cat_fill, .cat_size, .cat_alpha, .cat_adj,
+        .scale_by, .scale_factor
 ) {
 
     x <- x[[1]]
     stopifnot(all(c(x, fill) %in% colnames(df)))
     df[[x]] <- as.factor(df[[x]])
     df[[fill]] <- as.factor(df[[fill]])
-    if (!missing(.scale_by)) stopifnot(is.numeric(df[[.scale_by]]))
     r <- N <- value <- p <- c() # R CMD check error avoidance
 
     grp_df <- group_by(df, !!sym(x), !!sym(fill))
@@ -268,8 +282,11 @@ setMethod(
         ## The column 'value' is hard-wired into geom_scatterpie for long format
         summ_df <- summarise(grp_df, value = dplyr::n(), .groups = "drop_last")
     } else {
+        stopifnot(is.numeric(df[[.scale_by]]) & is.numeric(.scale_factor))
+        if (.scale_by == "n") .scale_factor <- 1
         summ_df <- summarise(
-            grp_df, value = sum(!!sym(.scale_by)), .groups = "drop_last"
+            grp_df, value = sum(!!sym(.scale_by)) / .scale_factor,
+            .groups = "drop_last"
         )
     }
     summ_df <- mutate(
@@ -286,8 +303,8 @@ setMethod(
         n = value, lab = glue(.cat_glue),
         r = N / sum(N), r = 0.5 * r / max(r),
         x = as.integer(!!sym(x)),
-        lab_x = x + 0.5 * r * sin(!!sym("label_radians")),
-        lab_y = 1 + 0.5 * r * cos(!!sym("label_radians"))
+        lab_x = x + 0.5 * r * sin(!!sym("label_radians")) * (1 + .cat_adj),
+        lab_y = 1 + 0.5 * r * cos(!!sym("label_radians")) * (1 + .cat_adj)
     )
 
     p <- ggplot(data = summ_df) +
@@ -307,7 +324,7 @@ setMethod(
             axis.ticks.y = element_blank()
         )
 
-    if (.total_geom != "none"){
+    if (.total_geom != "none") {
         lab_fun <- match.fun(paste0("geom_", .total_geom))
         lab_df <- dplyr::filter(summ_df, N > .min_p * sum(N))
         lab_df <- distinct(lab_df, x, N, .keep_all = TRUE)
@@ -325,7 +342,10 @@ setMethod(
         args <- list(
             mapping = aes(
                 .data[["lab_x"]], .data[["lab_y"]], label = .data[["lab"]]
-            ), data = dplyr::filter(summ_df, n / sum(n) > .min_p),
+            ),
+            data = dplyr::filter(
+                summ_df, n / sum(n) >= .min_p, n / sum(n) <= .max_p
+            ),
             colour = .cat_colour, alpha = .cat_alpha, size = .cat_size,
             show.legend = FALSE
         )
@@ -347,8 +367,9 @@ setMethod(
 #' @import ggplot2
 .plotTriplePie <- function(
         df, x, y, fill, width, .total_geom, .total_glue, .total_size,
-        .total_colour, .total_fill, .total_alpha, .min_p, .cat_geom, .cat_glue,
-        .cat_colour, .cat_fill, .cat_size, .cat_alpha, .scale_by
+        .total_colour, .total_fill, .total_alpha, .min_p, .max_p, .cat_geom,
+        .cat_glue, .cat_colour, .cat_fill, .cat_size, .cat_alpha, .cat_adj,
+        .scale_by, .scale_factor
 ) {
 
     x <- x[[1]]
@@ -358,15 +379,17 @@ setMethod(
     df[[x]] <- as.factor(df[[x]])
     df[[y]] <- as.factor(df[[y]])
     df[[fill]] <- as.factor(df[[fill]])
-    if (!missing(.scale_by)) stopifnot(is.numeric(df[[.scale_by]]))
     r <- N <- p <- value <- c() # R CMD check error avoidance
 
     grp_df <- group_by(df, !!sym(x), !!sym(y), !!sym(fill))
     if (missing(.scale_by)) {
         summ_df <- summarise(grp_df, value = dplyr::n(), .groups = "drop_last")
     } else {
+        stopifnot(is.numeric(df[[.scale_by]]) & is.numeric(.scale_factor))
+        if (.scale_by == "n") .scale_factor <- 1
         summ_df <- summarise(
-            grp_df, value = sum(!!sym(.scale_by)), .groups = "drop_last"
+            grp_df, value = sum(!!sym(.scale_by)) / .scale_factor,
+            .groups = "drop_last"
         )
     }
     summ_df <- mutate(
@@ -383,8 +406,8 @@ setMethod(
         n = value, lab = glue(.cat_glue),
         r = N / sum(N), r = 0.5 * r / max(r),
         x = as.integer(!!sym(x)), y = as.integer(!!sym(y)),
-        lab_x = x + 0.5 * r * sin(!!sym("label_radians")),
-        lab_y = y + 0.5 * r * cos(!!sym("label_radians"))
+        lab_x = x + 0.5 * r * sin(!!sym("label_radians")) * (1 + .cat_adj),
+        lab_y = y + 0.5 * r * cos(!!sym("label_radians")) * (1 + .cat_adj)
     )
 
     p <- ggplot(data = summ_df) +
@@ -402,7 +425,7 @@ setMethod(
             breaks = seq_along(levels(df[[y]])), labels = levels(df[[y]])
         )
 
-    if (.total_geom != "none"){
+    if (.total_geom != "none") {
         lab_fun <- match.fun(paste0("geom_", .total_geom))
         lab_df <- distinct(summ_df, x, y, N)
         lab_df <- dplyr::filter(lab_df, N > .min_p * sum(N))
@@ -420,7 +443,9 @@ setMethod(
         geom <- paste0("geom_", .cat_geom)
         args <- list(
             mapping = aes(!!sym("lab_x"), !!sym("lab_y"), label = !!sym("lab")),
-            data = dplyr::filter(summ_df, n / sum(n) > .min_p),
+            data = dplyr::filter(
+                summ_df, n / sum(n) >= .min_p, n / sum(n) <= .max_p
+            ),
             colour = .cat_colour, alpha = .cat_alpha, size = .cat_size,
             show.legend = FALSE
         )

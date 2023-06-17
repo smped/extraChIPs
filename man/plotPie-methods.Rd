@@ -19,6 +19,7 @@ plotPie(object, ...)
   x,
   y,
   scale_by,
+  scale_factor = 1000,
   width = 0.8,
   total_geom = c("label", "text", "none"),
   total_glue = "{comma(N)}",
@@ -27,12 +28,14 @@ plotPie(object, ...)
   total_alpha = 1,
   total_size = 3,
   min_p = 0.01,
+  max_p = 1,
   cat_geom = c("label", "text", "none"),
   cat_glue = "{.data[[fill]]}\\n{comma(n, 1)}\\n({percent(p, 0.1)})",
   cat_colour = "black",
   cat_fill = "white",
   cat_size = 3,
   cat_alpha = 1,
+  cat_adj = 0,
   ...
 )
 }
@@ -52,6 +55,10 @@ will be displayed in Kb}
 
 \item{y}{The final (optional) category/column to plce along the y-axis}
 
+\item{scale_factor}{When scaling by another column, such as width, totals
+will be divided by this value, with 1000 being the default to provide output
+in kb.}
+
 \item{width}{Scale the width of all pies}
 
 \item{total_geom}{The geom_* to use for the totals at the centre of each pie.
@@ -69,6 +76,9 @@ Effectively removes labels from pie charts with few members. Alternatively
 when only one column is specified, categories below this will not be shown
 around the edge of the plot}
 
+\item{max_p}{only display labels for segments representing less than this
+proportion of the total.}
+
 \item{cat_geom}{The geom_* to use for category labels corresponding to each
 slice of the pie. Setting this to 'none' will disable category labels}
 
@@ -78,6 +88,8 @@ be used to print totals and proportions for each slice.}
 
 \item{cat_colour, cat_fill, cat_size, cat_alpha}{Colour, fill, size and alpha
 for category labels}
+
+\item{cat_adj}{Adjust category labels}
 }
 \value{
 A ggplot2 object able to be customised with colour scales and themes.

@@ -43,6 +43,9 @@
 #' @param scale_by Column to scale values by. If provided, values in this column
 #' will be summed, instead of simply counting entries. Any label in the centre
 #' of the plot will also reflect this difference
+#' @param scale_factor When scaling by another column, such as width, totals
+#' will be divided by this value, with 1000 being the default to provide output
+#' in kb.
 #' @param r_centre The radius of the hole in the centre. Setting to zero will
 #' create a Pie chart
 #' @param r_inner,r_outer The radii of the inner/outer rings
@@ -69,6 +72,9 @@
 #' @param min_p,inner_min_p,outer_min_p only display labels for segments
 #' representing greater than this proportion of the total. If inner/outer values
 #' are specified, the values in `min_p` will be ignored for that layer
+#' @param max_p,inner_max_p,outer_max_p only display labels for segments
+#' representing less than this proportion of the total. If inner/outer values
+#' are specified, the values in `max_p` will be ignored for that layer
 #' @param explode_inner,explode_outer Regular expressions from either the inner
 #' or outer ring for which segments will be 'exploded'
 #' @param explode_query Setting to AND and specifying values for both the inner
@@ -97,7 +103,7 @@
 #'
 #' ## Adding an exploded section along with an outer palette & customisation
 #' plotSplitDonut(
-#'   df, inner = "TF1", outer = "feature", total_size = NA,
+#'   df, inner = "TF1", outer = "feature", total_label = "none",
 #'   inner_label_alpha = 0.5, r_centre = 0,
 #'   outer_glue = "{.data[[outer]]}\n(n = {n})", outer_label = "text",
 #'   explode_inner = "Up", explode_outer = "Prom|Enh",
@@ -117,7 +123,7 @@ setMethod(
         scale_by <- match.arg(scale_by)
         if (scale_by == "n") df[["n"]] <- 1
         ## Set width to be in Kb by default
-        if (scale_by == "width") df[["width"]] <- width(object) / 1e3
+        if (scale_by == "width") df[["width"]] <- width(object)
         plotSplitDonut(df, scale_by = scale_by, ...)
     }
 )
@@ -150,7 +156,7 @@ setMethod(
     "plotSplitDonut",
     signature = signature(object = "data.frame"),
     function(
-        object, inner, outer, scale_by = NULL,
+        object, inner, outer, scale_by = NULL, scale_factor = 1e3,
         r_centre = 0.5, r_inner = 1, r_outer = 1,
         total_glue = "{comma(N)}",
         total_size = 5, total_colour = "black",
@@ -164,6 +170,7 @@ setMethod(
         label_colour = "black", inner_label_colour = NULL,
         outer_label_colour = NULL,
         min_p = 0.05, inner_min_p = NULL, outer_min_p = NULL,
+        max_p = 1, inner_max_p = NULL, outer_max_p = NULL,
         explode_inner = NULL, explode_outer = NULL,
         explode_query = c("AND", "OR"), explode_x = 0, explode_y = 0,
         explode_r = 0, nudge_r = 0.5,
@@ -178,7 +185,6 @@ setMethod(
         scale_by <- scale_by[[1]]
         stopifnot(all(c(inner, outer, scale_by) %in% colnames(object)))
         stopifnot(inner != outer)
-        if (!is.null(scale_by)) stopifnot(is.numeric(object[[scale_by]]))
         object[[inner]] <- as.factor(object[[inner]])
         object[[outer]] <- as.factor(object[[outer]])
         explode_query <- match.arg(explode_query)
@@ -190,6 +196,8 @@ setMethod(
         if (any(c(explode_inner, explode_outer) == "^$")) explode_query <- "OR"
         if (is.null(inner_min_p)) inner_min_p <- min_p
         if (is.null(outer_min_p)) outer_min_p <- min_p
+        if (is.null(inner_max_p)) inner_max_p <- max_p
+        if (is.null(outer_max_p)) outer_max_p <- max_p
         if (is.null(inner_label_alpha)) inner_label_alpha <- label_alpha
         if (is.null(outer_label_alpha)) outer_label_alpha <- label_alpha
         if (is.null(inner_label_size)) inner_label_size <- label_size
@@ -202,8 +210,11 @@ setMethod(
             summ_df <- summarise(summ_df, n = dplyr::n(), .groups = "drop_last")
             N <- nrow(object)
         } else {
+            stopifnot(is.numeric(object[[scale_by]]) & is.numeric(scale_factor))
+            if (scale_by == "n") scale_factor <- 1 # Will happen with GRanges
             summ_df <- summarise(
-                summ_df, n = sum(!!sym(scale_by)), .groups = "drop_last"
+                summ_df, n = sum(!!sym(scale_by)) / scale_factor,
+                .groups = "drop_last"
             )
             N <- sum(object[[scale_by]])
         }
@@ -356,7 +367,8 @@ setMethod(
                         y = cos(mid) * (x + 0.5 * r_inner) + y0, label = lab
                     ),
                     data = dplyr::filter(
-                        plot_df, ring == "inner", p > inner_min_p
+                        plot_df, ring == "inner",
+                        p >= inner_min_p, p <= inner_max_p
                     ),
                     size = inner_label_size, alpha = inner_label_alpha,
                     colour = inner_label_colour
@@ -369,7 +381,8 @@ setMethod(
                         colour = colour, label = lab
                     ),
                     data = dplyr::filter(
-                        plot_df, ring == "inner", p > inner_min_p
+                        plot_df, ring == "inner",
+                        p >= inner_min_p, p <= inner_max_p
                     ),
                     size = inner_label_size, alpha = inner_label_alpha,
                     show.legend = FALSE
@@ -385,7 +398,8 @@ setMethod(
                         y = cos(mid) * (x1 + nudge_r) + y0, label = lab
                     ),
                     data = dplyr::filter(
-                        plot_df, ring == "outer", p > outer_min_p
+                        plot_df, ring == "outer",
+                        p >= outer_min_p, p <= outer_max_p
                     ),
                     size = outer_label_size, alpha = outer_label_alpha,
                     colour = outer_label_colour
@@ -398,7 +412,8 @@ setMethod(
                         colour = colour, label = lab
                     ),
                     data = dplyr::filter(
-                        plot_df, ring == "outer", p > outer_min_p
+                        plot_df, ring == "outer",
+                        p >= outer_min_p, p <= outer_max_p
                     ),
                     size = outer_label_size, alpha = outer_label_alpha,
                     show.legend = FALSE

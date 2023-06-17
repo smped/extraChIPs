@@ -52,10 +52,11 @@
 #' @importFrom tibble as_tibble
 #' @importFrom tidyr pivot_longer nest
 #' @importFrom tidyselect all_of
-#' @importFrom S4Vectors DataFrame
+#' @importFrom S4Vectors DataFrame mcols
 #' @importFrom IRanges SplitDataFrameList
 #' @importFrom dplyr left_join
 #' @importFrom BiocParallel SerialParam bplapply bpisup bpstart bpstop
+#' @importFrom GenomeInfoDb seqlevels keepSeqlevels
 #' @rdname getProfileData-methods
 #' @export
 setMethod(
@@ -67,7 +68,14 @@ setMethod(
     ) {
 
         stopifnot(upstream > 0 & downstream > 0 & bins > 0)
+        ## Manage the seqinfo objects to avoid warnings & errors
+        bw_seqlevels <- seqlevels(x)
+        gr <- gr[as.character(seqnames(gr)) %in% bw_seqlevels]
+        stopifnot(length(gr) > 0)
+        bw_seqlevels <- intersect(bw_seqlevels, seqnames(gr))
+        gr <- keepSeqlevels(gr, bw_seqlevels)
         ids <- as.character(gr)
+        ## Set the bins & resize
         bin_width <- as.integer((upstream + downstream) / bins)
         gr_resize <- resize(gr, width = 1, fix = "center")
         gr_resize <- promoters(gr_resize, upstream, downstream)
@@ -79,7 +87,7 @@ setMethod(
         mat <- normalizeToMatrix(
             signal = vals,
             target = resize(gr_resize, width = 1, fix = "center"),
-            extend = (upstream + downstream)/ 2, w = bin_width,
+            extend = (upstream + downstream) / 2, w = bin_width,
             mean_mode = mean_mode, value_column = "score", ...
         )
         mat <- as.matrix(mat)

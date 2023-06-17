@@ -64,9 +64,13 @@ Imports:
 Suggests: 
   BiocStyle,
   covr,
+  cqn,
   harmonicmeanp,
+  here,
   knitr,
+  magrittr,
   plyranges,
+  quantro,
   rmarkdown,
   testthat (>= 3.0.0),
   tidyverse
