@@ -84,7 +84,9 @@ interactions are supplied.}
 
 \item{axistrack}{logical. Add an AxisTrack()}
 
-\item{cytobands}{Cytogenetic bands to be displayed on each chromosome}
+\item{cytobands}{Cytogenetic bands to be displayed on each chromosome.
+See data('grch37.cytobands') for the correct format. Only drawn if a
+cytobands data.frame is provided.}
 
 \item{covtype}{The plot type for coverage. Currently only lines ("l")
 and heatmaps ("heatmap") are supported}
@@ -159,7 +161,7 @@ directly.
 
 The primary tracks defined in this function are H (HiC), F (features), G
 (genes), and C (coverage). Axis and Ideogram tracks are an additional part of
-this visualisation
+this visualisation, with the Ideogram also being optional
 
 Use all tracks specific to this dataset to generate a simple visualisation.
 In descending order the tracks displayed will be:

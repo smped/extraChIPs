@@ -9,7 +9,7 @@
 #'
 #' The primary tracks defined in this function are H (HiC), F (features), G
 #' (genes), and C (coverage). Axis and Ideogram tracks are an additional part of
-#' this visualisation
+#' this visualisation, with the Ideogram also being optional
 #'
 #' Use all tracks specific to this dataset to generate a simple visualisation.
 #' In descending order the tracks displayed will be:
@@ -237,7 +237,9 @@
 #' @param zoom Multiplicative factor for zooming in and out
 #' @param shift Shift the plot. Applied after zooming
 #' @param axistrack logical. Add an AxisTrack()
-#' @param cytobands Cytogenetic bands to be displayed on each chromosome
+#' @param cytobands Cytogenetic bands to be displayed on each chromosome.
+#' See data('grch37.cytobands') for the correct format. Only drawn if a
+#' cytobands data.frame is provided.
 #' @param max The maximum width of the plotting region. Given that the width of
 #' the final plotting window will be determined by any HiC interactions, this
 #' argument excludes any interactions beyond this distance. Plotting can be
@@ -396,7 +398,8 @@ plotHFGC <- function(
             fill = "#FFFFFF00", inBackground = FALSE
         )
 
-    plot_list <- list(ideo_track)
+    plot_list <- list()
+    if (!is.null(ideo_track)) plot_list <- list(ideo_track)
     if (axistrack)
         plot_list <- c(
             plot_list, GenomeAxisTrack(plot_range, fontsize = fontsize)
@@ -415,33 +418,10 @@ plotHFGC <- function(
 #' @importFrom GenomeInfoDb genome seqnames
 #' @importFrom rtracklayer ucscGenomes
 .makeIdeoTrack <- function(.gr, .bands, .fontsize) {
+    if (missing(.bands)) return(NULL)
     ## Checks have been done in .checkHFGCArgs
-    ## Any missing cytoband information will have to generated automatically
-    ## This can be either downloaded, or generated as a hack from the gr
-    ## If a UCSC genome is provided without cytogenetic information: download
-    ## Obviously, this is really slow!!!
-    ## Otherwise, just use the seqinfo object
     gen <- as.character(unique(genome(.gr)))
     chr <- as.character(unique(seqnames(.gr)))
-    if (missing(.bands)) {
-        ## First map any GRCh IDs to UCSC
-        grc2ucsc <- c(
-            GRCh37 = "hg19", GRCh38 = "hg38", GRCm38 = "mm10", GRCm39 = "mm39",
-            GRCz10 = "danRer10", GRCz11 = "danRer11", "Rnor_6.0" = "rn6",
-            "mRatBN7.2" = "rn7", "Gallus_gallus-5.0" = "galGal5",
-            GRCg6a = "galGal6"
-        )
-        if (gen %in% names(grc2ucsc)) gen <- grc2ucsc[gen]
-        ## Now check for a valid UCSC name & set to NULL for an auto download
-        avail <- ucscGenomes()[,"db"]
-        if (gen %in% avail) {
-            .bands <- NULL
-        } else {
-            ## If no valid genome is available return a NULL
-            message("Could not find cytogenetic bands for genome ", gen)
-            return(NULL)
-        }
-    }
     IdeogramTrack(
         chromosome = chr, genome = gen, name = chr, bands = .bands,
         fontsize = .fontsize
@@ -629,7 +609,7 @@ plotHFGC <- function(
     .col <- .col[names(.genes)]
 
     ## Setup the collapseTranscripts argument if we just have a vector
-    if (length(.collapse) == 1){
+    if (length(.collapse) == 1) {
         .collapse <- rep(.collapse[[1]], length(.genes))
         names(.collapse) <- names(.genes)
     }
@@ -670,6 +650,7 @@ plotHFGC <- function(
 #' @importFrom rtracklayer import.bw
 #' @importFrom S4Vectors mcols
 #' @importFrom stringr str_count str_pad
+#' @importFrom GenomeInfoDb seqlevels keepSeqlevels
 #' @import GenomicRanges
 .makeCoverageTracks <- function(
         .coverage, .gr, .fontsize, .type = c("l", "heatmap"), .linecol,
@@ -686,6 +667,14 @@ plotHFGC <- function(
     ## named S3 list of BigWigFileList objects
     is_single_list <- is(.coverage, "BigWigFileList")
     if (is_single_list) .coverage <- split(.coverage, f = names(.coverage))
+    # Make sure all seqinfo objects are compatible with the ranges
+    seq_levels <- lapply(.coverage, function(x) lapply(x, seqlevels))
+    seq_levels <- unique(unlist(seq_levels))
+    gr_levels <- as.character(seqnames(.gr))
+    .gr <- .gr[gr_levels %in% seq_levels]
+    stopifnot(length(.gr) > 0)
+    seq_levels <- intersect(seq_levels, gr_levels)
+    .gr <- keepSeqlevels(.gr, seq_levels)
     ## Ensure .linecol is a list of the same structure as .coverage
     .linecol <- .assignColours(.coverage, .linecol, .type)
     ## Ensure the .ylim is a list of the same structure as .coverage
@@ -700,9 +689,7 @@ plotHFGC <- function(
             if (.type == "l") grp <- factor(nm, levels = nm)
             ## Now import each file within each list element
             cov <- lapply(nm, function(f) {
-                data <- suppressWarnings(
-                    import.bw(.coverage[[x]][[f]], which = .gr)
-                )
+                data <- import.bw(.coverage[[x]][[f]], which = .gr)
                 colnames(mcols(data)) <- f
                 data
             })
