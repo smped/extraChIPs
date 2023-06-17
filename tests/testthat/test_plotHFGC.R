@@ -230,7 +230,7 @@ test_that("Malformed coverage parameters are caught", {
             gr = GRanges("chr2:1-1000"), coverage = test_bw,
             annotation = GRangesList(a = GRanges()), annotcol = c(b = "blue"),
             zoom = 1, shift = 0, max = Inf, type = "l", axistrack = TRUE,
-            ylim =c(0, 1), linecol = c()
+            ylim = c(0, 1), linecol = c()
         ),
         "Colours not specified for a"
     )
@@ -489,21 +489,14 @@ test_that("Coverage Track forms correctly", {
     expect_equal(cov_track[[1]]@dp@pars$fontcolor.title, "black")
     expect_equal(cov_track[[1]]@dp@pars$background.title, "white")
     expect_equal(levels(cov_track[[1]]@dp@pars$groups), "a")
-    expect_equal(
+    expect_error(
         suppressWarnings(
             .makeCoverageTracks(
                 .coverage = test_bw, .gr = gr1, .linecol = c(), .ylim = c(),
                 .col.title = "black", .bg.title = "white"
             )
         ),
-        list(NULL)
-    )
-    expect_warning(
-        .makeCoverageTracks(
-            .coverage = test_bw, .gr = gr1, .linecol = c(), .ylim = c(),
-            .col.title = "black", .bg.title = "white"
-        ),
-        "'which' contains seqnames not known to BigWig file: chr1"
+        "length\\(.gr\\) > 0 is not TRUE"
     )
     expect_equal(.makeCoverageTracks(), list(NULL))
     expect_equal(.makeCoverageTracks(.coverage = NULL), list(NULL))
@@ -532,7 +525,7 @@ test_that("ylim is parsed correctly", {
     expect_equal(.assignLimits(test_bw, c()), list(a = c()))
     expect_equal(.assignLimits(test_bw, c(0, 1)), list(a = c(0, 1)))
     expect_equal(
-        .assignLimits(list(test= test_bw), c(0, 1)),
+        .assignLimits(list(test = test_bw), c(0, 1)),
         list(test = c(0, 1))
     )
     expect_equal(
