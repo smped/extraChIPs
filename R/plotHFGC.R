@@ -310,6 +310,7 @@ plotHFGC <- function(
 ) {
 
     ## Argument checks
+    ## Add checks for standard chromosomes!!!
     covtype <- match.arg(covtype)
     checkArgs <- .checkHFGCArgs(
         gr = gr, zoom = zoom, shift = shift, hic = hic, features = features,
@@ -320,6 +321,8 @@ plotHFGC <- function(
         collapseTranscripts = collapseTranscripts, maxTrans = maxTrans
     )
     stopifnot(checkArgs)
+
+    ## Add a step for restricting to standard chromosomes!!!
 
     ## Form the HiC track, including all interactions beyond the max
     hic_track <- .makeHiCTrack(
@@ -697,7 +700,9 @@ plotHFGC <- function(
             if (.type == "l") grp <- factor(nm, levels = nm)
             ## Now import each file within each list element
             cov <- lapply(nm, function(f) {
-                data <- import.bw(.coverage[[x]][[f]], which = .gr)
+                data <- suppressWarnings(
+                    import.bw(.coverage[[x]][[f]], which = .gr)
+                )
                 colnames(mcols(data)) <- f
                 data
             })

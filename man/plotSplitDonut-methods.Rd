@@ -18,6 +18,7 @@ plotSplitDonut(object, ...)
   inner,
   outer,
   scale_by = NULL,
+  scale_factor = 1000,
   r_centre = 0.5,
   r_inner = 1,
   r_outer = 1,
@@ -41,6 +42,9 @@ plotSplitDonut(object, ...)
   min_p = 0.05,
   inner_min_p = NULL,
   outer_min_p = NULL,
+  max_p = 1,
+  inner_max_p = NULL,
+  outer_max_p = NULL,
   explode_inner = NULL,
   explode_outer = NULL,
   explode_query = c("AND", "OR"),
@@ -69,6 +73,10 @@ of the plot will also reflect this difference}
 \item{inner}{Column name to create the inner ring}
 
 \item{outer}{Column name to create the outer ring, subset by the inner ring}
+
+\item{scale_factor}{When scaling by another column, such as width, totals
+will be divided by this value, with 1000 being the default to provide output
+in kb.}
 
 \item{r_centre}{The radius of the hole in the centre. Setting to zero will
 create a Pie chart}
@@ -106,6 +114,10 @@ the same palette as is used for each segment will be applied.}
 \item{min_p, inner_min_p, outer_min_p}{only display labels for segments
 representing greater than this proportion of the total. If inner/outer values
 are specified, the values in \code{min_p} will be ignored for that layer}
+
+\item{max_p, inner_max_p, outer_max_p}{only display labels for segments
+representing less than this proportion of the total. If inner/outer values
+are specified, the values in \code{max_p} will be ignored for that layer}
 
 \item{explode_inner, explode_outer}{Regular expressions from either the inner
 or outer ring for which segments will be 'exploded'}
@@ -181,7 +193,7 @@ plotSplitDonut(df, inner = "TF1", outer = "TF2", inner_legend = FALSE)
 
 ## Adding an exploded section along with an outer palette & customisation
 plotSplitDonut(
-  df, inner = "TF1", outer = "feature", total_size = NA,
+  df, inner = "TF1", outer = "feature", total_label = "none",
   inner_label_alpha = 0.5, r_centre = 0,
   outer_glue = "{.data[[outer]]}\n(n = {n})", outer_label = "text",
   explode_inner = "Up", explode_outer = "Prom|Enh",

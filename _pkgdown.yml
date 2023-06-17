@@ -55,8 +55,8 @@ navbar:
     menu:
     - text: Range-based Operations
       href: articles/range_based_functions.html
-    - text: Differential Signal Analysis
-      href: articles/differential_signal.html
+    - text: Differential Signal Using Sliding Windows
+      href: articles/differential_signal_sliding.html
   - text: News
     href: news/index.html
   right:

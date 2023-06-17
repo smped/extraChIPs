@@ -100,6 +100,25 @@ test_that("dualFilter runs as expected", {
     expect_equal(dim(filtcounts), c(101, 2))
     expect_equal(assayNames(filtcounts), c("counts", "logCPM"))
     expect_equal(colnames(rowData(filtcounts)), "overlaps_ref")
+    expect_equal(names(metadata(filtcounts)$cuts), c("control", "prop"))
+
+})
+
+test_that("dualFilter runs as expected without 'bg'", {
+
+    expect_message(
+        filtcounts <- dualFilter(
+            x = wincounts[, !is.na(wincounts$treat)],
+            bg = NULL,
+            ref = peaks,
+            q = 0.8 # Better to use q = 0.5 on real data
+        ),
+        "No Input/BG samples provided. .+"
+    )
+    expect_equal(dim(filtcounts), c(108, 2))
+    expect_equal(assayNames(filtcounts), c("counts", "logCPM"))
+    expect_equal(colnames(rowData(filtcounts)), "overlaps_ref")
+    expect_equal(names(metadata(filtcounts)$cuts), "prop")
 
 })
 

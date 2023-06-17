@@ -58,10 +58,14 @@ signal, are retained.
 Cutoff values for both criteria are added to the metadata
 element of the returned object.
 
+If setting \code{bg = NULL} the \link[csaw]{filterWindowsControl} step will be
+ignored and only the \link[csaw]{filterWindowsProportion} will be used.
+This should only be performed if no Input sample is available.
+
 \strong{Please note} that the any \code{.bam} files referred to in the supplied objects
 \strong{must} be accessible to this function. It will not run on a separate
 machine or file structure to that which the original sliding windows were
-prepared. Please see the example/vignette for runnable conde.
+prepared. Please see the example/vignette for runnable code.
 }
 \examples{
 \donttest{
