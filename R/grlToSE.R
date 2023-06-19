@@ -88,8 +88,8 @@ setMethod(
     }
 )
 
+#' @import GenomicRanges
 #' @importFrom S4Vectors SimpleList queryHits subjectHits 'mcols<-' mcols
-#' @importFrom GenomicRanges findOverlaps GRangesList
 #' @importFrom dplyr arrange distinct left_join select across
 #' @importFrom rlang '!!!' syms
 #' @importFrom tidyr pivot_wider
