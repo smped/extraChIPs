@@ -42,15 +42,15 @@
 #' @seealso \link{reduceMC} \link{intersectMC}
 #'
 #' @examples
-#' a <- GRanges("chr1:11-20")
-#' a$score <- 1
-#' b <- GRanges(c("chr1:18-22", "chr1:1-5"))
-#' b$score <- c(0.6, 0.3)
-#' grl <- GRangesList(a = a, b = b)
+#' data("peaks")
+#' ## The first three replicates are from the same treatment group
+#' grl <- peaks[1:3]
+#' names(grl) <- gsub("_peaks.+", "", names(grl))
 #' makeConsensus(grl)
-#' makeConsensus(grl, p = 1)
-#' makeConsensus(grl, p = 1, var = "score")
-#' makeConsensus(grl, p = 1, var = "score", method = "coverage")
+#' makeConsensus(grl, p = 2/3, var = "score")
+#'
+#' ## Using method = 'coverage' finds ranges based on the intersection
+#' makeConsensus(grl, p = 2/3, var = "score", method = "coverage")
 #'
 #'
 #' @import GenomicRanges

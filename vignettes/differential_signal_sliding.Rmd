@@ -12,7 +12,7 @@ bibliography: '`r system.file("references.bib", package = "extraChIPs")`'
 output:
   BiocStyle::html_document
 vignette: >
-  %\VignetteIndexEntry{Differential Signal Analysis}
+  %\VignetteIndexEntry{Differential Signal Analysis (Sliding Windows)}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -942,49 +942,83 @@ empty circles</figcaption>
 
 In addition to which gene is likely to be directly impacted by the
 detected signal, knowing which type of regulatory region signal was
-observed in is another question commonly asked of ChIP-Seq data. We’ve
-already defined our promoters, so let’s keep using `reduceMC()` along
-with `setdiffMC()` to define unique *upstream promoter*, *exon*,
-*intron* and *intergenic* regions in a hierarchical manner such that
-each nucleotide only belongs to one type of region.
-
-First we’ll shift our start sites upstream by 2.5kb, then we can extend
-another 2.5kb to define regions 5kb upstream from a TSS. Then we’ll
-merge overlapping regions using `reduceMC()` and separate these from any
-promoters we’ve already defined using `setdiffMC()`
+observed in is another question commonly asked of ChIP-Seq data. The
+function `deinfeRegions()` takes, gene-, transcript- and exon-level
+information from an annotation source and creates unique region
+annotations across the genome. These are for in hierarchical order
+as: 1) Promoters, 2) Upstream Promoters, 3) Exons, 4) Introns, 5)
+Proximal Intergenic and, 6 Distal Intergenic regions.
 
 ``` r
-regions <- GRangesList(promoter = promoters)
-regions$upstream <- gencode$transcript %>% 
-  select(gene_id, ends_with("name")) %>% 
-  resize(width = 1, fix = "start") %>% 
-  shift_upstream(2500) %>% 
-  promoters(upstream = 2500, downstream = 0) %>% 
-  reduceMC() %>% 
-  setdiffMC(regions$promoter, ignore.strand = TRUE)
+regions <- defineRegions(
+  genes = gencode$gene, transcripts = gencode$transcript, exons = gencode$exon
+)
+regions
 ```
 
-We can use a similar approach to define exons, not already classified as
-being within a promoter, and introns not already assigned as promoters.
+    ## GRangesList object of length 6:
+    ## $promoter
+    ## GRanges object with 1491 ranges and 5 metadata columns:
+    ##          seqnames            ranges strand |                region
+    ##             <Rle>         <IRanges>  <Rle> |           <character>
+    ##      [1]    chr10 42644498-42647497      * | Promoter (-2500/+500)
+    ##      [2]    chr10 42678287-42681286      * | Promoter (-2500/+500)
+    ##      [3]    chr10 42702938-42705937      * | Promoter (-2500/+500)
+    ##      [4]    chr10 42729924-42732923      * | Promoter (-2500/+500)
+    ##      [5]    chr10 42735669-42738668      * | Promoter (-2500/+500)
+    ##      ...      ...               ...    ... .                   ...
+    ##   [1487]    chr10 99695536-99698535      * | Promoter (-2500/+500)
+    ##   [1488]    chr10 99770595-99773594      * | Promoter (-2500/+500)
+    ##   [1489]    chr10 99789879-99793085      * | Promoter (-2500/+500)
+    ##   [1490]    chr10 99891881-99894913      * | Promoter (-2500/+500)
+    ##   [1491]    chr10 99920140-99923543      * | Promoter (-2500/+500)
+    ##                        gene_id       gene_name
+    ##                <CharacterList> <CharacterList>
+    ##      [1]   ENSG00000229485.1_5          KSR1P1
+    ##      [2]   ENSG00000237592.2_5     IGKV1OR10-1
+    ##      [3]   ENSG00000271650.1_7 ENSG00000271650
+    ##      [4]     ENSG00000264398.1      AL031601.1
+    ##      [5]   ENSG00000290458.1_2 ENSG00000290458
+    ##      ...                   ...             ...
+    ##   [1487] ENSG00000095713.14_13          CRTAC1
+    ##   [1488] ENSG00000095713.14_13          CRTAC1
+    ##   [1489] ENSG00000095713.14_13          CRTAC1
+    ##   [1490]  ENSG00000166024.14_8         R3HCC1L
+    ##   [1491]  ENSG00000166024.14_8         R3HCC1L
+    ##                                                            transcript_id
+    ##                                                          <CharacterList>
+    ##      [1]                                             ENST00000446298.1_2
+    ##      [2]                                             ENST00000442306.2_2
+    ##      [3]                                             ENST00000605702.1_2
+    ##      [4]                                               ENST00000580460.1
+    ##      [5]                                             ENST00000622823.4_3
+    ##      ...                                                             ...
+    ##   [1487]                                             ENST00000413387.5_4
+    ##   [1488]                                             ENST00000309155.3_5
+    ##   [1489]                        ENST00000370597.8_11,ENST00000370591.6_9
+    ##   [1490]                         ENST00000370584.7_7,ENST00000298999.8_8
+    ##   [1491] ENST00000370586.6_5,ENST00000613938.4_5,ENST00000612478.4_2,...
+    ##                                  transcript_name
+    ##                                  <CharacterList>
+    ##      [1]                              KSR1P1-201
+    ##      [2]                         IGKV1OR10-1-201
+    ##      [3]                         ENST00000605702
+    ##      [4]                          AL031601.1-201
+    ##      [5]                         ENST00000622823
+    ##      ...                                     ...
+    ##   [1487]                              CRTAC1-204
+    ##   [1488]                              CRTAC1-201
+    ##   [1489]                   CRTAC1-203,CRTAC1-202
+    ##   [1490]                 R3HCC1L-203,R3HCC1L-201
+    ##   [1491] R3HCC1L-204,R3HCC1L-206,R3HCC1L-205,...
+    ##   -------
+    ##   seqinfo: 25 sequences from GRCh37 genome
+    ## 
+    ## ...
+    ## <5 more elements>
 
-``` r
-regions$exon <- gencode$exon %>% 
-  select(gene_id, ends_with("name")) %>% 
-  setdiffMC(unlist(regions), ignore.strand = TRUE) 
-regions$intron <- gencode$gene %>% 
-  select(gene_id, ends_with("name")) %>% 
-  setdiffMC(unlist(regions), ignore.strand = TRUE) 
-```
 
-For our intergenic regions, there will be no gene information so we can
-simply use the slightly faster `setdiff()` function.
-
-``` r
-regions$intergenic <- GRanges("chr10:42354900-100000000") %>% 
-  setdiff(unlist(regions), ignore.strand = TRUE)
-```
-
-Using the function `bestOverlap()` we can assign each window with
+We can now use the function `bestOverlap()` to assign each window with
 ChIP-Seq signal to the region which it shows the greatest overlap,
 setting this as a factor which reflects the hierarchy with which the
 regions were defined.
@@ -992,7 +1026,7 @@ regions were defined.
 ``` r
 tmm_results$bestOverlap <- bestOverlap(tmm_results, regions) %>% 
   factor(levels = names(regions))
-tmm_results %>% filter(hmp_fdr < 0.05, bestOverlap == "promoter")
+filter(tmm_results, hmp_fdr < 0.05, bestOverlap == "promoter")
 ```
 
     ## GRanges object with 2 ranges and 14 metadata columns:
@@ -1019,6 +1053,16 @@ tmm_results %>% filter(hmp_fdr < 0.05, bestOverlap == "promoter")
     ##   -------
     ##   seqinfo: 25 sequences from GRCh37 genome
 
+Given the region column contains nicely formateed output, we can also
+use this
+
+``` r
+reg_levels <- vapply(regions, function(x) x$region[1], character(1))
+tmm_results$bestOverlap <- tmm_results %>% 
+  bestOverlap(unlist(regions), var = "region") %>% 
+  factor(levels = reg_levels)
+```
+
 # Visualisation of Results
 
 ## Pie Charts
@@ -1029,8 +1073,8 @@ regions. First we’ll define a consistent colour palette for these
 regions in all plots.
 
 ``` r
-region_colours <- hcl.colors(length(regions), "Viridis", rev = TRUE)
-names(region_colours) <- names(regions)
+region_colours <- hcl.colors(length(reg_levels), "Viridis", rev = TRUE)
+names(region_colours) <- reg_levels
 ```
 
 Labels produced using `plotPie()` use the `glue()` syntax and are able
@@ -1040,18 +1084,12 @@ to fill the pie segments. Totals and percentages within each segment are
 accessible using `n` and `p` respectively as these are columns within
 the internal `data.frame` formed when creating the plot. External
 formatting functions such as `comma()`, `percent()` or `str_to_title()`
-can also be put to good use here. In the label
-`"{str_to_title(.data[[fill]])}\n{n}\n({percent(p, 0.1)})"`, the first
-braces take the values from the bestOverlap (i.e. fill) column and
-format them using `str_to_title()`. The second braces take the category
-counts using the value `n` and the third braces format the proportions
-`p` as percentages. Each set of braces is separated by a line break
-using `\n`
+can also be put to good use here.
 
 ``` r
 plotPie(
   tmm_results, fill = "bestOverlap", min_p = 0.05,
-  cat_glue = "{str_to_title(.data[[fill]])}\n{n}\n({percent(p, 0.1)})"
+  cat_glue = "{.data[[fill]]}\n{n}\n({percent(p, 0.1)})"
 ) +
   scale_fill_manual(values = region_colours)
 ```
@@ -1067,25 +1105,8 @@ without modifying the underlying data.</figcaption>
 
 In addition to highly customisable labels, segments can be scaled by
 width to produce segments representing the overlaps in kb instead of
-counts.
+counts, by setting `scale_by = "width"`
 
-``` r
-plotPie(
-  tmm_results, fill = "bestOverlap", scale_by = "width",
-  total_glue = "{comma(N)}kb", total_size = 5,
-  cat_glue = "{str_to_title(.data[[fill]])}\n({percent(p, 0.1)})",
-  cat_size = 4, cat_adj = 0.1, min_p = 0.04
-) +
-  scale_fill_manual(values = region_colours)
-```
-
-<figure>
-<img
-src="differential_signal_sliding_files/figure-gfm/plot-pie-width-1.png"
-alt="Pie chart with sgments scaled by width of ChIP-Seq regions" />
-<figcaption aria-hidden="true">Pie chart with sgments scaled by width of
-ChIP-Seq regions</figcaption>
-</figure>
 
 ## Split Donut Charts
 
@@ -1117,8 +1138,8 @@ key segments of interest.
 plotSplitDonut(
   tmm_results, inner = "bestOverlap", outer = "status", 
   inner_palette = region_colours, outer_palette = status_colours,
-  inner_glue = "{str_to_title(.data[[inner]])}\nn = {comma(n)}\n{percent(p,0.1)}",
-  outer_glue = "{.data[[outer]]}\n{str_to_title(.data[[inner]])}\nn = {n}",
+  inner_glue = "{str_replace_all(.data[[inner]], ' ', '\n')}\nn = {comma(n)}\n{percent(p,0.1)}",
+  outer_glue = "{.data[[outer]]}\n{str_replace_all(.data[[inner]], ' ', '\n')}\nn = {n}",
   explode_outer = "(In|De)creased", explode_r = 0.3, 
   outer_label = "text", outer_min_p = 0, outer_max_p = 0.02
 )
@@ -1177,7 +1198,7 @@ Let’s check the coverage across the most highly-ranked region with
 default settings.
 
 ``` r
-gr <- filter(tmm_results, hmp_fdr < 0.05, bestOverlap == "promoter")[1]
+gr <- filter(tmm_results, hmp_fdr < 0.05, str_detect(bestOverlap, '^Prom'))[1]
 ```
 
 The most important option to consider when showing coverage is whether
@@ -1196,7 +1217,8 @@ plotHFGC(gr, cytobands = grch37.cytobands, coverage = bwfl)
 ```
 
 Overlaying coverage onto a single track can instead be highly
-informative and enables the visualisation of multiple ChIP targets
+informative and enables the visualisation of multiple ChIP targets.
+(Plot not shown in vignette)
 
 ``` r
 cov_list <- list(H3K27ac = bwfl)
@@ -1207,61 +1229,11 @@ plotHFGC(
 )
 ```
 
-<figure>
-<img
-src="differential_signal_sliding_files/figure-gfm/plot-hfgc-cov-1.png"
-alt="Zoomed out version of the above region with coverage plots set to overlap" />
-<figcaption aria-hidden="true">Zoomed out version of the above region
-with coverage plots set to overlap</figcaption>
-</figure>
 
 By default, the specified range will also be outlined (i.e. highlighted)
 with a blue rectangle which is able to be turned off and customised as
 the user sees fit.
 
-### Displaying Genes
-
-Next we might like to add gene models to provide the regulatory context.
-We’ll use the exons element of our `gencode` object to create the format
-used by the defaults of the `GeneRegionTrack()` function, with all exons
-and transcripts annotated.
-
-``` r
-gene_models <- gencode$exon %>% 
-  select(
-    type, gene = gene_id, exon = exon_id, transcript = transcript_id, 
-    symbol = gene_name
-  )
-```
-
-Now we can add this to our plot, manually ensuring that all transcripts
-are shown (`collapseTranscripts = FALSE`)
-
-``` r
-plotHFGC(
-  gr, cytobands = grch37.cytobands, 
-  coverage =  cov_list, linecol = cov_colour,
-  genes = gene_models, genecol = "wheat", collapseTranscripts = FALSE,
-  zoom = 50, rotation.title = 90, covsize = 10, genesize = 1
-)
-```
-
-<figure>
-<img
-src="differential_signal_sliding_files/figure-gfm/plot-hfgc-with-genes-1.png"
-alt="Coverage for our region showing the relationship of signal to annotated genes" />
-<figcaption aria-hidden="true"><em>Coverage for our region showing the
-relationship of signal to annotated genes</em></figcaption>
-</figure>
-
-### Adding Features
-
-Another useful track to add might be some key features such as promoters
-and other annotated regions, as we have formed earlier in the workflow.
-Features must **always** be a `GRangesList`, with each element defining
-a different type of feature, as we already have in our `regions` object.
-For multiple feature tracks, a list of `GRangesList` objects can be
-passed.
 
 ### Adding Annotations To Coverage
 
@@ -1283,10 +1255,31 @@ track for H3K27ac signal.
 
 ``` r
 cov_annot <- splitAsList(tmm_results, tmm_results$status) %>% 
-  endoapply(granges) %>% 
-  keepStandardChromosomes()
+  endoapply(granges) 
 cov_annot <- list(H3K27ac = cov_annot)
 ```
+
+### Displaying Genes and Features
+
+Next we might like to add gene models to provide the regulatory context.
+We’ll use the exons element of our `gencode` object to create the format
+used by the defaults of the `GeneRegionTrack()` function, with all exons
+and transcripts annotated.
+
+``` r
+gene_models <- gencode$exon %>% 
+  select(
+    type, gene = gene_id, exon = exon_id, transcript = transcript_id, 
+    symbol = gene_name
+  )
+```
+
+Another useful track to add might be some key features such as promoters
+and other annotated regions, as we have formed earlier in the workflow.
+Features must **always** be a `GRangesList`, with each element defining
+a different type of feature, as we already have in our `regions` object.
+For multiple feature tracks, a list of `GRangesList` objects can be
+passed.
 
 In our final plot, we’ll zoom out to the entire region covered by
 *KAT6B*, showing all transcripts, with out original region highlighted
@@ -1299,6 +1292,7 @@ the neighbouring region to our initial range. In contrast, the primary
 promoter appears unaffected by DHT treatment.
 
 ``` r
+names(region_colours) <- names(regions)
 plotHFGC(
   gr, cytobands = grch37.cytobands, 
   features = regions, featcol = region_colours, featstack = "dense",
@@ -1331,7 +1325,7 @@ HFGC components.
 
 # Session Info
 
-```{r}
+```{r session-info}
 sessionInfo()
 ```
 
@@ -1454,4 +1448,3 @@ Dependent Tests.” *Proc. Natl. Acad. Sci. U. S. A.* 116 (4): 1195–1200.
 </div>
 
 <br>
-

@@ -58,6 +58,8 @@ navbar:
       href: articles/range_based_functions.html
     - text: Differential Signal Using Sliding Windows
       href: articles/differential_signal_sliding.html
+    - text: Differential Signal Using Fixed-Width Windows
+      href: articles/differential_signal_fixed.html
   - text: News
     href: news/index.html
   right:

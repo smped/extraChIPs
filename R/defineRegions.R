@@ -44,7 +44,10 @@
 #' sq <- Seqinfo(seqnames = "chr1", seqlengths = 50000)
 #' e <- c("chr1:20001-21000", "chr1:29001-29950", "chr1:22001-23000", "chr1:29001-30000")
 #' e <- GRanges(e, seqinfo = sq)
-#' mcols(e) <- DataFrame(gene_id = "Gene1", transcript_id = c("Trans1", "Trans1", "Trans2", "Trans2"))
+#' mcols(e) <- DataFrame(
+#'   gene_id = "Gene1",
+#'   transcript_id = c("Trans1", "Trans1", "Trans2", "Trans2")
+#' )
 #'
 #' ## Define the transcript ranges
 #' t <- unlist(endoapply(split(e, e$transcript_id), range))
@@ -61,7 +64,9 @@
 #' sort(unlist(regions))
 #'
 #' ## Alternatively, collpse gene body and intergenic ranges
-#' regions <- defineRegions(genes = g, transcripts = t, exons = e, intron = FALSE, proximal = 0)
+#' regions <- defineRegions(
+#'   genes = g, transcripts = t, exons = e, intron = FALSE, proximal = 0
+#' )
 #' sort(unlist(regions))
 #'
 #'
@@ -92,14 +97,14 @@ defineRegions <- function(
   prom$region <- paste0("Promoter (-", promoter[1], "/+", promoter[2], ")")
   mcols(prom) <- mcols(prom)[cols]
   prom <- reduceMC(prom, ignore.strand = TRUE)
-  out <- GRangesList(promoters = prom)
+  out <- GRangesList(promoter = prom)
 
   ## Upstream Promoters
   up_prom <- promoters(transcripts, upstream[1], downstream = 0)
   up_prom$region <- paste0("Upstream Promoter (-", upstream / 1e3, "kb)")
   mcols(up_prom) <- mcols(up_prom)[cols]
   up_prom <- setdiffMC(up_prom, prom, ignore.strand = TRUE)
-  out$upstream_promoters <- reduceMC(up_prom)
+  out$upstream_promoter <- reduceMC(up_prom)
 
   ## Gene Bodies
   if (intron) {
@@ -107,16 +112,16 @@ defineRegions <- function(
     ex$region <- "Exon"
     mcols(ex) <- mcols(ex)[cols]
     ex <- setdiffMC(ex, unlist(out), ignore.strand = TRUE)
-    out$exons <- reduceMC(ex)
+    out$exon <- reduceMC(ex)
     introns <- setdiffMC(genes, unlist(out), ignore.strand = TRUE)
     introns$region <- "Intron"
     mcols(introns) <- mcols(introns)[cols]
-    out$introns <- reduceMC(introns)
+    out$intron <- reduceMC(introns)
   } else {
     gn <- setdiffMC(genes, unlist(out), ignore.strand = TRUE)
     gn$region <- "Gene Body"
     mcols(gn) <- mcols(gn)[cols]
-    out$gene_bodies <- reduceMC(gn)
+    out$gene_body <- reduceMC(gn)
   }
 
   if (proximal > 0) {

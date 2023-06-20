@@ -65,17 +65,13 @@ transformation prior to performing the PCA can be specified using the
 \code{trans} argument
 }
 \examples{
-nrows <- 200; ncols <- 4
-counts <- matrix(runif(nrows * ncols, 1, 1e4), nrows)
-df <- DataFrame(treat = c("A", "A", "B", "B"), sample = seq_len(4))
-se <- SummarizedExperiment(
-  assays = SimpleList(counts = counts),
-  colData = df
-)
-plotAssayPCA(se, "counts", colour = "treat", label = "sample")
+data("se")
+se$treatment <- c("E2", "E2", "E2", "E2DHT", "E2DHT", "E2DHT")
+se$sample <- colnames(se)
+plotAssayPCA(se, trans = "log1p", colour = "treatment", label = "sample")
 plotAssayPCA(
-  se, "counts", colour = "treat", label = "sample",
-  inherit.aes = FALSE, size = 5
+  se, trans = "log1p", colour = "treatment", label = "sample",
+  show_points = FALSE
 )
 
 
