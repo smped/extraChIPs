@@ -19,7 +19,7 @@ around GenomicRanges objects"><!-- mathjax --><script src="https://cdnjs.cloudfl
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.3</span>
       </span>
     </div>
 
@@ -37,7 +37,10 @@ around GenomicRanges objects"><!-- mathjax --><script src="https://cdnjs.cloudfl
       <a href="../articles/range_based_functions.html">Range-based Operations</a>
     </li>
     <li>
-      <a href="../articles/differential_signal.html">Differential Signal Analysis</a>
+      <a href="../articles/differential_signal_sliding.html">Differential Signal Using Sliding Windows</a>
+    </li>
+    <li>
+      <a href="../articles/differential_signal_fixed.html">Differential Signal Using Fixed-Width Windows</a>
     </li>
   </ul></li>
 <li>
@@ -106,10 +109,12 @@ Used for combining peak intensities or results across multiple ChIP targets.</p>
 <ul><li><p><code><a href="plotHFGC.html">plotHFGC()</a></code> is a wrapper to Gviz plotting functions, able to take any
 combination of HiC, Features, Genes and Coverage (i.e. BigWig) and plot a
 specified range.</p></li>
+<li><p><code><a href="plotOverlaps-methods.html">plotOverlaps()</a></code> visualises overlapping ranges as an UpSet plot or Venn
+Diagram</p></li>
 <li><p><code><a href="plotProfileHeatmap-methods.html">plotProfileHeatmap()</a></code> plots the average signal around a set of ranges,
 as prepared by <code><a href="getProfileData-methods.html">getProfileData()</a></code></p></li>
-<li><p><code><a href="plotPie-methods.html">plotPie()</a></code> emables simple comparison across multuple annotation columns
-within a GRanges object.</p></li>
+<li><p><code><a href="plotPie-methods.html">plotPie()</a></code> and <code><a href="plotSplitDonut-methods.html">plotSplitDonut()</a></code> enable simple comparison across
+multiple annotation columns within a GRanges object.</p></li>
 <li><p><code><a href="plotAssayDensities-methods.html">plotAssayDensities()</a></code>, <code><a href="plotAssayPCA-methods.html">plotAssayPCA()</a></code> and <code><a href="plotAssayRle-methods.html">plotAssayRle()</a></code> provide
 simple interfaces to plotting key values from a
 <a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">SummarizedExperiment::RangedSummarizedExperiment</a>.</p></li>
@@ -118,9 +123,13 @@ simple interfaces to plotting key values from a
     <h2>Convenience Functions</h2>
     
 
-<ul><li><p><code><a href="collapseGenes.html">collapseGenes()</a></code> prints a vector of genes for an rmarkdown document,
+<ul><li><p><code><a href="fitAssayDiff-methods.html">fitAssayDiff()</a></code> enables differential signal analysis on a
+SummarizedExperiment object</p></li>
+<li><p><code><a href="collapseGenes.html">collapseGenes()</a></code> prints a vector of genes for an rmarkdown document,
 using italics.</p></li>
 <li><p><code><a href="importPeaks.html">importPeaks()</a></code> imports large numbers of broadPeak or narrowPeak files</p></li>
+<li><p><code><a href="makeConsensus.html">makeConsensus()</a></code> forms consensus peaks from overlapping ranges within a
+GRangesList()</p></li>
 <li><p><code><a href="voomWeightsFromCPM.html">voomWeightsFromCPM()</a></code> allows creation of an limma::EList object
 as would be created from counts by <code><a href="https://rdrr.io/pkg/limma/man/voom.html" class="external-link">limma::voom()</a></code>, but using
 <code><a href="https://rdrr.io/pkg/edgeR/man/cpm.html" class="external-link">edgeR::cpm()</a></code> values as input.</p></li>
@@ -142,7 +151,7 @@ as would be created from counts by <code><a href="https://rdrr.io/pkg/limma/man/
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

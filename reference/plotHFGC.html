@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.3</span>
       </span>
     </div>
 
@@ -35,7 +35,10 @@
       <a href="../articles/range_based_functions.html">Range-based Operations</a>
     </li>
     <li>
-      <a href="../articles/differential_signal.html">Differential Signal Analysis</a>
+      <a href="../articles/differential_signal_sliding.html">Differential Signal Using Sliding Windows</a>
+    </li>
+    <li>
+      <a href="../articles/differential_signal_fixed.html">Differential Signal Using Fixed-Width Windows</a>
     </li>
   </ul></li>
 <li>
@@ -169,7 +172,9 @@ interactions are supplied.</p></dd>
 
 
 <dt>cytobands</dt>
-<dd><p>Cytogenetic bands to be displayed on each chromosome</p></dd>
+<dd><p>Cytogenetic bands to be displayed on each chromosome.
+See data('grch37.cytobands') for the correct format. Only drawn if a
+cytobands data.frame is provided.</p></dd>
 
 
 <dt>covtype</dt>
@@ -287,7 +292,7 @@ optional. For more fine control, users are advised to simply use Gviz
 directly.</p>
 <p>The primary tracks defined in this function are H (HiC), F (features), G
 (genes), and C (coverage). Axis and Ideogram tracks are an additional part of
-this visualisation</p>
+this visualisation, with the Ideogram also being optional</p>
 <p>Use all tracks specific to this dataset to generate a simple visualisation.
 In descending order the tracks displayed will be:</p><ol><li><p>HiC Interactions (if supplied)</p></li>
 <li><p>Regulatory features</p></li>
@@ -541,7 +546,7 @@ GRanges, across all of the tracks must be included as a colour</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

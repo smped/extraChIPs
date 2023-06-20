@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.3</span>
       </span>
     </div>
 
@@ -35,7 +35,10 @@
       <a href="../articles/range_based_functions.html">Range-based Operations</a>
     </li>
     <li>
-      <a href="../articles/differential_signal.html">Differential Signal Analysis</a>
+      <a href="../articles/differential_signal_sliding.html">Differential Signal Using Sliding Windows</a>
+    </li>
+    <li>
+      <a href="../articles/differential_signal_fixed.html">Differential Signal Using Fixed-Width Windows</a>
     </li>
   </ul></li>
 <li>
@@ -80,6 +83,7 @@
 <span>  <span class="va">inner</span>,</span>
 <span>  <span class="va">outer</span>,</span>
 <span>  scale_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  scale_factor <span class="op">=</span> <span class="fl">1000</span>,</span>
 <span>  r_centre <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  r_inner <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  r_outer <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -103,6 +107,9 @@
 <span>  min_p <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  inner_min_p <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  outer_min_p <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_p <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  inner_max_p <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  outer_max_p <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  explode_inner <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  explode_outer <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  explode_query <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AND"</span>, <span class="st">"OR"</span><span class="op">)</span>,</span>
@@ -142,6 +149,12 @@ of the plot will also reflect this difference</p></dd>
 
 <dt>outer</dt>
 <dd><p>Column name to create the outer ring, subset by the inner ring</p></dd>
+
+
+<dt>scale_factor</dt>
+<dd><p>When scaling by another column, such as width, totals
+will be divided by this value, with 1000 being the default to provide output
+in kb.</p></dd>
 
 
 <dt>r_centre</dt>
@@ -201,6 +214,12 @@ the same palette as is used for each segment will be applied.</p></dd>
 <dd><p>only display labels for segments
 representing greater than this proportion of the total. If inner/outer values
 are specified, the values in <code>min_p</code> will be ignored for that layer</p></dd>
+
+
+<dt>max_p, inner_max_p, outer_max_p</dt>
+<dd><p>only display labels for segments
+representing less than this proportion of the total. If inner/outer values
+are specified, the values in <code>max_p</code> will be ignored for that layer</p></dd>
 
 
 <dt>explode_inner, explode_outer</dt>
@@ -298,7 +317,7 @@ to be utilised.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Adding an exploded section along with an outer palette &amp; customisation</span></span></span>
 <span class="r-in"><span><span class="fu">plotSplitDonut</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">df</span>, inner <span class="op">=</span> <span class="st">"TF1"</span>, outer <span class="op">=</span> <span class="st">"feature"</span>, total_size <span class="op">=</span> <span class="cn">NA</span>,</span></span>
+<span class="r-in"><span>  <span class="va">df</span>, inner <span class="op">=</span> <span class="st">"TF1"</span>, outer <span class="op">=</span> <span class="st">"feature"</span>, total_label <span class="op">=</span> <span class="st">"none"</span>,</span></span>
 <span class="r-in"><span>  inner_label_alpha <span class="op">=</span> <span class="fl">0.5</span>, r_centre <span class="op">=</span> <span class="fl">0</span>,</span></span>
 <span class="r-in"><span>  outer_glue <span class="op">=</span> <span class="st">"{.data[[outer]]}\n(n = {n})"</span>, outer_label <span class="op">=</span> <span class="st">"text"</span>,</span></span>
 <span class="r-in"><span>  explode_inner <span class="op">=</span> <span class="st">"Up"</span>, explode_outer <span class="op">=</span> <span class="st">"Prom|Enh"</span>,</span></span>
@@ -322,7 +341,7 @@ to be utilised.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

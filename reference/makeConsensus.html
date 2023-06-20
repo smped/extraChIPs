@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.3</span>
       </span>
     </div>
 
@@ -35,7 +35,10 @@
       <a href="../articles/range_based_functions.html">Range-based Operations</a>
     </li>
     <li>
-      <a href="../articles/differential_signal.html">Differential Signal Analysis</a>
+      <a href="../articles/differential_signal_sliding.html">Differential Signal Using Sliding Windows</a>
+    </li>
+    <li>
+      <a href="../articles/differential_signal_fixed.html">Differential Signal Using Fixed-Width Windows</a>
     </li>
   </ul></li>
 <li>
@@ -144,40 +147,102 @@ the relevant ChIP targets</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="st">"chr1:11-20"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">a</span><span class="op">$</span><span class="va">score</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
-<span class="r-in"><span><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chr1:18-22"</span>, <span class="st">"chr1:1-5"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">b</span><span class="op">$</span><span class="va">score</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">0.3</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">grl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRangesList-class.html" class="external-link">GRangesList</a></span><span class="op">(</span>a <span class="op">=</span> <span class="va">a</span>, b <span class="op">=</span> <span class="va">b</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"peaks"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## The first three replicates are from the same treatment group</span></span></span>
+<span class="r-in"><span><span class="va">grl</span> <span class="op">&lt;-</span> <span class="va">peaks</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">grl</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"_peaks.+"</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">grl</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">makeConsensus</span><span class="op">(</span><span class="va">grl</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 2 ranges and 3 metadata columns:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand |         a         b         n</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;logical&gt; &lt;logical&gt; &lt;numeric&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1       1-5      * |     FALSE      TRUE         1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chr1     11-22      * |      TRUE      TRUE         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 244 ranges and 4 metadata columns:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         seqnames            ranges strand | SRR8315180 SRR8315181 SRR8315182</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; |  &lt;logical&gt;  &lt;logical&gt;  &lt;logical&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [1]    chr10 43048195-43048529      * |       TRUE       TRUE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [2]    chr10 43521739-43522260      * |       TRUE       TRUE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [3]    chr10 43540042-43540390      * |       TRUE      FALSE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [4]    chr10 43606238-43606573      * |       TRUE       TRUE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [5]    chr10 43851214-43851989      * |      FALSE       TRUE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ...      ...               ...    ... .        ...        ...        ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [240]    chr10 99168353-99168649      * |       TRUE       TRUE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [241]    chr10 99207868-99208156      * |      FALSE       TRUE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [242]    chr10 99326100-99326363      * |      FALSE      FALSE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [243]    chr10 99331363-99331730      * |       TRUE       TRUE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [244]    chr10 99621632-99621961      * |      FALSE       TRUE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 n</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         &lt;numeric&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [1]         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [2]         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [3]         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [4]         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [5]         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ...       ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [240]         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [241]         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [242]         1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [243]         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [244]         2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
-<span class="r-in"><span><span class="fu">makeConsensus</span><span class="op">(</span><span class="va">grl</span>, p <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 1 range and 3 metadata columns:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand |         a         b         n</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;logical&gt; &lt;logical&gt; &lt;numeric&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1     11-22      * |      TRUE      TRUE         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 25 sequences from GRCh37 genome</span>
+<span class="r-in"><span><span class="fu">makeConsensus</span><span class="op">(</span><span class="va">grl</span>, p <span class="op">=</span> <span class="fl">2</span><span class="op">/</span><span class="fl">3</span>, var <span class="op">=</span> <span class="st">"score"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 164 ranges and 5 metadata columns:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         seqnames            ranges strand |         score SRR8315180 SRR8315181</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; | &lt;NumericList&gt;  &lt;logical&gt;  &lt;logical&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [1]    chr10 43048195-43048529      * |   251,531,391       TRUE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [2]    chr10 43521739-43522260      * |   223,548,645       TRUE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [3]    chr10 43540042-43540390      * |        58,206       TRUE      FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [4]    chr10 43606238-43606573      * |    92,192,302       TRUE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [5]    chr10 43851214-43851989      * |        87,148      FALSE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ...      ...               ...    ... .           ...        ...        ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [160]    chr10 99096784-99097428      * |   196,117,308       TRUE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [161]    chr10 99168353-99168649      * |    48,105,130       TRUE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [162]    chr10 99207868-99208156      * |        94,137      FALSE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [163]    chr10 99331363-99331730      * |   210,258,504       TRUE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [164]    chr10 99621632-99621961      * |         74,75      FALSE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         SRR8315182         n</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;logical&gt; &lt;numeric&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [1]       TRUE         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [2]       TRUE         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [3]       TRUE         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [4]       TRUE         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [5]       TRUE         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ...        ...       ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [160]       TRUE         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [161]       TRUE         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [162]       TRUE         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [163]       TRUE         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [164]       TRUE         2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
-<span class="r-in"><span><span class="fu">makeConsensus</span><span class="op">(</span><span class="va">grl</span>, p <span class="op">=</span> <span class="fl">1</span>, var <span class="op">=</span> <span class="st">"score"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 1 range and 4 metadata columns:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand |         score         a         b         n</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;NumericList&gt; &lt;logical&gt; &lt;logical&gt; &lt;numeric&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1     11-22      * |       1.0,0.6      TRUE      TRUE         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 25 sequences from GRCh37 genome</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Using method = 'coverage' finds ranges based on the intersection</span></span></span>
+<span class="r-in"><span><span class="fu">makeConsensus</span><span class="op">(</span><span class="va">grl</span>, p <span class="op">=</span> <span class="fl">2</span><span class="op">/</span><span class="fl">3</span>, var <span class="op">=</span> <span class="st">"score"</span>, method <span class="op">=</span> <span class="st">"coverage"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 164 ranges and 5 metadata columns:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         seqnames            ranges strand |         score SRR8315180 SRR8315181</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; | &lt;NumericList&gt;  &lt;logical&gt;  &lt;logical&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [1]    chr10 43048224-43048519      * |   251,531,391       TRUE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [2]    chr10 43521773-43522218      * |   223,548,645       TRUE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [3]    chr10 43540200-43540384      * |        58,206       TRUE      FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [4]    chr10 43606264-43606559      * |    92,192,302       TRUE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [5]    chr10 43851570-43851940      * |        87,148      FALSE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ...      ...               ...    ... .           ...        ...        ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [160]    chr10 99097038-99097398      * |   196,117,308       TRUE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [161]    chr10 99168367-99168608      * |    48,105,130       TRUE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [162]    chr10 99207908-99208139      * |        94,137      FALSE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [163]    chr10 99331412-99331687      * |   210,258,504       TRUE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [164]    chr10 99621674-99621944      * |         74,75      FALSE       TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         SRR8315182         n</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;logical&gt; &lt;numeric&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [1]       TRUE         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [2]       TRUE         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [3]       TRUE         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [4]       TRUE         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     [5]       TRUE         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     ...        ...       ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [160]       TRUE         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [161]       TRUE         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [162]       TRUE         2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [163]       TRUE         3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [164]       TRUE         2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
-<span class="r-in"><span><span class="fu">makeConsensus</span><span class="op">(</span><span class="va">grl</span>, p <span class="op">=</span> <span class="fl">1</span>, var <span class="op">=</span> <span class="st">"score"</span>, method <span class="op">=</span> <span class="st">"coverage"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 1 range and 4 metadata columns:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand |         score         a         b         n</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;NumericList&gt; &lt;logical&gt; &lt;logical&gt; &lt;numeric&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1     18-20      * |       1.0,0.6      TRUE      TRUE         2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 25 sequences from GRCh37 genome</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
@@ -194,7 +259,7 @@ the relevant ChIP targets</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

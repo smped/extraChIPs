@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.4.3</span>
       </span>
     </div>
 
@@ -35,7 +35,10 @@
       <a href="../articles/range_based_functions.html">Range-based Operations</a>
     </li>
     <li>
-      <a href="../articles/differential_signal.html">Differential Signal Analysis</a>
+      <a href="../articles/differential_signal_sliding.html">Differential Signal Using Sliding Windows</a>
+    </li>
+    <li>
+      <a href="../articles/differential_signal_fixed.html">Differential Signal Using Fixed-Width Windows</a>
     </li>
   </ul></li>
 <li>
@@ -135,10 +138,13 @@ Lower values will ensure that fewer windows, generally with the strongest
 signal, are retained.
 Cutoff values for both criteria are added to the metadata
 element of the returned object.</p>
+<p>If setting <code>bg = NULL</code> the <a href="https://rdrr.io/pkg/csaw/man/filterWindows.html" class="external-link">filterWindowsControl</a> step will be
+ignored and only the <a href="https://rdrr.io/pkg/csaw/man/filterWindows.html" class="external-link">filterWindowsProportion</a> will be used.
+This should only be performed if no Input sample is available.</p>
 <p><strong>Please note</strong> that the any <code>.bam</code> files referred to in the supplied objects
 <strong>must</strong> be accessible to this function. It will not run on a separate
 machine or file structure to that which the original sliding windows were
-prepared. Please see the example/vignette for runnable conde.</p>
+prepared. Please see the example/vignette for runnable code.</p>
     </div>
 
     <div id="ref-examples">
@@ -146,41 +152,7 @@ prepared. Please see the example/vignette for runnable conde.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co">## Taken from the differential_binding vignette</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Attaching core tidyverse packages</span> ──────────────────────── tidyverse 2.0.0 ──</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">dplyr    </span> 1.1.2     <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">readr    </span> 2.1.4</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">forcats  </span> 1.0.0     <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">stringr  </span> 1.5.0</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">lubridate</span> 1.9.2     <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">tidyr    </span> 1.3.0</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> <span style="color: #0000BB;">purrr    </span> 1.0.1     </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Conflicts</span> ────────────────────────────────────────── tidyverse_conflicts() ──</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">lubridate</span>::<span style="color: #00BB00;">%within%()</span> masks <span style="color: #0000BB;">IRanges</span>::%within%()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">ggplot2</span>::<span style="color: #00BB00;">Position()</span>   masks <span style="color: #0000BB;">BiocGenerics</span>::Position(), <span style="color: #0000BB;">base</span>::Position()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">dplyr</span>::<span style="color: #00BB00;">collapse()</span>     masks <span style="color: #0000BB;">IRanges</span>::collapse()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">dplyr</span>::<span style="color: #00BB00;">combine()</span>      masks <span style="color: #0000BB;">Biobase</span>::combine(), <span style="color: #0000BB;">BiocGenerics</span>::combine()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">dplyr</span>::<span style="color: #00BB00;">count()</span>        masks <span style="color: #0000BB;">matrixStats</span>::count()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">dplyr</span>::<span style="color: #00BB00;">desc()</span>         masks <span style="color: #0000BB;">IRanges</span>::desc()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">tidyr</span>::<span style="color: #00BB00;">expand()</span>       masks <span style="color: #0000BB;">S4Vectors</span>::expand()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">dplyr</span>::<span style="color: #00BB00;">filter()</span>       masks <span style="color: #0000BB;">stats</span>::filter()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">dplyr</span>::<span style="color: #00BB00;">first()</span>        masks <span style="color: #0000BB;">S4Vectors</span>::first()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">dplyr</span>::<span style="color: #00BB00;">lag()</span>          masks <span style="color: #0000BB;">stats</span>::lag()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">purrr</span>::<span style="color: #00BB00;">reduce()</span>       masks <span style="color: #0000BB;">GenomicRanges</span>::reduce(), <span style="color: #0000BB;">IRanges</span>::reduce()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">dplyr</span>::<span style="color: #00BB00;">rename()</span>       masks <span style="color: #0000BB;">S4Vectors</span>::rename()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">lubridate</span>::<span style="color: #00BB00;">second()</span>   masks <span style="color: #0000BB;">S4Vectors</span>::second()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">lubridate</span>::<span style="color: #00BB00;">second&lt;-()</span> masks <span style="color: #0000BB;">S4Vectors</span>::second&lt;-()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> <span style="color: #0000BB;">dplyr</span>::<span style="color: #00BB00;">slice()</span>        masks <span style="color: #0000BB;">IRanges</span>::slice()</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Use the conflicted package (<span style="color: #0000BB; font-style: italic;">&lt;http://conflicted.r-lib.org/&gt;</span>) to force all conflicts to become errors</span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/Rsamtools" class="external-link">Rsamtools</a></span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: Biostrings</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: XVector</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: 'XVector'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from 'package:purrr':</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     compact</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: 'Biostrings'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from 'package:base':</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     strsplit</span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">csaw</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/Bioconductor/BiocParallel" class="external-link">BiocParallel</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">rtracklayer</span><span class="op">)</span></span></span>
@@ -220,9 +192,9 @@ prepared. Please see the example/vignette for runnable conde.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DataFrame with 3 rows and 6 columns</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                    bam.files    totals       ext      rlen      sample    treat</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                  &lt;character&gt; &lt;integer&gt; &lt;integer&gt; &lt;integer&gt; &lt;character&gt; &lt;factor&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ex1   /__w/_temp/Library/e..    964076       200        73         ex1    ctrl </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ex2   /__w/_temp/Library/e..    989543       200        74         ex2    treat</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> input /__w/_temp/Library/e..   1172179       200        74       input    NA   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ex1   /home/steviep/R/x86_..    964076       200        73         ex1    ctrl </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ex2   /home/steviep/R/x86_..    989543       200        74         ex2    treat</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> input /home/steviep/R/x86_..   1172179       200        74       input    NA   </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## The function dualFilter requires a set of peaks which will guide the</span></span></span>
 <span class="r-in"><span><span class="co">## filtering step. This indicate where genuine signal is likely to be found</span></span></span>
@@ -255,7 +227,7 @@ prepared. Please see the example/vignette for runnable conde.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
