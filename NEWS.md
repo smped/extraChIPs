@@ -47,3 +47,11 @@
 # Changes in 1.3.9 (23-04-10)
 
 - Changed labelling strategy for `plotPie()`
+
+# Changes in 1.4.2 (23-06-20)
+
+- Added Fixed-width vignette & edited sliding window
+- Added `se` and `peaks` as example data for man pages and vignettes
+- Included `defineRegions()`
+- Enabled `plotHFCG()` without Ideogram tracks
+- Enabled use of offsets for normalisation in `fitAssayDiff()`
