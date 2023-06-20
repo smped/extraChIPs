@@ -62,3 +62,31 @@ Any columns matching the names provided in cols will be returned, and it is
 assumed that the gene/transcript/exon ranges will contain informative columns
 in the \code{mcols()} element.
 }
+\examples{
+
+## Define two exons for two transcripts
+sq <- Seqinfo(seqnames = "chr1", seqlengths = 50000)
+e <- c("chr1:20001-21000", "chr1:29001-29950", "chr1:22001-23000", "chr1:29001-30000")
+e <- GRanges(e, seqinfo = sq)
+mcols(e) <- DataFrame(gene_id = "Gene1", transcript_id = c("Trans1", "Trans1", "Trans2", "Trans2"))
+
+## Define the transcript ranges
+t <- unlist(endoapply(split(e, e$transcript_id), range))
+t$gene_id <- "Gene1"
+t$transcript_id <- names(t)
+names(t) <- NULL
+
+## Summarise to gene level
+g <- reduceMC(t)
+g$transcript_id <- NA_character_
+
+## Now annotate the regions
+regions <- defineRegions(genes = g, transcripts = t, exons = e)
+sort(unlist(regions))
+
+## Alternatively, collpse gene body and intergenic ranges
+regions <- defineRegions(genes = g, transcripts = t, exons = e, intron = FALSE, proximal = 0)
+sort(unlist(regions))
+
+
+}
