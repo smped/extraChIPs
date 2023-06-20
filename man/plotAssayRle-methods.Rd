@@ -53,14 +53,14 @@ transformation prior to performing the RLE can be specified using the
 \code{trans} argument
 }
 \examples{
-nrows <- 200; ncols <- 4
-counts <- matrix(runif(nrows * ncols, 1, 1e4), nrows)
-df <- DataFrame(treat = c("A", "A", "B", "B"))
-se <- SummarizedExperiment(
-  assays = SimpleList(counts = counts),
-  colData = df
-)
-plotAssayRle(se, "counts", fill = "treat")
-plotAssayRle(se, "counts", fill = "treat", by_x = "treat")
+data("se")
+se$treatment <- c("E2", "E2", "E2", "E2DHT", "E2DHT", "E2DHT")
+se$sample <- colnames(se)
+## A conventional RLE Plot using all samples
+plotAssayRle(se, trans = "log1p", fill = "treatment")
+## Calculate RLE within groups
+plotAssayRle(se, trans = "log1p", fill = "treatment", rle_group = "treatment")
+# Or show groups combined
+plotAssayRle(se, trans = "log1p", fill = "treatment", by_x = "treatment")
 
 }

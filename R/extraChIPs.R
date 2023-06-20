@@ -37,18 +37,24 @@
 #'  * [plotHFGC()] is a wrapper to Gviz plotting functions, able to take any
 #'  combination of HiC, Features, Genes and Coverage (i.e. BigWig) and plot a
 #'  specified range.
+#'  * [plotOverlaps()] visualises overlapping ranges as an UpSet plot or Venn
+#'  Diagram
 #'  * [plotProfileHeatmap()] plots the average signal around a set of ranges,
 #'   as prepared by [getProfileData()]
-#'  * [plotPie()] emables simple comparison across multuple annotation columns
-#'  within a GRanges object.
+#'  * [plotPie()] and [plotSplitDonut()] enable simple comparison across
+#'  multiple annotation columns within a GRanges object.
 #'  * [plotAssayDensities()], [plotAssayPCA()] and [plotAssayRle()] provide
 #'  simple interfaces to plotting key values from a
 #'  [SummarizedExperiment::RangedSummarizedExperiment].
 #'
 #' @section Convenience Functions:
+#'   * [fitAssayDiff()] enables differential signal analysis on a
+#'   SummarizedExperiment object
 #'   * [collapseGenes()] prints a vector of genes for an rmarkdown document,
 #'   using italics.
 #'   * [importPeaks()] imports large numbers of broadPeak or narrowPeak files
+#'   * [makeConsensus()] forms consensus peaks from overlapping ranges within a
+#'   GRangesList()
 #'   * [voomWeightsFromCPM()] allows creation of an [limma::EList-class] object
 #'   as would be created from counts by [limma::voom()], but using
 #'   [edgeR::cpm()] values as input.

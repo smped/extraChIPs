@@ -69,3 +69,23 @@
 #' @rdname ex_datasets
 #' @usage data(ex_hic)
 "ex_hic"
+
+#' @title Datasets for the Fixed-Width Vignette
+#'
+#' @description GRangesList of peaks and SummarizedExperiment of counts
+#' All were saved during initial vignette preparation at
+#' https://github.com/smped/extraChIPs_vignette/blob/main/differential_signal_fixed.Rmd
+#'
+#' @examples
+#' data(se)
+#' se
+#' data(peaks)
+#' peaks
+#' @name fixed_width_datasets
+#' @rdname fixed_width_datasets
+#' @usage data(se)
+"se"
+
+#' @rdname fixed_width_datasets
+#' @usage data(peaks)
+"peaks"

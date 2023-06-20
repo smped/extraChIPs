@@ -51,15 +51,13 @@ Uses ggplot2 to create a density plot for all samples within the selected
 assay
 }
 \examples{
-nrows <- 200; ncols <- 4
-counts <- matrix(runif(nrows * ncols, 1, 1e4), nrows)
-colnames(counts) <- paste0("Sample_", seq_len(ncols))
-df <- DataFrame(treat = c("A", "A", "B", "B"))
-se <- SummarizedExperiment(
-  assays = SimpleList(counts = counts),
-  colData = df
-)
-plotAssayDensities(se, colour = "treat")
-plotAssayDensities(se, colour = "treat", group = NULL)
+data("se")
+se$treatment <- c("E2", "E2", "E2", "E2DHT", "E2DHT", "E2DHT")
+## Plot individual samples
+plotAssayDensities(se, colour = "treatment")
+## Plot combined within treatment groups
+plotAssayDensities(se, colour = "treatment", group = NULL)
+## Use a data transformation
+plotAssayDensities(se, trans = "log1p", colour = "treatment")
 
 }

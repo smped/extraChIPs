@@ -44,14 +44,13 @@
 #'
 #' ## GRangesList object will produce a boxplot of summarised values in the
 #' ## upper panel
-#' set.seed(100)
-#' grl <- GRangesList(
-#'   a = GRanges(c("chr1:1-10", "chr1:21-30", "chr1:31-40")),
-#'   b = GRanges(c("chr1:12-15", "chr1:21-30", "chr1:46-50"))
-#' )
-#' grl$a$score <- rnorm(3)
-#' grl$b$score <- rnorm(3)
-#' plotOverlaps(grl, type = 'upset', var = 'score')
+#' data("peaks")
+#' grl <- peaks[1:3]
+#' names(grl) <- gsub("_peaks.+", "", names(grl))
+#' plotOverlaps(grl, type = 'upset', var = 'score', f = 'max')
+#'
+#' ## If only two samples are present, a VennDiagram will be produced
+#' plotOverlaps(grl[1:2], set_col = c("green", "blue"))
 #'
 #' @import GenomicRanges
 #' @importFrom S4Vectors endoapply mcols

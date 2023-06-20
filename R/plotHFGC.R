@@ -579,7 +579,7 @@ plotHFGC <- function(
                     if (n_trans > .max_trans) {
                         .collapse <- "meta"
                     } else {
-                        .collapse = FALSE
+                        .collapse <- FALSE
                     }
                 }
 

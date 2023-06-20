@@ -46,10 +46,12 @@ Used for combining peak intensities or results across multiple ChIP targets.
 \item \code{\link[=plotHFGC]{plotHFGC()}} is a wrapper to Gviz plotting functions, able to take any
 combination of HiC, Features, Genes and Coverage (i.e. BigWig) and plot a
 specified range.
+\item \code{\link[=plotOverlaps]{plotOverlaps()}} visualises overlapping ranges as an UpSet plot or Venn
+Diagram
 \item \code{\link[=plotProfileHeatmap]{plotProfileHeatmap()}} plots the average signal around a set of ranges,
 as prepared by \code{\link[=getProfileData]{getProfileData()}}
-\item \code{\link[=plotPie]{plotPie()}} emables simple comparison across multuple annotation columns
-within a GRanges object.
+\item \code{\link[=plotPie]{plotPie()}} and \code{\link[=plotSplitDonut]{plotSplitDonut()}} enable simple comparison across
+multiple annotation columns within a GRanges object.
 \item \code{\link[=plotAssayDensities]{plotAssayDensities()}}, \code{\link[=plotAssayPCA]{plotAssayPCA()}} and \code{\link[=plotAssayRle]{plotAssayRle()}} provide
 simple interfaces to plotting key values from a
 \link[SummarizedExperiment:RangedSummarizedExperiment-class]{SummarizedExperiment::RangedSummarizedExperiment}.
@@ -59,9 +61,13 @@ simple interfaces to plotting key values from a
 \section{Convenience Functions}{
 
 \itemize{
+\item \code{\link[=fitAssayDiff]{fitAssayDiff()}} enables differential signal analysis on a
+SummarizedExperiment object
 \item \code{\link[=collapseGenes]{collapseGenes()}} prints a vector of genes for an rmarkdown document,
 using italics.
 \item \code{\link[=importPeaks]{importPeaks()}} imports large numbers of broadPeak or narrowPeak files
+\item \code{\link[=makeConsensus]{makeConsensus()}} forms consensus peaks from overlapping ranges within a
+GRangesList()
 \item \code{\link[=voomWeightsFromCPM]{voomWeightsFromCPM()}} allows creation of an \link[limma:EList]{limma::EList} object
 as would be created from counts by \code{\link[limma:voom]{limma::voom()}}, but using
 \code{\link[edgeR:cpm]{edgeR::cpm()}} values as input.

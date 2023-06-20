@@ -22,7 +22,11 @@ test_that("defineRegions works correctly", {
   expect_equal(length(regions), 6)
   expect_equal(
     vapply(regions, length, integer(1)),
+<<<<<<< HEAD
     c(promoters = 1L, upstream_promoters = 1L, exons = 2L, introns = 1L,
+=======
+    c(promoter = 1L, upstream_promoter = 1L, exon = 2L, intron = 1L,
+>>>>>>> update
       proximal_intergenic = 2L, distal_intergenic = 2L)
   )
 
@@ -31,7 +35,11 @@ test_that("defineRegions works correctly", {
   expect_equal(length(regions), 4)
   expect_equal(
     vapply(regions, length, integer(1)),
+<<<<<<< HEAD
     c(promoters = 1L, upstream_promoters = 1L, gene_bodies = 1L, intergenic = 2L)
+=======
+    c(promoter = 1L, upstream_promoter = 1L, gene_body = 1L, intergenic = 2L)
+>>>>>>> update
   )
 
 })
