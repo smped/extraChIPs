@@ -76,11 +76,11 @@ test_that("Correct plotting works", {
 })
 
 test_that(".makeIdeoTrack behaves as expected", {
-    expect_message(.makeIdeoTrack(gr1), "Could not find cytogenetic bands")
+    expect_null(.makeIdeoTrack(gr1))
     genome(gr1) <- "GRCh37"
-    tr <- .makeIdeoTrack(gr1, .fontsize = 12)
-    expect_equal(tr@genome, setNames("hg19", "GRCh37"))
-    expect_equal(dim(tr@bandTable), c(1136, 5))
+    tr <- .makeIdeoTrack(gr1, .fontsize = 12, .bands = cyto_df)
+    expect_equal(tr@genome, "GRCh37")
+    expect_equal(dim(tr@bandTable), c(1, 5))
     expect_equal(tr@dp@pars$fontsize, 12)
 })
 
