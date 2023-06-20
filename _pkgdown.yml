@@ -46,6 +46,7 @@ reference:
   contents:
     - contains("cytobands")
     - starts_with("ex_")
+    - fixed_width_datasets
 
 navbar:
   type: default
