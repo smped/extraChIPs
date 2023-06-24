@@ -17,6 +17,11 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r setup}
+knitr::opts_chunk$set(message = FALSE, crop = NULL)
+```
+
+
 # Introduction
 
 The [GRAVI](https://github.com/smped/GRAVI) workflow, for which this
@@ -67,7 +72,7 @@ BiocManager::install(pkg, update = FALSE)
 
 Once these packages are installed, we can load them easily
 
-```{r load-packages, message=FALSE}
+```{r load-packages, eval = TRUE}
 library(tidyverse)
 library(Rsamtools)
 library(csaw)
@@ -109,7 +114,7 @@ A description of the samples can be found in the file
 `data/PRJNA509779.tsv`. A pooled Input (IgG) sample was used for the
 entire dataset and this accession is provided in a separate column.
 
-``` r
+```{r samples, eval = FALSE}
 samples <- here("data", "PRJNA509779.tsv") %>% 
   read_tsv() %>% 
   dplyr::filter(target == "H3K27ac") %>% 
@@ -143,7 +148,7 @@ The example files provided here contain a small subset of reads from
 chromosome 10 across two experimental conditions and one input sample,
 and we will define them all as a `BamFileList`.
 
-``` r
+```{r bfl, eval = FALSE}
 bfl <- here("data", "H3K27ac", glue("{accessions}.bam")) %>% 
   BamFileList() %>% 
   setNames(str_remove_all(names(.), ".bam"))
@@ -152,7 +157,7 @@ file.exists(path(bfl))
 
     ## [1] TRUE TRUE TRUE TRUE TRUE TRUE TRUE
 
-``` r
+```{r sq, eval = FALSE}
 sq <- seqinfo(bfl) %>% 
   sortSeqlevels() %>% 
   keepStandardChromosomes()
@@ -192,7 +197,7 @@ preparing the GreyList\` is available
 [here](https://github.com/smped/PRJNA509779/blob/main/workflow/scripts/make_greylist.R).
 Fragment sizes for each sample were also estimated to be around 200nt.
 
-``` r
+```{r wincounts, eval = FALSE}
 greylist <- here("data", "chr10_greylist.bed") %>% 
   import.bed(seqinfo = sq)
 blacklist <- here("data", "chr10_blacklist.bed") %>% 
@@ -219,7 +224,7 @@ This produces a `RangedSummarizedExperiment` with windows included which
 passed the minimum threshold of 7 total reads. We can check which
 windows passed this threshold using `rowRanges()`
 
-``` r
+```{r rowranges-wincounts, eval = FALSE}
 rowRanges(wincounts)
 ```
 
@@ -243,7 +248,7 @@ rowRanges(wincounts)
 We can also add some key information to the `colData` element of this
 object, which will also be propagated to all downstream objects.
 
-``` r
+```{r coldata-wincounts, eval = FALSE}
 colData(wincounts)
 ```
 
@@ -258,7 +263,7 @@ colData(wincounts)
     ## SRR8315191 /home/steviep/github..    283745       200        75
     ## SRR8315192 /home/steviep/github..    361835       200        75
 
-``` r
+```{r update-coldata, eval = FALSE}
 colData(wincounts) <- colData(wincounts) %>%
   as_tibble(rownames = "accession") %>% 
   left_join(samples, by = "accession") %>% 
@@ -281,19 +286,12 @@ windows with higher counts tend to be associated with the samples
 targeting a transcription factor (TF), as seen in the two treatment
 group samples.
 
-``` r
+```{r plot-densities, eval = FALSE}
 plotAssayDensities(wincounts, colour = "treatment", trans = "log1p") +
   theme_bw() +
   scale_colour_manual(values = treat_colours)
 ```
 
-<figure>
-<img
-src="differential_signal_sliding_files/figure-gfm/plot-densities-1.png"
-alt="Read Densities for the complete set of sliding windows across all samples" />
-<figcaption aria-hidden="true"><em>Read Densities for the complete set
-of sliding windows across all samples</em></figcaption>
-</figure>
 
 ## Filtering of Sliding Windows
 
@@ -303,7 +301,7 @@ signal from our ChIP target. The strategy employed in `extraChIPs` uses
 a set of pre-defined regions to automatically set thresholds based on 1)
 counts strongly above the counts from the input sample, and 2) the
 windows with the overall highest signal. Thresholds are determined such
-that a proportion (e.g. `q = 0.5`) of the windows which overlap one of
+that a proportion (e.g. `q = 0.5`) of the windows which overlap one of
 the supplied consensus peaks will be returned. Higher values for `q`
 will return more windows, however many of these will tend to only
 marginally overlap a peak in one of the tail regions, and these will
@@ -319,7 +317,7 @@ time-consuming, as can the initial counting step. Multiple alternative
 filtering strategies are also provided by the package `csaw` and these
 can be accessed using `?csaw::filterWindows`
 
-``` r
+```{r filter-counts, eval = FALSE}
 guide_regions <- here("data", "H3K27ac", "H3K27ac_chr10.bed") %>% 
   import.bed(seqinfo = sq)
 filtcounts <- dualFilter(
@@ -389,7 +387,7 @@ logCPM values. We can also check the samples using a PCA plot, again
 colouring the points by treatment group and adding labels, which will
 repel by default if the points are shown.
 
-``` r
+```{r plot-density-pca, eval = FALSE}
 A <- plotAssayDensities(filtcounts, assay = "logCPM", colour = "treatment") +
   scale_colour_manual(values = treat_colours) +
   theme_bw()
@@ -400,15 +398,10 @@ A + B +
   plot_layout(guides = "collect") + plot_annotation(tag_levels = "A")
 ```
 
-<figure>
-<img
-src="differential_signal_sliding_files/figure-gfm/plot-density-pca-1.png"
-alt="A) Densities for logCPM values across all samples after discarding windows less likely to contain H3K27ac signal using dualFilter() B) PCA plot based on the logCPM assay" />
-<figcaption aria-hidden="true"><em>A) Densities for logCPM values across
-all samples after discarding windows less likely to contain H3K27ac
-signal using <code>dualFilter()</code> B) PCA plot based on the logCPM
-assay</em></figcaption>
-</figure>
+```{r add-dens-pca, echo = FALSE, eval = TRUE, fig.cap = "*A) Densities for logCPM values across all samples after discarding windows less likely to contain H3K27ac signal using `dualFilter()` B) PCA plot based on the logCPM assay*"}
+knitr::include_graphics("differential_signal_sliding_files/figure-gfm/plot-density-pca-1.png")
+```
+
 
 Another common QC step is Relative Log-Expression (RLE) (Gandolfo and
 Speed 2018). In the following, we first inspect the RLE across the
@@ -419,7 +412,7 @@ by a given ChIP target. Here, however, there is minimal difference
 between the two approaches as H3K27ac signal tends to be broadly
 consistent between these treatment groups.
 
-``` r
+```{r plot-assay-rle, eval = FALSE}
 a <- plotAssayRle(filtcounts, assay = "logCPM", fill = "treat") +
   geom_hline(yintercept = 0, linetype = 2, colour = "grey") +
   scale_fill_manual(values = treat_colours) +
@@ -436,13 +429,10 @@ a + b + plot_layout(guides = "collect") +
   plot_annotation(tag_levels = "A")
 ```
 
-<figure>
-<img
-src="differential_signal_sliding_files/figure-gfm/plot-assay-rle-1.png"
-alt="RLE plots (A) across all samples and (B) with values calculated within treatment groups." />
-<figcaption aria-hidden="true"><em>RLE plots (A) across all samples and
-(B) with values calculated within treatment groups.</em></figcaption>
-</figure>
+```{r add-rle-plot, eval = TRUE, echo = FALSE, fig.cap = "*RLE plots (A) across all samples and (B) with values calculated within treatment groups*"}
+knitr::include_graphics("differential_signal_sliding_files/figure-gfm/plot-assay-rle-1.png")
+```
+
 
 ## Statistical Testing
 
@@ -474,7 +464,7 @@ from model fitting in the `rowData()` element. However, setting
 `asRanges = TRUE` will simply return the set of GRanges along with the
 testing results as a stand-alone object.
 
-``` r
+```{r fit-gr, eval = FALSE}
 X <- model.matrix(~treatment, data = colData(filtcounts))
 fit_gr <- fitAssayDiff(filtcounts, design = X, fc = 1.2, asRanges = TRUE)
 ```
@@ -500,7 +490,7 @@ averages for the expression and logFC estimates are returned using the
 weights $w_i = \frac{1}{p_i}$. A representative window, corresponding to
 the original window with the lowest p-value is returned.
 
-``` r
+```{r results-gr, eval = FALSE}
 results_gr <- mergeByHMP(fit_gr, inc_cols = "overlaps_ref", merge_within = 120) %>% 
   mutate(
     status <- case_when(
@@ -546,7 +536,7 @@ and the final set of merged windows. Any bias present in our data will
 be visible when using the sliding windows, whilst our final results can
 be inspected using the merged windows.
 
-``` r
+```{r plot-ma-libsize, eval = FALSE}
 A <- fit_gr %>% 
   as_tibble() %>% 
   ggplot(aes(logCPM, logFC)) +
@@ -591,16 +581,10 @@ B <- results_gr %>%
 A + B + plot_annotation(tag_levels = "A")
 ```
 
-<figure>
-<img
-src="differential_signal_sliding_files/figure-gfm/plot-ma-libsize-1.png"
-alt="MA Plots using A) all sliding windows (after filtering before merging) and B) the final set of merged windows. The most highly ranked merged window is also labelled in the set of merged windows. Blue lines represent a loess curve through the data." />
-<figcaption aria-hidden="true">MA Plots using A) all sliding windows
-(after filtering before merging) and B) the final set of merged windows.
-The most highly ranked merged window is also labelled in the set of
-merged windows. Blue lines represent a loess curve through the
-data.</figcaption>
-</figure>
+```{r add-ma-plot, echo=FALSE, eval=TRUE, fig.cap="*MA Plots using A) all sliding windows (after filtering before merging) and B) the final set of merged windows. The most highly ranked merged window is also labelled in the set of merged windows. Blue lines represent a loess curve through the data.*"}
+knitr::include_graphics("differential_signal_sliding_files/figure-gfm/plot-ma-libsize-1.png")
+```
+
 
 A particularly beneficial feature of this approach is that the final
 ranges will be of highly variable width, with this select region of
@@ -625,7 +609,7 @@ distributions as well as any GC-bias. The package `quantro` (Hicks and
 Irizarry 2015) provides a useful test for any difference in medians as
 well as differences in the underlying distributions.
 
-``` r
+```{r qtest, eval = FALSE}
 set.seed(100)
 qtest <- assay(filtcounts, "counts") %>% 
   quantro(groupFactor = filtcounts$treatment, B = 1e3)
@@ -649,7 +633,7 @@ across all samples may be appropriate.
 To perform an analysis using TMM-normalisation, we can simply specify
 this using the argument `norm = "TMM"` when calling `fitAssayDiff()`
 
-``` r
+```{r fit-tmm, eval = FALSE}
 tmm_gr <- fitAssayDiff(
   filtcounts, design = X, fc = 1.2, norm = "TMM", asRanges = TRUE
 )
@@ -685,7 +669,7 @@ Checking MA-plots shows that the very slight negative bias in
 higher-signal windows when using library size normalisation, as seen
 above, was lessened after TMM normalisation.
 
-``` r
+```{r plot-ma-tmm, eval = FALSE}
 tmm_gr %>% 
   as_tibble() %>% 
   ggplot(aes(logCPM, logFC)) +
@@ -694,14 +678,6 @@ tmm_gr %>%
   ggtitle("MA Plot: TMM Normalisation")
 ```
 
-<figure>
-<img
-src="differential_signal_sliding_files/figure-gfm/plot-ma-tmm-1.png"
-alt="MA plot for all sliding windows using TMM normalisation. The blue line corresponds to a loess curve fitted through the points." />
-<figcaption aria-hidden="true">MA plot for all sliding windows using TMM
-normalisation. The blue line corresponds to a loess curve fitted through
-the points.</figcaption>
-</figure>
 
 If choosing more nuanced normalisation strategies, passing any offset
 matrices can be simply done using the `offset` argument, which will
@@ -754,7 +730,7 @@ this example relies on this format, any additional resource such as an
 then split into a `GRangesList` with separate elements for genes,
 transcripts and exons.
 
-``` r
+```{r gencode, eval = FALSE}
 gencode <- here("data/gencode.v43lift37.chr10.annotation.gtf.gz") %>% 
   import.gff() %>% 
   filter_by_overlaps(GRanges("chr10:42354900-100000000")) %>% 
@@ -770,7 +746,7 @@ the function `reduceMC()`. This function is an extension of
 `mcols()` element by collapsing these into `CompressedList` columns, and
 simplifying to vectors where possible.
 
-``` r
+```{r tss, eval = FALSE}
 tss <- gencode$transcript %>% 
   resize(width = 1, fix = "start") %>% 
   select(gene_id, ends_with("name")) %>% 
@@ -780,7 +756,7 @@ tss <- gencode$transcript %>%
 Checking the TSS for *PPIF* shows we have one site which 3 transcripts
 start at, along with two more unique to specific transcripts.
 
-``` r
+```{r subset-tss, eval = FALSE}
 subset(tss, vapply(gene_name, function(x) "PPIF" %in% x, logical(1)))
 ```
 
@@ -800,7 +776,7 @@ subset(tss, vapply(gene_name, function(x) "PPIF" %in% x, logical(1)))
 
 We can also add the TSS overlap status to our set of results
 
-``` r
+```{r overlaps-any, eval = FALSE}
 tmm_results$tss <- overlapsAny(tmm_results, tss)
 ```
 
@@ -815,7 +791,7 @@ with variable width and with the complete set of transcripts that may be
 regulated by the promoter listed. As can be seen, 4 potential promoter
 regions are found for *CRTAC1*
 
-``` r
+```{r promoters, eval = FALSE}
 promoters <- gencode$transcript %>% 
     select(gene_id, ends_with("name")) %>% 
     promoters(upstream = 2500, downstream = 500) %>% 
@@ -851,7 +827,7 @@ tail(promoters)
     ##   -------
     ##   seqinfo: 25 sequences from GRCh37 genome
 
-``` r
+```{r map-by-feature, eval = FALSE}
 tmm_results <- mapByFeature(
   tmm_results, genes = gencode$gene,
   prom = select(promoters, gene_id, gene_name)
@@ -907,7 +883,7 @@ gene they are most likely to be impacting, and whether they directly
 overlap the TSS. This can all be summarised into a single MA-plot for
 presentation of final results.
 
-``` r
+```{r plot-ma-mapped, eval = FALSE}
 status_colours <- c(Unchanged = "grey70", Increased = "red3", Decreased = "royalblue")
 tmm_results %>% 
   as_tibble() %>% 
@@ -928,15 +904,10 @@ tmm_results %>%
   scale_shape_manual(values = c(19, 21))
 ```
 
-<figure>
-<img
-src="differential_signal_sliding_files/figure-gfm/plot-ma-mapped-1.png"
-alt="MA-plot with the top 20 regions by significance labelled according to the most likely gene influenced by the detected signal. Regions which directly overlap a TSS are shown as empty circles" />
-<figcaption aria-hidden="true">MA-plot with the top 20 regions by
-significance labelled according to the most likely gene influenced by
-the detected signal. Regions which directly overlap a TSS are shown as
-empty circles</figcaption>
-</figure>
+```{r add-ma-mapped-plot, eval = TRUE, echo = FALSE, fig.cap = "*MA-plot with the top 20 regions by significance labelled according to the most likely gene influenced by the detected signal. Regions which directly overlap a TSS are shown as empty circles*"}
+knitr::include_graphics("differential_signal_sliding_files/figure-gfm/plot-ma-mapped-1.png")
+```
+
 
 ## Mapping to Regions
 
@@ -949,7 +920,7 @@ annotations across the genome. These are for in hierarchical order
 as: 1) Promoters, 2) Upstream Promoters, 3) Exons, 4) Introns, 5)
 Proximal Intergenic and, 6 Distal Intergenic regions.
 
-``` r
+```{r define-regions, eval = FALSE}
 regions <- defineRegions(
   genes = gencode$gene, transcripts = gencode$transcript, exons = gencode$exon
 )
@@ -1023,7 +994,7 @@ ChIP-Seq signal to the region which it shows the greatest overlap,
 setting this as a factor which reflects the hierarchy with which the
 regions were defined.
 
-``` r
+```{r bet-overlap, eval = FALSE}
 tmm_results$bestOverlap <- bestOverlap(tmm_results, regions) %>% 
   factor(levels = names(regions))
 filter(tmm_results, hmp_fdr < 0.05, bestOverlap == "promoter")
@@ -1056,7 +1027,7 @@ filter(tmm_results, hmp_fdr < 0.05, bestOverlap == "promoter")
 Given the region column contains nicely formateed output, we can also
 use this
 
-``` r
+```{r reg-as-factor, eval = FALSE}
 reg_levels <- vapply(regions, function(x) x$region[1], character(1))
 tmm_results$bestOverlap <- tmm_results %>% 
   bestOverlap(unlist(regions), var = "region") %>% 
@@ -1072,7 +1043,7 @@ Now that we’ve assigned each window to a genomic regions, we can use
 regions. First we’ll define a consistent colour palette for these
 regions in all plots.
 
-``` r
+```{r reg-colours, eval = FALSE}
 region_colours <- hcl.colors(length(reg_levels), "Viridis", rev = TRUE)
 names(region_colours) <- reg_levels
 ```
@@ -1086,7 +1057,7 @@ the internal `data.frame` formed when creating the plot. External
 formatting functions such as `comma()`, `percent()` or `str_to_title()`
 can also be put to good use here.
 
-``` r
+```{r plot-pie-labels, eval = FALSE}
 plotPie(
   tmm_results, fill = "bestOverlap", min_p = 0.05,
   cat_glue = "{.data[[fill]]}\n{n}\n({percent(p, 0.1)})"
@@ -1094,18 +1065,15 @@ plotPie(
   scale_fill_manual(values = region_colours)
 ```
 
-<figure>
-<img
-src="differential_signal_sliding_files/figure-gfm/plot-pie-labels-1.png"
-alt="Pie chart showing customised labels. Here the regions have been modified to use title case in the labels, but without modifying the underlying data." />
-<figcaption aria-hidden="true">Pie chart showing customised labels. Here
-the regions have been modified to use title case in the labels, but
-without modifying the underlying data.</figcaption>
-</figure>
+```{r add-pit, eval = TRUE, echo = FALSE, fig.cap = "*Pie chart showing customised labels. Here the regions have been modified to use title case in the labels, but without modifying the underlying data.*"}
+knitr::include_graphics("differential_signal_sliding_files/figure-gfm/plot-pie-labels-1.png")
+```
+
 
 In addition to highly customisable labels, segments can be scaled by
 width to produce segments representing the overlaps in kb instead of
 counts, by setting `scale_by = "width"`
+
 
 ## Split Donut Charts
 
@@ -1113,27 +1081,23 @@ Pie charts can be further extended into Split-Donut charts, with data in
 two rings. The default settings can be used to add the status of each
 window to the overlapping regions.
 
-``` r
+```{r plot-donut-default, eval = FALSE}
 plotSplitDonut(
   tmm_results, inner = "bestOverlap", outer = "status",
   inner_palette = region_colours
 )
 ```
 
-<figure>
-<img
-src="differential_signal_sliding_files/figure-gfm/plot-donut-default-1.png"
-alt="Split-Donut chart showing status with overlapping region" />
-<figcaption aria-hidden="true">Split-Donut chart showing status with
-overlapping region</figcaption>
-</figure>
+```{r add-donut, eval = TRUE, echo=FALSE, fig.cap = "*Split-Donut chart showing status with overlapping region*"}
+knitr::include_graphics("differential_signal_sliding_files/figure-gfm/plot-donut-default-1.png")
+```
 
 A key advantage of `plotSplitDonut()` is the ability to provide separate
 colour palettes for the inner & outer rings. Once again these are
 heavily customisable using the `glue()` syntax for labels and exploding
 key segments of interest.
 
-``` r
+```{r plot-donut-customised, eval = FALSE}
 plotSplitDonut(
   tmm_results, inner = "bestOverlap", outer = "status", 
   inner_palette = region_colours, outer_palette = status_colours,
@@ -1144,13 +1108,9 @@ plotSplitDonut(
 )
 ```
 
-<figure>
-<img
-src="differential_signal_sliding_files/figure-gfm/plot-donut-customised-1.png"
-alt="Split-Donut chart exploding key regions and customising labels." />
-<figcaption aria-hidden="true">Split-Donut chart exploding key regions
-and customising labels.</figcaption>
-</figure>
+```{r add-donut-customised, eval=TRUE, echo=FALSE, fig.cap = "*Split-Donut chart exploding key regions and customising labels.*"}
+knitr::include_graphics("differential_signal_sliding_files/figure-gfm/plot-donut-customised-1.png")
+```
 
 ## Coverage Plots
 
@@ -1169,7 +1129,7 @@ either a `BigWigFileList` (for separate tracks) or a list of
 `BigWigFileList` objects, for multiple tracks with individual samples
 overlaid.
 
-``` r
+```{r bwfl, eval = FALSE}
 bwfl <- here::here(
   "data", "H3K27ac", glue("{levels(samples$treatment)}_cov_chr10.bw")
 ) %>% 
@@ -1180,23 +1140,15 @@ bwfl <- here::here(
 We can also include cytogenetic bands for these coverage plots, some of
 which are provided with `extraChIPs`.
 
-``` r
+```{r cytobands}
 data("grch37.cytobands")
 head(grch37.cytobands)
 ```
 
-    ##   chrom chromStart chromEnd   name gieStain
-    ## 1  chr1          0  2300000 p36.33     gneg
-    ## 2  chr1    2300000  5400000 p36.32   gpos25
-    ## 3  chr1    5400000  7200000 p36.31     gneg
-    ## 4  chr1    7200000  9200000 p36.23   gpos25
-    ## 5  chr1    9200000 12700000 p36.22     gneg
-    ## 6  chr1   12700000 16200000 p36.21   gpos50
-
 Let’s check the coverage across the most highly-ranked region with
 default settings.
 
-``` r
+```{r gr, eval = FALSE}
 gr <- filter(tmm_results, hmp_fdr < 0.05, str_detect(bestOverlap, '^Prom'))[1]
 ```
 
@@ -1211,7 +1163,7 @@ provided in a list with matching structure.
 
 The code for separate tracks would be: (not shown)
 
-``` r
+```{r plot-hfgc, eval = FALSE}
 plotHFGC(gr, cytobands = grch37.cytobands, coverage = bwfl)
 ```
 
@@ -1219,7 +1171,7 @@ Overlaying coverage onto a single track can instead be highly
 informative and enables the visualisation of multiple ChIP targets.
 (Plot not shown in vignette)
 
-``` r
+```{r cov-list, eval = FALSE}
 cov_list <- list(H3K27ac = bwfl)
 cov_colour <- list(H3K27ac = treat_colours[levels(samples$treatment)])
 plotHFGC(
@@ -1229,9 +1181,10 @@ plotHFGC(
 ```
 
 
-By default, the specified range will also be outlined (i.e. highlighted)
+By default, the specified range will also be outlined (i.e. highlighted)
 with a blue rectangle which is able to be turned off and customised as
 the user sees fit.
+
 
 ### Adding Annotations To Coverage
 
@@ -1251,7 +1204,7 @@ so here if we pass the annotations as a list with the single element
 `H3K27ac` these annotations will be added directly above the coverage
 track for H3K27ac signal.
 
-``` r
+```{r cov-annot, eval = FALSE}
 cov_annot <- splitAsList(tmm_results, tmm_results$status) %>% 
   endoapply(granges) 
 cov_annot <- list(H3K27ac = cov_annot)
@@ -1264,7 +1217,7 @@ We’ll use the exons element of our `gencode` object to create the format
 used by the defaults of the `GeneRegionTrack()` function, with all exons
 and transcripts annotated.
 
-``` r
+```{r gene-models, eval = FALSE}
 gene_models <- gencode$exon %>% 
   select(
     type, gene = gene_id, exon = exon_id, transcript = transcript_id, 
@@ -1289,7 +1242,7 @@ enhancer and alternative promoter being most likely impacted, including
 the neighbouring region to our initial range. In contrast, the primary
 promoter appears unaffected by DHT treatment.
 
-``` r
+```{r plot-hfgc-with-annot, eval = FALSE}
 names(region_colours) <- names(regions)
 plotHFGC(
   gr, cytobands = grch37.cytobands, 
@@ -1302,15 +1255,10 @@ plotHFGC(
 )
 ```
 
-<figure>
-<img
-src="differential_signal_sliding_files/figure-gfm/plot-hfgc-with-annot-1.png"
-alt="The addition of an annotation track for the coverage tracks shows which regions were retained during the analysis, as well as those which were considered as showing changed or unchanged signal." />
-<figcaption aria-hidden="true"><em>The addition of an annotation track
-for the coverage tracks shows which regions were retained during the
-analysis, as well as those which were considered as showing changed or
-unchanged signal.</em></figcaption>
-</figure>
+```{r add-hfgc, eval=TRUE, echo=FALSE, fig.cap = "The addition of an annotation track for the coverage tracks shows which regions were retained during the analysis, as well as those which were considered as showing changed or unchanged signal"}
+knitr::include_graphics("differential_signal_sliding_files/figure-gfm/plot-hfgc-with-annot-1.png")
+```
+
 
 Plots are able to be tweaked considerably further via multiple
 parameters, however these basic approaches cover the core functionality
