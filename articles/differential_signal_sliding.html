@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.4</span>
       </span>
     </div>
 
@@ -103,6 +103,8 @@ University<br><a class="author_email" href="mailto:#"></a><a href="mailto:stephe
 
     
     
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/knitr/man/opts_chunk.html" class="external-link">opts_chunk</a></span><span class="op">$</span><span class="fu">set</span><span class="op">(</span>message <span class="op">=</span> <span class="cn">FALSE</span>, crop <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -142,7 +144,7 @@ vignette, we recommend using the package <code>BiocManager</code>
 (hosted on CRAN) to install all packages. Once <code>BiocManager</code>
 is installed, the additional packages required for this vignette can
 also be installed as shown below.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="st">"BiocManager"</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/row_colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html" class="external-link">installed.packages</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
 <span><span class="va">pkg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -152,7 +154,7 @@ also be installed as shown below.</p>
 <span><span class="op">)</span></span>
 <span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="va">pkg</span>, update <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>Once these packages are installed, we can load them easily</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/Rsamtools" class="external-link">Rsamtools</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">csaw</span><span class="op">)</span></span>
@@ -190,7 +192,7 @@ region found on chromosome 10 for simplicity.</p>
 <code>data/PRJNA509779.tsv</code>. A pooled Input (IgG) sample was used
 for the entire dataset and this accession is provided in a separate
 column.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"PRJNA509779.tsv"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_tsv</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">target</span> <span class="op">==</span> <span class="st">"H3K27ac"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -226,13 +228,13 @@ included at this stage of the analysis. The example files provided here
 contain a small subset of reads from chromosome 10 across two
 experimental conditions and one input sample, and we will define them
 all as a <code>BamFileList</code>.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bfl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"H3K27ac"</span>, <span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"{accessions}.bam"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/Rsamtools/man/BamFile-class.html" class="external-link">BamFileList</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html" class="external-link">str_remove_all</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>, <span class="st">".bam"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/path.html" class="external-link">path</a></span><span class="op">(</span><span class="va">bfl</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] TRUE TRUE TRUE TRUE TRUE TRUE TRUE</span></span></code></pre>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqinfo</a></span><span class="op">(</span><span class="va">bfl</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">sortSeqlevels</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqlevels-wrappers.html" class="external-link">keepStandardChromosomes</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -268,7 +270,7 @@ in the dataset. These can be obtained easily by using the
 vignette, however, code for preparing the GreyList` is available <a href="https://github.com/smped/PRJNA509779/blob/main/workflow/scripts/make_greylist.R" class="external-link">here</a>.
 Fragment sizes for each sample were also estimated to be around
 200nt.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">greylist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"chr10_greylist.bed"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/BEDFile-class.html" class="external-link">import.bed</a></span><span class="op">(</span>seqinfo <span class="op">=</span> <span class="va">sq</span><span class="op">)</span></span>
 <span><span class="va">blacklist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"chr10_blacklist.bed"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -293,7 +295,7 @@ Fragment sizes for each sample were also estimated to be around
 included which passed the minimum threshold of 7 total reads. We can
 check which windows passed this threshold using
 <code>rowRanges()</code></p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">rowRanges</span><span class="op">(</span><span class="va">wincounts</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## GRanges object with 506538 ranges and 0 metadata columns:</span></span>
 <span><span class="co">##            seqnames            ranges strand</span></span>
@@ -314,7 +316,7 @@ check which windows passed this threshold using
 <p>We can also add some key information to the <code>colData</code>
 element of this object, which will also be propagated to all downstream
 objects.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## DataFrame with 7 rows and 4 columns</span></span>
 <span><span class="co">##                         bam.files    totals       ext      rlen</span></span>
@@ -326,7 +328,7 @@ objects.</p>
 <span><span class="co">## SRR8315190 /home/steviep/github..    325211       200        75</span></span>
 <span><span class="co">## SRR8315191 /home/steviep/github..    283745       200        75</span></span>
 <span><span class="co">## SRR8315192 /home/steviep/github..    361835       200        75</span></span></code></pre>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/as_tibble.html">as_tibble</a></span><span class="op">(</span>rownames <span class="op">=</span> <span class="st">"accession"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">samples</span>, by <span class="op">=</span> <span class="st">"accession"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -346,13 +348,10 @@ transcription factor binding, where long stretches are unbound. The
 windows with higher counts tend to be associated with the samples
 targeting a transcription factor (TF), as seen in the two treatment
 group samples.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotAssayDensities-methods.html">plotAssayDensities</a></span><span class="op">(</span><span class="va">wincounts</span>, colour <span class="op">=</span> <span class="st">"treatment"</span>, trans <span class="op">=</span> <span class="st">"log1p"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_colour_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">treat_colours</span><span class="op">)</span></span></code></pre></div>
-<figure><img src="differential_signal_sliding_files/figure-gfm/plot-densities-1.png" alt="Read Densities for the complete set of sliding windows across all samples"><figcaption aria-hidden="true"><em>Read Densities for the complete set of sliding windows across all
-samples</em>
-</figcaption></figure>
 </div>
 <div class="section level3">
 <h3 id="filtering-of-sliding-windows">Filtering of Sliding Windows<a class="anchor" aria-label="anchor" href="#filtering-of-sliding-windows"></a>
@@ -379,7 +378,7 @@ quite time-consuming, as can the initial counting step. Multiple
 alternative filtering strategies are also provided by the package
 <code>csaw</code> and these can be accessed using
 <code><a href="https://rdrr.io/pkg/csaw/man/defunct.html" class="external-link">?csaw::filterWindows</a></code></p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">guide_regions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"H3K27ac"</span>, <span class="st">"H3K27ac_chr10.bed"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/BEDFile-class.html" class="external-link">import.bed</a></span><span class="op">(</span>seqinfo <span class="op">=</span> <span class="va">sq</span><span class="op">)</span></span>
 <span><span class="va">filtcounts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dualFilter.html">dualFilter</a></span><span class="op">(</span></span>
@@ -396,20 +395,20 @@ the calculation of <code>logCPM</code> values. Similarly, <em>the input
 sample is no longer included</em> in the data object, although
 additional columns can easily be added to the returned object using any
 number of strategies.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 506538      7</span></span></code></pre>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">filtcounts</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 23417     6</span></span></code></pre>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assays</a></span><span class="op">(</span><span class="va">filtcounts</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## List of length 2</span></span>
 <span><span class="co">## names(2): counts logCPM</span></span></code></pre>
 <p>The <code>rowData</code> element of the returned object will contain
 a logical column indicating where each specific retained window
 overlapped one of the supplied consensus peaks.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">rowRanges</span><span class="op">(</span><span class="va">filtcounts</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## GRanges object with 23417 ranges and 1 metadata column:</span></span>
 <span><span class="co">##           seqnames            ranges strand | overlaps_ref</span></span>
@@ -435,7 +434,7 @@ overlapped one of the supplied consensus peaks.</p>
 logCPM values. We can also check the samples using a PCA plot, again
 colouring the points by treatment group and adding labels, which will
 repel by default if the points are shown.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">A</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotAssayDensities-methods.html">plotAssayDensities</a></span><span class="op">(</span><span class="va">filtcounts</span>, assay <span class="op">=</span> <span class="st">"logCPM"</span>, colour <span class="op">=</span> <span class="st">"treatment"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_colour_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">treat_colours</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -444,10 +443,14 @@ repel by default if the points are shown.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">A</span> <span class="op">+</span> <span class="va">B</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_layout.html" class="external-link">plot_layout</a></span><span class="op">(</span>guides <span class="op">=</span> <span class="st">"collect"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span>tag_levels <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
-<figure><img src="differential_signal_sliding_files/figure-gfm/plot-density-pca-1.png" alt="A) Densities for logCPM values across all samples after discarding windows less likely to contain H3K27ac signal using dualFilter() B) PCA plot based on the logCPM assay"><figcaption aria-hidden="true"><em>A) Densities for logCPM values across all samples after discarding
+<div class="figure">
+<img src="differential_signal_sliding_files/figure-gfm/plot-density-pca-1.png" alt="*A) Densities for logCPM values across all samples after discarding windows less likely to contain H3K27ac signal using `dualFilter()` B) PCA plot based on the logCPM assay*" width="480"><p class="caption">
+<em>A) Densities for logCPM values across all samples after discarding
 windows less likely to contain H3K27ac signal using
 <code><a href="../reference/dualFilter.html">dualFilter()</a></code> B) PCA plot based on the logCPM assay</em>
-</figcaption></figure><p>Another common QC step is Relative Log-Expression (RLE) (Gandolfo and
+</p>
+</div>
+<p>Another common QC step is Relative Log-Expression (RLE) (Gandolfo and
 Speed 2018). In the following, we first inspect the RLE across the
 entire dataset, followed by RLE grouping <em>within treatments</em>.
 This can be particularly useful when distributions vary significantly
@@ -455,7 +458,7 @@ between treatment groups, such as may occur with a cytoplasmic to
 nuclear shift by a given ChIP target. Here, however, there is minimal
 difference between the two approaches as H3K27ac signal tends to be
 broadly consistent between these treatment groups.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotAssayRle-methods.html">plotAssayRle</a></span><span class="op">(</span><span class="va">filtcounts</span>, assay <span class="op">=</span> <span class="st">"logCPM"</span>, fill <span class="op">=</span> <span class="st">"treat"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_hline</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0</span>, linetype <span class="op">=</span> <span class="fl">2</span>, colour <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">treat_colours</span><span class="op">)</span> <span class="op">+</span></span>
@@ -470,9 +473,12 @@ broadly consistent between these treatment groups.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">a</span> <span class="op">+</span> <span class="va">b</span> <span class="op">+</span> <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_layout.html" class="external-link">plot_layout</a></span><span class="op">(</span>guides <span class="op">=</span> <span class="st">"collect"</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span>tag_levels <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
-<figure><img src="differential_signal_sliding_files/figure-gfm/plot-assay-rle-1.png" alt="RLE plots (A) across all samples and (B) with values calculated within treatment groups."><figcaption aria-hidden="true"><em>RLE plots (A) across all samples and (B) with values calculated
-within treatment groups.</em>
-</figcaption></figure>
+<div class="figure">
+<img src="differential_signal_sliding_files/figure-gfm/plot-assay-rle-1.png" alt="*RLE plots (A) across all samples and (B) with values calculated within treatment groups*" width="384"><p class="caption">
+<em>RLE plots (A) across all samples and (B) with values calculated
+within treatment groups</em>
+</p>
+</div>
 </div>
 <div class="section level3">
 <h3 id="statistical-testing">Statistical Testing<a class="anchor" aria-label="anchor" href="#statistical-testing"></a>
@@ -506,7 +512,7 @@ interest. By default, the returned object, would be a
 model fitting in the <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData()</a></code> element. However, setting
 <code>asRanges = TRUE</code> will simply return the set of GRanges along
 with the testing results as a stand-alone object.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span><span class="va">treatment</span>, data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">filtcounts</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">fit_gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fitAssayDiff-methods.html">fitAssayDiff</a></span><span class="op">(</span><span class="va">filtcounts</span>, design <span class="op">=</span> <span class="va">X</span>, fc <span class="op">=</span> <span class="fl">1.2</span>, asRanges <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -531,7 +537,7 @@ instead of values from a representative window, weighted averages for
 the expression and logFC estimates are returned using the weights <span class="math inline">\(w_i = \frac{1}{p_i}\)</span>. A representative
 window, corresponding to the original window with the lowest p-value is
 returned.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">results_gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mergeByHMP-methods.html">mergeByHMP</a></span><span class="op">(</span><span class="va">fit_gr</span>, inc_cols <span class="op">=</span> <span class="st">"overlaps_ref"</span>, merge_within <span class="op">=</span> <span class="fl">120</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    <span class="va">status</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
@@ -574,7 +580,7 @@ using the complete set of sliding windows and the final set of merged
 windows. Any bias present in our data will be visible when using the
 sliding windows, whilst our final results can be inspected using the
 merged windows.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">A</span> <span class="op">&lt;-</span> <span class="va">fit_gr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">logCPM</span>, <span class="va">logFC</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -617,12 +623,15 @@ merged windows.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="va">fit_gr</span><span class="op">$</span><span class="va">logFC</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"MA Plot: Merged Windows"</span><span class="op">)</span></span>
 <span><span class="va">A</span> <span class="op">+</span> <span class="va">B</span> <span class="op">+</span> <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span>tag_levels <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
-<figure><img src="differential_signal_sliding_files/figure-gfm/plot-ma-libsize-1.png" alt="MA Plots using A) all sliding windows (after filtering before merging) and B) the final set of merged windows. The most highly ranked merged window is also labelled in the set of merged windows. Blue lines represent a loess curve through the data."><figcaption aria-hidden="true">
-MA Plots using A) all sliding windows (after filtering before merging)
-and B) the final set of merged windows. The most highly ranked merged
-window is also labelled in the set of merged windows. Blue lines
-represent a loess curve through the data.
-</figcaption></figure><p>A particularly beneficial feature of this approach is that the final
+<div class="figure">
+<img src="differential_signal_sliding_files/figure-gfm/plot-ma-libsize-1.png" alt="*MA Plots using A) all sliding windows (after filtering before merging) and B) the final set of merged windows. The most highly ranked merged window is also labelled in the set of merged windows. Blue lines represent a loess curve through the data.*" width="384"><p class="caption">
+<em>MA Plots using A) all sliding windows (after filtering before
+merging) and B) the final set of merged windows. The most highly ranked
+merged window is also labelled in the set of merged windows. Blue lines
+represent a loess curve through the data.</em>
+</p>
+</div>
+<p>A particularly beneficial feature of this approach is that the final
 ranges will be of highly variable width, with this select region of
 chromosome 10 producing merged windows ranging from 120bp to 18.88kb, as
 may be expected for H3K27ac signal.</p>
@@ -645,7 +654,7 @@ these two treatments, we can easily check for differences in data
 distributions as well as any GC-bias. The package <code>quantro</code>
 (Hicks and Irizarry 2015) provides a useful test for any difference in
 medians as well as differences in the underlying distributions.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span>
 <span><span class="va">qtest</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">filtcounts</span>, <span class="st">"counts"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/quantro/man/quantro.html" class="external-link">quantro</a></span><span class="op">(</span>groupFactor <span class="op">=</span> <span class="va">filtcounts</span><span class="op">$</span><span class="va">treatment</span>, B <span class="op">=</span> <span class="fl">1e3</span><span class="op">)</span></span>
@@ -666,7 +675,7 @@ normalisation across all samples may be appropriate.</p>
 <p>To perform an analysis using TMM-normalisation, we can simply specify
 this using the argument <code>norm = "TMM"</code> when calling
 <code><a href="../reference/fitAssayDiff-methods.html">fitAssayDiff()</a></code></p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tmm_gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fitAssayDiff-methods.html">fitAssayDiff</a></span><span class="op">(</span></span>
 <span>  <span class="va">filtcounts</span>, design <span class="op">=</span> <span class="va">X</span>, fc <span class="op">=</span> <span class="fl">1.2</span>, norm <span class="op">=</span> <span class="st">"TMM"</span>, asRanges <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
@@ -696,17 +705,14 @@ evidence exists and the underlying biology supports this.</p>
 <p>Checking MA-plots shows that the very slight negative bias in
 higher-signal windows when using library size normalisation, as seen
 above, was lessened after TMM normalisation.</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tmm_gr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">logCPM</span>, <span class="va">logFC</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html" class="external-link">geom_smooth</a></span><span class="op">(</span>se <span class="op">=</span> <span class="cn">FALSE</span>, method <span class="op">=</span> <span class="st">"loess"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"MA Plot: TMM Normalisation"</span><span class="op">)</span></span></code></pre></div>
-<figure><img src="differential_signal_sliding_files/figure-gfm/plot-ma-tmm-1.png" alt="MA plot for all sliding windows using TMM normalisation. The blue line corresponds to a loess curve fitted through the points."><figcaption aria-hidden="true">
-MA plot for all sliding windows using TMM normalisation. The blue line
-corresponds to a loess curve fitted through the points.
-</figcaption></figure><p>If choosing more nuanced normalisation strategies, passing any offset
+<p>If choosing more nuanced normalisation strategies, passing any offset
 matrices can be simply done using the <code>offset</code> argument,
 which will over-ride any other normalisation settings.</p>
 </div>
@@ -775,7 +781,7 @@ resource such as an <code>EnsDb</code> or <code>TxDb</code> object could
 easily be used. Here, we’ll load the data then split into a
 <code>GRangesList</code> with separate elements for genes, transcripts
 and exons.</p>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gencode</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"data/gencode.v43lift37.chr10.annotation.gtf.gz"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/GFFFile-class.html" class="external-link">import.gff</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/plyranges/man/ranges-filter-overlaps.html" class="external-link">filter_by_overlaps</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="st">"chr10:42354900-100000000"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -789,7 +795,7 @@ an extension of <code><a href="https://rdrr.io/pkg/IRanges/man/inter-range-metho
 supplied columns in the <code>mcols()</code> element by collapsing these
 into <code>CompressedList</code> columns, and simplifying to vectors
 where possible.</p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tss</span> <span class="op">&lt;-</span> <span class="va">gencode</span><span class="op">$</span><span class="va">transcript</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/IRanges/man/intra-range-methods.html" class="external-link">resize</a></span><span class="op">(</span>width <span class="op">=</span> <span class="fl">1</span>, fix <span class="op">=</span> <span class="st">"start"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">gene_id</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">ends_with</a></span><span class="op">(</span><span class="st">"name"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -797,7 +803,7 @@ where possible.</p>
 <p>Checking the TSS for <em>PPIF</em> shows we have one site which 3
 transcripts start at, along with two more unique to specific
 transcripts.</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">tss</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="va">gene_name</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="st">"PPIF"</span> <span class="op"><a href="https://rdrr.io/pkg/BiocGenerics/man/match.html" class="external-link">%in%</a></span> <span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## GRanges object with 3 ranges and 3 metadata columns:</span></span>
 <span><span class="co">##       seqnames    ranges strand |              gene_id       gene_name</span></span>
@@ -813,7 +819,7 @@ transcripts.</p>
 <span><span class="co">##   -------</span></span>
 <span><span class="co">##   seqinfo: 25 sequences from GRCh37 genome</span></span></code></pre>
 <p>We can also add the TSS overlap status to our set of results</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tmm_results</span><span class="op">$</span><span class="va">tss</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/IRanges/man/findOverlaps-methods.html" class="external-link">overlapsAny</a></span><span class="op">(</span><span class="va">tmm_results</span>, <span class="va">tss</span><span class="op">)</span></span></code></pre></div>
 <p>Next we’ll want to map our regions to genes. To use the methods
 available in <code><a href="../reference/mapByFeature.html">mapByFeature()</a></code> let’s define a set of
@@ -826,7 +832,7 @@ which are unique and non-overlapping but with variable width and with
 the complete set of transcripts that may be regulated by the promoter
 listed. As can be seen, 4 potential promoter regions are found for
 <em>CRTAC1</em></p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">promoters</span> <span class="op">&lt;-</span> <span class="va">gencode</span><span class="op">$</span><span class="va">transcript</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">gene_id</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">ends_with</a></span><span class="op">(</span><span class="st">"name"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>    <span class="fu"><a href="https://rdrr.io/pkg/IRanges/man/intra-range-methods.html" class="external-link">promoters</a></span><span class="op">(</span>upstream <span class="op">=</span> <span class="fl">2500</span>, downstream <span class="op">=</span> <span class="fl">500</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -859,7 +865,7 @@ listed. As can be seen, 4 potential promoter regions are found for
 <span><span class="co">##   [6] CRTAC1-203,CRTAC1-202</span></span>
 <span><span class="co">##   -------</span></span>
 <span><span class="co">##   seqinfo: 25 sequences from GRCh37 genome</span></span></code></pre>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tmm_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mapByFeature.html">mapByFeature</a></span><span class="op">(</span></span>
 <span>  <span class="va">tmm_results</span>, genes <span class="op">=</span> <span class="va">gencode</span><span class="op">$</span><span class="va">gene</span>,</span>
 <span>  prom <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">promoters</span>, <span class="va">gene_id</span>, <span class="va">gene_name</span><span class="op">)</span></span>
@@ -911,7 +917,7 @@ listed. As can be seen, 4 potential promoter regions are found for
 which gene they are most likely to be impacting, and whether they
 directly overlap the TSS. This can all be summarised into a single
 MA-plot for presentation of final results.</p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">status_colours</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Unchanged <span class="op">=</span> <span class="st">"grey70"</span>, Increased <span class="op">=</span> <span class="st">"red3"</span>, Decreased <span class="op">=</span> <span class="st">"royalblue"</span><span class="op">)</span></span>
 <span><span class="va">tmm_results</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -930,11 +936,13 @@ MA-plot for presentation of final results.</p>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_colour_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">status_colours</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_shape_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">19</span>, <span class="fl">21</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<figure><img src="differential_signal_sliding_files/figure-gfm/plot-ma-mapped-1.png" alt="MA-plot with the top 20 regions by significance labelled according to the most likely gene influenced by the detected signal. Regions which directly overlap a TSS are shown as empty circles"><figcaption aria-hidden="true">
-MA-plot with the top 20 regions by significance labelled according to
-the most likely gene influenced by the detected signal. Regions which
-directly overlap a TSS are shown as empty circles
-</figcaption></figure>
+<div class="figure">
+<img src="differential_signal_sliding_files/figure-gfm/plot-ma-mapped-1.png" alt="*MA-plot with the top 20 regions by significance labelled according to the most likely gene influenced by the detected signal. Regions which directly overlap a TSS are shown as empty circles*" width="384"><p class="caption">
+<em>MA-plot with the top 20 regions by significance labelled according
+to the most likely gene influenced by the detected signal. Regions which
+directly overlap a TSS are shown as empty circles</em>
+</p>
+</div>
 </div>
 <div class="section level3">
 <h3 id="mapping-to-regions">Mapping to Regions<a class="anchor" aria-label="anchor" href="#mapping-to-regions"></a>
@@ -947,7 +955,7 @@ exon-level information from an annotation source and creates unique
 region annotations across the genome. These are for in hierarchical
 order as: 1) Promoters, 2) Upstream Promoters, 3) Exons, 4) Introns, 5)
 Proximal Intergenic and, 6 Distal Intergenic regions.</p>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">regions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/defineRegions.html">defineRegions</a></span><span class="op">(</span></span>
 <span>  genes <span class="op">=</span> <span class="va">gencode</span><span class="op">$</span><span class="va">gene</span>, transcripts <span class="op">=</span> <span class="va">gencode</span><span class="op">$</span><span class="va">transcript</span>, exons <span class="op">=</span> <span class="va">gencode</span><span class="op">$</span><span class="va">exon</span></span>
 <span><span class="op">)</span></span>
@@ -1016,7 +1024,7 @@ Proximal Intergenic and, 6 Distal Intergenic regions.</p>
 window with ChIP-Seq signal to the region which it shows the greatest
 overlap, setting this as a factor which reflects the hierarchy with
 which the regions were defined.</p>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tmm_results</span><span class="op">$</span><span class="va">bestOverlap</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bestOverlap-methods.html">bestOverlap</a></span><span class="op">(</span><span class="va">tmm_results</span>, <span class="va">regions</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span>levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">regions</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">tmm_results</span>, <span class="va">hmp_fdr</span> <span class="op">&lt;</span> <span class="fl">0.05</span>, <span class="va">bestOverlap</span> <span class="op">==</span> <span class="st">"promoter"</span><span class="op">)</span></span></code></pre></div>
@@ -1045,7 +1053,7 @@ which the regions were defined.</p>
 <span><span class="co">##   seqinfo: 25 sequences from GRCh37 genome</span></span></code></pre>
 <p>Given the region column contains nicely formateed output, we can also
 use this</p>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">reg_levels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="va">regions</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">$</span><span class="va">region</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">tmm_results</span><span class="op">$</span><span class="va">bestOverlap</span> <span class="op">&lt;-</span> <span class="va">tmm_results</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/bestOverlap-methods.html">bestOverlap</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">regions</span><span class="op">)</span>, var <span class="op">=</span> <span class="st">"region"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -1062,7 +1070,7 @@ use this</p>
 <code><a href="../reference/plotPie-methods.html">plotPie()</a></code> to view the distribution of ChIP-Seq signal
 within these regions. First we’ll define a consistent colour palette for
 these regions in all plots.</p>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">region_colours</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">hcl.colors</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">reg_levels</span><span class="op">)</span>, <span class="st">"Viridis"</span>, rev <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">region_colours</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">reg_levels</span></span></code></pre></div>
 <p>Labels produced using <code><a href="../reference/plotPie-methods.html">plotPie()</a></code> use the
@@ -1075,17 +1083,20 @@ are columns within the internal <code>data.frame</code> formed when
 creating the plot. External formatting functions such as
 <code><a href="https://scales.r-lib.org/reference/comma.html" class="external-link">comma()</a></code>, <code><a href="https://scales.r-lib.org/reference/percent_format.html" class="external-link">percent()</a></code> or
 <code><a href="https://stringr.tidyverse.org/reference/case.html" class="external-link">str_to_title()</a></code> can also be put to good use here.</p>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotPie-methods.html">plotPie</a></span><span class="op">(</span></span>
 <span>  <span class="va">tmm_results</span>, fill <span class="op">=</span> <span class="st">"bestOverlap"</span>, min_p <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  cat_glue <span class="op">=</span> <span class="st">"{.data[[fill]]}\n{n}\n({percent(p, 0.1)})"</span></span>
 <span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">region_colours</span><span class="op">)</span></span></code></pre></div>
-<figure><img src="differential_signal_sliding_files/figure-gfm/plot-pie-labels-1.png" alt="Pie chart showing customised labels. Here the regions have been modified to use title case in the labels, but without modifying the underlying data."><figcaption aria-hidden="true">
-Pie chart showing customised labels. Here the regions have been modified
-to use title case in the labels, but without modifying the underlying
-data.
-</figcaption></figure><p>In addition to highly customisable labels, segments can be scaled by
+<div class="figure">
+<img src="differential_signal_sliding_files/figure-gfm/plot-pie-labels-1.png" alt="*Pie chart showing customised labels. Here the regions have been modified to use title case in the labels, but without modifying the underlying data.*" width="384"><p class="caption">
+<em>Pie chart showing customised labels. Here the regions have been
+modified to use title case in the labels, but without modifying the
+underlying data.</em>
+</p>
+</div>
+<p>In addition to highly customisable labels, segments can be scaled by
 width to produce segments representing the overlaps in kb instead of
 counts, by setting <code>scale_by = "width"</code></p>
 </div>
@@ -1095,18 +1106,21 @@ counts, by setting <code>scale_by = "width"</code></p>
 <p>Pie charts can be further extended into Split-Donut charts, with data
 in two rings. The default settings can be used to add the status of each
 window to the overlapping regions.</p>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotSplitDonut-methods.html">plotSplitDonut</a></span><span class="op">(</span></span>
 <span>  <span class="va">tmm_results</span>, inner <span class="op">=</span> <span class="st">"bestOverlap"</span>, outer <span class="op">=</span> <span class="st">"status"</span>,</span>
 <span>  inner_palette <span class="op">=</span> <span class="va">region_colours</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<figure><img src="differential_signal_sliding_files/figure-gfm/plot-donut-default-1.png" alt="Split-Donut chart showing status with overlapping region"><figcaption aria-hidden="true">
-Split-Donut chart showing status with overlapping region
-</figcaption></figure><p>A key advantage of <code><a href="../reference/plotSplitDonut-methods.html">plotSplitDonut()</a></code> is the ability to
+<div class="figure">
+<img src="differential_signal_sliding_files/figure-gfm/plot-donut-default-1.png" alt="*Split-Donut chart showing status with overlapping region*" width="384"><p class="caption">
+<em>Split-Donut chart showing status with overlapping region</em>
+</p>
+</div>
+<p>A key advantage of <code><a href="../reference/plotSplitDonut-methods.html">plotSplitDonut()</a></code> is the ability to
 provide separate colour palettes for the inner &amp; outer rings. Once
 again these are heavily customisable using the <code><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue()</a></code>
 syntax for labels and exploding key segments of interest.</p>
-<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotSplitDonut-methods.html">plotSplitDonut</a></span><span class="op">(</span></span>
 <span>  <span class="va">tmm_results</span>, inner <span class="op">=</span> <span class="st">"bestOverlap"</span>, outer <span class="op">=</span> <span class="st">"status"</span>, </span>
 <span>  inner_palette <span class="op">=</span> <span class="va">region_colours</span>, outer_palette <span class="op">=</span> <span class="va">status_colours</span>,</span>
@@ -1115,9 +1129,11 @@ syntax for labels and exploding key segments of interest.</p>
 <span>  explode_outer <span class="op">=</span> <span class="st">"(In|De)creased"</span>, explode_r <span class="op">=</span> <span class="fl">0.3</span>, </span>
 <span>  outer_label <span class="op">=</span> <span class="st">"text"</span>, outer_min_p <span class="op">=</span> <span class="fl">0</span>, outer_max_p <span class="op">=</span> <span class="fl">0.02</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<figure><img src="differential_signal_sliding_files/figure-gfm/plot-donut-customised-1.png" alt="Split-Donut chart exploding key regions and customising labels."><figcaption aria-hidden="true">
-Split-Donut chart exploding key regions and customising labels.
-</figcaption></figure>
+<div class="figure">
+<img src="differential_signal_sliding_files/figure-gfm/plot-donut-customised-1.png" alt="*Split-Donut chart exploding key regions and customising labels.*" width="384"><p class="caption">
+<em>Split-Donut chart exploding key regions and customising labels.</em>
+</p>
+</div>
 </div>
 <div class="section level3">
 <h3 id="coverage-plots">Coverage Plots<a class="anchor" aria-label="anchor" href="#coverage-plots"></a>
@@ -1137,7 +1153,7 @@ specified GenomicRange. However, this does restrict plotting to the
 <code><a href="../reference/plotHFGC.html">plotHFGC()</a></code> as either a <code>BigWigFileList</code> (for
 separate tracks) or a list of <code>BigWigFileList</code> objects, for
 multiple tracks with individual samples overlaid.</p>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bwfl</span> <span class="op">&lt;-</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span></span>
 <span>  <span class="st">"data"</span>, <span class="st">"H3K27ac"</span>, <span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"{levels(samples$treatment)}_cov_chr10.bw"</span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -1145,7 +1161,7 @@ multiple tracks with individual samples overlaid.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">samples</span><span class="op">$</span><span class="va">treatment</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>We can also include cytogenetic bands for these coverage plots, some
 of which are provided with <code>extraChIPs</code>.</p>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"grch37.cytobands"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">grch37.cytobands</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##   chrom chromStart chromEnd   name gieStain</span></span>
@@ -1157,7 +1173,7 @@ of which are provided with <code>extraChIPs</code>.</p>
 <span><span class="co">## 6  chr1   12700000 16200000 p36.21   gpos50</span></span></code></pre>
 <p>Let’s check the coverage across the most highly-ranked region with
 default settings.</p>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">tmm_results</span>, <span class="va">hmp_fdr</span> <span class="op">&lt;</span> <span class="fl">0.05</span>, <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">bestOverlap</span>, <span class="st">'^Prom'</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span></code></pre></div>
 <p>The most important option to consider when showing coverage is
 whether to display tracks individually or as overlapping tracks. Passing
@@ -1168,12 +1184,12 @@ objects, each list element will be drawn as a single track with coverage
 overlaid. For one or more overlaid tracks, colours will need to now be
 provided in a list with matching structure.</p>
 <p>The code for separate tracks would be: (not shown)</p>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotHFGC.html">plotHFGC</a></span><span class="op">(</span><span class="va">gr</span>, cytobands <span class="op">=</span> <span class="va">grch37.cytobands</span>, coverage <span class="op">=</span> <span class="va">bwfl</span><span class="op">)</span></span></code></pre></div>
 <p>Overlaying coverage onto a single track can instead be highly
 informative and enables the visualisation of multiple ChIP targets.
 (Plot not shown in vignette)</p>
-<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cov_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>H3K27ac <span class="op">=</span> <span class="va">bwfl</span><span class="op">)</span></span>
 <span><span class="va">cov_colour</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>H3K27ac <span class="op">=</span> <span class="va">treat_colours</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">samples</span><span class="op">$</span><span class="va">treatment</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plotHFGC.html">plotHFGC</a></span><span class="op">(</span></span>
@@ -1201,7 +1217,7 @@ assigned different colours. Annotation tracks should be passed to
 so here if we pass the annotations as a list with the single element
 <code>H3K27ac</code> these annotations will be added directly above the
 coverage track for H3K27ac signal.</p>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cov_annot</span> <span class="op">&lt;-</span> <span class="fu">splitAsList</span><span class="op">(</span><span class="va">tmm_results</span>, <span class="va">tmm_results</span><span class="op">$</span><span class="va">status</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu">endoapply</span><span class="op">(</span><span class="va">granges</span><span class="op">)</span> </span>
 <span><span class="va">cov_annot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>H3K27ac <span class="op">=</span> <span class="va">cov_annot</span><span class="op">)</span></span></code></pre></div>
@@ -1214,7 +1230,7 @@ context. We’ll use the exons element of our <code>gencode</code> object
 to create the format used by the defaults of the
 <code>GeneRegionTrack()</code> function, with all exons and transcripts
 annotated.</p>
-<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gene_models</span> <span class="op">&lt;-</span> <span class="va">gencode</span><span class="op">$</span><span class="va">exon</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span></span>
 <span>    <span class="va">type</span>, gene <span class="op">=</span> <span class="va">gene_id</span>, exon <span class="op">=</span> <span class="va">exon_id</span>, transcript <span class="op">=</span> <span class="va">transcript_id</span>, </span>
@@ -1236,7 +1252,7 @@ to be responding to DHT treatment for <em>KAT6B</em> with a possible
 intronic enhancer and alternative promoter being most likely impacted,
 including the neighbouring region to our initial range. In contrast, the
 primary promoter appears unaffected by DHT treatment.</p>
-<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">region_colours</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">regions</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plotHFGC.html">plotHFGC</a></span><span class="op">(</span></span>
 <span>  <span class="va">gr</span>, cytobands <span class="op">=</span> <span class="va">grch37.cytobands</span>, </span>
@@ -1247,10 +1263,14 @@ primary promoter appears unaffected by DHT treatment.</p>
 <span>  rotation.title <span class="op">=</span> <span class="fl">90</span>, covsize <span class="op">=</span> <span class="fl">10</span>, genesize <span class="op">=</span> <span class="fl">1</span>, featsize <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  annotation <span class="op">=</span> <span class="va">cov_annot</span>, annotcol <span class="op">=</span> <span class="va">status_colours</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Unchanged"</span>, <span class="st">"Increased"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<figure><img src="differential_signal_sliding_files/figure-gfm/plot-hfgc-with-annot-1.png" alt="The addition of an annotation track for the coverage tracks shows which regions were retained during the analysis, as well as those which were considered as showing changed or unchanged signal."><figcaption aria-hidden="true"><em>The addition of an annotation track for the coverage tracks shows
-which regions were retained during the analysis, as well as those which
-were considered as showing changed or unchanged signal.</em>
-</figcaption></figure><p>Plots are able to be tweaked considerably further via multiple
+<div class="figure">
+<img src="differential_signal_sliding_files/figure-gfm/plot-hfgc-with-annot-1.png" alt="The addition of an annotation track for the coverage tracks shows which regions were retained during the analysis, as well as those which were considered as showing changed or unchanged signal" width="384"><p class="caption">
+The addition of an annotation track for the coverage tracks shows which
+regions were retained during the analysis, as well as those which were
+considered as showing changed or unchanged signal
+</p>
+</div>
+<p>Plots are able to be tweaked considerably further via multiple
 parameters, however these basic approaches cover the core functionality
 of <code><a href="../reference/plotHFGC.html">plotHFGC()</a></code> for enabling simple &amp; reproducible
 plotting across regions for multiple sites within a larger
@@ -1264,7 +1284,7 @@ the HFGC components.</p>
 <div class="section level2">
 <h2 id="session-info">Session Info<a class="anchor" aria-label="anchor" href="#session-info"></a>
 </h2>
-<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## R version 4.3.0 (2023-04-21)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
@@ -1296,7 +1316,7 @@ the HFGC components.</p>
 <span><span class="co">##  [7] mclust_6.0.0                quantro_1.34.0             </span></span>
 <span><span class="co">##  [9] magrittr_2.0.3              here_1.0.1                 </span></span>
 <span><span class="co">## [11] glue_1.6.2                  scales_1.2.1               </span></span>
-<span><span class="co">## [13] plyranges_1.20.0            extraChIPs_1.5.3           </span></span>
+<span><span class="co">## [13] plyranges_1.20.0            extraChIPs_1.5.4           </span></span>
 <span><span class="co">## [15] patchwork_1.1.2             edgeR_3.42.4               </span></span>
 <span><span class="co">## [17] limma_3.56.2                rtracklayer_1.60.0         </span></span>
 <span><span class="co">## [19] BiocParallel_1.34.2         csaw_1.34.0                </span></span>
@@ -1304,7 +1324,7 @@ the HFGC components.</p>
 <span><span class="co">## [23] MatrixGenerics_1.12.2       matrixStats_1.0.0          </span></span>
 <span><span class="co">## [25] Rsamtools_2.16.0            Biostrings_2.68.1          </span></span>
 <span><span class="co">## [27] XVector_0.40.0              GenomicRanges_1.52.0       </span></span>
-<span><span class="co">## [29] GenomeInfoDb_1.36.0         IRanges_2.34.0             </span></span>
+<span><span class="co">## [29] GenomeInfoDb_1.36.1         IRanges_2.34.1             </span></span>
 <span><span class="co">## [31] S4Vectors_0.38.1            BiocGenerics_0.46.0        </span></span>
 <span><span class="co">## [33] lubridate_1.9.2             forcats_1.0.0              </span></span>
 <span><span class="co">## [35] stringr_1.5.0               dplyr_1.1.2                </span></span>
@@ -1341,7 +1361,7 @@ the HFGC components.</p>
 <span><span class="co">##  [49] BiocFileCache_2.8.0        grid_4.3.0                </span></span>
 <span><span class="co">##  [51] blob_1.2.4                 crayon_1.5.2              </span></span>
 <span><span class="co">##  [53] lattice_0.21-8             ComplexUpset_1.3.3        </span></span>
-<span><span class="co">##  [55] GenomicFeatures_1.52.0     annotate_1.78.0           </span></span>
+<span><span class="co">##  [55] GenomicFeatures_1.52.1     annotate_1.78.0           </span></span>
 <span><span class="co">##  [57] KEGGREST_1.40.0            pillar_1.9.0              </span></span>
 <span><span class="co">##  [59] knitr_1.43                 ComplexHeatmap_2.16.0     </span></span>
 <span><span class="co">##  [61] beanplot_1.3.1             metapod_1.8.0             </span></span>
@@ -1366,37 +1386,37 @@ the HFGC components.</p>
 <span><span class="co">##  [99] digest_0.6.31              rmarkdown_2.22            </span></span>
 <span><span class="co">## [101] GEOquery_2.68.0            htmltools_0.5.5           </span></span>
 <span><span class="co">## [103] pkgconfig_2.0.3            jpeg_0.1-10               </span></span>
-<span><span class="co">## [105] base64enc_0.1-3            sparseMatrixStats_1.12.0  </span></span>
-<span><span class="co">## [107] dbplyr_2.3.2               fastmap_1.1.1             </span></span>
-<span><span class="co">## [109] ensembldb_2.24.0           rlang_1.1.1               </span></span>
-<span><span class="co">## [111] GlobalOptions_0.1.2        htmlwidgets_1.6.2         </span></span>
-<span><span class="co">## [113] DelayedMatrixStats_1.22.1  EnrichedHeatmap_1.30.0    </span></span>
-<span><span class="co">## [115] farver_2.1.1               jquerylib_0.1.4           </span></span>
-<span><span class="co">## [117] jsonlite_1.8.5             VariantAnnotation_1.46.0  </span></span>
-<span><span class="co">## [119] RCurl_1.98-1.12            Formula_1.2-5             </span></span>
-<span><span class="co">## [121] GenomeInfoDbData_1.2.10    Rhdf5lib_1.22.0           </span></span>
-<span><span class="co">## [123] munsell_0.5.0              Rcpp_1.0.10               </span></span>
-<span><span class="co">## [125] stringi_1.7.12             zlibbioc_1.46.0           </span></span>
-<span><span class="co">## [127] MASS_7.3-60                bumphunter_1.42.0         </span></span>
-<span><span class="co">## [129] plyr_1.8.8                 minfi_1.46.0              </span></span>
-<span><span class="co">## [131] parallel_4.3.0             deldir_1.0-9              </span></span>
-<span><span class="co">## [133] multtest_2.56.0            hms_1.1.3                 </span></span>
-<span><span class="co">## [135] circlize_0.4.15            locfit_1.5-9.8            </span></span>
-<span><span class="co">## [137] igraph_1.5.0               rngtools_1.5.2            </span></span>
-<span><span class="co">## [139] biomaRt_2.56.1             futile.options_1.0.1      </span></span>
-<span><span class="co">## [141] XML_3.99-0.14              evaluate_0.21             </span></span>
-<span><span class="co">## [143] latticeExtra_0.6-30        biovizBase_1.48.0         </span></span>
-<span><span class="co">## [145] lambda.r_1.2.4             BiocManager_1.30.21       </span></span>
-<span><span class="co">## [147] tzdb_0.4.0                 foreach_1.5.2             </span></span>
-<span><span class="co">## [149] tweenr_2.0.2               MatrixModels_0.5-1        </span></span>
-<span><span class="co">## [151] openssl_2.0.6              polyclip_1.10-4           </span></span>
-<span><span class="co">## [153] reshape_0.8.9              clue_0.3-64               </span></span>
-<span><span class="co">## [155] ggforce_0.4.1              xtable_1.8-4              </span></span>
-<span><span class="co">## [157] broom_1.0.5                restfulr_0.0.15           </span></span>
-<span><span class="co">## [159] AnnotationFilter_1.24.0    ragg_1.2.5                </span></span>
-<span><span class="co">## [161] memoise_2.0.1              AnnotationDbi_1.62.1      </span></span>
-<span><span class="co">## [163] GenomicAlignments_1.36.0   cluster_2.1.4             </span></span>
-<span><span class="co">## [165] timechange_0.2.0</span></span></code></pre>
+<span><span class="co">## [105] base64enc_0.1-3            sparseMatrixStats_1.12.1  </span></span>
+<span><span class="co">## [107] highr_0.10                 dbplyr_2.3.2              </span></span>
+<span><span class="co">## [109] fastmap_1.1.1              ensembldb_2.24.0          </span></span>
+<span><span class="co">## [111] rlang_1.1.1                GlobalOptions_0.1.2       </span></span>
+<span><span class="co">## [113] htmlwidgets_1.6.2          DelayedMatrixStats_1.22.1 </span></span>
+<span><span class="co">## [115] EnrichedHeatmap_1.30.0     farver_2.1.1              </span></span>
+<span><span class="co">## [117] jquerylib_0.1.4            jsonlite_1.8.5            </span></span>
+<span><span class="co">## [119] VariantAnnotation_1.46.0   RCurl_1.98-1.12           </span></span>
+<span><span class="co">## [121] Formula_1.2-5              GenomeInfoDbData_1.2.10   </span></span>
+<span><span class="co">## [123] Rhdf5lib_1.22.0            munsell_0.5.0             </span></span>
+<span><span class="co">## [125] Rcpp_1.0.10                stringi_1.7.12            </span></span>
+<span><span class="co">## [127] zlibbioc_1.46.0            MASS_7.3-60               </span></span>
+<span><span class="co">## [129] bumphunter_1.42.0          plyr_1.8.8                </span></span>
+<span><span class="co">## [131] minfi_1.46.0               parallel_4.3.0            </span></span>
+<span><span class="co">## [133] deldir_1.0-9               multtest_2.56.0           </span></span>
+<span><span class="co">## [135] hms_1.1.3                  circlize_0.4.15           </span></span>
+<span><span class="co">## [137] locfit_1.5-9.8             igraph_1.5.0              </span></span>
+<span><span class="co">## [139] rngtools_1.5.2             biomaRt_2.56.1            </span></span>
+<span><span class="co">## [141] futile.options_1.0.1       XML_3.99-0.14             </span></span>
+<span><span class="co">## [143] evaluate_0.21              latticeExtra_0.6-30       </span></span>
+<span><span class="co">## [145] biovizBase_1.48.0          lambda.r_1.2.4            </span></span>
+<span><span class="co">## [147] BiocManager_1.30.21        tzdb_0.4.0                </span></span>
+<span><span class="co">## [149] foreach_1.5.2              tweenr_2.0.2              </span></span>
+<span><span class="co">## [151] MatrixModels_0.5-1         openssl_2.0.6             </span></span>
+<span><span class="co">## [153] polyclip_1.10-4            reshape_0.8.9             </span></span>
+<span><span class="co">## [155] clue_0.3-64                ggforce_0.4.1             </span></span>
+<span><span class="co">## [157] xtable_1.8-4               broom_1.0.5               </span></span>
+<span><span class="co">## [159] restfulr_0.0.15            AnnotationFilter_1.24.0   </span></span>
+<span><span class="co">## [161] ragg_1.2.5                 memoise_2.0.1             </span></span>
+<span><span class="co">## [163] AnnotationDbi_1.62.1       GenomicAlignments_1.36.0  </span></span>
+<span><span class="co">## [165] cluster_2.1.4              timechange_0.2.0</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

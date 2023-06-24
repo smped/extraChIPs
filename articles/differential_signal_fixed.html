@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.4</span>
       </span>
     </div>
 
@@ -104,7 +104,7 @@ University<br><a class="author_email" href="mailto:#"></a><a href="mailto:stephe
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/knitr/man/opts_chunk.html" class="external-link">opts_chunk</a></span><span class="op">$</span><span class="fu">set</span><span class="op">(</span>message <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/knitr/man/opts_chunk.html" class="external-link">opts_chunk</a></span><span class="op">$</span><span class="fu">set</span><span class="op">(</span>message <span class="op">=</span> <span class="cn">FALSE</span>, crop <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -202,17 +202,19 @@ good habit to develop.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">pull</span>, <span class="st">"accession"</span><span class="op">)</span></span></code></pre></div>
 <p>We’ll eventually be loading counts for differential signal analysis
 from a set of BamFiles, so first we’ll create a <code>BamFileList</code>
-with all of these files. This also enables creation of a
-<code>Seqinfo</code> object based on the actual reference genome to
-which the reads were aligned during data preparation.
-<code>Seqinfo</code> objects are the foundation of working with GRanges,
-so defining an object at the start of a workflow is good practice.</p>
+with all of these files.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bfl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"ER"</span>, <span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"{samples$accession}.bam"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/Rsamtools/man/BamFile-class.html" class="external-link">BamFileList</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html" class="external-link">str_remove_all</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>, <span class="st">".bam"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/path.html" class="external-link">path</a></span><span class="op">(</span><span class="va">bfl</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] TRUE TRUE TRUE TRUE TRUE TRUE</span></span></code></pre>
+<p>This also enables creation of a <code>Seqinfo</code> object based on
+the actual reference genome to which the reads were aligned during data
+preparation. <code>Seqinfo</code> objects are the foundation of working
+with GRanges, so defining an object at the start of a workflow is good
+practice. As is common practice for ChIP-Seq analyses, we’ll restrict
+our focus to the standard chromosomes.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqinfo</a></span><span class="op">(</span><span class="va">bfl</span><span class="op">)</span></span>
 <span><span class="va">sq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqlevels-wrappers.html" class="external-link">keepStandardChromosomes</a></span><span class="op">(</span><span class="va">sq</span><span class="op">)</span></span>
@@ -239,7 +241,9 @@ this is included in the previously provided repository (<a href="https://github.
 <code>narrowPeak</code> format, and these are able to be easily parsed
 using <code>extraChIPs</code>. We’ll immediately pass our black &amp;
 grey-listed regions to our parsing function so we can exclude these
-regions right from the start</p>
+regions right from the start. By passing the above seqinfo object to
+this function, we’re also telling <code><a href="../reference/importPeaks.html">importPeaks()</a></code> to ignore
+any peaks not on the included chromosomes.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"ER"</span>, <span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"{samples$accession}_peaks.narrowPeak"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/importPeaks.html">importPeaks</a></span><span class="op">(</span>seqinfo <span class="op">=</span> <span class="va">sq</span>, blacklist <span class="op">=</span> <span class="va">omit_ranges</span><span class="op">)</span></span></code></pre></div>
@@ -257,11 +261,6 @@ by default.</p>
 <span>  <span class="va">peaks</span>, min_size <span class="op">=</span> <span class="fl">10</span>, .sort_sets <span class="op">=</span> <span class="cn">FALSE</span>, </span>
 <span>  set_col <span class="op">=</span> <span class="va">treat_colours</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">samples</span><span class="op">$</span><span class="va">treatment</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="differential_signal_fixed_files/figure-html/plot-overlaps-1.png" alt="*UpSet plot showing overlapping peaks across all replicates*" width="700"><p class="caption">
-<em>UpSet plot showing overlapping peaks across all replicates</em>
-</p>
-</div>
 <p>Optionally, specifying a column and a suitable function will produce
 an additional panel summarising that value. In the following, we’ll show
 the maximum score obtained, highlighting that for peaks identified in
@@ -742,9 +741,6 @@ log-transformation so we’ll set <code>log = FALSE</code> in our call to
 <span>  <span class="fu"><a href="../reference/plotProfileHeatmap-methods.html">plotProfileHeatmap</a></span><span class="op">(</span><span class="st">"profile_data"</span>, facetY <span class="op">=</span> <span class="st">"status"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_gradient.html" class="external-link">scale_fill_gradient</a></span><span class="op">(</span>low <span class="op">=</span> <span class="st">"white"</span>, high <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"Fold\nEnrichment"</span><span class="op">)</span></span></code></pre></div>
-<figure><img src="differential_signal_fixed_files/figure-gfm/fe-profile-heatmaps-1.png" alt="Profile Heatmap showing fold-enrichment over input samples for all sites consiered as showing evidence of differential signal."><figcaption aria-hidden="true"><em>Profile Heatmap showing fold-enrichment over input samples for all
-sites consiered as showing evidence of differential signal.</em>
-</figcaption></figure>
 </div>
 <div class="section level3">
 <h3 id="session-info">Session Info<a class="anchor" aria-label="anchor" href="#session-info"></a>
@@ -778,15 +774,15 @@ sites consiered as showing evidence of differential signal.</em>
 <span><span class="co">##  [1] quantro_1.34.0              here_1.0.1                 </span></span>
 <span><span class="co">##  [3] ggrepel_0.9.3               glue_1.6.2                 </span></span>
 <span><span class="co">##  [5] scales_1.2.1                plyranges_1.20.0           </span></span>
-<span><span class="co">##  [7] extraChIPs_1.5.3            patchwork_1.1.2            </span></span>
+<span><span class="co">##  [7] extraChIPs_1.5.4            patchwork_1.1.2            </span></span>
 <span><span class="co">##  [9] edgeR_3.42.4                limma_3.56.2               </span></span>
 <span><span class="co">## [11] rtracklayer_1.60.0          BiocParallel_1.34.2        </span></span>
 <span><span class="co">## [13] csaw_1.34.0                 SummarizedExperiment_1.30.2</span></span>
 <span><span class="co">## [15] Biobase_2.60.0              MatrixGenerics_1.12.2      </span></span>
 <span><span class="co">## [17] matrixStats_1.0.0           Rsamtools_2.16.0           </span></span>
 <span><span class="co">## [19] Biostrings_2.68.1           XVector_0.40.0             </span></span>
-<span><span class="co">## [21] GenomicRanges_1.52.0        GenomeInfoDb_1.36.0        </span></span>
-<span><span class="co">## [23] IRanges_2.34.0              S4Vectors_0.38.1           </span></span>
+<span><span class="co">## [21] GenomicRanges_1.52.0        GenomeInfoDb_1.36.1        </span></span>
+<span><span class="co">## [23] IRanges_2.34.1              S4Vectors_0.38.1           </span></span>
 <span><span class="co">## [25] BiocGenerics_0.46.0         lubridate_1.9.2            </span></span>
 <span><span class="co">## [27] forcats_1.0.0               stringr_1.5.0              </span></span>
 <span><span class="co">## [29] dplyr_1.1.2                 purrr_1.0.1                </span></span>
@@ -823,7 +819,7 @@ sites consiered as showing evidence of differential signal.</em>
 <span><span class="co">##  [51] rhdf5_2.44.0               BiocFileCache_2.8.0       </span></span>
 <span><span class="co">##  [53] grid_4.3.0                 blob_1.2.4                </span></span>
 <span><span class="co">##  [55] crayon_1.5.2               lattice_0.21-8            </span></span>
-<span><span class="co">##  [57] ComplexUpset_1.3.3         GenomicFeatures_1.52.0    </span></span>
+<span><span class="co">##  [57] ComplexUpset_1.3.3         GenomicFeatures_1.52.1    </span></span>
 <span><span class="co">##  [59] annotate_1.78.0            KEGGREST_1.40.0           </span></span>
 <span><span class="co">##  [61] pillar_1.9.0               knitr_1.43                </span></span>
 <span><span class="co">##  [63] ComplexHeatmap_2.16.0      beanplot_1.3.1            </span></span>
@@ -849,7 +845,7 @@ sites consiered as showing evidence of differential signal.</em>
 <span><span class="co">## [103] digest_0.6.31              rmarkdown_2.22            </span></span>
 <span><span class="co">## [105] GEOquery_2.68.0            htmltools_0.5.5           </span></span>
 <span><span class="co">## [107] pkgconfig_2.0.3            jpeg_0.1-10               </span></span>
-<span><span class="co">## [109] base64enc_0.1-3            sparseMatrixStats_1.12.0  </span></span>
+<span><span class="co">## [109] base64enc_0.1-3            sparseMatrixStats_1.12.1  </span></span>
 <span><span class="co">## [111] highr_0.10                 dbplyr_2.3.2              </span></span>
 <span><span class="co">## [113] fastmap_1.1.1              ensembldb_2.24.0          </span></span>
 <span><span class="co">## [115] rlang_1.1.1                GlobalOptions_0.1.2       </span></span>
