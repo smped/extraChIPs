@@ -18,7 +18,7 @@ vignette: >
 ---
 
 ```{r setup}
-knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(message = FALSE, crop = NULL)
 ```
 
 
@@ -49,7 +49,7 @@ installed, the additional packages required for this vignette
 (`tidyverse`, `Rsamtools`, `csaw`, `BiocParallel` and `rtracklayer`) can
 also be installed.
 
-```{r install, eval=FALSE}
+``` r 
 if (!"BiocManager" %in% rownames(installed.packages()))
   install.packages("BiocManager")
 pkg <- c(
@@ -120,13 +120,9 @@ accessions <- samples %>%
 
 We’ll eventually be loading counts for differential signal analysis from
 a set of BamFiles, so first we’ll create a `BamFileList` with all of
-these files. This also enables creation of a `Seqinfo` object based on
-the actual reference genome to which the reads were aligned during data
-preparation. `Seqinfo` objects are the foundation of working with
-GRanges, so defining an object at the start of a workflow is good
-practice.
+these files. 
 
-``` r
+```{r bfl, eval = FALSE}
 bfl <- here("data", "ER", glue("{samples$accession}.bam")) %>% 
   BamFileList() %>% 
   setNames(str_remove_all(names(.), ".bam"))
@@ -135,7 +131,15 @@ file.exists(path(bfl))
 
     ## [1] TRUE TRUE TRUE TRUE TRUE TRUE
 
-``` r
+This also enables creation of a `Seqinfo` object based on
+the actual reference genome to which the reads were aligned during data
+preparation. `Seqinfo` objects are the foundation of working with
+GRanges, so defining an object at the start of a workflow is good
+practice.
+As is common practice for ChIP-Seq analyses, we'll restrict our focus to the 
+standard chromosomes.
+
+```{r sq, eval = FALSE}
 sq <- seqinfo(bfl)
 sq <- keepStandardChromosomes(sq)
 isCircular(sq) <- rep(FALSE, length(seqlevels(sq)))
@@ -152,7 +156,7 @@ detected within the input sample. For our samples code for this is
 included in the previously provided repository
 (<https://github.com/smped/PRJNA509779>).
 
-``` r
+```{r omit-ranges, eval = FALSE}
 greylist <- import.bed(here("data/chr10_greylist.bed"), seqinfo = sq)
 blacklist <- import.bed( here("data/chr10_blacklist.bed"), seqinfo = sq)
 omit_ranges <- c(greylist, blacklist)
@@ -164,16 +168,17 @@ The provided dataset includes six files produced by `macs2 callpeak`
 (Zhang et al. 2008) in the `narrowPeak` format, and these are able to be
 easily parsed using `extraChIPs`. We’ll immediately pass our black &
 grey-listed regions to our parsing function so we can exclude these
-regions right from the start
+regions right from the start. 
+By passing the above seqinfo object to this function, we're also telling 
+`importPeaks()` to ignore any peaks not on the included chromosomes.
 
-``` r
+```{r fake-peaks, eval = FALSE}
 peaks <- here("data", "ER", glue("{samples$accession}_peaks.narrowPeak")) %>% 
   importPeaks(seqinfo = sq, blacklist = omit_ranges)
 ```
 
 ```{r load-peaks, echo = FALSE}
 data("peaks")
-sq <- seqinfo(peaks)
 ```
 
 
@@ -189,7 +194,7 @@ Once loaded, we can easily check how similar our replicates are using
 `plotOverlaps()`. When three or more sets of peaks are contained in the
 `GRangesList`, an UpSet plot will be drawn by default.
 
-```{r plot-overlaps, fig.cap = "*UpSet plot showing overlapping peaks across all replicates*"}
+```{r plot-overlaps, eval = FALSE, fig.cap = "*UpSet plot showing overlapping peaks across all replicates*"}
 plotOverlaps(
   peaks, min_size = 10, .sort_sets = FALSE, 
   set_col = treat_colours[as.character(samples$treatment)]
@@ -299,7 +304,7 @@ mutate, so let’s make sure we know what’s happening.
 This gives a GRanges object with all original information, but with
 centred peaks of a fixed width.
 
-```{r centred-peaks}
+```{r centred-peaks, eval = FALSE}
 w <- 500
 centred_peaks <- union_peaks %>% 
   mutate(
@@ -322,7 +327,7 @@ sophisticated approach to counting.
 data("se")
 ```
 
-``` r
+```{r fake-se, eval = FALSE}
 se <- regionCounts(bfl, centred_peaks, ext = 200)
 ```
 
@@ -451,7 +456,7 @@ peaks to genes, we’ll need to define our genes. In the following, we’ll
 use the provided Gencode gene mappings at the gene, transcript and exon
 level.
 
-``` r
+```{r gencode, eval = FALSE}
 gencode <- here("data/gencode.v43lift37.chr10.annotation.gtf.gz") %>% 
   import.gff() %>% 
   filter_by_overlaps(GRanges("chr10:42354900-100000000")) %>% 
@@ -467,7 +472,7 @@ promoters from our transcript-level information, ensuring we incorporate
 all possible promoters within a gene, and merging any overlapping ranges
 using `reduceMC()`
 
-``` r
+```{r promoters, eval = FALSE}
 promoters <- gencode$transcript %>% 
     select(gene_id, ends_with("name")) %>% 
     promoters(upstream = 2500, downstream = 500) %>% 
@@ -536,7 +541,7 @@ original ‘union_peak’ back as the core of the GRanges object. This will
 retain all the results from testing, but ensures the correct region is
 mapped to genes.
 
-``` r
+```{r tmm-mapped-res, eval = FALSE}
 tmm_mapped_res <- tmm_res %>% 
   colToRanges("union_peak") %>% 
   mapByFeature(genes = gencode$gene, prom = promoters) %>% 
@@ -631,7 +636,7 @@ can use fold-enrichment over the input sample(s), as is also produced by
 log-transformation so we’ll set `log = FALSE` in our call to
 `getProfileData()`
 
-``` r
+```{r profile-heatmap, eval = FALSE}
 fe_bw <- here("data", "ER", glue("{treat_levels}_FE_chr10.bw")) %>% 
   BigWigFileList() %>% 
   setNames(treat_levels)
@@ -642,15 +647,6 @@ pd_fe %>%
   scale_fill_gradient(low = "white", high = "red") +
   labs(fill = "Fold\nEnrichment")
 ```
-
-<figure>
-<img
-src="differential_signal_fixed_files/figure-gfm/fe-profile-heatmaps-1.png"
-alt="Profile Heatmap showing fold-enrichment over input samples for all sites consiered as showing evidence of differential signal." />
-<figcaption aria-hidden="true"><em>Profile Heatmap showing
-fold-enrichment over input samples for all sites consiered as showing
-evidence of differential signal.</em></figcaption>
-</figure>
 
 
 ## Session Info
