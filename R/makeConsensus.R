@@ -1,6 +1,6 @@
 #' @title Make a set of consensus peaks
 #'
-#' @description Make a set of consensus peaks based on umber of replicates
+#' @description Make a set of consensus peaks based on the number of replicates
 #'
 #' @details
 #' This takes a list of GRanges objects and forms a set of consensus peaks.

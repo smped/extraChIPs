@@ -22,6 +22,7 @@ Depends:
   R (>= 4.2.0),
   GenomicRanges,
   ggplot2 (>= 3.4.0),
+  ggside (>= 0.2.2),
   SummarizedExperiment,
   tibble
 Imports:
@@ -37,7 +38,6 @@ Imports:
   GenomicInteractions,
   ggforce,
   ggrepel,
-  ggside,
   glue,
   grDevices,
   grid,

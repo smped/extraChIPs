@@ -68,8 +68,8 @@ setGeneric(
 #' @importFrom dplyr group_by summarise
 #' @importFrom methods as
 #' @importFrom rlang sym syms .data '!!!'
-#' @importFrom ggside ggside geom_ysideline
 #' @importFrom forcats fct_inorder
+#' @import ggside
 #' @import ggplot2
 #'
 #' @rdname plotAssayHeatmap-methods

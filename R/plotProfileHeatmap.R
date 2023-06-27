@@ -183,7 +183,7 @@ setMethod(
 #' @param x_lab,y_lab,fill_lab _labels added to x/y-axes & the fill legend
 #' @param ... Passed to facet_grid
 #'
-#' @importFrom ggside geom_xsideline ggside scale_xsidey_continuous
+#' @import ggside
 #' @importFrom dplyr group_by summarise
 #' @importFrom rlang '!!' sym '!!!' syms
 #' @importFrom stats as.formula
