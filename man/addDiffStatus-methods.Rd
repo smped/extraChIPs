@@ -14,7 +14,7 @@ addDiffStatus(x, ...)
 \S4method{addDiffStatus}{data.frame}(
   x,
   fc_col = "logFC",
-  sig_col = c("FDR", "hmp_fdr", "adj.P.Value"),
+  sig_col = c("FDR", "hmp_fdr", "p_fdr", "adj.P.Value"),
   alpha = 0.05,
   cutoff = 0,
   up = "Increased",
