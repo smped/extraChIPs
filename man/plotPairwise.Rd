@@ -101,20 +101,14 @@ set.seed(100)
 gr1 <- GRanges(paste0("chr1:", seq(10, 150, by = 10)))
 width(gr1) <- 5
 gr1$logFC <- rnorm(length(gr1))
-gr1$status <- dplyr::case_when(
-  gr1$logFC > 0.5 ~ "Increased",
-  gr1$logFC < -0.5 ~ "Decreased",
-  TRUE ~ "Unchanged"
-)
+gr1$FDR <- rbeta(length(gr1), 1, 8)
+
 gr2 <-  GRanges(paste0("chr1:", seq(51, 250, by = 15)))
 width(gr2) <- 4
 gr2$logFC <- rnorm(length(gr2))
-gr2$status <- dplyr::case_when(
-  gr2$logFC > 0.5 ~ "Increased",
-  gr2$logFC < -0.5 ~ "Decreased",
-  TRUE ~ "Unchanged"
-)
+gr2$FDR <- rbeta(length(gr2), 1, 8)
 grl <- GRangesList(TF1 = gr1, TF2 = gr2)
+grl <- addDiffStatus(grl)
 
 # Using the defaults
 plotPairwise(grl, var = "logFC")
@@ -126,12 +120,12 @@ plotPairwise(
 
 # Turning off side panels, regression line and correlations
 plotPairwise(
-  grl, var = "logFC", xside = "none", yside = "none", 
+  grl, var = "logFC", xside = "none", yside = "none",
   text_geom = "none", line_col = NULL
 )
 
 # Add colours using the status column
-plotPairwise(grl, var = "logFC", colour = "status") + 
+plotPairwise(grl, var = "logFC", colour = "status") +
   scale_fill_manual(values = rep_len(c("blue", "red", "white", "grey"), 8)) +
   guides(fill = "none")
 

@@ -22,7 +22,7 @@ reference:
     - partitionRanges
     - stitchRanges
 
-- title: Functions For Differential Binding Analysis
+- title: Functions For Differential Signal Analysis
   contents:
     - dualFilter
     - importPeaks
@@ -41,6 +41,7 @@ reference:
   contents:
     - contains("as_tibble")
     - collapseGenes
+    - starts_with("addDiff")
 
 - title: Data Objects
   contents:
