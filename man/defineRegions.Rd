@@ -12,6 +12,7 @@ defineRegions(
   upstream = 5000,
   intron = TRUE,
   proximal = 10000,
+  simplify = FALSE,
   cols = c("gene_id", "gene_name", "transcript_id", "transcript_name"),
   ...
 )
@@ -32,6 +33,8 @@ The first value represents the upstream range}
 \item{proximal}{Distance from a gene to be considered a proximal intergenic
 region. If set to 0, intergenic regions will simply be considered as
 uniformly intergenic}
+
+\item{simplify}{Passed internally to \code{reduceMC} and \code{setdiffMC}}
 
 \item{cols}{Column names to be retained from the supplied annotations}
 
@@ -55,7 +58,7 @@ Body" annotation.
 Setting \code{proximal = 0} will return all intergenic regions (not previously
 annotated as promoters or upstream promoters) to an "Intergenic" category
 
-Notably, once a region has been defined, it is excluded from all subsquent
+Notably, once a region has been defined, it is excluded from all subsequent
 candidate regions.
 
 Any columns matching the names provided in cols will be returned, and it is

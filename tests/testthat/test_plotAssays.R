@@ -6,6 +6,7 @@ se <- SummarizedExperiment(
   assays = SimpleList(counts = counts),
   colData = df
 )
+se$totals <- colSums(counts)
 
 test_that("Assay Density plots behave correctly", {
 
@@ -54,13 +55,14 @@ test_that("show_points behaves as expected", {
   expect_equal(length(p$layers), 0)
 })
 
-test_that("colours are added correctly", {
-  p <- plotAssayPCA(se, colour = "treat")
+test_that("colours/size are added correctly", {
+  p <- plotAssayPCA(se, colour = "treat", size = "totals")
   expect_equal(rlang::as_label(p$mapping$colour), "treat")
   expect_equal(
-    grepl("PC", unlist(p$labels)), c(TRUE, TRUE, FALSE)
+    grepl("PC", unlist(p$labels)), c(TRUE, TRUE, FALSE, FALSE)
   )
   expect_equal(p$labels$colour, sym("treat"))
+  expect_equal(p$labels$size, sym("totals"))
 })
 
 test_that("labels repel correctly", {
@@ -98,7 +100,7 @@ test_that("plotAssayRle errors correctly", {
 test_that("plotAssayRle creates a plot", {
   p <- plotAssayRle(se, "counts", fill = "treat", n_max = 100)
   expect_true(is(p, "gg"))
-  expect_equal(dim(p$data), c(100*ncols, 4))
+  expect_equal(dim(p$data), c(100*ncols, 5))
   expect_equal(
     unlist(p$labels),
     c(x = "Sample", y = "RLE", fill = "treat", colour = "colour")
@@ -110,11 +112,11 @@ test_that("plotAssayRle creates a plot", {
 test_that("plotAssayHeatmap creates a plot", {
 
     p <- plotAssayHeatmap(se[1:10,], trans = "log10")
-    expect_equal(c("index", "colnames", "value", "treat"), colnames(p$data))
-    expect_equal(dim(p$data), c(40, 4))
+    expect_equal(c("index", "colnames", "value", "treat", "totals"), colnames(p$data))
+    expect_equal(dim(p$data), c(40, 5))
     rowRanges(se) <- GRanges(paste0("chr:", seq_len(nrow(se))))
     p <- plotAssayHeatmap(se[1:10,], trans = "log10")
-    expect_equal(c("range", "colnames", "value", "treat"), colnames(p$data))
+    expect_equal(c("range", "colnames", "value", "treat", "totals"), colnames(p$data))
     expect_true(is(p, "gg"))
     p <- plotAssayHeatmap(se[1:10,], trans = "log10", ysideline = TRUE)
     expect_true(is(p, "ggside"))
