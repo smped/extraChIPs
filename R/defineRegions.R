@@ -15,6 +15,7 @@
 #' region. If set to 0, intergenic regions will simply be considered as
 #' uniformly intergenic
 #' @param cols Column names to be retained from the supplied annotations
+#' @param simplify Passed internally to `reduceMC` and `setdiffMC`
 #' @param ... Not used
 #'
 #' @details
@@ -29,7 +30,7 @@
 #' Setting `proximal = 0` will return all intergenic regions (not previously
 #' annotated as promoters or upstream promoters) to an "Intergenic" category
 #'
-#' Notably, once a region has been defined, it is excluded from all subsquent
+#' Notably, once a region has been defined, it is excluded from all subsequent
 #' candidate regions.
 #'
 #' Any columns matching the names provided in cols will be returned, and it is
@@ -75,7 +76,7 @@
 #' @export
 defineRegions <- function(
     genes, transcripts, exons, promoter = c(2500, 500), upstream = 5000,
-    intron = TRUE, proximal = 10000,
+    intron = TRUE, proximal = 10000, simplify = FALSE,
     cols = c("gene_id", "gene_name", "transcript_id", "transcript_name"), ...
 ) {
 
@@ -96,46 +97,49 @@ defineRegions <- function(
   prom <- promoters(transcripts, promoter[1], promoter[2])
   prom$region <- paste0("Promoter (-", promoter[1], "/+", promoter[2], ")")
   mcols(prom) <- mcols(prom)[cols]
-  prom <- reduceMC(prom, ignore.strand = TRUE)
+  prom <- reduceMC(prom, ignore.strand = TRUE, simplify = simplify)
   out <- GRangesList(promoter = prom)
 
   ## Upstream Promoters
   up_prom <- promoters(transcripts, upstream[1], downstream = 0)
   up_prom$region <- paste0("Upstream Promoter (-", upstream / 1e3, "kb)")
   mcols(up_prom) <- mcols(up_prom)[cols]
-  up_prom <- setdiffMC(up_prom, prom, ignore.strand = TRUE)
-  out$upstream_promoter <- reduceMC(up_prom)
+  up_prom <- setdiffMC(up_prom, prom, ignore.strand = TRUE, simplify = simplify)
+  out$upstream_promoter <- reduceMC(up_prom, simplify = simplify)
 
   ## Gene Bodies
   if (intron) {
     ex <- exons
     ex$region <- "Exon"
     mcols(ex) <- mcols(ex)[cols]
-    ex <- setdiffMC(ex, unlist(out), ignore.strand = TRUE)
-    out$exon <- reduceMC(ex)
-    introns <- setdiffMC(genes, unlist(out), ignore.strand = TRUE)
+    ex <- setdiffMC(ex, unlist(out), ignore.strand = TRUE, simplify = simplify)
+    out$exon <- reduceMC(ex, simplify = simplify)
+    introns <- setdiffMC(genes, unlist(out), ignore.strand = TRUE, simplify = simplify)
     introns$region <- "Intron"
     mcols(introns) <- mcols(introns)[cols]
-    out$intron <- reduceMC(introns)
+    out$intron <- reduceMC(introns, simplify = simplify)
   } else {
-    gn <- setdiffMC(genes, unlist(out), ignore.strand = TRUE)
+    gn <- setdiffMC(genes, unlist(out), ignore.strand = TRUE, simplify = simplify)
     gn$region <- "Gene Body"
     mcols(gn) <- mcols(gn)[cols]
-    out$gene_body <- reduceMC(gn)
+    out$gene_body <- reduceMC(gn, simplify = simplify)
   }
 
   if (proximal > 0) {
     ## Only define proximal/distal if proximal > 0
-    prox <- resize(genes, width = width(genes) + 2 * proximal, fix = 'center')
-    prox <- setdiffMC(prox, unlist(out), ignore.strand = TRUE)
+    prox <- suppressWarnings(
+      ## This may give an OOB error
+      resize(genes, width = width(genes) + 2 * proximal, fix = 'center')
+    )
+    prox <- setdiffMC(prox, unlist(out), ignore.strand = TRUE, simplify = simplify)
     prox$region <- paste0("Intergenic (<", proximal / 1e3, "kb)")
     mcols(prox) <- mcols(prox)[cols]
-    out$proximal_intergenic <- reduceMC(prox)
-    distal <- setdiffMC(GRanges(sq), unlist(out))
+    out$proximal_intergenic <- reduceMC(prox, simplify = simplify)
+    distal <- setdiffMC(GRanges(sq), unlist(out), simplify = simplify)
     distal$region <- paste0("Intergenic (>", proximal / 1e3, "kb)")
     out$distal_intergenic <- distal
   } else {
-    inter <- setdiffMC(GRanges(sq), unlist(out))
+    inter <- setdiffMC(GRanges(sq), unlist(out), simplify = simplify)
     inter$region <- "Intergenic"
     out$intergenic <- inter
   }

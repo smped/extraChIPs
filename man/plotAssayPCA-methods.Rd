@@ -12,6 +12,7 @@ plotAssayPCA(x, ...)
   assay = "counts",
   colour = NULL,
   shape = NULL,
+  size = NULL,
   label = NULL,
   show_points = TRUE,
   pc_x = 1,
@@ -32,7 +33,8 @@ plotAssayPCA(x, ...)
 
 \item{colour}{The column name to be used for colours}
 
-\item{shape}{The column name to be used for determining the shape of points}
+\item{shape, size}{The column name(s) to be used for determining the shape
+or size of points}
 
 \item{label}{The column name to be used for labels}
 

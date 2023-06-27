@@ -13,7 +13,8 @@
 #' @param x An object containing an assay slot
 #' @param assay The assay to perform PCA on
 #' @param colour The column name to be used for colours
-#' @param shape The column name to be used for determining the shape of points
+#' @param shape,size The column name(s) to be used for determining the shape
+#' or size of points
 #' @param label The column name to be used for labels
 #' @param show_points logical(1). Display the points. If `TRUE` any labels will
 #' repel. If `FALSE`, labels will appear at the exact points
@@ -62,9 +63,9 @@ setMethod(
     "plotAssayPCA",
     signature = signature(x = "SummarizedExperiment"),
     function(
-        x, assay = "counts", colour = NULL, shape = NULL, label = NULL,
-        show_points = TRUE, pc_x = 1, pc_y = 2, trans = NULL, n_max = Inf,
-        tol = sqrt(.Machine$double.eps), rank = NULL, ...
+        x, assay = "counts", colour = NULL, shape = NULL, size = NULL,
+        label = NULL, show_points = TRUE, pc_x = 1, pc_y = 2, trans = NULL,
+        n_max = Inf, tol = sqrt(.Machine$double.eps), rank = NULL, ...
     ) {
 
         if (is.null(colnames(x))) colnames(x) <- as.character(seq_len(ncol(x)))
@@ -73,6 +74,7 @@ setMethod(
         df$row <- rownames(df) ## To match tidy(pca) later
         if (!is.null(colour)) colour <- sym(match.arg(colour, args))
         if (!is.null(shape)) shape <- sym(match.arg(shape, args))
+        if (!is.null(size)) size <- sym(match.arg(size, args))
         if (!is.null(label)) label <- sym(match.arg(label, args))
         stopifnot(is.logical(show_points))
 
@@ -121,7 +123,8 @@ setMethod(
         y <- sym(paste0("PC", pc_y))
 
         plot_aes <- aes(
-            x = {{ x }}, y = {{ y }}, colour = {{ colour }}, shape = {{ shape }}
+            x = {{ x }}, y = {{ y }}, colour = {{ colour }},
+            shape = {{ shape }}, size = {{ size }}
         )
         p <- ggplot(pca_df, plot_aes)
         if (show_points) p <- p + geom_point()
@@ -134,6 +137,8 @@ setMethod(
                 )
         }
 
-        p + labs(x = labs$x, y = labs$y, shape = shape, colour = colour)
+        p +  labs(
+            x = labs$x, y = labs$y, shape = shape, colour = colour, size = size
+        )
     }
 )

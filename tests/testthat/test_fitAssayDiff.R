@@ -10,6 +10,11 @@ se <- SummarizedExperiment(
 )
 X <- model.matrix(~treat, colData(se))
 assay(se, "logCPM") <- edgeR::cpm(counts, log = TRUE, prior.count = 0)
+## Test the handling of GRanges columns during parsing
+gr <- paste0("chr1:", seq(1, nrow(se)))
+sq <- Seqinfo(seqnames = "chr1", seqlengths = nrow(se), genome = "test")
+rowRanges(se) <- GRanges(gr, seqinfo = sq)
+rowRanges(se)$range <- GRanges(gr, seqinfo = sq)
 
 test_that("Incorrect assay types error correctly", {
 
@@ -26,20 +31,25 @@ test_that("Results appear correct", {
         fitAssayDiff(se, design = X, fc = 1.2)
     )
     row_data <- rowData(new_se)
-    expect_equal(colnames(row_data), c("logFC", "logCPM", "PValue", "FDR"))
+    cols <- c("range", "logFC", "logCPM", "PValue", "FDR")
+    expect_equal(colnames(row_data), cols)
+    expect_equal(sq, seqinfo(row_data$range))
     new_se <- suppressMessages(
         fitAssayDiff(se, design = X, lib.size = NULL, fc = 1)
     )
     row_data <- rowData(new_se)
-    expect_equal(colnames(row_data), c("logFC", "logCPM", "F", "PValue", "FDR"))
+    cols <- c("range", "logFC", "logCPM", "F", "PValue", "FDR")
+    expect_equal(colnames(row_data), cols)
     # Limma Fits
     new_se <- fitAssayDiff(se, assay = "logCPM", method = "lt", design = X)
     row_data <- rowData(new_se)
-    expect_equal(colnames(row_data), c("logFC", "logCPM", "t", "PValue", "FDR"))
+    cols <- c("range", "logFC", "logCPM", "t", "PValue", "FDR")
+    expect_equal(colnames(row_data), cols)
 
 })
 
 test_that("setting asRanges = TRUE works", {
+    rowRanges(se) <- NULL
     expect_warning(fitAssayDiff(se, design = X, asRanges = TRUE))
     rowRanges(se) <- GRanges(paste("chr1:", seq_len(nrows)))
     gr <- fitAssayDiff(se, design = X, asRanges = TRUE)

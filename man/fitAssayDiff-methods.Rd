@@ -20,6 +20,7 @@ fitAssayDiff(x, ...)
   lfc = log2(fc),
   asRanges = FALSE,
   offset = NULL,
+  null = c("interval", "worst.case"),
   ...
 )
 }
@@ -64,6 +65,8 @@ this element}
 
 \item{offset}{If provided will be used as the offset when the DGEList object
 is created during model fitting}
+
+\item{null}{Passed to \link[edgeR]{glmTreat}}
 }
 \value{
 A SummarizedExperiment object with results set as the \code{rowData} element.

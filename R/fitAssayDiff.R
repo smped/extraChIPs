@@ -62,6 +62,7 @@
 #' this element
 #' @param offset If provided will be used as the offset when the DGEList object
 #' is created during model fitting
+#' @param null Passed to \link[edgeR]{glmTreat}
 #' @param ... Passed to \link[edgeR]{calcNormFactors}, \link[edgeR]{estimateDisp}
 #' and \link[edgeR]{glmQLFit} when method = "qlf".
 #' If method = "lt", instead passed to \link[limma]{lmFit}, \link[limma]{treat},
@@ -102,7 +103,7 @@ setMethod(
         lib.size = "totals", method = c("qlf", "lt"),
         norm = c("none", "TMM", "RLE", "TMMwsp", "upperquartile"),
         groups = NULL, fc = 1, lfc = log2(fc), asRanges = FALSE,
-        offset = NULL, ...
+        offset = NULL, null = c("interval", "worst.case"), ...
     ) {
         method <- match.arg(method)
         norm <- match.arg(norm)
@@ -123,7 +124,8 @@ setMethod(
             if (lfc == 0) {
                 fit <- glmQLFTest(fit, coef = coef)
             } else {
-                fit <- glmTreat(fit, coef, lfc = lfc)
+                null <- match.arg(null)
+                fit <- glmTreat(fit, coef, lfc = lfc, null = null)
             }
             res <- topTags(
                 fit, n = nrow(x), adjust.method = "none", sort.by = "none"
@@ -151,8 +153,18 @@ setMethod(
         }
         res[["FDR"]] <- p.adjust(res[["PValue"]], "fdr")
         keep_cols <- setdiff(colnames(rowData(x)), colnames(res))
+        any_gr <- vapply(
+            keep_cols, function(i) is(rowData(x)[[i]], "GRanges"), logical(1)
+        )
+        gr_cols <- keep_cols[any_gr]
         orig <- as_tibble(rowData(x))[,keep_cols]
         rowData(x) <- cbind(orig, res)
+        if (any(any_gr) & is(x, "RangedSummarizedExperiment")) {
+            sq <- seqinfo(x)
+            rowData(x)[gr_cols] <- lapply(
+                rowData(x)[gr_cols], GRanges, seqinfo = sq
+            )
+        }
         if (asRanges) {
             if (is.null(rowRanges(x))) {
                 warning(
