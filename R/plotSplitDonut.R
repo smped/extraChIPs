@@ -81,7 +81,7 @@
 #' and outer ring will require matches in both categories
 #' @param explode_x,explode_y Numeric values for shifting exploded values
 #' @param explode_r Radius expansion for exploded values
-#' @param nudge_r Radius expansion for labels in the outer ring
+#' @param nudge_r,inner_nudge_r,outer_nudge_r Radius expansion for labels
 #' @param expand Passed to \link[ggplot2]{expansion} for both x and y axes
 #' @param inner_palette Colour palette for the inner ring
 #' @param outer_palette Optional colour palette for the outer ring
@@ -173,7 +173,8 @@ setMethod(
         max_p = 1, inner_max_p = NULL, outer_max_p = NULL,
         explode_inner = NULL, explode_outer = NULL,
         explode_query = c("AND", "OR"), explode_x = 0, explode_y = 0,
-        explode_r = 0, nudge_r = 0.5,
+        explode_r = 0,
+        nudge_r = 0.5, inner_nudge_r = NULL, outer_nudge_r = NULL,
         expand = 0.1, inner_palette = NULL, outer_palette = NULL,
         inner_legend = TRUE, outer_legend = TRUE,
         layout = c(main = area(1, 1, 6, 6), lg1 = area(2, 7), lg2 = area(4, 7)),
@@ -204,6 +205,8 @@ setMethod(
         if (is.null(outer_label_size)) outer_label_size <- label_size
         if (is.null(inner_label_colour)) inner_label_colour <- label_colour
         if (is.null(outer_label_colour)) outer_label_colour <- label_colour
+        if (is.null(inner_nudge_r)) inner_nudge_r <- nudge_r
+        if (is.null(outer_nudge_r)) outer_nudge_r <- nudge_r
 
         summ_df <- group_by(object, !!!syms(c(inner, outer)))
         if (is.null(scale_by)) {
@@ -363,8 +366,9 @@ setMethod(
             if (inner_label_colour != "palette") {
                 p <- p + lab_fun(
                     aes(
-                        x = sin(mid) * (x + 0.5 * r_inner) + x0,
-                        y = cos(mid) * (x + 0.5 * r_inner) + y0, label = lab
+                        x = sin(mid) * (x + inner_nudge_r * r_inner) + x0,
+                        y = cos(mid) * (x + inner_nudge_r * r_inner) + y0,
+                        label = lab
                     ),
                     data = dplyr::filter(
                         plot_df, ring == "inner",
@@ -376,8 +380,8 @@ setMethod(
             } else {
                 p <- p + lab_fun(
                     aes(
-                        x = sin(mid) * (x + 0.5 * r_inner) + x0,
-                        y = cos(mid) * (x + 0.5 * r_inner) + y0,
+                        x = sin(mid) * (x + inner_nudge_r * r_inner) + x0,
+                        y = cos(mid) * (x + inner_nudge_r * r_inner) + y0,
                         colour = colour, label = lab
                     ),
                     data = dplyr::filter(
@@ -394,8 +398,8 @@ setMethod(
             if (outer_label_colour != "palette") {
                 p <- p + lab_fun(
                     aes(
-                        x = sin(mid) * (x1 + nudge_r) + x0 ,
-                        y = cos(mid) * (x1 + nudge_r) + y0, label = lab
+                        x = sin(mid) * (x1 + outer_nudge_r) + x0 ,
+                        y = cos(mid) * (x1 + outer_nudge_r) + y0, label = lab
                     ),
                     data = dplyr::filter(
                         plot_df, ring == "outer",
@@ -407,8 +411,8 @@ setMethod(
             } else {
                 p <- p + lab_fun(
                     aes(
-                        x = sin(mid) * (x1 + nudge_r) + x0 ,
-                        y = cos(mid) * (x1 + nudge_r) + y0,
+                        x = sin(mid) * (x1 + outer_nudge_r) + x0 ,
+                        y = cos(mid) * (x1 + outer_nudge_r) + y0,
                         colour = colour, label = lab
                     ),
                     data = dplyr::filter(
