@@ -44,7 +44,7 @@ returned as CompressedList objects as produced by \code{reduceMC()} or
 \code{intersectMC()}.
 }
 \description{
-Make a set of consensus peaks based on umber of replicates
+Make a set of consensus peaks based on the number of replicates
 }
 \details{
 This takes a list of GRanges objects and forms a set of consensus peaks.

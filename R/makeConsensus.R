@@ -1,6 +1,6 @@
 #' @title Make a set of consensus peaks
 #'
-#' @description Make a set of consensus peaks based on umber of replicates
+#' @description Make a set of consensus peaks based on the number of replicates
 #'
 #' @details
 #' This takes a list of GRanges objects and forms a set of consensus peaks.
@@ -58,7 +58,7 @@
 #' @importFrom S4Vectors "mcols<-" subset mcols endoapply
 #' @importFrom methods is
 #' @export
-makeConsensus <-function(
+makeConsensus <- function(
         x, p = 0, var = NULL, method = c("union", "coverage"),
         ignore.strand = TRUE, simplify = FALSE, min_width = 0, ...
 ) {
