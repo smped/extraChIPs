@@ -55,3 +55,7 @@
 - Included `defineRegions()`
 - Enabled `plotHFCG()` without Ideogram tracks
 - Enabled use of offsets for normalisation in `fitAssayDiff()`
+
+# Changes in 1.5.5 (23-06-28)
+
+- Added `plotPairwise()` and `addDiffStatus()`
