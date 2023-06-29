@@ -41,7 +41,7 @@ setGeneric(
     "plotAssayDensities",
     function(x, ...){standardGeneric("plotAssayDensities")}
 )
-#' @importFrom SummarizedExperiment colData assay
+#' @import SummarizedExperiment
 #' @importFrom stats density
 #' @importFrom tidyr unnest
 #' @importFrom tidyselect everything all_of

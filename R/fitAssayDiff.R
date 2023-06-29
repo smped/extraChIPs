@@ -89,7 +89,7 @@
 setGeneric(
     "fitAssayDiff", function(x, ...){standardGeneric("fitAssayDiff")}
 )
-#' @importFrom SummarizedExperiment colData rowData "rowData<-"
+#' @import SummarizedExperiment
 #' @importFrom edgeR glmTreat topTags glmQLFTest
 #' @importFrom limma eBayes treat topTable topTreat
 #' @importFrom stats model.matrix
@@ -179,7 +179,7 @@ setMethod(
     }
 )
 
-#' @importFrom SummarizedExperiment assay
+#' @import SummarizedExperiment
 #' @importFrom limma lmFit
 .se2LT <- function(x, assay, design, ...){
     ## 1. Create an MArrayM/Elist object
@@ -190,7 +190,7 @@ setMethod(
     lmFit(mat, design = design, ...)
 }
 
-#' @importFrom SummarizedExperiment assay colData
+#' @import SummarizedExperiment
 #' @importFrom edgeR DGEList calcNormFactors estimateDisp glmQLFit
 .se2DGEGLM <- function(x, assay, design, lib.size, norm, groups, offset, ...) {
 

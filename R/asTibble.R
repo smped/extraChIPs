@@ -129,7 +129,7 @@ as_tibble.GInteractions <- function(
 
 }
 #' @importFrom tibble as_tibble
-#' @importFrom SummarizedExperiment rowRanges
+#' @import SummarizedExperiment
 #' @rdname as_tibble
 #' @export
 as_tibble.SummarizedExperiment <- function(

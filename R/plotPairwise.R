@@ -17,6 +17,16 @@
 #' Addition columns, such as Differential Signal status can also be used to
 #' form pairwise groups and colour the points.
 #'
+#' If a column in the GRangesList is suitable for labelling points, such as a
+#' column with genes mapped to each range, this can be specified using the
+#' argument `label = "col_to_label"`.
+#' Only the furthest point from the origin will be labelled within each group
+#' used to colour the points.
+#' Labels will only be added if they lie beyond a circle of radius `min_d` from
+#' the origin.
+#' If multiple genes are mapped to the range, these will be separated by the
+#' string provided in the `label_sep` argument.
+#'
 #' A regression line and correlation co-efficient are added to the plot by
 #' default, but can be hidden easily if preferred
 #'
@@ -25,20 +35,29 @@
 #' @param index Which list elements to compare
 #' @param colour Optional column to use for combining across elements and
 #' setting point colour
+#' @param label Optional column to use for labelling ranges with the most
+#' extreme changes
 #' @param xside,yside Will call geom_(x/y)side* from the package ggside and
-#' show additional panels on the right and top of the plot
-#' @param side_width Set the relative widths of the side panels
+#' show additional panels on the top and right of the plot respectively
+#' @param side_panel_width Set the relative widths of the side panels
 #' @param side_alpha Set the transparency of any side_(x/y) panels
-#' @param xside_label_pos Position for axis_labels in the top panel when using
+#' @param xside_axis_pos Position for axis_labels in the top panel when using
 #' a discrete axis
-#' @param yside_label_wrap Wrapping for axis labels on the right-side panel when
+#' @param yside_axis_label Wrapping for axis labels on the right-side panel when
 #' using a discrete axis. Set to waiver() to turn off wrapping
 #' @param line_col,line_type,line_width Parameters for adding a regression line
 #' through the points. Set linecol to either `NULL` or `NA` to hide this line
-#' @param text_geom Used to add correlation coefficients for the two values
-#' @param text_pos Place the correlation coefficient within the plotting region
-#' @param text_col,text_size,text_alpha Parameters for displaying the correlation
-#' @param sep Text separator used to separate categories when specifying colour
+#' @param rho_geom Used to add correlation coefficients for the two values
+#' @param rho_pos Place the correlation coefficient within the plotting region
+#' @param rho_col,rho_size,rho_alpha Parameters for displaying the correlation
+#' @param label_geom Used to add labels from the column specified in label
+#' @param label_width Label text will be truncated to this length
+#' @param label_sep If multiple values (e.g. genes) are mapped to a range,
+#' separate values using this string
+#' @param label_size,label_alpha Passed to the geom used for adding labels
+#' @param min_d Labels will only be added if the points lie circle beyond a
+#' sircle of this radius
+#' @param group_sep Text separator used to separate categories when specifying colour
 #' @param simplify_equal logical(1) When combining columns from both elements
 #' for the colour categories, should shared values be annotated as 'Both ...'
 #' instead of having longer, more difficult to read annotations.
@@ -46,7 +65,7 @@
 #' current R session via get_theme()
 #' @param ... Passed to `geom_point()` for the main panel
 #'
-#' @return A `ggplot2` object
+#' @return A `ggside` or `ggplot2` object
 #'
 #' @examples
 #' theme_set(theme_bw())
@@ -74,7 +93,7 @@
 #' # Turning off side panels, regression line and correlations
 #' plotPairwise(
 #'   grl, var = "logFC", xside = "none", yside = "none",
-#'   text_geom = "none", line_col = NULL
+#'   rho_geom = "none", line_col = NULL
 #' )
 #'
 #' # Add colours using the status column
@@ -86,16 +105,18 @@
 #' @importFrom rlang '!!' sym
 #' @export
 plotPairwise <- function(
-        x, var, colour = NULL, index = c(1, 2),
+        x, var, colour = NULL, label = NULL, index = c(1, 2),
         xside = c("boxplot", "density", "violin", "none"),
         yside = c("boxplot", "density", "violin", "none"),
-        side_width = c(0.3, 0.4), side_alpha = 1,
-        xside_label_pos = "right", yside_label_wrap = scales::label_wrap(10),
+        side_panel_width = c(0.3, 0.4), side_alpha = 1,
+        xside_axis_pos = "right", yside_axis_label = scales::label_wrap(10),
         line_col = "blue", line_type = 1, line_width = 1,
-        text_geom = c("text", "label", "none"), text_col = "black",
-        text_size = 4, text_pos = c(0.05, 0.95),  text_alpha = 1,
-        sep = " - ", simplify_equal = TRUE, plot_theme = theme_get(),
-        ...
+        rho_geom = c("text", "label", "none"), rho_col = "black",
+        rho_size = 4, rho_pos = c(0.05, 0.95),  rho_alpha = 1,
+        label_geom = c("label_repel", "label", "text_repel", "text", "none"),
+        label_width = 20, label_sep = "; ", label_size = 3.5, label_alpha = 0.7,
+        min_d = 1, group_sep = " - ", simplify_equal = TRUE,
+        plot_theme = theme_get(), ...
 ) {
     ## Basic checks
     stopifnot(is(x, "GRangesList"))
@@ -110,17 +131,22 @@ plotPairwise <- function(
     var <- match.arg(var, mc_names)
     stopifnot(is.numeric(mcols(x[[1]])[[var]]))
     if (!is.null(colour)) colour <- sym(match.arg(colour, mc_names))
+    if (!is.null(label)) label <- sym(match.arg(label, mc_names))
     x_lab <- paste(nm[[1]], var)
     y_lab <- paste(nm[[2]], var)
 
     xside <- match.arg(xside)
     yside <- match.arg(yside)
-    side_width <- rep_len(side_width, 2)
-    text_geom <- match.arg(text_geom)
+    side_panel_width <- rep_len(side_panel_width, 2)
+    rho_geom <- match.arg(rho_geom)
+    label_geom <- match.arg(label_geom)
 
     ol <- .makeOLaps(x, var, x_lab, y_lab) ## The basic df for plotting
-    if (!is.null(colour))
-        ol <- .addColourCol(x, ol, colour, x_lab, y_lab, sep, simplify_equal)
+    if (!is.null(colour)) {
+        ol <- .addColourCol(
+            x, ol, colour, x_lab, y_lab, group_sep, simplify_equal
+        )
+    }
 
     df <- dplyr::filter(ol, !!sym("detected") == "Both Detected")
     p <- ggplot(df, aes(!!sym(x_lab), !!sym(y_lab))) +
@@ -128,17 +154,18 @@ plotPairwise <- function(
         plot_theme
 
     if (xside != "none")
-        p <- .addXSide(p, ol, x, xside, colour, side_alpha, xside_label_pos)
+        p <- .addXSide(p, ol, x, xside, colour, side_alpha, xside_axis_pos)
 
     if (yside != "none")
-        p <- .addYSide(p, ol, x, yside, colour, side_alpha, yside_label_wrap)
+        p <- .addYSide(p, ol, x, yside, colour, side_alpha, yside_axis_label)
 
     if (xside != "none" | yside != "none") {
+        w_x <- side_panel_width[[1]]
+        w_y <- side_panel_width[[2]]
         p <- p + theme(
-            ggside.panel.scale.x = side_width[[1]],
-            ggside.panel.scale.y = side_width[[2]],
-            axis.title.x = element_text(hjust = 0.5 * (1 - side_width[[2]])),
-            axis.title.y = element_text(hjust = 0.5 * (1 - side_width[[1]]))
+            ggside.panel.scale.x = w_x, ggside.panel.scale.y = w_y,
+            axis.title.x = element_text(hjust = 0.5 * (1 - w_y)),
+            axis.title.y = element_text(hjust = 0.5 * (1 - w_x))
         )
     }
     if (!is.null(line_col)) {
@@ -148,30 +175,79 @@ plotPairwise <- function(
                 colour = line_col, linetype = line_type, linewidth = line_width
             )
     }
-    if (text_geom != "none")
+    if (rho_geom != "none")
         p <- .addRho(
-            p, x_lab, y_lab, text_geom, text_pos, text_col, text_size, text_alpha
+            p, ol[[x_lab]], ol[[y_lab]], rho_geom, rho_pos, rho_col, rho_size,
+            rho_alpha
         )
+    if (!is.null(label) & label_geom != "none") {
+        p <- .addLabels(
+            x, p, ol, label, colour, x_lab, y_lab, min_d, label_alpha,
+            label_size, label_sep, label_geom, label_width
+        )
+    }
     p + labs(fill = c())
+
+}
+
+#' @importFrom dplyr bind_rows
+#' @importFrom S4Vectors mcols
+#' @importFrom stringr str_trunc
+#' @importFrom ggrepel geom_text_repel geom_label_repel
+#' @importFrom rlang '!!'
+#' @keywords internal
+.addLabels <- function(
+        x, p, ol, label, colour, x_lab, y_lab, min_d, .alpha, .size, .sep, .geom,
+        .width
+) {
+    d <- c() # R CMD check
+    grp_col <- "detected"
+    if (!is.null(colour)) grp_col <- as.character(colour)
+    nm <- names(x)
+    ol$d <- ol[[x_lab]]^2 + ol[[y_lab]]^2
+    split_ol <- split(ol, f = ol[[as.character(grp_col)]])
+    split_ol <- lapply(split_ol, dplyr::filter, d == max(d), d > min_d^2)
+    split_ol <- split_ol[vapply(split_ol, nrow, integer(1)) == 1]
+    ## Now there should be a list of single-row tibbles without NA values
+    split_ol <- lapply(
+        split_ol,
+        function(df) {
+            ind <- unlist(df[nm])
+            lb <- c(
+                unlist(mcols(x[[1]])[[as.character(label)]][ind[[1]]]),
+                unlist(mcols(x[[2]])[[as.character(label)]][ind[[2]]])
+            )
+            lb <- paste(unique(lb), collapse = .sep)
+            if (length(lb) == 0) return(NULL)
+            df[[as.character(label)]] <- str_trunc(lb, width = .width)
+            df
+        }
+    )
+    ol <- bind_rows(split_ol)
+    if (nrow(ol) == 0) return(p)
+    f <- match.fun(paste0("geom_", .geom))
+    p + f(
+        aes(label = !!label, colour = {{ colour }}),
+        data = ol, alpha = .alpha, size = .size, show.legend = FALSE
+    )
 
 }
 
 #' @importFrom stats cor
 #' @keywords internal
-.addRho <- function(p, x_lab, y_lab, geom, pos, colour, size, alpha) {
+.addRho <- function(p, xvals, yvals, geom, pos, colour, size, alpha) {
     pos <- rep_len(pos, 2)
     stopifnot(is.numeric(pos))
-    xvals <- p$data[[x_lab]]
-    cor_x <- min(xvals) + pos[[1]] * diff(range(xvals))
-    yvals <- p$data[[y_lab]]
-    cor_y <- min(yvals) + pos[[2]] * diff(range(yvals))
-    rho <- round(cor(xvals, yvals), 3)
+    rng_x <- range(xvals, na.rm = TRUE)
+    rng_y <- range(yvals, na.rm = TRUE)
+    cor_x <- min(rng_x) + pos[[1]] * diff(rng_x)
+    cor_y <- min(rng_y) + pos[[2]] * diff(rng_y)
+    rho <- round(cor(xvals, yvals, use = "pairwise.complete.obs"), 3)
     lab <- paste("rho ==", rho)
-    p +
-        annotate(
-            geom, x = cor_x, y = cor_y, label = lab, parse = TRUE,
-            colour = colour, size = size, alpha = alpha
-        )
+    p + annotate(
+        geom, x = cor_x, y = cor_y, label = lab, parse = TRUE,
+        colour = colour, size = size, alpha = alpha
+    )
 }
 
 #' @import ggside
@@ -202,28 +278,25 @@ plotPairwise <- function(
     ol <- droplevels(dplyr::filter(ol, !is.na(!!sym(nm[[1]]))))
     if (xside == "density") {
         x_lab <- p$labels$x
-        p <- p +
-            geom_xsidedensity(
-                aes(x = !!sym(x_lab), y = after_stat(density), fill = !!sym(col)),
-                data = ol, colour = NA, alpha = alpha
-            )
+        p <- p + geom_xsidedensity(
+            aes(x = !!sym(x_lab), y = after_stat(density), fill = !!sym(col)),
+            data = ol, colour = NA, alpha = alpha
+        )
     }
     if (xside == "boxplot") {
-        p <- p +
-            geom_xsideboxplot(
-                aes(y = !!sym(col), fill = !!sym(col)), data = ol,
-                orientation = "y", alpha = alpha
-            ) +
+        p <- p + geom_xsideboxplot(
+            aes(y = !!sym(col), fill = !!sym(col)), data = ol,
+            orientation = "y", alpha = alpha
+        ) +
             scale_xsidey_discrete(position = label_side)
     }
     if (xside == "violin") {
-        p <- p +
-            geom_xsideviolin(
-                aes(y = !!sym(col), fill = !!sym(col)), data = ol,
-                orientation = "y", draw_quantiles = 0.5, trim = FALSE,
-                alpha = alpha
-            ) +
-            scale_xsidey_discrete(position = "right")
+        p <- p + geom_xsideviolin(
+            aes(y = !!sym(col), fill = !!sym(col)), data = ol,
+            orientation = "y", draw_quantiles = 0.5, trim = FALSE,
+            alpha = alpha
+        ) +
+            scale_xsidey_discrete(position = label_side)
     }
 
     p
@@ -259,27 +332,23 @@ plotPairwise <- function(
     ol <- droplevels(dplyr::filter(ol, !is.na(!!sym(nm[[2]]))))
     if (yside == "density") {
         y_lab <- p$labels$y
-        p <- p +
-            geom_ysidedensity(
-                aes(y = !!sym(y_lab), x = after_stat(density), fill = !!sym(col)),
-                data = ol, orientation = "y", colour = NA, alpha = alpha
-            )
+        p <- p + geom_ysidedensity(
+            aes(y = !!sym(y_lab), x = after_stat(density), fill = !!sym(col)),
+            data = ol, orientation = "y", colour = NA, alpha = alpha
+        )
     }
     if (yside == "boxplot") {
-        p <- p +
-            geom_ysideboxplot(
-                aes(x = !!sym(col), fill = !!sym(col)), data = ol,
-                orientation = "x", alpha = alpha
-            ) +
+        p <- p + geom_ysideboxplot(
+            aes(x = !!sym(col), fill = !!sym(col)), data = ol,
+            orientation = "x", alpha = alpha
+        ) +
             scale_ysidex_discrete(labels = lab)
     }
     if (yside == "violin") {
-        p <- p +
-            geom_ysideviolin(
-                aes(x = !!sym(col), fill = !!sym(col)), data = ol,
-                orientation = "x", draw_quantiles = 0.5, trim = FALSE,
-                alpha = alpha
-            ) +
+        p <- p + geom_ysideviolin(
+            aes(x = !!sym(col), fill = !!sym(col)), data = ol, alpha = alpha,
+            orientation = "x", draw_quantiles = 0.5, trim = FALSE
+        ) +
             scale_ysidex_discrete(labels = lab)
     }
 
@@ -294,10 +363,9 @@ plotPairwise <- function(
 #' @importFrom methods is
 #' @importFrom forcats fct_relabel fct_cross fct_na_value_to_level
 #' @importFrom stringr str_replace_na
+#' @importFrom glue glue
 #' @keywords internal
-.addColourCol <- function(
-        x, ol, colour, x_lab, y_lab, .sep = " - ", simplify = TRUE
-) {
+.addColourCol <- function(x, ol, colour, x_lab, y_lab, .sep, simplify = TRUE) {
     nm <- names(x)
     col <- as.character(colour)
     ## These columns must be character/factor. They'll be the same type as a GRL
@@ -325,9 +393,7 @@ plotPairwise <- function(
         temp <- lapply(temp, fct_na_value_to_level, "Undetected")
         temp <- lapply(
             seq_along(temp),
-            function(i) {
-                fct_relabel(temp[[i]], function(x) paste(nm[[i]], x))
-            }
+            function(i) fct_relabel(temp[[i]], function(x) paste(nm[[i]], x))
         )
         names(temp) <- nm
         temp_df <- as_tibble(temp)
@@ -354,6 +420,7 @@ plotPairwise <- function(
 #' @keywords internal
 .makeOLaps <- function(x, var, x_lab, y_lab) {
     nm <- names(x)
+    rln <- "many-to-many"
     consensus <- makeConsensus(x)
     ol1 <- as_tibble(findOverlaps(consensus, x[[1]]))
     names(ol1) <- c("queryHits", nm[[1]])
@@ -361,10 +428,10 @@ plotPairwise <- function(
     names(ol2) <- c("queryHits", nm[[2]])
     ol <- tibble(queryHits = seq_along(consensus))
     ol <- left_join(
-        ol, ol1, by = "queryHits", multiple = "all", relationship = "many-to-many"
+        ol, ol1, by = "queryHits", multiple = "all", relationship = rln
     )
     ol <- left_join(
-        ol, ol2, by = "queryHits", multiple = "all", relationship = "many-to-many"
+        ol, ol2, by = "queryHits", multiple = "all", relationship = rln
     )
     ol <- distinct(ol, !!!syms(names(ol)))
     ol$range <- as.character(consensus)[ol$queryHits]

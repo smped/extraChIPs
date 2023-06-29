@@ -80,7 +80,7 @@ setMethod(
         gr_resize <- resize(gr, width = 1, fix = "center")
         gr_resize <- promoters(gr_resize, upstream, downstream)
         vals <- import.bw(x, which = gr_resize)
-        stopifnot("score" %in% colnames(mcols(vals)))
+        stopifnot("score" %in% .mcolnames(vals))
         stopifnot(is.logical(log) & is.numeric(offset))
         if (log) vals$score <- log2(vals$score + offset)
 

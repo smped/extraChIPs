@@ -8,22 +8,29 @@ plotPairwise(
   x,
   var,
   colour = NULL,
+  label = NULL,
   index = c(1, 2),
   xside = c("boxplot", "density", "violin", "none"),
   yside = c("boxplot", "density", "violin", "none"),
-  side_width = c(0.3, 0.4),
+  side_panel_width = c(0.3, 0.4),
   side_alpha = 1,
-  xside_label_pos = "right",
-  yside_label_wrap = scales::label_wrap(10),
+  xside_axis_pos = "right",
+  yside_axis_label = scales::label_wrap(10),
   line_col = "blue",
   line_type = 1,
   line_width = 1,
-  text_geom = c("text", "label", "none"),
-  text_col = "black",
-  text_size = 4,
-  text_pos = c(0.05, 0.95),
-  text_alpha = 1,
-  sep = " - ",
+  rho_geom = c("text", "label", "none"),
+  rho_col = "black",
+  rho_size = 4,
+  rho_pos = c(0.05, 0.95),
+  rho_alpha = 1,
+  label_geom = c("label_repel", "label", "text_repel", "text", "none"),
+  label_width = 20,
+  label_sep = "; ",
+  label_size = 3.5,
+  label_alpha = 0.7,
+  min_d = 1,
+  group_sep = " - ",
   simplify_equal = TRUE,
   plot_theme = theme_get(),
   ...
@@ -37,31 +44,46 @@ plotPairwise(
 \item{colour}{Optional column to use for combining across elements and
 setting point colour}
 
+\item{label}{Optional column to use for labelling ranges with the most
+extreme changes}
+
 \item{index}{Which list elements to compare}
 
 \item{xside, yside}{Will call geom_(x/y)side* from the package ggside and
-show additional panels on the right and top of the plot}
+show additional panels on the top and right of the plot respectively}
 
-\item{side_width}{Set the relative widths of the side panels}
+\item{side_panel_width}{Set the relative widths of the side panels}
 
 \item{side_alpha}{Set the transparency of any side_(x/y) panels}
 
-\item{xside_label_pos}{Position for axis_labels in the top panel when using
+\item{xside_axis_pos}{Position for axis_labels in the top panel when using
 a discrete axis}
 
-\item{yside_label_wrap}{Wrapping for axis labels on the right-side panel when
+\item{yside_axis_label}{Wrapping for axis labels on the right-side panel when
 using a discrete axis. Set to waiver() to turn off wrapping}
 
 \item{line_col, line_type, line_width}{Parameters for adding a regression line
 through the points. Set linecol to either \code{NULL} or \code{NA} to hide this line}
 
-\item{text_geom}{Used to add correlation coefficients for the two values}
+\item{rho_geom}{Used to add correlation coefficients for the two values}
 
-\item{text_col, text_size, text_alpha}{Parameters for displaying the correlation}
+\item{rho_col, rho_size, rho_alpha}{Parameters for displaying the correlation}
 
-\item{text_pos}{Place the correlation coefficient within the plotting region}
+\item{rho_pos}{Place the correlation coefficient within the plotting region}
 
-\item{sep}{Text separator used to separate categories when specifying colour}
+\item{label_geom}{Used to add labels from the column specified in label}
+
+\item{label_width}{Label text will be truncated to this length}
+
+\item{label_sep}{If multiple values (e.g. genes) are mapped to a range,
+separate values using this string}
+
+\item{label_size, label_alpha}{Passed to the geom used for adding labels}
+
+\item{min_d}{Labels will only be added if the points lie circle beyond a
+sircle of this radius}
+
+\item{group_sep}{Text separator used to separate categories when specifying colour}
 
 \item{simplify_equal}{logical(1) When combining columns from both elements
 for the colour categories, should shared values be annotated as 'Both ...'
@@ -73,7 +95,7 @@ current R session via get_theme()}
 \item{...}{Passed to \code{geom_point()} for the main panel}
 }
 \value{
-A \code{ggplot2} object
+A \code{ggside} or \code{ggplot2} object
 }
 \description{
 Plot Pairwise Values from a GRangeList by overlapping GRanges
@@ -91,6 +113,16 @@ form of density, violin or boxplots.
 
 Addition columns, such as Differential Signal status can also be used to
 form pairwise groups and colour the points.
+
+If a column in the GRangesList is suitable for labelling points, such as a
+column with genes mapped to each range, this can be specified using the
+argument \code{label = "col_to_label"}.
+Only the furthest point from the origin will be labelled within each group
+used to colour the points.
+Labels will only be added if they lie beyond a circle of radius \code{min_d} from
+the origin.
+If multiple genes are mapped to the range, these will be separated by the
+string provided in the \code{label_sep} argument.
 
 A regression line and correlation co-efficient are added to the plot by
 default, but can be hidden easily if preferred
@@ -121,7 +153,7 @@ plotPairwise(
 # Turning off side panels, regression line and correlations
 plotPairwise(
   grl, var = "logFC", xside = "none", yside = "none",
-  text_geom = "none", line_col = NULL
+  rho_geom = "none", line_col = NULL
 )
 
 # Add colours using the status column

@@ -87,9 +87,7 @@ defineRegions <- function(
   )
   sq <- seqinfo(genes)
   stopifnot(is.numeric(c(promoter, upstream, proximal)))
-  all_cols <- c(
-    colnames(mcols(genes)), colnames(mcols(transcripts)), colnames(mcols(exons))
-  )
+  all_cols <- c(.mcolnames(genes), .mcolnames(transcripts), .mcolnames(exons))
   stopifnot(all(table(all_cols) == 3))
   cols <- c("region", intersect(cols, all_cols))
 

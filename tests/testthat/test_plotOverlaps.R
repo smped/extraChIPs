@@ -9,6 +9,10 @@ grl <- GRangesList(
 grl$a$score <- rnorm(3)
 grl$b$score <- rnorm(3)
 
+test_that(".mcolnames works",{
+    expect_equal(.mcolnames(grl[[1]]), "score")
+})
+
 test_that("plotSingleVenn produces correct output", {
     p <- .plotSingleVenn(ex[1])
     expect_equal(length(p), 4)
@@ -106,7 +110,7 @@ test_that("GRL Input is handled as expect without var", {
 
 test_that("Simple errors are caught", {
     expect_error(
-        plotOverlaps(grl, type = "upset", var = "x"), "Couldn't find column x"
+        plotOverlaps(grl, type = "upset", var = "x"), "'arg' should be.+"
     )
     grl2 <- GRangesList(
         lapply(grl, function(x) {x$letters <- c("a", "b", "c"); x})

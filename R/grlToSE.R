@@ -46,7 +46,7 @@
 #'
 #' @import GenomicRanges
 #' @importFrom S4Vectors mcols
-#' @importFrom SummarizedExperiment SummarizedExperiment
+#' @import SummarizedExperiment
 #' @rdname grlToSE-methods
 #' @export
 setMethod(
@@ -59,7 +59,7 @@ setMethod(
 
         ## Return an empty object retaining any seqinfo
         if (length(x) == 0) return(.emptySE(x))
-        all_mcols <- colnames(mcols(unlist(x)))
+        all_mcols <- .mcolnames(unlist(x))
         stopifnot(.checkArgsGrlToSe(x, assayCols, metaCols, keyvals, all_mcols))
 
         by <- match.arg(by)
@@ -94,6 +94,7 @@ setMethod(
 #' @importFrom rlang '!!!' syms
 #' @importFrom tidyr pivot_wider
 #' @importFrom tidyselect all_of
+#' @keywords internal
 .cols2Assays <- function(
         .merged, .grl, .assayCols, .keyvals, .by, .ignore.strand
 ) {
@@ -161,6 +162,7 @@ setMethod(
 #' @importFrom tidyselect all_of everything
 #' @importFrom vctrs vec_proxy
 #' @importClassesFrom IRanges CompressedList
+#' @keywords internal
 .addMcols <- function(.merged, .metaCols, .grl, .ignore.strand) {
     if (length(.metaCols) == 0) return(.merged)
     gr <- unlist(.grl)
@@ -190,6 +192,9 @@ setMethod(
 
 }
 
+#' @importFrom GenomeInfoDb seqinfo
+#' @import SummarizedExperiment
+#' @keywords internal
 .emptySE <- function(.x) {
     warning("Returned object will contain no assays or rowData")
     sq <- seqinfo(.x)

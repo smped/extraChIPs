@@ -47,7 +47,7 @@ setGeneric(
     "plotAssayPCA",
     function(x, ...){standardGeneric("plotAssayPCA")}
 )
-#' @importFrom SummarizedExperiment colData assay
+#' @import SummarizedExperiment
 #' @importFrom broom tidy
 #' @importFrom dplyr left_join
 #' @importFrom tidyr pivot_wider

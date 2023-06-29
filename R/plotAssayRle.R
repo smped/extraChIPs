@@ -34,7 +34,7 @@
 #' # Or show groups combined
 #' plotAssayRle(se, trans = "log1p", fill = "treatment", by_x = "treatment")
 #'
-#' @importFrom SummarizedExperiment assay colData
+#' @import SummarizedExperiment
 #' @importFrom tidyr unnest
 #' @importFrom tidyselect all_of
 #' @importFrom dplyr group_by mutate ungroup

@@ -151,9 +151,7 @@ mapByFeature <- function(
     )
 
     out <- granges(gr)
-    mcols(out) <-  cbind(
-        mcols(gr)[!colnames(mcols(gr)) %in% cols], gr_list[cols]
-    )
+    mcols(out) <-  cbind(mcols(gr)[!.mcolnames(gr) %in% cols], gr_list[cols])
     out
 
 }
@@ -383,7 +381,7 @@ mapByFeature <- function(
         if (!is(.prom, "GRanges")) {
             msg <- c(msg, "Promoters must be GRanges\n")
         } else {
-            colInProm <- any(.cols %in% colnames(mcols(.prom)))
+            colInProm <- any(.cols %in% .mcolnames(.prom))
         }
     }
 
@@ -391,7 +389,7 @@ mapByFeature <- function(
         if (!is(.enh, "GRanges")) {
             msg <- c(msg, "Enhancers must be GRanges\n")
         } else {
-            colInEnh <- any(.cols %in% colnames(mcols(.enh)))
+            colInEnh <- any(.cols %in% .mcolnames(.enh))
         }
     }
 
@@ -399,7 +397,7 @@ mapByFeature <- function(
         if (!is(.gi, "GInteractions")) {
             msg <- c(msg, "Interactions must be a GInteractions object\n")
         } else {
-            colInGI <- any(.cols %in% colnames(mcols(.gi)))
+            colInGI <- any(.cols %in% .mcolnames(.gi))
         }
     }
 
@@ -408,7 +406,7 @@ mapByFeature <- function(
         if (!is(.genes, "GRanges")) {
             msg <- c(msg, "Genes must be provided as GRanges\n")
         } else {
-            colInGenes <- any(.cols %in% colnames(mcols(.genes)))
+            colInGenes <- any(.cols %in% .mcolnames(.genes))
         }
     }
 

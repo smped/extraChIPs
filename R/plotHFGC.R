@@ -1031,7 +1031,7 @@ plotHFGC <- function(
 
         chk_mcols <- vapply(
             genes,
-            function(x) all(reqd_mcols %in% colnames(mcols(x))),
+            function(x) all(reqd_mcols %in% .mcolnames(x)),
             logical(1)
         )
         if (!all(chk_mcols))
@@ -1080,7 +1080,7 @@ plotHFGC <- function(
             ## Check the values which aren't logical
             is_log <- vapply(collapseTranscripts, is.logical, logical(1))
             ct <- unlist(collapseTranscripts[!is_log])
-            if (!all(ct %in% trans_vals)){
+            if (!all(ct %in% trans_vals)) {
                 msg <- c(
                     msg,
                     paste(
@@ -1097,7 +1097,7 @@ plotHFGC <- function(
     }
 
     if (is(genes, "GRanges")) {
-        chk_cols <- all(reqd_mcols %in% colnames(mcols(genes)))
+        chk_cols <- all(reqd_mcols %in% .mcolnames(genes))
         if (!chk_cols)
             msg <- c(
                 msg,

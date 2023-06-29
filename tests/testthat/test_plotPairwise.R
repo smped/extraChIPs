@@ -7,6 +7,7 @@ gr1$status <- dplyr::case_when(
   gr1$logFC < -0.5 ~ "Decreased",
   TRUE ~ "Unchanged"
 )
+gr1$gene <- paste("Gene", sample(LETTERS, length(gr1)))
 gr2 <-  GRanges(paste0("chr1:", seq(51, 250, by = 15)))
 width(gr2) <- 4
 gr2$logFC <- rnorm(length(gr2))
@@ -15,6 +16,7 @@ gr2$status <- dplyr::case_when(
   gr2$logFC < -0.5 ~ "Decreased",
   TRUE ~ "Unchanged"
 )
+gr2$gene <- paste("Gene", sample(LETTERS, length(gr2)))
 grl <- GRangesList(TF1 = gr1, TF2 = gr2)
 
 test_that(
@@ -35,6 +37,10 @@ test_that(
     expect_true(is(p, "ggside"))
     p <- plotPairwise(grl, var = "logFC", colour = "status", xside = "violin", yside = "violin")
     expect_true(is(p, "ggside"))
+
+    p <- plotPairwise(grl, var = "logFC", colour = "status", label = "gene")
+    expect_true(is(p, "ggside"))
+
   }
 )
 

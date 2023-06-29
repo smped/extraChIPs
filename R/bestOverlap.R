@@ -47,7 +47,7 @@ setMethod(
     x, y, var = NULL, ignore.strand = FALSE, missing = NA_character_,
     min_prop = 0.01, ...
   ) {
-    cols <- colnames(mcols(y))
+    cols <- .mcolnames(y)
     var <- match.arg(var, cols)
     grl <- splitAsList(y, f = mcols(y)[[var]])
     bestOverlap(x, grl, ignore.strand, missing = missing, min_prop = min_prop)

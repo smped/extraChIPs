@@ -58,7 +58,7 @@
 #' @importFrom S4Vectors "mcols<-" subset mcols endoapply
 #' @importFrom methods is
 #' @export
-makeConsensus <-function(
+makeConsensus <- function(
         x, p = 0, var = NULL, method = c("union", "coverage"),
         ignore.strand = TRUE, simplify = FALSE, min_width = 0, ...
 ) {
@@ -67,7 +67,7 @@ makeConsensus <-function(
     if (!is(x, "GRangesList")) stop("Input must be a GRangesList")
     method <- match.arg(method)
     if (!is.null(var)) {
-        mc_names <- colnames(mcols(x[[1]]))
+        mc_names <- .mcolnames(x[[1]])
         if (length(setdiff(var, mc_names))) {
             d <- paste(setdiff(var, mc_names), collapse = ", ")
             stop("Couldn't find column ", d)

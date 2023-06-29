@@ -62,7 +62,7 @@ setGeneric(
     function(x, ...){standardGeneric("plotAssayHeatmap")}
 )
 #'
-#' @importFrom SummarizedExperiment colData rowRanges assay
+#' @import SummarizedExperiment
 #' @importFrom tidyr unnest pivot_longer
 #' @importFrom tidyselect everything all_of
 #' @importFrom dplyr group_by summarise
