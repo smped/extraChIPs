@@ -73,22 +73,29 @@
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">var</span>,</span>
 <span>  colour <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  label <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  index <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,</span>
 <span>  xside <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"boxplot"</span>, <span class="st">"density"</span>, <span class="st">"violin"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
 <span>  yside <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"boxplot"</span>, <span class="st">"density"</span>, <span class="st">"violin"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
-<span>  side_width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="fl">0.4</span><span class="op">)</span>,</span>
+<span>  side_panel_width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="fl">0.4</span><span class="op">)</span>,</span>
 <span>  side_alpha <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  xside_label_pos <span class="op">=</span> <span class="st">"right"</span>,</span>
-<span>  yside_label_wrap <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_wrap.html" class="external-link">label_wrap</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>,</span>
+<span>  xside_axis_pos <span class="op">=</span> <span class="st">"right"</span>,</span>
+<span>  yside_axis_label <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/label_wrap.html" class="external-link">label_wrap</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>,</span>
 <span>  line_col <span class="op">=</span> <span class="st">"blue"</span>,</span>
 <span>  line_type <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  line_width <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  text_geom <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"text"</span>, <span class="st">"label"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
-<span>  text_col <span class="op">=</span> <span class="st">"black"</span>,</span>
-<span>  text_size <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  text_pos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.95</span><span class="op">)</span>,</span>
-<span>  text_alpha <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  sep <span class="op">=</span> <span class="st">" - "</span>,</span>
+<span>  rho_geom <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"text"</span>, <span class="st">"label"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
+<span>  rho_col <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  rho_size <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>  rho_pos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.95</span><span class="op">)</span>,</span>
+<span>  rho_alpha <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  label_geom <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"label_repel"</span>, <span class="st">"label"</span>, <span class="st">"text_repel"</span>, <span class="st">"text"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
+<span>  label_width <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  label_sep <span class="op">=</span> <span class="st">"; "</span>,</span>
+<span>  label_size <span class="op">=</span> <span class="fl">3.5</span>,</span>
+<span>  label_alpha <span class="op">=</span> <span class="fl">0.7</span>,</span>
+<span>  min_d <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  group_sep <span class="op">=</span> <span class="st">" - "</span>,</span>
 <span>  simplify_equal <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  plot_theme <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme_get.html" class="external-link">theme_get</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -110,16 +117,21 @@
 setting point colour</p></dd>
 
 
+<dt>label</dt>
+<dd><p>Optional column to use for labelling ranges with the most
+extreme changes</p></dd>
+
+
 <dt>index</dt>
 <dd><p>Which list elements to compare</p></dd>
 
 
 <dt>xside, yside</dt>
 <dd><p>Will call geom_(x/y)side* from the package ggside and
-show additional panels on the right and top of the plot</p></dd>
+show additional panels on the top and right of the plot respectively</p></dd>
 
 
-<dt>side_width</dt>
+<dt>side_panel_width</dt>
 <dd><p>Set the relative widths of the side panels</p></dd>
 
 
@@ -127,12 +139,12 @@ show additional panels on the right and top of the plot</p></dd>
 <dd><p>Set the transparency of any side_(x/y) panels</p></dd>
 
 
-<dt>xside_label_pos</dt>
+<dt>xside_axis_pos</dt>
 <dd><p>Position for axis_labels in the top panel when using
 a discrete axis</p></dd>
 
 
-<dt>yside_label_wrap</dt>
+<dt>yside_axis_label</dt>
 <dd><p>Wrapping for axis labels on the right-side panel when
 using a discrete axis. Set to waiver() to turn off wrapping</p></dd>
 
@@ -142,19 +154,41 @@ using a discrete axis. Set to waiver() to turn off wrapping</p></dd>
 through the points. Set linecol to either <code>NULL</code> or <code>NA</code> to hide this line</p></dd>
 
 
-<dt>text_geom</dt>
+<dt>rho_geom</dt>
 <dd><p>Used to add correlation coefficients for the two values</p></dd>
 
 
-<dt>text_col, text_size, text_alpha</dt>
+<dt>rho_col, rho_size, rho_alpha</dt>
 <dd><p>Parameters for displaying the correlation</p></dd>
 
 
-<dt>text_pos</dt>
+<dt>rho_pos</dt>
 <dd><p>Place the correlation coefficient within the plotting region</p></dd>
 
 
-<dt>sep</dt>
+<dt>label_geom</dt>
+<dd><p>Used to add labels from the column specified in label</p></dd>
+
+
+<dt>label_width</dt>
+<dd><p>Label text will be truncated to this length</p></dd>
+
+
+<dt>label_sep</dt>
+<dd><p>If multiple values (e.g. genes) are mapped to a range,
+separate values using this string</p></dd>
+
+
+<dt>label_size, label_alpha</dt>
+<dd><p>Passed to the geom used for adding labels</p></dd>
+
+
+<dt>min_d</dt>
+<dd><p>Labels will only be added if the points lie circle beyond a
+sircle of this radius</p></dd>
+
+
+<dt>group_sep</dt>
 <dd><p>Text separator used to separate categories when specifying colour</p></dd>
 
 
@@ -177,7 +211,7 @@ current R session via get_theme()</p></dd>
     <h2>Value</h2>
     
 
-<p>A <code>ggplot2</code> object</p>
+<p>A <code>ggside</code> or <code>ggplot2</code> object</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -191,6 +225,15 @@ which are only found in one of the foundational GRanges. These can take the
 form of density, violin or boxplots.</p>
 <p>Addition columns, such as Differential Signal status can also be used to
 form pairwise groups and colour the points.</p>
+<p>If a column in the GRangesList is suitable for labelling points, such as a
+column with genes mapped to each range, this can be specified using the
+argument <code>label = "col_to_label"</code>.
+Only the furthest point from the origin will be labelled within each group
+used to colour the points.
+Labels will only be added if they lie beyond a circle of radius <code>min_d</code> from
+the origin.
+If multiple genes are mapped to the range, these will be separated by the
+string provided in the <code>label_sep</code> argument.</p>
 <p>A regression line and correlation co-efficient are added to the plot by
 default, but can be hidden easily if preferred</p>
     </div>
@@ -224,7 +267,7 @@ default, but can be hidden easily if preferred</p>
 <span class="r-in"><span><span class="co"># Turning off side panels, regression line and correlations</span></span></span>
 <span class="r-in"><span><span class="fu">plotPairwise</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">grl</span>, var <span class="op">=</span> <span class="st">"logFC"</span>, xside <span class="op">=</span> <span class="st">"none"</span>, yside <span class="op">=</span> <span class="st">"none"</span>,</span></span>
-<span class="r-in"><span>  text_geom <span class="op">=</span> <span class="st">"none"</span>, line_col <span class="op">=</span> <span class="cn">NULL</span></span></span>
+<span class="r-in"><span>  rho_geom <span class="op">=</span> <span class="st">"none"</span>, line_col <span class="op">=</span> <span class="cn">NULL</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotPairwise-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
