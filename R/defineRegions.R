@@ -145,7 +145,16 @@ defineRegions <- function(
 
   ## Remove any empty elements
   keep <- vapply(out, length, integer(1)) > 0
-  out[keep]
+  out <- out[keep]
+  ## Simplify the type column if needed
+  if (!simplify) {
+    out <- endoapply(
+      out, function(x){
+        x$region <- vapply(x$region, unique, character(1))
+        x
+      })
+  }
+  out
 
 }
 
