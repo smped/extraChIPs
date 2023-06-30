@@ -46,8 +46,7 @@
 #' e <- c("chr1:20001-21000", "chr1:29001-29950", "chr1:22001-23000", "chr1:29001-30000")
 #' e <- GRanges(e, seqinfo = sq)
 #' mcols(e) <- DataFrame(
-#'   gene_id = "Gene1",
-#'   transcript_id = c("Trans1", "Trans1", "Trans2", "Trans2")
+#'   gene_id = "Gene1", transcript_id = c("Trans1", "Trans1", "Trans2", "Trans2")
 #' )
 #'
 #' ## Define the transcript ranges
@@ -85,6 +84,9 @@ defineRegions <- function(
     all(is(genes, "GRanges"), is(transcripts, "GRanges"), is(exons, "GRanges"))
   )
   sq <- seqinfo(genes)
+  seqlengths <- seqlengths(sq)
+  if (any(is.na(seqlengths)))
+    stop("NA seqlengths. Cannot defne regions with undefined sequence lengths")
   stopifnot(is.numeric(c(promoter, upstream, proximal)))
   all_cols <- c(
     colnames(mcols(genes)), colnames(mcols(transcripts)), colnames(mcols(exons))
@@ -131,6 +133,7 @@ defineRegions <- function(
       ## This may give an OOB error
       resize(genes, width = width(genes) + 2 * proximal, fix = 'center')
     )
+    prox <- trim(prox)
     prox <- setdiffMC(prox, unlist(out), ignore.strand = TRUE, simplify = simplify)
     prox$region <- paste0("Intergenic (<", proximal / 1e3, "kb)")
     mcols(prox) <- mcols(prox)[cols]
@@ -146,7 +149,16 @@ defineRegions <- function(
 
   ## Remove any empty elements
   keep <- vapply(out, length, integer(1)) > 0
-  out[keep]
+  out <- out[keep]
+  ## Simplify the type column if needed
+  if (!simplify) {
+    out <- endoapply(
+      out, function(x){
+        x$region <- vapply(x$region, unique, character(1))
+        x
+      })
+  }
+  out
 
 }
 
