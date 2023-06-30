@@ -174,28 +174,17 @@ in the <code>mcols()</code> element.</p>
 <span class="r-in"><span><span class="va">regions</span> <span class="op">&lt;-</span> <span class="fu">defineRegions</span><span class="op">(</span>genes <span class="op">=</span> <span class="va">g</span>, transcripts <span class="op">=</span> <span class="va">t</span>, exons <span class="op">=</span> <span class="va">e</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">regions</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 9 ranges and 3 metadata columns:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                       seqnames      ranges strand |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                          &lt;Rle&gt;   &lt;IRanges&gt;  &lt;Rle&gt; |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     distal_intergenic     chr1     1-10000      * |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   proximal_intergenic     chr1 10001-15000      * |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     upstream_promoter     chr1 15001-17500      * |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              promoter     chr1 17501-22500      * |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  exon     chr1 22501-23000      * |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                intron     chr1 23001-29000      * |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  exon     chr1 29001-30000      * |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   proximal_intergenic     chr1 30001-40000      * |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     distal_intergenic     chr1 40001-50000      * |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                              region</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                     &lt;CharacterList&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     distal_intergenic                            Intergenic (&gt;10kb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   proximal_intergenic                            Intergenic (&lt;10kb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     upstream_promoter Upstream Promoter (-..,Upstream Promoter (-..</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              promoter   Promoter (-2500/+500),Promoter (-2500/+500)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  exon                                          Exon</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                intron                                        Intron</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  exon                                     Exon,Exon</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   proximal_intergenic                            Intergenic (&lt;10kb)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     distal_intergenic                            Intergenic (&gt;10kb)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       seqnames      ranges strand |                 region</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                          &lt;Rle&gt;   &lt;IRanges&gt;  &lt;Rle&gt; |            &lt;character&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     distal_intergenic     chr1     1-10000      * |     Intergenic (&gt;10kb)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   proximal_intergenic     chr1 10001-15000      * |     Intergenic (&lt;10kb)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     upstream_promoter     chr1 15001-17500      * | Upstream Promoter (-..</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              promoter     chr1 17501-22500      * |  Promoter (-2500/+500)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                  exon     chr1 22501-23000      * |                   Exon</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                intron     chr1 23001-29000      * |                 Intron</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                  exon     chr1 29001-30000      * |                   Exon</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   proximal_intergenic     chr1 30001-40000      * |     Intergenic (&lt;10kb)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     distal_intergenic     chr1 40001-50000      * |     Intergenic (&gt;10kb)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                               gene_id   transcript_id</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                       &lt;CharacterList&gt; &lt;CharacterList&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     distal_intergenic            &lt;NA&gt;            &lt;NA&gt;</span>
@@ -216,20 +205,13 @@ in the <code>mcols()</code> element.</p>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">regions</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 5 ranges and 3 metadata columns:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                     seqnames      ranges strand |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                        &lt;Rle&gt;   &lt;IRanges&gt;  &lt;Rle&gt; |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          intergenic     chr1     1-15000      * |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   upstream_promoter     chr1 15001-17500      * |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            promoter     chr1 17501-22500      * |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           gene_body     chr1 22501-30000      * |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          intergenic     chr1 30001-50000      * |</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                            region</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                   &lt;CharacterList&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          intergenic                                    Intergenic</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   upstream_promoter Upstream Promoter (-..,Upstream Promoter (-..</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            promoter   Promoter (-2500/+500),Promoter (-2500/+500)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           gene_body                                     Gene Body</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          intergenic                                    Intergenic</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     seqnames      ranges strand |                 region</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        &lt;Rle&gt;   &lt;IRanges&gt;  &lt;Rle&gt; |            &lt;character&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          intergenic     chr1     1-15000      * |             Intergenic</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   upstream_promoter     chr1 15001-17500      * | Upstream Promoter (-..</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            promoter     chr1 17501-22500      * |  Promoter (-2500/+500)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           gene_body     chr1 22501-30000      * |              Gene Body</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          intergenic     chr1 30001-50000      * |             Intergenic</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                             gene_id   transcript_id</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                     &lt;CharacterList&gt; &lt;CharacterList&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          intergenic            &lt;NA&gt;            &lt;NA&gt;</span>
