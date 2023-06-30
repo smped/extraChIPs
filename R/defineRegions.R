@@ -86,6 +86,9 @@ defineRegions <- function(
     all(is(genes, "GRanges"), is(transcripts, "GRanges"), is(exons, "GRanges"))
   )
   sq <- seqinfo(genes)
+  seqlengths <- seqlengths(sq)
+  if (any(is.na(seqlengths)))
+    stop("NA seqlengths. Cannot defne regions with undefined sequence lengths")
   stopifnot(is.numeric(c(promoter, upstream, proximal)))
   all_cols <- c(.mcolnames(genes), .mcolnames(transcripts), .mcolnames(exons))
   stopifnot(all(table(all_cols) == 3))
@@ -130,6 +133,7 @@ defineRegions <- function(
       ## This may give an OOB error
       resize(genes, width = width(genes) + 2 * proximal, fix = 'center')
     )
+    prox <- trim(prox)
     prox <- setdiffMC(prox, unlist(out), ignore.strand = TRUE, simplify = simplify)
     prox$region <- paste0("Intergenic (<", proximal / 1e3, "kb)")
     mcols(prox) <- mcols(prox)[cols]
