@@ -81,6 +81,7 @@
 <span>  up <span class="op">=</span> <span class="st">"Increased"</span>,</span>
 <span>  down <span class="op">=</span> <span class="st">"Decreased"</span>,</span>
 <span>  other <span class="op">=</span> <span class="st">"Unchanged"</span>,</span>
+<span>  missing <span class="op">=</span> <span class="st">"Undetected"</span>,</span>
 <span>  new_col <span class="op">=</span> <span class="st">"status"</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -128,6 +129,10 @@ or down categories</p></dd>
 <dt>up, down, other</dt>
 <dd><p>factor levels to annotate regions based on the above
 criteria</p></dd>
+
+
+<dt>missing</dt>
+<dd><p>Value to add when either fc_col or sig_col has NA values</p></dd>
 
 
 <dt>new_col</dt>
