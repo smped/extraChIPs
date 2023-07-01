@@ -16,6 +16,7 @@
 #' or down categories
 #' @param up,down,other factor levels to annotate regions based on the above
 #' criteria
+#' @param missing Value to add when either fc_col or sig_col has NA values
 #' @param new_col name of the new column to be added
 #' @param ... Used to pass arguments between methods
 #'
@@ -49,7 +50,7 @@ setMethod(
   function(
     x, fc_col = "logFC", sig_col = c("FDR", "hmp_fdr", "p_fdr", "adj.P.Value"),
     alpha = 0.05, cutoff = 0, up = "Increased", down = "Decreased",
-    other = "Unchanged", new_col = "status", ...
+    other = "Unchanged", missing = "Undetected", new_col = "status", ...
   ) {
 
     # Start with a df
@@ -64,10 +65,12 @@ setMethod(
     sig <- x[[sig_col]] < alpha
     status <- case_when(
       !sig ~ other[[1]],
+      is.na(sig) | is.na(fc) ~ missing[[1]],
       fc > abs(cutoff) ~ up[[1]],
       fc < -abs(cutoff) ~ down[[1]]
     )
-    lv <- unique(c(other, down, up))
+    ## Do we need to add an explicit NA value here?
+    lv <- unique(c(other, down, up, missing))
     x[[new_col]] <- factor(status, levels = lv)
     x
   }

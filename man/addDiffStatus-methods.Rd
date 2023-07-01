@@ -20,6 +20,7 @@ addDiffStatus(x, ...)
   up = "Increased",
   down = "Decreased",
   other = "Unchanged",
+  missing = "Undetected",
   new_col = "status",
   ...
 )
@@ -48,6 +49,8 @@ or down categories}
 
 \item{up, down, other}{factor levels to annotate regions based on the above
 criteria}
+
+\item{missing}{Value to add when either fc_col or sig_col has NA values}
 
 \item{new_col}{name of the new column to be added}
 }
