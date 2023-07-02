@@ -6,7 +6,7 @@
 \usage{
 importPeaks(
   x,
-  type = c("narrow", "broad", "bed"),
+  type = c("narrow", "broad"),
   blacklist,
   seqinfo,
   pruning.mode = c("coarse", "error"),
@@ -21,8 +21,7 @@ importPeaks(
 \item{x}{One or more files to be imported. All files must be of the same
 type, i.e. narrow or broad}
 
-\item{type}{The type of peaks to be imported. All files are assumed to be
-the same format}
+\item{type}{The type of peaks to be imported}
 
 \item{blacklist}{A set of ranges to be excluded}
 
@@ -36,12 +35,6 @@ implemented. See \link[GenomeInfoDb]{seqinfo}.}
 
 \item{setNames}{logical Set basename(x) as the name}
 
-\item{centre}{Add the position of the peak centre. Ignored unless
-importing narrowPeak files.}
-
-\item{nameRanges}{Set the values in the 'name' column as the range name.
-Ignored if parsing a bed file}
-
 \item{...}{passed to \code{sort}}
 }
 \value{
@@ -51,10 +44,8 @@ A GRangesList
 Import peaks in narrowPeak or broadPeak format
 }
 \details{
-Peaks are imported from either narrowPeak, broadPeak or bed format as
-individual GenomicRanges objects, before being incorporated as a single
-GRangesList. If importing bed files, \link[rtracklayer]{import.bed} will be
-called internally.
+Peaks are imported from either narrowPeak or broadPeak format as
+GenomicRanges objects.
 }
 \examples{
 fl <- system.file(

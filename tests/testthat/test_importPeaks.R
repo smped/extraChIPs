@@ -47,11 +47,12 @@ test_that("seqinfo objects behave correctly for narrowPeak files", {
     "S4"
   )
   ## Empty GRanges
-  expect_error(
+  expect_message(
     importPeaks(
       fl, type = "narrow", seqinfo = Seqinfo(seqnames = "chr2"),
       pruning.mode = "coarse"
-    )
+    ),
+    "No ranges match the supplied seqinfo object"
   )
   ## Error
   expect_error(
