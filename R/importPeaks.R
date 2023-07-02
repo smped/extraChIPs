@@ -69,8 +69,9 @@ importPeaks <- function(
 
 #' @import GenomicRanges
 #' @importFrom IRanges overlapsAny
+#' @importFrom GenomeInfoDb sortSeqlevels keepSeqlevels
+#' @importFrom GenomeInfoDb 'seqinfo<-' seqlevels 'seqlevels<-'
 #' @importFrom methods is
-#' @importFrom utils read.table
 #' @importFrom rtracklayer import
 .importPeakFile <- function(
         x, type, seqinfo, blacklist, pruning.mode, centre, nameRanges
@@ -88,7 +89,12 @@ importPeaks <- function(
 
     ## Import
     gr <- rtracklayer::import(x, format = type)
-    if (!is.null(seqinfo)) seqinfo(gr, pruning.mode = pruning.mode) <- seqinfo
+    if (!is.null(seqinfo)) {
+        gr <- keepSeqlevels(gr, seqlevels(seqinfo))
+        gr <- sortSeqlevels(gr)
+        seqlevels(gr) <- seqlevels(seqinfo)
+        seqinfo(gr, pruning.mode = pruning.mode) <- seqinfo
+    }
     if (nameRanges & all(!is.na(gr$name))) {
         names(gr) <- gr$name
         gr$name <- NULL
@@ -99,6 +105,5 @@ importPeaks <- function(
     if (missing(blacklist)) blacklist <- GRanges()
     stopifnot(is(blacklist, "GRanges"))
     gr[!overlapsAny(gr, blacklist)]
-
 
 }

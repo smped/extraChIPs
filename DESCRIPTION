@@ -58,7 +58,6 @@ Imports:
   stringr,
   tidyr,
   tidyselect,
-  utils,
   vctrs,
   VennDiagram
 Suggests: 
