@@ -72,8 +72,7 @@ sq <- Seqinfo(seqnames = "chr1", seqlengths = 50000)
 e <- c("chr1:20001-21000", "chr1:29001-29950", "chr1:22001-23000", "chr1:29001-30000")
 e <- GRanges(e, seqinfo = sq)
 mcols(e) <- DataFrame(
-  gene_id = "Gene1",
-  transcript_id = c("Trans1", "Trans1", "Trans2", "Trans2")
+  gene_id = "Gene1", transcript_id = paste0("Trans", c(1, 1, 2, 2))
 )
 
 ## Define the transcript ranges
