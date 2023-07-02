@@ -143,7 +143,7 @@ plotPairwise <- function(
     rho_geom <- match.arg(rho_geom)
     label_geom <- match.arg(label_geom)
 
-    ol <- .makeOLaps(x, var, x_lab, y_lab) ## The basic df for plotting
+    ol <- .makeOLaps(x, var, name_sep) ## The basic df for plotting
     if (!is.null(colour)) {
         ol <- .addColourCol(
             x, ol, colour, x_lab, y_lab, group_sep, simplify_equal
@@ -416,30 +416,15 @@ plotPairwise <- function(
     ol
 }
 
-#' @importFrom dplyr left_join distinct case_when
-#' @importFrom S4Vectors mcols
-#' @importFrom rlang '!!!' syms
+#' @importFrom dplyr case_when
 #' @keywords internal
-.makeOLaps <- function(x, var, x_lab, y_lab) {
+.makeOLaps <- function(x, var, name_sep) {
     nm <- names(x)
-    rln <- "many-to-many"
-    consensus <- makeConsensus(x)
-    ol1 <- as_tibble(findOverlaps(consensus, x[[1]]))
-    names(ol1) <- c("queryHits", nm[[1]])
-    ol2 <- as_tibble(findOverlaps(consensus, x[[2]]))
-    names(ol2) <- c("queryHits", nm[[2]])
-    ol <- tibble(queryHits = seq_along(consensus))
-    ol <- left_join(
-        ol, ol1, by = "queryHits", multiple = "all", relationship = rln
-    )
-    ol <- left_join(
-        ol, ol2, by = "queryHits", multiple = "all", relationship = rln
-    )
-    ol <- distinct(ol, !!!syms(names(ol)))
-    ol$range <- as.character(consensus)[ol$queryHits]
+    consensus <- granges(makeConsensus(x))
+    ol <- .mapHits(x, consensus)
+    ol <- .addCols(x, ol, var, NULL, NULL, name_sep)
 
-    ol[[x_lab]] <- mcols(x[[1]])[[var]][ol[[nm[[1]]]]]
-    ol[[y_lab]] <- mcols(x[[2]])[[var]][ol[[nm[[2]]]]]
+    ol$range <- as.character(consensus)[ol$consensus_peak]
     ol$detected <- case_when(
         !is.na(ol[[nm[[1]]]]) & !is.na(ol[[nm[[2]]]]) ~ "Both Detected",
         is.na(ol[[nm[[1]]]]) & !is.na(ol[[nm[[2]]]]) ~ paste(nm[[2]], "Only"),
