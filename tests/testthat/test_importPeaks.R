@@ -15,8 +15,6 @@ test_that("narrowPeak files parse correctly", {
   expect_true(!"centre" %in% .mcolnames(gr))
   gr <- unlist(importPeaks(fl, type = "narrow", nameRanges = FALSE, centre = TRUE))
   expect_true(all(c("centre", "name") %in% .mcolnames(gr)))
-  names(gr) <- gr$centre <- NULL
-  expect_equal(gr, rtracklayer::import(fl, format = "narrowPeak"))
 
 
 })

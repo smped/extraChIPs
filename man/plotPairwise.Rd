@@ -10,6 +10,7 @@ plotPairwise(
   colour = NULL,
   label = NULL,
   index = c(1, 2),
+  name_sep = " ",
   xside = c("boxplot", "density", "violin", "none"),
   yside = c("boxplot", "density", "violin", "none"),
   side_panel_width = c(0.3, 0.4),
@@ -48,6 +49,9 @@ setting point colour}
 extreme changes}
 
 \item{index}{Which list elements to compare}
+
+\item{name_sep}{Character string to separate names of the GRangesList and
+the selected column. Will appear as axis-labels}
 
 \item{xside, yside}{Will call geom_(x/y)side* from the package ggside and
 show additional panels on the top and right of the plot respectively}

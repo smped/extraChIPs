@@ -65,6 +65,8 @@ makeConsensus <- function(
 
     ## Starting with a GRList
     if (!is(x, "GRangesList")) stop("Input must be a GRangesList")
+    nm <- names(x)
+    if (length(nm) != length(x)) stop("Each element of 'x' must be named")
     method <- match.arg(method)
     if (!is.null(var)) {
         mc_names <- .mcolnames(x[[1]])

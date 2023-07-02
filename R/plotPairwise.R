@@ -37,6 +37,8 @@
 #' setting point colour
 #' @param label Optional column to use for labelling ranges with the most
 #' extreme changes
+#' @param name_sep Character string to separate names of the GRangesList and
+#' the selected column. Will appear as axis-labels
 #' @param xside,yside Will call geom_(x/y)side* from the package ggside and
 #' show additional panels on the top and right of the plot respectively
 #' @param side_panel_width Set the relative widths of the side panels
@@ -105,7 +107,7 @@
 #' @importFrom rlang '!!' sym
 #' @export
 plotPairwise <- function(
-        x, var, colour = NULL, label = NULL, index = c(1, 2),
+        x, var, colour = NULL, label = NULL, index = c(1, 2), name_sep = " ",
         xside = c("boxplot", "density", "violin", "none"),
         yside = c("boxplot", "density", "violin", "none"),
         side_panel_width = c(0.3, 0.4), side_alpha = 1,
@@ -132,8 +134,8 @@ plotPairwise <- function(
     stopifnot(is.numeric(mcols(x[[1]])[[var]]))
     if (!is.null(colour)) colour <- sym(match.arg(colour, mc_names))
     if (!is.null(label)) label <- sym(match.arg(label, mc_names))
-    x_lab <- paste(nm[[1]], var)
-    y_lab <- paste(nm[[2]], var)
+    x_lab <- paste(nm[[1]], var, sep = name_sep)
+    y_lab <- paste(nm[[2]], var, sep = name_sep)
 
     xside <- match.arg(xside)
     yside <- match.arg(yside)

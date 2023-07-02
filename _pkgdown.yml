@@ -15,6 +15,7 @@ reference:
 - title: Range-Based Operations
   contents:
     - makeConsensus
+    - mapGrlCols
     - ends_with("MC")
     - ends_with("Overlap")
     - colToRanges
