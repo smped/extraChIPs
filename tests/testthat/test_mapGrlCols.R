@@ -36,6 +36,10 @@ test_that("collapse_sep works for list objects", {
         mapGrlCols(grl, collapse = "genes", collapse_sep = list(g = "; ")),
         "All columns being collapsed need a separator provided"
     )
+    expect_error(
+        mapGrlCols(grl, collapse = "logFC"),
+        "Collapsing numeric columns is not permitted"
+    )
 })
 
 test_that(".coerceList works", {

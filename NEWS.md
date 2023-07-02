@@ -59,3 +59,8 @@
 # Changes in 1.5.5 (23-06-28)
 
 - Added `plotPairwise()` and `addDiffStatus()`
+
+# Changes in 1.5.6 (23-07-01)
+
+- Added `mapGrlCols()`
+

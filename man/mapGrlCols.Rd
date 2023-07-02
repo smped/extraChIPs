@@ -16,10 +16,10 @@ mapGrlCols(
 \arguments{
 \item{x}{GRangesList}
 
-\item{var}{columns to map onto the set of consensus peaks}
+\item{var}{Column(s) to map onto the set of consensus peaks}
 
-\item{collapse}{Any columns specified here will be simplified into a single
-column}
+\item{collapse}{Columns specified here will be simplified into a single
+column. Should only be character or factor columns}
 
 \item{collapse_sep, }{String to separate values whe collapsing columns}
 
@@ -37,4 +37,28 @@ GRangesList element
 \details{
 Starting with a GRangesList, make a single GRanges object with select columns
 from each element added to the new object
+}
+\examples{
+a <- GRanges(paste0("chr1:", seq(1, 61, by = 20)))
+width(a) <- 5
+a$logFC <- rnorm(length(a))
+a_g <- as.list(paste("Gene", seq_along(a)))
+a_g[[1]] <- c("Gene 0", a_g[[1]])
+a$genes <- as(a_g, "CompressedList")
+
+b <- GRanges("chr1:61-70")
+b$logFC <- rnorm(1)
+b$genes <- as(list("Gene 5"), "CompressedList")
+
+grl <- GRangesList(A = a, B = b)
+mapGrlCols(grl, var = "logFC")
+
+## This forms a union of overlapping rangesby default
+## Pass methods to makeConsensus() to change to regions with coverage == 2
+mapGrlCols(grl, var = "logFC", method = "coverage", p = 1)
+
+## Columns can be collapsed to merge into a single column
+mapGrlCols(grl, var = "logFC", collapse = "genes")
+
+
 }
