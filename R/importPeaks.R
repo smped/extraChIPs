@@ -15,7 +15,12 @@
 #' Defaults to `pruning.mode = "coarse"`. Only "coarse" and "error" are
 #' implemented. See \link[GenomeInfoDb]{seqinfo}.
 #' @param sort logical. Should the ranges be sorted during import
-#' @param setNames logical Set basename(x) as the name
+#' @param setNames logical Set basename(x) as the name for each element of the
+#' GRangesList
+#' @param glueNames \link[glue]{glue} syntax for naming list elements
+#' @param centre Add the estimated peak centre. Ignored unless type = "narrow"
+#' @param nameRanges Place any values in the name column as range names within
+#' each file.
 #' @param ... passed to `sort`
 #'
 #' @return
@@ -30,12 +35,13 @@
 #' peaks
 #'
 #' @importFrom GenomeInfoDb seqinfo seqnames
+#' @importFrom glue glue
 #' @import GenomicRanges
 #' @export
 importPeaks <- function(
         x, type = c("narrow", "broad"), blacklist, seqinfo,
         pruning.mode = c("coarse", "error"), sort = TRUE, setNames = TRUE,
-        centre = FALSE, nameRanges = TRUE, ...
+        glueNames = "{basename(x)}", centre = FALSE, nameRanges = TRUE, ...
 ) {
 
     ## Argument checks
@@ -53,7 +59,11 @@ importPeaks <- function(
 
     out <- GRangesList(out)
     if (sort) sort(out, ...)
-    if (setNames) names(out) <- basename(x)
+    if (setNames) {
+        nm <- as.character(glue(glueNames))
+        stopifnot(length(nm) == length(out))
+        names(out) <- nm
+    }
     out
 
 }

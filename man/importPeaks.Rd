@@ -12,6 +12,7 @@ importPeaks(
   pruning.mode = c("coarse", "error"),
   sort = TRUE,
   setNames = TRUE,
+  glueNames = "{basename(x)}",
   centre = FALSE,
   nameRanges = TRUE,
   ...
@@ -33,7 +34,15 @@ implemented. See \link[GenomeInfoDb]{seqinfo}.}
 
 \item{sort}{logical. Should the ranges be sorted during import}
 
-\item{setNames}{logical Set basename(x) as the name}
+\item{setNames}{logical Set basename(x) as the name for each element of the
+GRangesList}
+
+\item{glueNames}{\link[glue]{glue} syntax for naming list elements}
+
+\item{centre}{Add the estimated peak centre. Ignored unless type = "narrow"}
+
+\item{nameRanges}{Place any values in the name column as range names within
+each file.}
 
 \item{...}{passed to \code{sort}}
 }

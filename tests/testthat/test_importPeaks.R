@@ -66,6 +66,11 @@ test_that("seqinfo objects behave correctly for narrowPeak files", {
   expect_error(
     importPeaks(fl, "narrow", seqinfo = NULL)
   )
+  ## Error
+  expect_error(
+    importPeaks(fl, "narrow", glueNames = "{1:5}"), "length.+is not TRUE"
+  )
+
 })
 
 test_that("blacklists behave correctly",{
