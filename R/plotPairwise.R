@@ -37,6 +37,7 @@
 #' setting point colour
 #' @param label Optional column to use for labelling ranges with the most
 #' extreme changes
+#' @param p,method,ignore.strand,min_width Passed to [makeConsensus()]
 #' @param name_sep Character string to separate names of the GRangesList and
 #' the selected column. Will appear as axis-labels
 #' @param xside,yside Will call geom_(x/y)side* from the package ggside and
@@ -107,7 +108,8 @@
 #' @importFrom rlang '!!' sym
 #' @export
 plotPairwise <- function(
-        x, var, colour = NULL, label = NULL, index = c(1, 2), name_sep = " ",
+        x, var, colour = NULL, label = NULL, index = c(1, 2),
+        p = 0, method = "union", ignore.strand = TRUE, min_width = 0,
         xside = c("boxplot", "density", "violin", "none"),
         yside = c("boxplot", "density", "violin", "none"),
         side_panel_width = c(0.3, 0.4), side_alpha = 1,
@@ -117,7 +119,7 @@ plotPairwise <- function(
         rho_size = 4, rho_pos = c(0.05, 0.95),  rho_alpha = 1,
         label_geom = c("label_repel", "label", "text_repel", "text", "none"),
         label_width = 20, label_sep = "; ", label_size = 3.5, label_alpha = 0.7,
-        min_d = 1, group_sep = " - ", simplify_equal = TRUE,
+        min_d = 1, group_sep = " - ", simplify_equal = TRUE, name_sep = " ",
         plot_theme = theme_get(), ...
 ) {
     ## Basic checks
@@ -143,7 +145,8 @@ plotPairwise <- function(
     rho_geom <- match.arg(rho_geom)
     label_geom <- match.arg(label_geom)
 
-    ol <- .makeOLaps(x, var, name_sep) ## The basic df for plotting
+    ## The basic df for plotting
+    ol <- .makeOLaps(x, var, name_sep, p, method, ignore.strand, min_width)
     if (!is.null(colour)) {
         ol <- .addColourCol(
             x, ol, colour, x_lab, y_lab, group_sep, simplify_equal
@@ -418,13 +421,14 @@ plotPairwise <- function(
 
 #' @importFrom dplyr case_when
 #' @keywords internal
-.makeOLaps <- function(x, var, name_sep) {
+.makeOLaps <- function(x, var, name_sep, .p, .method, .ignore.str, .min_width) {
     nm <- names(x)
-    consensus <- granges(makeConsensus(x))
-    ol <- .mapHits(x, consensus)
+    cons <- makeConsensus(x, .p, NULL, .method, .ignore.str, FALSE, .min_width)
+    cons <- granges(cons)
+    ol <- .mapHits(x, cons)
     ol <- .addCols(x, ol, var, NULL, NULL, name_sep)
 
-    ol$range <- as.character(consensus)[ol$consensus_peak]
+    ol$range <- as.character(cons)[ol$consensus_peak]
     ol$detected <- case_when(
         !is.na(ol[[nm[[1]]]]) & !is.na(ol[[nm[[2]]]]) ~ "Both Detected",
         is.na(ol[[nm[[1]]]]) & !is.na(ol[[nm[[2]]]]) ~ paste(nm[[2]], "Only"),

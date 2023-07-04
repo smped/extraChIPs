@@ -10,7 +10,10 @@ plotPairwise(
   colour = NULL,
   label = NULL,
   index = c(1, 2),
-  name_sep = " ",
+  p = 0,
+  method = "union",
+  ignore.strand = TRUE,
+  min_width = 0,
   xside = c("boxplot", "density", "violin", "none"),
   yside = c("boxplot", "density", "violin", "none"),
   side_panel_width = c(0.3, 0.4),
@@ -33,6 +36,7 @@ plotPairwise(
   min_d = 1,
   group_sep = " - ",
   simplify_equal = TRUE,
+  name_sep = " ",
   plot_theme = theme_get(),
   ...
 )
@@ -50,8 +54,7 @@ extreme changes}
 
 \item{index}{Which list elements to compare}
 
-\item{name_sep}{Character string to separate names of the GRangesList and
-the selected column. Will appear as axis-labels}
+\item{p, method, ignore.strand, min_width}{Passed to \code{\link[=makeConsensus]{makeConsensus()}}}
 
 \item{xside, yside}{Will call geom_(x/y)side* from the package ggside and
 show additional panels on the top and right of the plot respectively}
@@ -92,6 +95,9 @@ sircle of this radius}
 \item{simplify_equal}{logical(1) When combining columns from both elements
 for the colour categories, should shared values be annotated as 'Both ...'
 instead of having longer, more difficult to read annotations.}
+
+\item{name_sep}{Character string to separate names of the GRangesList and
+the selected column. Will appear as axis-labels}
 
 \item{plot_theme}{Sets the initial theme by using the default theme for the
 current R session via get_theme()}
