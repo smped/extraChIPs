@@ -147,6 +147,7 @@ setMethod(
         dotArgs$queries <- c(dotArgs$queries, ql)
       }
       dotArgs$sort_sets <- .sort_sets
+      ip <- ip[!names(ip) %in% names(dotArgs)]
       p <- do.call("upset", c(ip, dotArgs))
       return(p)
     }
