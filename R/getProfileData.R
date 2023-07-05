@@ -74,7 +74,9 @@ setMethod(
         stopifnot(length(gr) > 0)
         bw_seqlevels <- intersect(bw_seqlevels, seqnames(gr))
         gr <- keepSeqlevels(gr, bw_seqlevels)
+        gr <- gr[!duplicated(gr)]
         ids <- as.character(gr)
+
         ## Set the bins & resize
         bin_width <- as.integer((upstream + downstream) / bins)
         gr_resize <- resize(gr, width = 1, fix = "center")
