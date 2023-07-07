@@ -33,6 +33,8 @@
 #' See \link[EnrichedHeatmap]{normalizeToMatrix} for details
 #' @param log logical(1) Should the returned values be log2-transformed
 #' @param offset Value added to data if log-transforming. Ignored otherwise
+#' @param n_max Upper limit on the number of ranges to return profile data for.
+#' By default, no limit will be applied .
 #' @param BPPARAM Passed internally to \link[BiocParallel]{bplapply}
 #' @param ... Passed to \link[EnrichedHeatmap]{normalizeToMatrix}
 #'
@@ -64,7 +66,7 @@ setMethod(
     signature = signature(x = "BigWigFile", gr = "GenomicRanges"),
     function(
         x, gr, upstream = 2500, downstream = upstream, bins = 100,
-        mean_mode = "w0", log = TRUE, offset = 1, ...
+        mean_mode = "w0", log = TRUE, offset = 1, n_max = Inf, ...
     ) {
 
         stopifnot(upstream > 0 & downstream > 0 & bins > 0)
@@ -75,6 +77,13 @@ setMethod(
         bw_seqlevels <- intersect(bw_seqlevels, seqnames(gr))
         gr <- keepSeqlevels(gr, bw_seqlevels)
         gr <- gr[!duplicated(gr)]
+        n <- length(gr)
+        if (n > n_max) {
+            stopifnot(n_max > 0)
+            message("Downsampling to a maximum of ", n_max, " ranges")
+            ind <- sort(sample.int(n, n_max))
+            gr <- gr[ind]
+        }
         ids <- as.character(gr)
 
         ## Set the bins & resize

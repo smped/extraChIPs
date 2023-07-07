@@ -79,9 +79,12 @@ setMethod(
 #' @export
 setMethod(
   "addDiffStatus", signature = signature(x = "DataFrame"), function(x, ...) {
-    x <- as.data.frame(x)
-    x <- addDiffStatus(x, ...)
-    DataFrame(x)
+    df <- as.data.frame(x)
+    orig_names <- colnames(df)
+    df <- addDiffStatus(df, ...)
+    new_col <- setdiff(colnames(df), orig_names)
+    x[[new_col]] <- df[[new_col]]
+    x
   }
 )
 #' @rdname addDiffStatus-methods

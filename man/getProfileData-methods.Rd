@@ -18,6 +18,7 @@ getProfileData(x, gr, ...)
   mean_mode = "w0",
   log = TRUE,
   offset = 1,
+  n_max = Inf,
   ...
 )
 
@@ -67,6 +68,9 @@ See \link[EnrichedHeatmap]{normalizeToMatrix} for details}
 \item{log}{logical(1) Should the returned values be log2-transformed}
 
 \item{offset}{Value added to data if log-transforming. Ignored otherwise}
+
+\item{n_max}{Upper limit on the number of ranges to return profile data for.
+By default, no limit will be applied .}
 
 \item{BPPARAM}{Passed internally to \link[BiocParallel]{bplapply}}
 }

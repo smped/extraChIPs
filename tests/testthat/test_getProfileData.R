@@ -24,4 +24,5 @@ test_that("Errors", {
   expect_error(getProfileData("", gr))
   expect_error(getProfileData(bw))
   expect_error(getProfileData(bw, gr, offset = "a"))
+  expect_error(getProfileData(bw, gr, n_max = 0))
 })
