@@ -81,6 +81,7 @@
 <span>  mean_mode <span class="op">=</span> <span class="st">"w0"</span>,</span>
 <span>  log <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  offset <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  n_max <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -151,6 +152,11 @@ See <a href="https://rdrr.io/pkg/EnrichedHeatmap/man/normalizeToMatrix.html" cla
 
 <dt>offset</dt>
 <dd><p>Value added to data if log-transforming. Ignored otherwise</p></dd>
+
+
+<dt>n_max</dt>
+<dd><p>Upper limit on the number of ranges to return profile data for.
+By default, no limit will be applied .</p></dd>
 
 
 <dt>BPPARAM</dt>
