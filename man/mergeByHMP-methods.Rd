@@ -19,6 +19,7 @@ mergeByHMP(x, ...)
   p_adj_method = "fdr",
   merge_within = 1L,
   ignore_strand = TRUE,
+  min_win = 1,
   ...
 )
 
@@ -64,6 +65,8 @@ vignette("harmonicmeanp") for more details}
 
 \item{ignore_strand}{Passed internally to \link[GenomicRanges]{reduce} and
 \link[GenomicRanges]{findOverlaps}}
+
+\item{min_win}{Only keep merged windows derived from at least this number}
 }
 \value{
 A GenomicRanges object with merged ranges from the original object along with

@@ -48,6 +48,7 @@
 #' @param merge_within Merge any non-overlapping windows within this distance
 #' @param ignore_strand Passed internally to \link[GenomicRanges]{reduce} and
 #' \link[GenomicRanges]{findOverlaps}
+#' @param min_win Only keep merged windows derived from at least this number
 #' @param ... Not used
 #'
 #' @return
@@ -83,7 +84,8 @@ setMethod(
     function(
         x, df = NULL, w = NULL,
         logfc = "logFC", pval = "P", cpm = "logCPM", inc_cols = NULL,
-        p_adj_method = "fdr", merge_within = 1L, ignore_strand = TRUE, ...
+        p_adj_method = "fdr", merge_within = 1L, ignore_strand = TRUE,
+        min_win = 1, ...
     ){
 
         ## Checks & defining the key columns
@@ -157,12 +159,23 @@ setMethod(
             adj_df <- summarise(
                 grp_df, adjp = .ec_HMP_adj(!!sym(pval), !!sym("weights"), L)
             )
+            ## This could be revisited for better integration with filtering
             ret_df[[adj_col]] <- adj_df[["adjp"]]
         }
         mcols(ranges_out) <- as.data.frame(ret_df)
         ranges_out$keyval_range <- GRanges(
             ranges_out$keyval_range, seqinfo = seqinfo(ranges_out)
         )
+
+        ## Apply the filter based on window size
+        stopifnot(is.numeric(min_win))
+        ranges_out <- ranges_out[ranges_out$n_windows >= min_win]
+        ## Re-adjust p-values if using conventional methods
+        if (p_adj_method != "fwer") {
+            vals <- p.adjust(ranges_out$hmp, p_adj_method)
+            mcols(ranges_out)[[adj_col]] <- vals
+        }
+
         ranges_out
     }
 )
