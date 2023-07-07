@@ -63,8 +63,9 @@
 #' @param offset If provided will be used as the offset when the DGEList object
 #' is created during model fitting
 #' @param null Passed to \link[edgeR]{glmTreat}
-#' @param ... Passed to \link[edgeR]{calcNormFactors}, \link[edgeR]{estimateDisp}
-#' and \link[edgeR]{glmQLFit} when method = "qlf".
+#' @param weighted logical(1) Passed to  \link[edgeR]{calcNormFactors}
+#' @param ... Passed to \link[edgeR]{calcNormFactors} and
+#' \link[edgeR]{glmQLFit} when method = "qlf".
 #' If method = "lt", instead passed to \link[limma]{lmFit}, \link[limma]{treat},
 #' \link[limma]{eBayes}
 #'
@@ -103,7 +104,8 @@ setMethod(
         lib.size = "totals", method = c("qlf", "lt"),
         norm = c("none", "TMM", "RLE", "TMMwsp", "upperquartile"),
         groups = NULL, fc = 1, lfc = log2(fc), asRanges = FALSE,
-        offset = NULL, null = c("interval", "worst.case"), ...
+        offset = NULL, null = c("interval", "worst.case"),
+        weighted = FALSE, ...
     ) {
         method <- match.arg(method)
         norm <- match.arg(norm)
@@ -119,7 +121,7 @@ setMethod(
             if (!is.null(groups)) groups <- match.arg(groups, args)
             if (!is.null(lib.size)) lib.size <- match.arg(lib.size, args)
             fit <- .se2DGEGLM(
-                x, assay, design, lib.size, norm, groups, offset, ...
+                x, assay, design, lib.size, norm, groups, offset, weighted, ...
             )
             if (lfc == 0) {
                 fit <- glmQLFTest(fit, coef = coef)
@@ -192,7 +194,9 @@ setMethod(
 
 #' @import SummarizedExperiment
 #' @importFrom edgeR DGEList calcNormFactors estimateDisp glmQLFit
-.se2DGEGLM <- function(x, assay, design, lib.size, norm, groups, offset, ...) {
+.se2DGEGLM <- function(
+        x, assay, design, lib.size, norm, groups, offset, weighted, ...
+) {
 
     ## 1. Create a DGE list
     ## 2. Normalise as requested
@@ -207,7 +211,7 @@ setMethod(
     if (!is.null(lib.size)) ls <- col_df[[lib.size]]
     message("Creating DGE list...")
     dge <- DGEList(counts = mat, lib.size = ls, samples = col_df)
-    if (!is.null(offset)) dge$offset <- offset
+    if (!is.null(offset)) dge$offset <- edgeR::scaleOffset(ls, offset)
     if (!is.null(groups)) {
         grp_fac <- as.factor(col_df[[groups]])
         dge$samples$group <- grp_fac
@@ -223,10 +227,14 @@ setMethod(
         dge$samples$norm.factors <- nf[colnames(dge)]
     } else {
         message("Calculating experiment-wide normalisation factors...")
-        dge <- calcNormFactors(dge, method = norm, ...)
+        ## Both DiffBind and csaw set doWeighting = FALSE. They're smart people
+        dge <- calcNormFactors(dge, method = norm, doWeighting = weighted, ...)
     }
     message("Estimating dispersions...")
-    dge <- estimateDisp(dge, design = design, ...)
+    # dge <- estimateDisp(dge, design = design, ...)
+    ## Switch to the method used by DiffBind
+    dge <- edgeR::estimateGLMTrendedDisp(dge, design = design)
+    dge <- edgeR::estimateGLMTagwiseDisp(dge, design = design)
     message("Running glmQLFit...")
     glmQLFit(dge, design = design, ...)
 
