@@ -136,12 +136,12 @@ from each element added to the new object</p>
 <span class="r-in"><span><span class="va">grl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRangesList-class.html" class="external-link">GRangesList</a></span><span class="op">(</span>A <span class="op">=</span> <span class="va">a</span>, B <span class="op">=</span> <span class="va">b</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">mapGrlCols</span><span class="op">(</span><span class="va">grl</span>, var <span class="op">=</span> <span class="st">"logFC"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 4 ranges and 2 metadata columns:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand |   A_logFC   B_logFC</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;numeric&gt; &lt;numeric&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1       1-5      * |  1.295993        NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chr1     21-25      * | -1.204969        NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [3]     chr1     41-45      * |  0.326973        NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [4]     chr1     61-70      * | -0.477829  0.702501</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand |    A_logFC   B_logFC</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; |  &lt;numeric&gt; &lt;numeric&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1       1-5      * | -0.1777754        NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chr1     21-25      * |  0.0419013        NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [3]     chr1     41-45      * | -0.1453987        NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [4]     chr1     61-70      * |  0.6335019  0.839524</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
 <span class="r-in"><span></span></span>
@@ -151,19 +151,19 @@ from each element added to the new object</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 1 range and 2 metadata columns:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand |   A_logFC   B_logFC</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;numeric&gt; &lt;numeric&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1     61-65      * | -0.477829  0.702501</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1     61-65      * |  0.633502  0.839524</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Columns can be collapsed to merge into a single column</span></span></span>
 <span class="r-in"><span><span class="fu">mapGrlCols</span><span class="op">(</span><span class="va">grl</span>, var <span class="op">=</span> <span class="st">"logFC"</span>, collapse <span class="op">=</span> <span class="st">"genes"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> GRanges object with 4 ranges and 3 metadata columns:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand |   A_logFC   B_logFC          genes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; | &lt;numeric&gt; &lt;numeric&gt;    &lt;character&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1       1-5      * |  1.295993        NA Gene 0; Gene 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chr1     21-25      * | -1.204969        NA         Gene 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [3]     chr1     41-45      * |  0.326973        NA         Gene 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [4]     chr1     61-70      * | -0.477829  0.702501 Gene 4; Gene 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       seqnames    ranges strand |    A_logFC   B_logFC          genes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt; |  &lt;numeric&gt; &lt;numeric&gt;    &lt;character&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1]     chr1       1-5      * | -0.1777754        NA Gene 0; Gene 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [2]     chr1     21-25      * |  0.0419013        NA         Gene 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [3]     chr1     41-45      * | -0.1453987        NA         Gene 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [4]     chr1     61-70      * |  0.6335019  0.839524 Gene 4; Gene 5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span>
 <span class="r-in"><span></span></span>

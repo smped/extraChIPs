@@ -85,6 +85,7 @@ testing</p>
 <span>  p_adj_method <span class="op">=</span> <span class="st">"fdr"</span>,</span>
 <span>  merge_within <span class="op">=</span> <span class="fl">1L</span>,</span>
 <span>  ignore_strand <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  min_win <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -150,6 +151,10 @@ vignette("harmonicmeanp") for more details</p></dd>
 <dt>ignore_strand</dt>
 <dd><p>Passed internally to <a href="https://rdrr.io/pkg/IRanges/man/inter-range-methods.html" class="external-link">reduce</a> and
 <a href="https://rdrr.io/pkg/IRanges/man/findOverlaps-methods.html" class="external-link">findOverlaps</a></p></dd>
+
+
+<dt>min_win</dt>
+<dd><p>Only keep merged windows derived from at least this number</p></dd>
 
 </dl></div>
     <div id="value">

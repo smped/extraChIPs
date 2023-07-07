@@ -86,6 +86,7 @@
 <span>  asRanges <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  offset <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  null <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"interval"</span>, <span class="st">"worst.case"</span><span class="op">)</span>,</span>
+<span>  weighted <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -97,8 +98,8 @@
 
 
 <dt>...</dt>
-<dd><p>Passed to <a href="https://rdrr.io/pkg/edgeR/man/calcNormFactors.html" class="external-link">calcNormFactors</a>, <a href="https://rdrr.io/pkg/edgeR/man/estimateDisp.html" class="external-link">estimateDisp</a>
-and <a href="https://rdrr.io/pkg/edgeR/man/glmQLFTest.html" class="external-link">glmQLFit</a> when method = "qlf".
+<dd><p>Passed to <a href="https://rdrr.io/pkg/edgeR/man/calcNormFactors.html" class="external-link">calcNormFactors</a> and
+<a href="https://rdrr.io/pkg/edgeR/man/glmQLFTest.html" class="external-link">glmQLFit</a> when method = "qlf".
 If method = "lt", instead passed to <a href="https://rdrr.io/pkg/limma/man/lmFit.html" class="external-link">lmFit</a>, <a href="https://rdrr.io/pkg/limma/man/ebayes.html" class="external-link">treat</a>,
 <a href="https://rdrr.io/pkg/limma/man/ebayes.html" class="external-link">eBayes</a></p></dd>
 
@@ -160,6 +161,10 @@ is created during model fitting</p></dd>
 <dt>null</dt>
 <dd><p>Passed to <a href="https://rdrr.io/pkg/edgeR/man/glmTreat.html" class="external-link">glmTreat</a></p></dd>
 
+
+<dt>weighted</dt>
+<dd><p>logical(1) Passed to  <a href="https://rdrr.io/pkg/edgeR/man/calcNormFactors.html" class="external-link">calcNormFactors</a></p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -217,17 +222,17 @@ individually as conventionally specified.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DataFrame with 200 rows and 5 columns</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          logFC    logCPM           F     PValue       FDR</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;numeric&gt; &lt;numeric&gt;   &lt;numeric&gt;  &lt;numeric&gt; &lt;numeric&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    4.3066445   11.7022 10.49754627 0.00343434  0.686868</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    0.0834143   12.2407  0.00648834 0.93645603  0.996343</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    1.6794989   11.6748  1.97631431 0.17237281  0.996343</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   -1.1910934   12.0523  1.27000858 0.27071483  0.996343</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    0.5179779   12.0443  0.22968366 0.63602144  0.996343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    4.3066297   11.7021 10.16802466 0.00399995  0.799990</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    0.0834144   12.2407  0.00642621 0.93678278  0.996477</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    1.6795006   11.6748  1.92608248 0.17814742  0.996477</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   -1.1910934   12.0524  1.30459678 0.26482720  0.996477</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    0.5179778   12.0442  0.23548266 0.63196061  0.996477</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ...        ...       ...         ...        ...       ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 196  0.0907533   12.7686   0.0264131   0.872233  0.996343</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 197  1.0952803   12.3007   1.1504058   0.293947  0.996343</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 198 -1.1430290   12.6072   2.8331979   0.105075  0.996343</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 199  0.1461144   12.3253   0.0242015   0.877652  0.996343</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 200  0.0463688   11.8591   0.0010982   0.973833  0.996343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 196  0.0907519   12.7687  0.02703171  0.8708054  0.996477</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 197  1.0952799   12.3006  1.13433141  0.2976250  0.996477</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 198 -1.1430288   12.6072  2.94270952  0.0993631  0.996477</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 199  0.1461143   12.3253  0.02388492  0.8784917  0.996477</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 200  0.0463691   11.8591  0.00110078  0.9738116  0.996477</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
