@@ -35,6 +35,7 @@
 #' @param merge_within Merge any non-overlapping windows within this distance
 #' @param ignore_strand Passed internally to \link[GenomicRanges]{reduce} and
 #' \link[GenomicRanges]{findOverlaps}
+#' @param min_win Only keep merged windows derived from at least this number
 #' @param ... Passed to all csaw functions being wrapped
 #'
 #' @return
@@ -70,7 +71,7 @@ setMethod(
         logfc = "logFC", pval = "P", cpm = "logCPM", inc_cols,
         p_adj_method = "fdr", alpha = 0.05,
         method = c("combine", "best", "minimal"),
-        merge_within = 1L, ignore_strand = TRUE,
+        merge_within = 1L, ignore_strand = TRUE, min_win = 1,
         ...
     ){
 
@@ -111,9 +112,12 @@ setMethod(
 
         ## Now tidy the standard output from any method
         merged_df <- merged_df[c(n_cols, ret_cols)]
-        adj_col <- paste0(pval, "_", p_adj_method)
-        merged_df[[adj_col]] <- p.adjust(merged_df[[pval]], p_adj_method)
         mcols(ranges_out) <- merged_df
+        ranges_out <- ranges_out[ranges_out$n_windows >= min_win]
+        adj_col <- paste0(pval, "_", p_adj_method)
+        vals <- p.adjust(mcols(ranges_out)[[pval]], p_adj_method)
+        mcols(ranges_out)[[adj_col]] <- vals
+
         ranges_out
 
     }

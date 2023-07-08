@@ -64,3 +64,8 @@
 
 - Added `mapGrlCols()`
 
+# Changes in 1.5.7 (23-07-08)
+
+- Matched DiffBind and csaw settings for `fitAssayDiff()`
+- Added `min_win` to all merging functions
+- Added `n_max` to `getProfileData()`

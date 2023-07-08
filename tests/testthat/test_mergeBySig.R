@@ -12,6 +12,9 @@ test_that("combineTestc behaves correctly for GRanges",{
     expect_equal(length(mergeBySig(x, pval = "p")), 2)
     expect_s4_class(mergeBySig(x, df, pval = "p")$keyval_range, "GRanges")
     expect_equal(as.character(new_gr$keyval_range), as.character(x)[-2])
+    new_gr <- mergeBySig(x, df, pval = "p", min_win = 2)
+    expect_equal(length(new_gr), 1)
+
 })
 
 test_that("getBestTest behaves correctly",{

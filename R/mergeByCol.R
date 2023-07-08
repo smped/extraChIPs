@@ -43,6 +43,7 @@
 #' @param merge_within Merge any ranges within this distance
 #' @param ignore_strand Passed internally to \link[GenomicRanges]{reduce} and
 #' \link[GenomicRanges]{findOverlaps}
+#' @param min_win Only keep merged windows derived from at least this number
 #' @param ... Not used
 #'
 #' @return
@@ -82,14 +83,14 @@ setMethod(
         x, df = NULL, col,
         by = c("max", "median", "mean", "min"),
         logfc = "logFC", pval = "P", inc_cols, p_adj_method = "fdr",
-        merge_within = 1L, ignore_strand = TRUE, ...
+        merge_within = 1L, ignore_strand = TRUE, min_win = 1, ...
     ) {
 
         ## Checks & defining the key columns
         if (is.null(df)) df <- mcols(x)
         stopifnot(nrow(df) == length(x))
         df_cols <- colnames(df)
-        if(missing(col)) stop("The column containing signal must be specified")
+        if (missing(col)) stop("The column containing signal must be specified")
         col <- match.arg(col, df_cols)
         logfc <- match.arg(logfc, df_cols)
         pval <- match.arg(pval, df_cols)
@@ -136,12 +137,21 @@ setMethod(
         )
 
         DF <- DataFrame(merged_df[c(n_cols, ret_cols)])
-        adj_col <- paste0(pval, "_", p_adj_method)
-        if (p_adj_method != "none")
-            DF[[adj_col]] <- p.adjust(DF[[pval]], method = p_adj_method)
         DF[["keyval_range"]] <- granges(x)[DF[["keyval_range"]]]
         seqinfo(DF[["keyval_range"]]) <- seqinfo(x)
         mcols(ranges_out) <- DF
+
+        ## Filter any with too few underlying windows
+        stopifnot(is.numeric(min_win))
+        keep <- ranges_out$n_windows >= min_win
+        ranges_out <- ranges_out[keep]
+
+        ## Adjust p-values
+        adj_col <- paste0(pval, "_", p_adj_method)
+        if (p_adj_method != "none") {
+            vals <-  p.adjust(mcols(ranges_out)[[pval]], method = p_adj_method)
+            mcols(ranges_out)[[adj_col]] <- vals
+        }
         ranges_out
 
     }

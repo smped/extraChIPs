@@ -17,6 +17,8 @@ test_that("mergedByHMP behaves correctly for GRanges",{
     new_gr$hmp[[1]],
     as.numeric(harmonicmeanp::p.hmp(x$p[1:2], L = 2, multilevel = FALSE))
   )
+  new_gr <- mergeByHMP(x, df, pval = "p", min_win = 2)
+  expect_equal(length(new_gr), 1)
 })
 
 
