@@ -81,12 +81,7 @@ setMethod(
     if (type == "auto") type <- ifelse(n > 3, "upset", "venn")
     if (n == 1 & type == "upset")
       stop("UpSet plots can only be drawn using more than one group")
-    if (length(var) > 1) {
-      var <- var[[1]]
-      message(
-        "Only one column can be specified in 'var'. Choosing ", var
-      )
-    }
+    if (!is.null(var)) var <- match.arg(var[[1]], .mcolnames(x[[1]]))
 
     ## Dummy variables for R CMD check
     count <- range <- intersection <- c()
@@ -99,9 +94,7 @@ setMethod(
     if (is.null(var) | type == "venn") {
 
       ## Form a character list & plot
-      l <- lapply(
-        nm, function(x) as.character(gr)[mcols(gr)[[x]]]
-      )
+      l <- lapply(nm, function(x) as.character(gr)[mcols(gr)[[x]]])
       names(l) <- nm
       plotOverlaps(l, type, set_col = set_col, .sort_sets = .sort_sets, ...)
 
@@ -133,15 +126,12 @@ setMethod(
       if (!"set_sizes" %in% names(dotArgs)) {
         dotArgs$set_sizes <- upset_set_size() +
           geom_text(
-            aes(label = comma(after_stat(count))),
-            hjust = 1.15, stat = 'count'
+            aes(label = comma(after_stat(count))), hjust = 1.15, stat = 'count'
           ) +
           scale_y_reverse(expand = expansion(c(0.25, 0)))
       }
       if (!'themes' %in% dotArgs) {
-        dotArgs$themes <- upset_default_themes(
-          panel.grid = element_blank()
-        )
+        dotArgs$themes <- upset_default_themes(panel.grid = element_blank())
       }
       if (!is.null(set_col)) {
         ## Respect any existing set queries
@@ -152,13 +142,12 @@ setMethod(
         names(set_col)[seq_len(n)] <- nm
         ql <- lapply(
           setdiff(nm, existing_sets),
-          function(i) {
-            upset_query(set = i, fill = set_col[[i]])
-          }
+          function(i) upset_query(set = i, fill = set_col[[i]])
         )
         dotArgs$queries <- c(dotArgs$queries, ql)
       }
       dotArgs$sort_sets <- .sort_sets
+      ip <- ip[!names(ip) %in% names(dotArgs)]
       p <- do.call("upset", c(ip, dotArgs))
       return(p)
     }
@@ -211,15 +200,12 @@ setMethod(
       if (!"set_sizes" %in% names(dotArgs)) {
         dotArgs$set_sizes <- upset_set_size() +
           geom_text(
-            aes(label = comma(after_stat(count))),
-            hjust = 1.15, stat = 'count'
+            aes(label = comma(after_stat(count))), hjust = 1.15, stat = 'count'
           ) +
           scale_y_reverse(expand = expansion(c(0.25, 0)))
       }
       if (!'themes' %in% dotArgs) {
-        dotArgs$themes <- upset_default_themes(
-          panel.grid = element_blank()
-        )
+        dotArgs$themes <- upset_default_themes(panel.grid = element_blank())
       }
       if (!is.null(set_col)) {
         ## Respect any existing set queries
@@ -230,9 +216,7 @@ setMethod(
         names(set_col)[seq_len(n)] <- nm
         ql <- lapply(
           setdiff(nm, existing_sets),
-          function(i) {
-            upset_query(set = i, fill = set_col[[i]])
-          }
+          function(i) upset_query(set = i, fill = set_col[[i]])
         )
         dotArgs$queries <- c(dotArgs$queries, ql)
       }
@@ -287,3 +271,6 @@ setMethod(
   do.call("draw.triple.venn", c(plotArgs, dotArgs))
 }
 
+#' @importFrom S4Vectors mcols
+#' @keywords internal
+.mcolnames <- function(x) {colnames(mcols(x))}
