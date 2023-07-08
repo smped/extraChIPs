@@ -342,7 +342,8 @@ plotHFGC <- function(
         plot_range <- range(c(anchors, gr), ignore.strand = TRUE)
     }
     ## Now resize/shift as required
-    plot_range <- resize(plot_range, zoom*width(plot_range), fix = "center")
+    max_width <- min(max, zoom*width(plot_range))
+    plot_range <- resize(plot_range, max_width, fix = "center")
     plot_range <- shift(plot_range, shift)
 
     ## Form the IdeogramTrack
