@@ -18,7 +18,7 @@
   x_lab = NULL,
   y_lab = NULL,
   fill_lab = NULL,
-  label_side = "left",
+  label_side = c("left", "right", "none"),
   ...
 )
 }

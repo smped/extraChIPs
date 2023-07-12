@@ -198,7 +198,7 @@ setMethod(
         facet_x = NULL, facet_y = NULL,
         summary_fun = c("mean", "median", "min", "max", "none"),
         rel_height = 0.3, x_lab = NULL, y_lab = NULL, fill_lab = NULL,
-        label_side = "left", ...
+        label_side = c("left", "right", "none"), ...
 ) {
 
     ## data should be a simple data.frame or tibble used to make the final plot
@@ -209,6 +209,7 @@ setMethod(
     if (!is.null(fill)) fill <- sym(match.arg(fill, args))
     if (!is.null(colour)) colour <- sym(match.arg(colour, args))
     if (!is.null(linetype)) linetype <- sym(match.arg(linetype, args))
+    label_side <- match.arg(label_side)
 
     summary_fun <- match.arg(summary_fun)
 
@@ -240,6 +241,11 @@ setMethod(
         )
     ## Only add the top summary if this is called
     if (summary_fun != "none") {
+        breaks <- waiver()
+        if (label_side == "none") {
+            breaks <- NULL
+            label_side <- "left"
+        }
         y <- c() ## R CMD check
         f <- match.fun(summary_fun)
         grp_vars <- unique(
@@ -253,7 +259,8 @@ setMethod(
         ) +
             ggside(collapse = "x") +
             scale_xsidey_continuous(
-                expand = c(0.1, 0, 0.1, 0), position = label_side
+                expand = c(0.1, 0, 0.1, 0), position = label_side,
+                breaks = breaks
             ) +
             theme(
                 panel.grid.minor = element_blank(),
