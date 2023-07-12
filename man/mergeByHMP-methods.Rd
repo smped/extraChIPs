@@ -20,6 +20,7 @@ mergeByHMP(x, ...)
   merge_within = 1L,
   ignore_strand = TRUE,
   min_win = 1,
+  keyval = c("min", "merged"),
   ...
 )
 
@@ -67,6 +68,10 @@ vignette("harmonicmeanp") for more details}
 \link[GenomicRanges]{findOverlaps}}
 
 \item{min_win}{Only keep merged windows derived from at least this number}
+
+\item{keyval}{Return the key-value range as the window associated with the
+minimum p-value, or by merging the ranges from all windows with raw p-values
+below the merged harmonic-mean p-value}
 }
 \value{
 A GenomicRanges object with merged ranges from the original object along with

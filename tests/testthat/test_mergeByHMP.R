@@ -7,6 +7,7 @@ mcols(x) <- df
 test_that("mergedByHMP behaves correctly for GRanges",{
   new_gr <- mergeByHMP(x, df, pval = "p")
   expect_equal(length(new_gr), 2)
+  expect_equal(new_gr$keyval_range, granges(x)[2:3])
   # expect_equal(sum(new_gr$p %in% df$p), 2)
   expect_equal(seqinfo(new_gr$keyval_range), sq)
   expect_equal(length(mergeBySig(x, pval = "p")), 2)
@@ -19,6 +20,12 @@ test_that("mergedByHMP behaves correctly for GRanges",{
   )
   new_gr <- mergeByHMP(x, df, pval = "p", min_win = 2)
   expect_equal(length(new_gr), 1)
+})
+
+test_that("Merging keyval ranges works", {
+  df$p[1] <- 0.014
+  new_gr <- mergeByHMP(x, df, pval = "p", keyval = "merged")
+  expect_equal(new_gr$keyval_range[1], GenomicRanges::reduce(x[1:2]))
 })
 
 

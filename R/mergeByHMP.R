@@ -49,6 +49,9 @@
 #' @param ignore_strand Passed internally to \link[GenomicRanges]{reduce} and
 #' \link[GenomicRanges]{findOverlaps}
 #' @param min_win Only keep merged windows derived from at least this number
+#' @param keyval Return the key-value range as the window associated with the
+#' minimum p-value, or by merging the ranges from all windows with raw p-values
+#' below the merged harmonic-mean p-value
 #' @param ... Not used
 #'
 #' @return
@@ -85,7 +88,7 @@ setMethod(
         x, df = NULL, w = NULL,
         logfc = "logFC", pval = "P", cpm = "logCPM", inc_cols = NULL,
         p_adj_method = "fdr", merge_within = 1L, ignore_strand = TRUE,
-        min_win = 1, ...
+        min_win = 1, keyval = c("min", "merged"), ...
     ){
 
         ## Checks & defining the key columns
@@ -97,6 +100,7 @@ setMethod(
         pval <- match.arg(pval, df_cols)
         cpm <- match.arg(cpm, df_cols)
         p_adj_method <- match.arg(p_adj_method, c(p.adjust.methods, "fwer"))
+        keyval <- match.arg(keyval)
         if (is.null(w)) {
             ## Need to sum \leq one using the HMP algorithms
             df[["weights"]] <- 1 / nrow(df)
@@ -147,8 +151,31 @@ setMethod(
         inc_df <- arrange(inc_df, !!sym("subjectHits"), !!sym(pval))
         inc_df <- distinct(inc_df, !!sym("subjectHits"), .keep_all = TRUE)
         inc_df <- inc_df[!names(inc_df) %in% pval]
+
+        ## If keyval = "merged" (as opposed to "min")
+        if (keyval == "merged") { ## Reform the keyvalue range by merging
+            df$range <- as.character(x)
+            df <- left_join(df, ret_df[c("subjectHits", "hmp")], by = "subjectHits")
+            df <- dplyr::filter(
+                df, !!sym("p") <= !!sym("hmp") | !!sym("p") == min(!!sym("p")),
+                .by = !!sym("subjectHits")
+            )
+            kv_gr <- colToRanges(df, "range")
+            kv_grl <- splitAsList(kv_gr, kv_gr$subjectHits)
+            kv_grl <- range(kv_grl)
+            kv_gr <- unlist(kv_grl)
+            mcols(kv_gr)[["subjectHits"]] <- as.integer(names(kv_gr))
+            kv_df <- as_tibble(kv_gr, name = "keyval_range")
+            inc_df <- inc_df[names(inc_df) != "keyval_range"]
+            inc_df <- left_join(
+                inc_df, kv_df, by = "subjectHits", relationship = "one-to-one"
+            )
+        }
+
         ## Merge the two, select the final columns, adjust p & return
-        ret_df <- left_join(ret_df, inc_df, by = "subjectHits")
+        ret_df <- left_join(
+            ret_df, inc_df, by = "subjectHits", relationship = "one-to-one"
+        )
         ret_df <- ret_df[c(n_cols, ret_cols)]
         adj_col <- paste0("hmp_", p_adj_method)
         if (p_adj_method != "fwer") {
