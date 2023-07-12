@@ -39,6 +39,7 @@ plotProfileHeatmap(object, ...)
   yLab = NULL,
   fillLab = fillValue,
   relHeight = 0.3,
+  summaryLabelSide = "left",
   ...
 )
 }
@@ -69,6 +70,9 @@ using labs() on any returned object}
 
 \item{relHeight}{The relative height of the top summary panel.
 Represents the fraction of the plotting area taken up by the summary panel.}
+
+\item{summaryLabelSide}{Side to place y-axis for the summary plot in the top
+panel}
 }
 \value{
 A \code{ggplot2} object, able to be customised using standard \code{ggplot2} syntax

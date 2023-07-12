@@ -41,6 +41,8 @@
 #' using labs() on any returned object
 #' @param relHeight The relative height of the top summary panel.
 #' Represents the fraction of the plotting area taken up by the summary panel.
+#' @param summaryLabelSide Side to place y-axis for the summary plot in the top
+#' panel
 #' @param ... Passed to \link[ggplot2]{facet_grid} internally. Can be utilised
 #' for switching panel strips or passing a labeller function
 #'
@@ -88,7 +90,8 @@ setMethod(
         profileCol, xValue = "bp", fillValue = "score",
         facetX = NULL, facetY = NULL, colour = facetY, linetype = NULL,
         summariseBy = c("mean", "median", "min", "max", "none"),
-        xLab = xValue, yLab = NULL, fillLab = fillValue, relHeight = 0.3, ...
+        xLab = xValue, yLab = NULL, fillLab = fillValue, relHeight = 0.3,
+        ...
     ) {
 
         ## All elements of the list should usually have identical ranges,
@@ -129,7 +132,8 @@ setMethod(
         profileCol, xValue = "bp", fillValue = "score",
         facetX = NULL, facetY = NULL, colour = facetY, linetype = NULL,
         summariseBy = c("mean", "median", "min", "max", "none"),
-        xLab = xValue, yLab = NULL, fillLab = fillValue, relHeight = 0.3, ...
+        xLab = xValue, yLab = NULL, fillLab = fillValue, relHeight = 0.3,
+        summaryLabelSide = "left", ...
     ) {
 
         ## Check the profile data.frames for identical dims & required cols
@@ -162,7 +166,7 @@ setMethod(
             colour = colour, linetype = linetype, facet_x = facetX,
             facet_y = facetY, summary_fun = summariseBy,
             rel_height = relHeight, x_lab = xLab, y_lab = yLab,
-            fill_lab = fillLab, ...
+            fill_lab = fillLab, label_side = summaryLabelSide, ...
         )
     }
 )
@@ -193,7 +197,8 @@ setMethod(
         data, x = NULL, y = NULL, fill = NULL, colour = NULL, linetype = NULL,
         facet_x = NULL, facet_y = NULL,
         summary_fun = c("mean", "median", "min", "max", "none"),
-        rel_height = 0.3, x_lab = NULL, y_lab = NULL, fill_lab = NULL, ...
+        rel_height = 0.3, x_lab = NULL, y_lab = NULL, fill_lab = NULL,
+        label_side = "left", ...
 ) {
 
     ## data should be a simple data.frame or tibble used to make the final plot
@@ -248,7 +253,7 @@ setMethod(
         ) +
             ggside(collapse = "x") +
             scale_xsidey_continuous(
-                expand = c(0.1, 0, 0.1, 0), position = "right"
+                expand = c(0.1, 0, 0.1, 0), position = label_side
             ) +
             theme(
                 panel.grid.minor = element_blank(),
