@@ -69,3 +69,9 @@
 - Matched DiffBind and csaw settings for `fitAssayDiff()`
 - Added `min_win` to all merging functions
 - Added `n_max` to `getProfileData()`
+
+# Changes in 1.5.8 (23-07-14)
+
+- Added control of side-axis label position for `plotProfileHeatmap()`
+- Added to return merged key-value ranges for `mergeByHMP()`
+
