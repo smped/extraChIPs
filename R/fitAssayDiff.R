@@ -161,6 +161,10 @@ setMethod(
         gr_cols <- keep_cols[any_gr]
         orig <- as_tibble(rowData(x))[,keep_cols]
         rowData(x) <- cbind(orig, res)
+        list_cols <- vapply(rowData(x), function(x) is(x, "list"), logical(1))
+        rowData(x)[list_cols] <- lapply(
+            rowData(x)[list_cols], function(x) as(x, "CompressedList")
+        )
         if (any(any_gr) & is(x, "RangedSummarizedExperiment")) {
             sq <- seqinfo(x)
             rowData(x)[gr_cols] <- lapply(

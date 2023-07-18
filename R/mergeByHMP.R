@@ -158,7 +158,7 @@ setMethod(
             df <- left_join(df, ret_df[c("subjectHits", "hmp")], by = "subjectHits")
             df <- dplyr::filter(
                 df,
-                !!sym("pval") <= !!sym("hmp") | !!sym("pval") == min(!!sym("pval")),
+                !!sym(pval) <= !!sym("hmp") | !!sym(pval) == min(!!sym(pval)),
                 .by = !!sym("subjectHits")
             )
             kv_gr <- colToRanges(df, "range")
