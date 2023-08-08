@@ -6,7 +6,7 @@
 \usage{
 importPeaks(
   x,
-  type = c("narrow", "broad"),
+  type = c("narrow", "broad", "bed"),
   blacklist,
   seqinfo,
   pruning.mode = c("coarse", "error"),
@@ -50,11 +50,13 @@ each file.}
 A GRangesList
 }
 \description{
-Import peaks in narrowPeak or broadPeak format
+Import peaks in narrowPeak, broadPeak or bed format
 }
 \details{
-Peaks are imported from either narrowPeak or broadPeak format as
+Peaks are imported from narrowPeak, broadPeak or bed format as
 GenomicRanges objects.
+
+If importing bed files, only the default 3-6 columns will imported.
 }
 \examples{
 fl <- system.file(

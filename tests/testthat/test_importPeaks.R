@@ -34,6 +34,23 @@ test_that("broadPeak files parse correctly", {
   expect_true(all(vapply(mcols(gr), is.numeric, logical(1))))
 })
 
+test_that("bed files parse correctly", {
+
+  fl <- system.file("extdata", "peaks.bed.gz", package = "extraChIPs")
+  grl <- importPeaks(fl, type = "bed")
+  gr <- unlist(grl)
+
+  expect_equal(length(grl), 1L)
+  expect_equal(length(gr), 5L)
+  expect_equal(.mcolnames(gr), "score")
+
+  grl <- importPeaks(fl, type = "bed", nameRanges = FALSE)
+  gr <- unlist(grl)
+  expect_equal(.mcolnames(gr), c("name", "score"))
+
+
+})
+
 test_that("seqinfo objects behave correctly for narrowPeak files", {
   fl <- system.file(
     "extdata/testFiles", "test.narrowPeak", package = "extraChIPs"

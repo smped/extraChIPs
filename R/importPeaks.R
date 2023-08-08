@@ -1,10 +1,12 @@
 #' @title Import peaks
 #'
-#' @description Import peaks in narrowPeak or broadPeak format
+#' @description Import peaks in narrowPeak, broadPeak or bed format
 #'
 #' @details
-#' Peaks are imported from either narrowPeak or broadPeak format as
+#' Peaks are imported from narrowPeak, broadPeak or bed format as
 #' GenomicRanges objects.
+#'
+#' If importing bed files, only the default 3-6 columns will imported.
 #'
 #' @param x One or more files to be imported. All files must be of the same
 #' type, i.e. narrow or broad
@@ -39,7 +41,7 @@
 #' @import GenomicRanges
 #' @export
 importPeaks <- function(
-        x, type = c("narrow", "broad"), blacklist, seqinfo,
+        x, type = c("narrow", "broad", "bed"), blacklist, seqinfo,
         pruning.mode = c("coarse", "error"), sort = TRUE, setNames = TRUE,
         glueNames = "{basename(x)}", centre = FALSE, nameRanges = TRUE, ...
 ) {
@@ -50,12 +52,21 @@ importPeaks <- function(
     pruning.mode <- match.arg(pruning.mode)
     stopifnot(is.logical(sort) & is.logical(setNames))
     n <- length(x)
-    out <- lapply(
-        x,
-        .importPeakFile,
-        type = type, seqinfo = seqinfo, blacklist = blacklist,
-        pruning.mode = pruning.mode, centre = centre, nameRanges = nameRanges
-    )
+    if (type == "bed") {
+        out <- lapply(
+            x,
+            .importBedFile,
+            seqinfo = seqinfo, blacklist = blacklist,
+            pruning.mode = pruning.mode, nameRanges = nameRanges
+        )
+    } else {
+        out <- lapply(
+            x,
+            .importPeakFile,
+            type = type, seqinfo = seqinfo, blacklist = blacklist,
+            pruning.mode = pruning.mode, centre = centre, nameRanges = nameRanges
+        )
+    }
 
     out <- GRangesList(out)
     if (sort) sort(out, ...)
@@ -111,7 +122,7 @@ importPeaks <- function(
 
         ## Fail if there is a mismatch between any seqnames and seqinfo
         if (pruning.mode == "error")
-            stopifnot(df[["seqnames"]] %in% seqnames(seqinfo))
+            stopifnot(all(df[["seqnames"]] %in% seqnames(seqinfo)))
         ## Subset to remove any ranges which are not included in seqinfo
         if (pruning.mode == "coarse")
             df <- subset(df, seqnames %in% seqnames(seqinfo))
@@ -133,6 +144,68 @@ importPeaks <- function(
 
 }
 
+#' @import GenomicRanges
+#' @importFrom IRanges overlapsAny
+#' @importFrom methods is
+#' @importFrom utils read.table
+.importBedFile <- function(x, seqinfo, blacklist, pruning.mode, nameRanges) {
+
+    stopifnot(length(x) == 1)
+    if (!missing(seqinfo)) {
+        stopifnot(is(seqinfo, "Seqinfo"))
+    } else {
+        seqinfo <- NULL
+    }
+
+    ## Handle empty files separately first
+    if (file.size(x) == 0) return(GRanges(NULL, seqinfo = seqinfo))
+
+    ## Define the colnames
+    nCol <- min(ncol(read.table(x, sep = "\t", nrows = 1)), 6)
+    colNames <- c("seqnames", "start", "end", "name", "score", "strand")
+    classes <- c(
+        "character", "numeric", "numeric", "character", "numeric", "character"
+    )
+
+    ## Parse
+    df <- read.table(x, sep = "\t", header = FALSE)[seq_len(nCol)]
+    df <- lapply(
+        seq_len(nCol), function(i) df[[i]] <- as(df[[i]], classes[[i]])
+    )
+    df <- as.data.frame(df)
+    colnames(df) <- colNames[seq_len(nCol)]
+
+    if (nCol >= 4 & nameRanges) {
+        if (length(unique(df[[4]])) == nrow(df)) rownames(df) <- df[[4]]
+        df <- df[-4] # The name column has been set as rownames
+    }
+
+    ## Deal with the Seqinfo object
+    if (!is.null(seqinfo)) {
+
+        ## Fail if there is a mismatch between any seqnames and seqinfo
+        if (pruning.mode == "error")
+            stopifnot(all(df[["seqnames"]] %in% seqnames(seqinfo)))
+        ## Subset to remove any ranges which are not included in seqinfo
+        if (pruning.mode == "coarse")
+            df <- subset(df, seqnames %in% seqnames(seqinfo))
+        if (nrow(df) == 0)
+            message("No ranges match the supplied seqinfo object")
+    }
+
+    ## Form the object
+    gr <- makeGRangesFromDataFrame(
+        df, TRUE, seqinfo = seqinfo, starts.in.df.are.0based = TRUE
+    )
+
+    ## Apply the blacklist if supplied
+    if (missing(blacklist)) blacklist <- GRanges(seqinfo = seqinfo)
+    stopifnot(is(blacklist, "GRanges"))
+    gr[!overlapsAny(gr, blacklist)]
+
+}
+
+
 #' @importFrom utils read.table
 .isValidNarrow <- function(x) {
     r1 <- read.table(x, sep = "\t", nrows = 1)
@@ -140,7 +213,7 @@ importPeaks <- function(
     if (!nCols) return(FALSE)
     charCols <- c(1, 4)
     allChars <- all(vapply(r1[charCols], is.character, logical(1)))
-    numericCols <- c(2, 3, 5, 7:10)
+    numericCols <- c(2, 3, 5, seq(7, 10))
     allNumerics <- all(vapply(r1[numericCols], is.numeric, logical(1)))
     strandOK <- r1[[6]] %in% c("+", "-", ".")
     all(allChars, allNumerics, strandOK)
@@ -153,8 +226,22 @@ importPeaks <- function(
     if (!nCols) return(FALSE)
     charCols <- c(1, 4)
     allChars <- all(vapply(r1[charCols], is.character, logical(1)))
-    numericCols <- c(2, 3, 5, 7:9)
+    numericCols <- c(2, 3, 5, seq(7, 9))
     allNumerics <- all(vapply(r1[numericCols], is.numeric, logical(1)))
     strandOK <- r1[[6]] %in% c("+", "-", ".")
     all(allChars, allNumerics, strandOK)
+}
+
+#' @importFrom utils read.table
+.isValidBed <- function(x){
+    r1 <- read.table(x, sep = "\t", nrows = 1)
+    nCols <- ncol(r1)
+    if (nCols < 3) return(FALSE)
+    numericCols <- c(2, 3)
+    allNumerics <- all(vapply(r1[numericCols], is.numeric, logical(1)))
+    strandOK <- TRUE
+    if (nCols >= 6) {
+        strandOK <- r1[[6]] %in% c("+", "-", ".")
+    }
+    all(allNumerics, strandOK)
 }
