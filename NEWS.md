@@ -73,5 +73,8 @@
 # Changes in 1.5.8 (23-07-14)
 
 - Added control of side-axis label position for `plotProfileHeatmap()`
-- Added to return merged key-value ranges for `mergeByHMP()`
+- Added option to return merged key-value ranges for `mergeByHMP()`
 
+# Changes in 1.5.10 (23-08-11)
+
+- Added bed format to `importPeaks()`
