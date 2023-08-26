@@ -40,9 +40,10 @@ reference:
 
 - title: Coercion & Convenience Functions
   contents:
+    - starts_with("addDiff")
     - contains("as_tibble")
     - collapseGenes
-    - starts_with("addDiff")
+    - defineSeqinfo
 
 - title: Data Objects
   contents:

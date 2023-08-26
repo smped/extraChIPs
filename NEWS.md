@@ -78,3 +78,7 @@
 # Changes in 1.5.10 (23-08-11)
 
 - Added bed format to `importPeaks()`
+
+# Changes in 1.5.11 (23-08-26)
+
+- Added `defineSeqinfo()`
