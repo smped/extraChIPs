@@ -15,6 +15,7 @@
 #' @param chr logical(1) Include the prefix "chr"
 #' @param mito Specify M or MT to include the mitochondrial chromosome. Omitted
 #' by default
+#' @param ... Not used
 #'
 #' @return A Seqinfo object
 #'
@@ -25,7 +26,8 @@
 #'
 #' @export
 defineSeqinfo <- function(
-        build = c("GRCh38", "GRCh37", "GRCm39", "GRCm38"), chr = TRUE, mito
+        build = c("GRCh38", "GRCh37", "GRCm39", "GRCm38"), chr = TRUE, mito,
+        ...
 ){
     build <- match.arg(build)
     stopifnot(is.logical(chr))

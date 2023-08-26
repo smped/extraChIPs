@@ -7,7 +7,8 @@
 defineSeqinfo(
   build = c("GRCh38", "GRCh37", "GRCm39", "GRCm38"),
   chr = TRUE,
-  mito
+  mito,
+  ...
 )
 }
 \arguments{
@@ -17,6 +18,8 @@ defineSeqinfo(
 
 \item{mito}{Specify M or MT to include the mitochondrial chromosome. Omitted
 by default}
+
+\item{...}{Not used}
 }
 \value{
 A Seqinfo object
