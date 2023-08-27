@@ -353,11 +353,10 @@ instead of an UpSet plot.</p>
 manner</em>
 </p>
 </div>
-<pre><code><span><span class="co">## (polygon[GRID.polygon.229], polygon[GRID.polygon.230], polygon[GRID.polygon.231], polygon[GRID.polygon.232], text[GRID.text.233], text[GRID.text.234], text[GRID.text.235], text[GRID.text.236], text[GRID.text.237])</span></span></code></pre>
 <p>We can now go one step further and define the set of peaks found in
 either treatment. Given we’re being inclusive here, we can leave p = 0
 so any peak found in <em>either treatment</em> is included.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">union_peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRangesList-class.html" class="external-link">GRangesList</a></span><span class="op">(</span></span>
 <span>  E2 <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">consensus_e2</span>, <span class="va">centre</span><span class="op">)</span>, </span>
 <span>  E2DHT <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">consensus_e2dht</span>, <span class="va">centre</span><span class="op">)</span></span>
@@ -388,7 +387,7 @@ place them as the core set of GRanges for this object.</li>
 </ol>
 <p>This gives a GRanges object with all original information, but with
 centred peaks of a fixed width.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">w</span> <span class="op">&lt;-</span> <span class="fl">500</span></span>
 <span><span class="va">centred_peaks</span> <span class="op">&lt;-</span> <span class="va">union_peaks</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
@@ -406,9 +405,9 @@ centred peaks of a fixed width.</p>
 <code><a href="https://rdrr.io/pkg/csaw/man/regionCounts.html" class="external-link">csaw::regionCounts()</a></code> (Lun and Smyth 2016). We know our
 fragment length is about 200bp, so we can pass this to the function for
 a slightly more sophisticated approach to counting.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/csaw/man/regionCounts.html" class="external-link">regionCounts</a></span><span class="op">(</span><span class="va">bfl</span>, <span class="va">centred_peaks</span>, ext <span class="op">=</span> <span class="fl">200</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">se</span></span></code></pre></div>
 <pre><code><span><span class="co">## class: RangedSummarizedExperiment </span></span>
 <span><span class="co">## dim: 188 6 </span></span>
@@ -426,7 +425,7 @@ to a <code>tibble</code>, 2) <code><a href="https://dplyr.tidyverse.org/referenc
 <code>samples</code> object, 3) add the accession as the sample column,
 4) set the accession back as the rownames, then 5) coerce back to the
 required <code>DataFrame()</code> structure.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/as_tibble.html">as_tibble</a></span><span class="op">(</span>rownames <span class="op">=</span> <span class="st">"accession"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">samples</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -454,10 +453,10 @@ required <code>DataFrame()</code> structure.</p>
 <span><span class="co">## SRR8315185     E2DHT  SRR8315185</span></span></code></pre>
 <p>For QC and visualisation, we can add an additional
 <code>logCPM</code> assay to our object as well.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">se</span>, <span class="st">"logCPM"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/edgeR/man/cpm.html" class="external-link">cpm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">se</span>, <span class="st">"counts"</span><span class="op">)</span>, lib.size <span class="op">=</span> <span class="va">se</span><span class="op">$</span><span class="va">totals</span>, log <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>First we might like to check our distribution of counts</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotAssayDensities-methods.html">plotAssayDensities</a></span><span class="op">(</span><span class="va">se</span>, assay <span class="op">=</span> <span class="st">"counts"</span>, colour <span class="op">=</span> <span class="st">"treat"</span>, trans <span class="op">=</span> <span class="st">"log1p"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_colour_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">treat_colours</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
@@ -467,7 +466,7 @@ required <code>DataFrame()</code> structure.</p>
 </div>
 <p>A PCA plot can also provide insight as to where the variability in
 the data lies.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotAssayPCA-methods.html">plotAssayPCA</a></span><span class="op">(</span><span class="va">se</span>, assay <span class="op">=</span> <span class="st">"logCPM"</span>, colour <span class="op">=</span> <span class="st">"treat"</span>, label <span class="op">=</span> <span class="st">"sample"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_colour_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">treat_colours</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
@@ -491,7 +490,7 @@ normalisation will be <em>library-size</em> normalisation, as is a
 common default strategy for ChIP-Seq data. In contrast to sliding window
 approaches, these results represent our final results and there is no
 need for merging windows.</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span><span class="va">treatment</span>, data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">ls_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fitAssayDiff-methods.html">fitAssayDiff</a></span><span class="op">(</span><span class="va">se</span>, design <span class="op">=</span> <span class="va">X</span>, asRanges <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">ls_res</span><span class="op">$</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span></span></code></pre></div>
@@ -503,7 +502,7 @@ from the same distributions. We can formally test this using the package
 for 1) H<sub>0</sub>: Group medians are drawn from the same
 distribution, and 2) H<sub>0</sub>: Group-specific distributions are the
 same.</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span></span>
 <span><span class="va">qtest</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">se</span>, <span class="st">"counts"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/quantro/man/quantro.html" class="external-link">quantro</a></span><span class="op">(</span>groupFactor <span class="op">=</span> <span class="va">se</span><span class="op">$</span><span class="va">treatment</span>, B <span class="op">=</span> <span class="fl">1e3</span><span class="op">)</span></span>
@@ -523,7 +522,7 @@ specified a fold-change threshold <code>(fc = 1.2)</code>, below which,
 changes in signal are considered to not be of interest (McCarthy and
 Smyth 2009). This threshold is incorporated into the testing so there is
 no requirement for <em>post-hoc</em> filtering based on a threshold.</p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tmm_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fitAssayDiff-methods.html">fitAssayDiff</a></span><span class="op">(</span><span class="va">se</span>, design <span class="op">=</span> <span class="va">X</span>, norm <span class="op">=</span> <span class="st">"TMM"</span>, asRanges <span class="op">=</span> <span class="cn">TRUE</span>, fc <span class="op">=</span> <span class="fl">1.2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">tmm_res</span><span class="op">$</span><span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 7</span></span></code></pre>
@@ -532,7 +531,7 @@ we use the original ‘union_peak’ in our labelling of points. This serves
 as a reminder that the fixed-width windows are in fact <em>a proxy</em>
 for the entire region for which we have confidently detected ChIP
 signal, and that these windows are truly the regions of interest.</p>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tmm_res</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>`FDR &lt; 0.05` <span class="op">=</span> <span class="va">FDR</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -562,7 +561,7 @@ regulatory consequences, such as the target gene. Before we can map
 peaks to genes, we’ll need to define our genes. In the following, we’ll
 use the provided Gencode gene mappings at the gene, transcript and exon
 level.</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gencode</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"data/gencode.v43lift37.chr10.annotation.gtf.gz"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/GFFFile-class.html" class="external-link">import.gff</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/plyranges/man/ranges-filter-overlaps.html" class="external-link">filter_by_overlaps</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="st">"chr10:42354900-100000000"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -575,7 +574,7 @@ long-range interaction. Here we’ll just use promoters, so let’s create a
 set of promoters from our transcript-level information, ensuring we
 incorporate all possible promoters within a gene, and merging any
 overlapping ranges using <code><a href="../reference/reduceMC.html">reduceMC()</a></code></p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">promoters</span> <span class="op">&lt;-</span> <span class="va">gencode</span><span class="op">$</span><span class="va">transcript</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">gene_id</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">ends_with</a></span><span class="op">(</span><span class="st">"name"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>    <span class="fu"><a href="https://rdrr.io/pkg/IRanges/man/intra-range-methods.html" class="external-link">promoters</a></span><span class="op">(</span>upstream <span class="op">=</span> <span class="fl">2500</span>, downstream <span class="op">=</span> <span class="fl">500</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -640,7 +639,7 @@ overlapping ranges using <code><a href="../reference/reduceMC.html">reduceMC()</
 place the original ‘union_peak’ back as the core of the GRanges object.
 This will retain all the results from testing, but ensures the correct
 region is mapped to genes.</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tmm_mapped_res</span> <span class="op">&lt;-</span> <span class="va">tmm_res</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/colToRanges-methods.html">colToRanges</a></span><span class="op">(</span><span class="st">"union_peak"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/mapByFeature.html">mapByFeature</a></span><span class="op">(</span>genes <span class="op">=</span> <span class="va">gencode</span><span class="op">$</span><span class="va">gene</span>, prom <span class="op">=</span> <span class="va">promoters</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -732,7 +731,7 @@ we can use fold-enrichment over the input sample(s), as is also produced
 by <code>macs2 bdgcmp</code>. This data isn’t generally visualised using
 log-transformation so we’ll set <code>log = FALSE</code> in our call to
 <code><a href="../reference/getProfileData-methods.html">getProfileData()</a></code></p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fe_bw</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"ER"</span>, <span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"{treat_levels}_FE_chr10.bw"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/BigWigFile.html" class="external-link">BigWigFileList</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="va">treat_levels</span><span class="op">)</span></span>
@@ -746,7 +745,7 @@ log-transformation so we’ll set <code>log = FALSE</code> in our call to
 <div class="section level3">
 <h3 id="session-info">Session Info<a class="anchor" aria-label="anchor" href="#session-info"></a>
 </h3>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## R version 4.3.0 (2023-04-21)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
