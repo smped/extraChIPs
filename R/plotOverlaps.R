@@ -98,7 +98,7 @@ setMethod(
       ## Form a character list & plot
       l <- lapply(nm, function(x) as.character(gr)[mcols(gr)[[x]]])
       names(l) <- nm
-      p <- plotOverlaps(
+      plotOverlaps(
         l, type, set_col = set_col, .sort_sets = .sort_sets,
         hj_sets = hj_sets, sz_sets = sz_sets, exp_sets = exp_sets, ...
       )
@@ -131,8 +131,8 @@ setMethod(
       dotArgs$sort_sets <- .sort_sets
       ip <- ip[!names(ip) %in% names(dotArgs)]
       p <- do.call("upset", c(ip, dotArgs))
+      return(p)
     }
-    return(p)
 
   }
 )
