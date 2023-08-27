@@ -80,6 +80,9 @@
 <span>  set_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span>,</span>
 <span>  .sort_sets <span class="op">=</span> <span class="st">"ascending"</span>,</span>
+<span>  hj_sets <span class="op">=</span> <span class="fl">1.15</span>,</span>
+<span>  sz_sets <span class="op">=</span> <span class="fl">3.5</span>,</span>
+<span>  exp_sets <span class="op">=</span> <span class="fl">0.25</span>,</span>
 <span>  min.gapwidth <span class="op">=</span> <span class="fl">1L</span>,</span>
 <span>  ignore.strand <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
@@ -90,7 +93,10 @@
 <span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"venn"</span>, <span class="st">"upset"</span><span class="op">)</span>,</span>
 <span>  set_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span>,</span>
-<span>  .sort_sets <span class="op">=</span> <span class="st">"ascending"</span></span>
+<span>  .sort_sets <span class="op">=</span> <span class="st">"ascending"</span>,</span>
+<span>  hj_sets <span class="op">=</span> <span class="fl">1.15</span>,</span>
+<span>  sz_sets <span class="op">=</span> <span class="fl">3.5</span>,</span>
+<span>  exp_sets <span class="op">=</span> <span class="fl">0.25</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -126,6 +132,19 @@ numeric vector</p></dd>
 
 <dt>.sort_sets</dt>
 <dd><p>passed to <code>sort_sets</code> in <a href="https://krassowski.github.io/complex-upset/reference/upset.html" class="external-link">upset</a></p></dd>
+
+
+<dt>hj_sets</dt>
+<dd><p>Horizontal adjustment of set size labels</p></dd>
+
+
+<dt>sz_sets</dt>
+<dd><p>Text size for set size labels. Passed internally to
+<code>geom_text(size = sz_sets)</code></p></dd>
+
+
+<dt>exp_sets</dt>
+<dd><p>X-axis expansion for set size panel</p></dd>
 
 
 <dt>min.gapwidth, ignore.strand</dt>
@@ -178,6 +197,7 @@ and the boxplot will be included as an upper panel above the intersections</p>
 <span class="r-in"><span><span class="co">## If only two samples are present, a VennDiagram will be produced</span></span></span>
 <span class="r-in"><span><span class="fu">plotOverlaps</span><span class="op">(</span><span class="va">grl</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span>, set_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"green"</span>, <span class="st">"blue"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotOverlaps-methods-6.png" alt="" width="700" height="433"></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (polygon[GRID.polygon.1273], polygon[GRID.polygon.1274], polygon[GRID.polygon.1275], polygon[GRID.polygon.1276], text[GRID.text.1277], text[GRID.text.1278], text[GRID.text.1279], text[GRID.text.1280], text[GRID.text.1281]) </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
