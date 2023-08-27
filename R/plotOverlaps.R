@@ -31,6 +31,10 @@
 #' \link[ComplexUpset]{upset} for UpSet plots
 #' @param .sort_sets passed to `sort_sets` in \link[ComplexUpset]{upset}
 #' @param min.gapwidth,ignore.strand Passed to \link[GenomicRanges]{reduce}
+#' @param sz_sets Text size for set size labels. Passed internally to
+#' `geom_text(size = sz_sets)`
+#' @param hj_sets Horizontal adjustment of set size labels
+#' @param exp_sets X-axis expansion for set size panel
 #'
 #' @examples
 #' ## Examples using a list of character vectors
@@ -56,9 +60,7 @@
 #' @importFrom S4Vectors endoapply mcols
 #' @importFrom dplyr bind_cols
 #' @importFrom rlang list2 ':=' '!!' sym
-#' @importFrom ComplexUpset upset upset_set_size upset_default_themes upset_data
-#' @importFrom ComplexUpset upset_query
-#' @importFrom scales comma
+#' @importFrom ComplexUpset upset
 #' @import ggplot2
 #' @rdname plotOverlaps-methods
 #' @aliases plotOverlaps
@@ -69,8 +71,8 @@ setMethod(
   function(
     x, type = c("auto", "venn", "upset"), var = NULL,
     f = c("mean", "median", "max", "min", "sd"),
-    set_col = NULL, ..., .sort_sets = "ascending", min.gapwidth = 1L,
-    ignore.strand = TRUE
+    set_col = NULL, ..., .sort_sets = "ascending", hj_sets = 1.15,
+    sz_sets = 3.5, exp_sets = 0.25, min.gapwidth = 1L, ignore.strand = TRUE
   ) {
 
     stopifnot(is(x, "GRangesList"))
@@ -96,7 +98,10 @@ setMethod(
       ## Form a character list & plot
       l <- lapply(nm, function(x) as.character(gr)[mcols(gr)[[x]]])
       names(l) <- nm
-      plotOverlaps(l, type, set_col = set_col, .sort_sets = .sort_sets, ...)
+      p <- plotOverlaps(
+        l, type, set_col = set_col, .sort_sets = .sort_sets,
+        hj_sets = hj_sets, sz_sets = sz_sets, exp_sets = exp_sets, ...
+      )
 
     } else {
 
@@ -120,45 +125,20 @@ setMethod(
       ip <- list(data = tbl, intersect = nm, annotations = ann)
 
       ## Add default arguments, respecting any supplied
-      dotArgs <- list(...)
-      allowed <- unique(names(c(formals(upset), formals(upset_data))))
-      dotArgs <- dotArgs[names(dotArgs) %in% allowed]
-      if (!"set_sizes" %in% names(dotArgs)) {
-        dotArgs$set_sizes <- upset_set_size() +
-          geom_text(
-            aes(label = comma(after_stat(count))), hjust = 1.15, stat = 'count'
-          ) +
-          scale_y_reverse(expand = expansion(c(0.25, 0)))
-      }
-      if (!'themes' %in% dotArgs) {
-        dotArgs$themes <- upset_default_themes(panel.grid = element_blank())
-      }
-      if (!is.null(set_col)) {
-        ## Respect any existing set queries
-        existing_sets <- unlist(
-          lapply(dotArgs$queries, function(x) x$set)
-        )
-        set_col <- rep(set_col, n)
-        names(set_col)[seq_len(n)] <- nm
-        ql <- lapply(
-          setdiff(nm, existing_sets),
-          function(i) upset_query(set = i, fill = set_col[[i]])
-        )
-        dotArgs$queries <- c(dotArgs$queries, ql)
-      }
+      dotArgs <- .parseDotArgs(set_col, n, nm, ...)
+      if (!"set_sizes" %in% names(dotArgs))
+        dotArgs$set_sizes <- .makeSetSizes(hj_sets, sz_sets, exp_sets)
       dotArgs$sort_sets <- .sort_sets
       ip <- ip[!names(ip) %in% names(dotArgs)]
       p <- do.call("upset", c(ip, dotArgs))
-      return(p)
     }
+    return(p)
 
   }
 )
 #'
 #' @importFrom methods is
-#' @importFrom ComplexUpset upset upset_set_size upset_default_themes upset_data
-#' @importFrom ComplexUpset upset_query
-#' @importFrom scales comma
+#' @importFrom ComplexUpset upset
 #' @importFrom grid grid.newpage
 #' @rdname plotOverlaps-methods
 #' @aliases plotOverlaps
@@ -168,7 +148,7 @@ setMethod(
   signature = "list",
   function(
     x, type = c("auto", "venn", "upset"), set_col = NULL, ...,
-    .sort_sets = 'ascending'
+    .sort_sets = 'ascending', hj_sets = 1.15, sz_sets = 3.5, exp_sets = 0.25
   ) {
 
     stopifnot(length(names(x)) == length(x))
@@ -185,41 +165,18 @@ setMethod(
         stop("UpSet plots can only be drawn using more than one group")
       ## Setup the df
       all_vals <- unique(unlist(x))
-      df <- lapply(
-        x, function(i) as.integer(all_vals %in% i)
-      )
+      df <- lapply(x, function(i) as.integer(all_vals %in% i))
+
       ## Ensure colnames are respected
       col_names <- names(df)
       df <- as.data.frame(df, row.names = all_vals)
       colnames(df) <- col_names
       ip <- list(data = df, intersect = names(df))
-      ## Add defaults
-      dotArgs <- list(...)
-      allowed <- unique(names(c(formals(upset), formals(upset_data))))
-      dotArgs <- dotArgs[names(dotArgs) %in% allowed]
-      if (!"set_sizes" %in% names(dotArgs)) {
-        dotArgs$set_sizes <- upset_set_size() +
-          geom_text(
-            aes(label = comma(after_stat(count))), hjust = 1.15, stat = 'count'
-          ) +
-          scale_y_reverse(expand = expansion(c(0.25, 0)))
-      }
-      if (!'themes' %in% dotArgs) {
-        dotArgs$themes <- upset_default_themes(panel.grid = element_blank())
-      }
-      if (!is.null(set_col)) {
-        ## Respect any existing set queries
-        existing_sets <- unlist(
-          lapply(dotArgs$queries, function(x) x$set)
-        )
-        set_col <- rep(set_col, n)
-        names(set_col)[seq_len(n)] <- nm
-        ql <- lapply(
-          setdiff(nm, existing_sets),
-          function(i) upset_query(set = i, fill = set_col[[i]])
-        )
-        dotArgs$queries <- c(dotArgs$queries, ql)
-      }
+
+      ## Add default arguments, respecting any supplied
+      dotArgs <- .parseDotArgs(set_col, n, nm, ...)
+      if (!"set_sizes" %in% names(dotArgs))
+        dotArgs$set_sizes <- .makeSetSizes(hj_sets, sz_sets, exp_sets)
       dotArgs$sort_sets <- .sort_sets
       p <- do.call("upset", c(ip, dotArgs))
       return(p)
@@ -269,6 +226,42 @@ setMethod(
   dotArgs <- list(...)
   dotArgs <- dotArgs[names(dotArgs) %in% allowed]
   do.call("draw.triple.venn", c(plotArgs, dotArgs))
+}
+
+#' @importFrom ComplexUpset upset_set_size
+#' @importFrom scales comma
+#' @importFrom rlang sym '!!'
+.makeSetSizes <- function(hj, sz, exp) {
+  upset_set_size() +
+    geom_text(
+      aes(label = comma(after_stat(!!sym("count")))),  stat = 'count',
+      hjust = hj, size = sz
+    ) +
+    scale_y_reverse(expand = expansion(c(exp, 0)))
+}
+
+#' @importFrom ComplexUpset upset upset_default_themes upset_data upset_query
+.parseDotArgs <- function(set_col, n, nm, ...) {
+  dotArgs <- list(...)
+  allowed <- unique(names(c(formals(upset), formals(upset_data))))
+  dotArgs <- dotArgs[names(dotArgs) %in% allowed]
+  if (!'themes' %in% names(dotArgs)) {
+    dotArgs$themes <- upset_default_themes(panel.grid = element_blank())
+  }
+  if (!is.null(set_col)) {
+    ## Respect any existing set queries
+    existing_sets <- unlist(
+      lapply(dotArgs$queries, function(x) x$set)
+    )
+    set_col <- rep(set_col, n)
+    names(set_col)[seq_len(n)] <- nm
+    ql <- lapply(
+      setdiff(nm, existing_sets),
+      function(i) upset_query(set = i, fill = set_col[[i]])
+    )
+    dotArgs$queries <- c(dotArgs$queries, ql)
+  }
+  dotArgs
 }
 
 #' @importFrom S4Vectors mcols

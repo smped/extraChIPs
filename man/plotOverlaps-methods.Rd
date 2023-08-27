@@ -16,6 +16,9 @@ plotOverlaps(x, ...)
   set_col = NULL,
   ...,
   .sort_sets = "ascending",
+  hj_sets = 1.15,
+  sz_sets = 3.5,
+  exp_sets = 0.25,
   min.gapwidth = 1L,
   ignore.strand = TRUE
 )
@@ -25,7 +28,10 @@ plotOverlaps(x, ...)
   type = c("auto", "venn", "upset"),
   set_col = NULL,
   ...,
-  .sort_sets = "ascending"
+  .sort_sets = "ascending",
+  hj_sets = 1.15,
+  sz_sets = 3.5,
+  exp_sets = 0.25
 )
 }
 \arguments{
@@ -46,6 +52,13 @@ numeric vector}
 \item{set_col}{Colours to be assigned to each set}
 
 \item{.sort_sets}{passed to \code{sort_sets} in \link[ComplexUpset]{upset}}
+
+\item{hj_sets}{Horizontal adjustment of set size labels}
+
+\item{sz_sets}{Text size for set size labels. Passed internally to
+\code{geom_text(size = sz_sets)}}
+
+\item{exp_sets}{X-axis expansion for set size panel}
 
 \item{min.gapwidth, ignore.strand}{Passed to \link[GenomicRanges]{reduce}}
 }
