@@ -5,10 +5,13 @@ df <- data.frame(sample = names(peaks), treat = rep(c("A", "B"), each = 3))
 test_that("General plots work", {
     p <- plotGrlCol(peaks)
     expect_true(is(p, "gg"))
+    p <- plotGrlCol(peaks, var = "signal")
+    expect_true(is(p, "gg"))
 })
 
 test_that("Errors are cuaght", {
     expect_error(plotGrlCol(peaks, var = ""))
     expect_error(plotGrlCol(peaks, ann_df = df, .id = ""))
     expect_error(plotGrlCol(peaks, ann_df = df, fill = ""))
+    expect_error(plotGrlCol(peaks, ann_df = df, colour = ""))
 })
