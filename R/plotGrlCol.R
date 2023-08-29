@@ -27,7 +27,7 @@
 #' @param geom Choose between a boxplot or violinplot
 #' @param .id The column name to place the element names. Passed internally to
 #' bind_rows
-#' @param ann_df Optional data.frame with columns to be passed to the colour or
+#' @param df Optional data.frame with columns to be passed to the colour or
 #' fill parameters. Must contain a column with the same name as the
 #' value passed to the `.id` argument.
 #' @param fill,colour Optional column names found in the df
@@ -56,7 +56,7 @@
 #' df <- data.frame(sample = names(peaks), treat = rep(c("A", "B"), each = 3))
 #' plotGrlCol(
 #'   peaks, geom = "violin", total_pos = "bottom", total_adj = 0.05,
-#'   ann_df = df, fill = "treat",
+#'   df = df, fill = "treat",
 #'   draw_quantiles = 0.5, trim = FALSE, width = 0.7, alpha = 0.7
 #' ) +
 #' scale_y_log10()
@@ -69,7 +69,7 @@
 #' @export
 plotGrlCol <- function(
         x, var = "width", geom = c("boxplot", "violin"), .id = "sample",
-        ann_df, fill = NULL, colour = NULL,
+        df, fill = NULL, colour = NULL,
         q = 0.1, hline_type = 2, hline_col = "blue",
         total = "{comma(n)}", total_geom = c("label", "text", "none"),
         total_pos = c("median", "top", "bottom"),
@@ -86,15 +86,15 @@ plotGrlCol <- function(
     } else {
         df_list <- lapply(x, function(x) tibble("{var}" := mcols(x)[[var]]))
     }
-    df <- bind_rows(df_list, .id = .id)
+    plot_df <- bind_rows(df_list, .id = .id)
 
     ## Add any annotations
-    if (!missing(ann_df)) {
-        stopifnot(is(ann_df, "data.frame"))
-        ann_cols <- colnames(ann_df)
+    if (!missing(df)) {
+        stopifnot(is(df, "data.frame"))
+        ann_cols <- colnames(df)
         if (!.id %in% ann_cols)
             stop(.id, " must be in the supplied annotations")
-        df <- left_join(df, ann_df, by = .id)
+        plot_df <- left_join(plot_df, df, by = .id)
         if (!is.null(fill)) fill <- sym(match.arg(fill, ann_cols))
         if (!is.null(colour)) colour <- sym(match.arg(colour, ann_cols))
     } else{
@@ -102,7 +102,7 @@ plotGrlCol <- function(
     }
 
     ## Summary values
-    rng <- range(df[[var]])
+    rng <- range(plot_df[[var]])
     n <- vapply(x, length, integer(1))
     totals_df <- tibble("{.id}" := names(x), label = glue(total))
 
@@ -112,7 +112,7 @@ plotGrlCol <- function(
 
     ## The basic plot
     p <- ggplot(
-        df,
+        plot_df,
         aes(!!sym(.id), !!sym(var), fill = {{ fill }}, colour = {{ colour }})
     ) +
         geom_fun(...)
@@ -125,7 +125,7 @@ plotGrlCol <- function(
             top = max(rng) + total_adj * diff(rng),
             bottom = min(rng) - total_adj * diff(rng),
             median = summarise(
-                df, "{var}" := median(!!sym(var)), .by = !!sym(.id)
+                plot_df, "{var}" := median(!!sym(var)), .by = !!sym(.id)
             )[[var]]
         )[[total_pos]]
         p <- p + annotate(
@@ -136,7 +136,7 @@ plotGrlCol <- function(
 
     ## Percentiles as a horizontal line
     if (q > 0) {
-        qval <- quantile(df[[var]], probs = q)
+        qval <- quantile(plot_df[[var]], probs = q)
         p <- p + geom_hline(
             yintercept = qval, linetype = hline_type, colour = hline_col
         )

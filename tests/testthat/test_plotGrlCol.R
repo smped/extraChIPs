@@ -11,7 +11,7 @@ test_that("General plots work", {
 
 test_that("Errors are cuaght", {
     expect_error(plotGrlCol(peaks, var = ""))
-    expect_error(plotGrlCol(peaks, ann_df = df, .id = ""))
-    expect_error(plotGrlCol(peaks, ann_df = df, fill = ""))
-    expect_error(plotGrlCol(peaks, ann_df = df, colour = ""))
+    expect_error(plotGrlCol(peaks, df = df, .id = ""))
+    expect_error(plotGrlCol(peaks, df = df, fill = ""))
+    expect_error(plotGrlCol(peaks, df = df, colour = ""))
 })

@@ -9,7 +9,7 @@ plotGrlCol(
   var = "width",
   geom = c("boxplot", "violin"),
   .id = "sample",
-  ann_df,
+  df,
   fill = NULL,
   colour = NULL,
   q = 0.1,
@@ -35,7 +35,7 @@ plotGrlCol(
 \item{.id}{The column name to place the element names. Passed internally to
 bind_rows}
 
-\item{ann_df}{Optional data.frame with columns to be passed to the colour or
+\item{df}{Optional data.frame with columns to be passed to the colour or
 fill parameters. Must contain a column with the same name as the
 value passed to the \code{.id} argument.}
 
@@ -96,7 +96,7 @@ plotGrlCol(peaks)
 df <- data.frame(sample = names(peaks), treat = rep(c("A", "B"), each = 3))
 plotGrlCol(
   peaks, geom = "violin", total_pos = "bottom", total_adj = 0.05,
-  ann_df = df, fill = "treat",
+  df = df, fill = "treat",
   draw_quantiles = 0.5, trim = FALSE, width = 0.7, alpha = 0.7
 ) +
 scale_y_log10()
