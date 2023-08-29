@@ -14,7 +14,7 @@
 #'
 #' If q is > 0, a horizontal line will be draw corresponding to this percentile
 #' across the complete dataset, with parameters for this line able to be set
-#' using the hline_* arguments.
+#' using the qline_* arguments.
 #' The digits argument controls how many decimal points will be shown for the
 #' associated label.
 #'
@@ -26,22 +26,25 @@
 #' @param var The variable to plot. Either a column in the mcols element or width
 #' @param geom Choose between a boxplot or violinplot
 #' @param .id The column name to place the element names. Passed internally to
-#' bind_rows
+#' the same argument in \link[dplyr]{bind_rows}
 #' @param df Optional data.frame with columns to be passed to the colour or
 #' fill parameters. Must contain a column with the same name as the
 #' value passed to the `.id` argument.
 #' @param fill,colour Optional column names found in the df
 #' @param q The overall percentile to be drawn as a labelled, horizontal line.
 #' Set q = 0 to hide this line
-#' @param hline_type,hline_col Linetype and colour arguments for the horizontal
-#' line shoqing the required quantile
+#' @param q_size Text size of percentile label
+#' @param qline_type,qline_col Linetype and colour arguments for the horizontal
+#' line showing the specified percentile(s)
 #' @param total Glue syntax for totals, representing the length of each
 #' GRangesList element
-#' @param total_geom Passed to `annotate`. Set to `none` to hide totals
+#' @param total_geom Passed to \link[ggplot2]{annotate}. Set to `none` to hide
+#' totals
 #' @param total_size,total_alpha Size and transparency of totals
 #' @param total_pos Position for placing totals
 #' @param total_adj Adjustment for labels
-#' @param ... Passed to `geom_boxplot` or `geom_violin`
+#' @param ... Passed to \link[ggplot2]{geom_boxplot} or
+#' \link[ggplot2]{geom_violin}
 #' @param digits Number of decimal places for the horizontal line label
 #'
 #' @examples
@@ -70,7 +73,7 @@
 plotGrlCol <- function(
         x, var = "width", geom = c("boxplot", "violin"), .id = "sample",
         df, fill = NULL, colour = NULL,
-        q = 0.1, hline_type = 2, hline_col = "blue",
+        q = 0.1, q_size = 3.5, qline_type = 2, qline_col = "blue",
         total = "{comma(n)}", total_geom = c("label", "text", "none"),
         total_pos = c("median", "top", "bottom"),
         total_size = 3.5, total_alpha = 1, total_adj = 0.025, ..., digits = 0
@@ -78,7 +81,7 @@ plotGrlCol <- function(
 
     stopifnot(is(x, "GRangesList"))
 
-    ## Create basic dta.frame
+    ## Create basic data.frame
     mcnames <- .mcolnames(x[[1]])
     var <- match.arg(var, c("width", mcnames))
     if (var == "width") {
@@ -138,12 +141,12 @@ plotGrlCol <- function(
     if (all(q > 0)) {
         qval <- quantile(plot_df[[var]], probs = q)
         p <- p + geom_hline(
-            yintercept = qval, linetype = hline_type, colour = hline_col
+            yintercept = qval, linetype = qline_type, colour = qline_col
         )
         p <- p +
             annotate(
                 "label", x = 0.55, y = qval, label = round(qval, digits),
-                colour = hline_col
+                colour = qline_col, size = q_size
             )
     }
 

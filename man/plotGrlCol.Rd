@@ -13,8 +13,9 @@ plotGrlCol(
   fill = NULL,
   colour = NULL,
   q = 0.1,
-  hline_type = 2,
-  hline_col = "blue",
+  q_size = 3.5,
+  qline_type = 2,
+  qline_col = "blue",
   total = "{comma(n)}",
   total_geom = c("label", "text", "none"),
   total_pos = c("median", "top", "bottom"),
@@ -33,7 +34,7 @@ plotGrlCol(
 \item{geom}{Choose between a boxplot or violinplot}
 
 \item{.id}{The column name to place the element names. Passed internally to
-bind_rows}
+the same argument in \link[dplyr]{bind_rows}}
 
 \item{df}{Optional data.frame with columns to be passed to the colour or
 fill parameters. Must contain a column with the same name as the
@@ -44,13 +45,16 @@ value passed to the \code{.id} argument.}
 \item{q}{The overall percentile to be drawn as a labelled, horizontal line.
 Set q = 0 to hide this line}
 
-\item{hline_type, hline_col}{Linetype and colour arguments for the horizontal
-line shoqing the required quantile}
+\item{q_size}{Text size of percentile label}
+
+\item{qline_type, qline_col}{Linetype and colour arguments for the horizontal
+line showing the specified percentile(s)}
 
 \item{total}{Glue syntax for totals, representing the length of each
 GRangesList element}
 
-\item{total_geom}{Passed to \code{annotate}. Set to \code{none} to hide totals}
+\item{total_geom}{Passed to \link[ggplot2]{annotate}. Set to \code{none} to hide
+totals}
 
 \item{total_pos}{Position for placing totals}
 
@@ -58,7 +62,8 @@ GRangesList element}
 
 \item{total_adj}{Adjustment for labels}
 
-\item{...}{Passed to \code{geom_boxplot} or \code{geom_violin}}
+\item{...}{Passed to \link[ggplot2]{geom_boxplot} or
+\link[ggplot2]{geom_violin}}
 
 \item{digits}{Number of decimal places for the horizontal line label}
 }
@@ -76,7 +81,7 @@ passed to the \code{.id} argument.
 
 If q is > 0, a horizontal line will be draw corresponding to this percentile
 across the complete dataset, with parameters for this line able to be set
-using the hline_* arguments.
+using the qline_* arguments.
 The digits argument controls how many decimal points will be shown for the
 associated label.
 
