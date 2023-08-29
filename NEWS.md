@@ -82,3 +82,7 @@
 # Changes in 1.5.11 (23-08-26)
 
 - Added `defineSeqinfo()`
+
+# Changes in 1.5.12 (23-08-30)
+
+- Added `plotGrlCol()`
