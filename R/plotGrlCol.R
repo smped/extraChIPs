@@ -135,7 +135,7 @@ plotGrlCol <- function(
     }
 
     ## Percentiles as a horizontal line
-    if (q > 0) {
+    if (all(q > 0)) {
         qval <- quantile(plot_df[[var]], probs = q)
         p <- p + geom_hline(
             yintercept = qval, linetype = hline_type, colour = hline_col
