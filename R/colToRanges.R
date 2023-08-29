@@ -63,7 +63,7 @@ setMethod(
     }
 )
 #' @import GenomicRanges
-#' @importFrom GenomeInfoDb "seqinfo<-" seqlevels
+#' @importFrom GenomeInfoDb 'seqinfo<-' seqlevels
 #' @importFrom S4Vectors DataFrame
 #' @importClassesFrom IRanges CompressedList
 #' @rdname colToRanges-methods

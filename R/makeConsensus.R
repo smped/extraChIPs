@@ -55,7 +55,7 @@
 #'
 #' @import GenomicRanges
 #' @importFrom IRanges subsetByOverlaps overlapsAny
-#' @importFrom S4Vectors "mcols<-" subset mcols endoapply
+#' @importFrom S4Vectors 'mcols<-' subset mcols endoapply
 #' @importFrom methods is
 #' @export
 makeConsensus <- function(
