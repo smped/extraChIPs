@@ -45,6 +45,8 @@ plotSplitDonut(object, ...)
   max_p = 1,
   inner_max_p = NULL,
   outer_max_p = NULL,
+  inner_pattern = ".",
+  outer_pattern = ".",
   explode_inner = NULL,
   explode_outer = NULL,
   explode_query = c("AND", "OR"),
@@ -120,6 +122,9 @@ are specified, the values in \code{min_p} will be ignored for that layer}
 \item{max_p, inner_max_p, outer_max_p}{only display labels for segments
 representing less than this proportion of the total. If inner/outer values
 are specified, the values in \code{max_p} will be ignored for that layer}
+
+\item{inner_pattern, outer_pattern}{Regular expressions which are combined
+with max_p and min_p values for accurately choosing labels}
 
 \item{explode_inner, explode_outer}{Regular expressions from either the inner
 or outer ring for which segments will be 'exploded'}

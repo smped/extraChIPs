@@ -75,6 +75,8 @@
 #' @param max_p,inner_max_p,outer_max_p only display labels for segments
 #' representing less than this proportion of the total. If inner/outer values
 #' are specified, the values in `max_p` will be ignored for that layer
+#' @param inner_pattern,outer_pattern Regular expressions which are combined
+#' with max_p and min_p values for accurately choosing labels
 #' @param explode_inner,explode_outer Regular expressions from either the inner
 #' or outer ring for which segments will be 'exploded'
 #' @param explode_query Setting to AND and specifying values for both the inner
@@ -171,6 +173,7 @@ setMethod(
         outer_label_colour = NULL,
         min_p = 0.05, inner_min_p = NULL, outer_min_p = NULL,
         max_p = 1, inner_max_p = NULL, outer_max_p = NULL,
+        inner_pattern = ".", outer_pattern = ".",
         explode_inner = NULL, explode_outer = NULL,
         explode_query = c("AND", "OR"), explode_x = 0, explode_y = 0,
         explode_r = 0,
@@ -180,6 +183,9 @@ setMethod(
         layout = c(main = area(1, 1, 6, 6), lg1 = area(2, 7), lg2 = area(4, 7)),
         ...
     ) {
+
+        ## R CMD check declarations
+        x <- y <- x0 <- y0 <- x1 <- yend <- explode <- ring <- p <- c()
 
         inner <- inner[[1]]
         outer <- outer[[1]]
@@ -207,6 +213,7 @@ setMethod(
         if (is.null(outer_label_colour)) outer_label_colour <- label_colour
         if (is.null(inner_nudge_r)) inner_nudge_r <- nudge_r
         if (is.null(outer_nudge_r)) outer_nudge_r <- nudge_r
+        stopifnot(is.character(inner_pattern) & is.character(outer_pattern))
 
         summ_df <- group_by(object, !!!syms(c(inner, outer)))
         if (is.null(scale_by)) {
@@ -226,7 +233,8 @@ setMethod(
             inner_df,
             ring = "inner", p = n / sum(n),
             x = r_centre, x1 = x + r_inner,
-            y = cumsum(c(0, p[seq_len(nrow(inner_df) - 1)])), yend = cumsum(p)
+            y = cumsum(c(0, p[seq_len(nrow(inner_df) - 1)])),
+            yend = cumsum(p)
         )
         lev_inner <- levels(inner_df[[inner]])
 
@@ -235,12 +243,12 @@ setMethod(
             outer_df,
             ring = "outer", p = n / sum(n),
             x = r_inner + r_centre, x1 = x + r_outer,
-            y = cumsum(c(0, p[seq_len(nrow(outer_df) - 1)])), yend = cumsum(p)
+            y = cumsum(c(0, p[seq_len(nrow(outer_df) - 1)])),
+            yend = cumsum(p)
         )
         lev_outer <- levels(outer_df[[outer]])
         lev_all <- unique(c(lev_inner, lev_outer))
 
-        explode <- c() # R CMD check
         plot_df <- bind_rows(inner_df, outer_df)
         plot_df <- mutate(
             plot_df,
@@ -268,7 +276,7 @@ setMethod(
                 explode ~ x1 + explode_r,
                 TRUE ~ x1
             ),
-            colour = fct_relabel(
+            "colour" = fct_relabel(
                 !!sym(inner), str_replace_all, "(.+)", paste(inner, "\\1")
             ),
             alpha = case_when(
@@ -278,7 +286,7 @@ setMethod(
                         max(as.numeric(!!sym(outer)), na.rm = TRUE) + 1
                     )
             ),
-            lab = ifelse(ring == "inner", glue(inner_glue), glue(outer_glue))
+            "lab" = ifelse(ring == "inner", glue(inner_glue), glue(outer_glue))
         )
 
         ## Setup the default palette for the inner ring
@@ -342,91 +350,46 @@ setMethod(
         }
 
         ## Create the basic plot
-        x <- y <- x0 <- y0 <- x1 <- lab <- ring <- mid <- yend <- colour <- c()
-        p <- ggplot(plot_df) + geom_arc_bar(
+        plt <- ggplot(plot_df) + geom_arc_bar(
             aes(
-                x0 = x0, y0 = y0, r0 = x, r = x1, start = .data[["start"]],
-                end = .data[["end"]], fill = colour, alpha = .data[["alpha"]]
+                x0 = x0, y0 = y0, r0 = x, r = x1,
+                start = .data[["start"]], end = .data[["end"]],
+                fill = .data[["colour"]], alpha = .data[["alpha"]]
             )
         )
 
         ## Add the centre label if required
         if (total_label != "none") {
             lab_fun <- match.fun(paste0("geom_", total_label))
-            p <- p + lab_fun(
-                aes(x, y, label = lab),
-                data = tibble(x = 0, y = 0, lab = glue(total_glue)),
+            plt <- plt + lab_fun(
+                aes(x, y, label = !!sym("lab")),
+                data = tibble(x = 0, y = 0, "lab" = glue(total_glue)),
                 size = total_size, inherit.aes = FALSE, colour = total_colour
             )
         }
 
         ## Add segment labels
         if (inner_label != "none") {
-            lab_fun <- match.fun(paste0("geom_", inner_label))
-            if (inner_label_colour != "palette") {
-                p <- p + lab_fun(
-                    aes(
-                        x = sin(mid) * (x + inner_nudge_r * r_inner) + x0,
-                        y = cos(mid) * (x + inner_nudge_r * r_inner) + y0,
-                        label = lab
-                    ),
-                    data = dplyr::filter(
-                        plot_df, ring == "inner",
-                        p >= inner_min_p, p <= inner_max_p
-                    ),
-                    size = inner_label_size, alpha = inner_label_alpha,
-                    colour = inner_label_colour
-                )
-            } else {
-                p <- p + lab_fun(
-                    aes(
-                        x = sin(mid) * (x + inner_nudge_r * r_inner) + x0,
-                        y = cos(mid) * (x + inner_nudge_r * r_inner) + y0,
-                        colour = colour, label = lab
-                    ),
-                    data = dplyr::filter(
-                        plot_df, ring == "inner",
-                        p >= inner_min_p, p <= inner_max_p
-                    ),
-                    size = inner_label_size, alpha = inner_label_alpha,
-                    show.legend = FALSE
-                )
-            }
+            plt <- .addLabel(
+                plt = plt, df = plot_df, label_type = inner_label,
+                label_colour = inner_label_colour, label_size = inner_label_size,
+                label_alpha = inner_label_alpha, min_p = inner_min_p,
+                max_p = inner_max_p, pattern = inner_pattern,
+                nudge_r = inner_nudge_r, r = r_inner, .x = "x", .ring = "inner"
+            )
         }
         if (outer_label != "none") {
-            lab_fun <- match.fun(paste0("geom_", outer_label))
-            if (outer_label_colour != "palette") {
-                p <- p + lab_fun(
-                    aes(
-                        x = sin(mid) * (x1 + outer_nudge_r) + x0 ,
-                        y = cos(mid) * (x1 + outer_nudge_r) + y0, label = lab
-                    ),
-                    data = dplyr::filter(
-                        plot_df, ring == "outer",
-                        p >= outer_min_p, p <= outer_max_p
-                    ),
-                    size = outer_label_size, alpha = outer_label_alpha,
-                    colour = outer_label_colour
-                )
-            } else {
-                p <- p + lab_fun(
-                    aes(
-                        x = sin(mid) * (x1 + outer_nudge_r) + x0 ,
-                        y = cos(mid) * (x1 + outer_nudge_r) + y0,
-                        colour = colour, label = lab
-                    ),
-                    data = dplyr::filter(
-                        plot_df, ring == "outer",
-                        p >= outer_min_p, p <= outer_max_p
-                    ),
-                    size = outer_label_size, alpha = outer_label_alpha,
-                    show.legend = FALSE
-                )
-            }
+            plt <- .addLabel(
+                plt = plt, df = plot_df, label_type = outer_label,
+                label_colour = outer_label_colour, label_size = outer_label_size,
+                label_alpha = outer_label_alpha, min_p = outer_min_p,
+                max_p = outer_max_p, pattern = outer_pattern,
+                nudge_r = outer_nudge_r, r = 1, .x = "x1", .ring = "outer"
+            )
         }
 
         ## Add all remaining elements & formatting
-        p <- p +
+        plt <- plt +
             coord_equal() +
             theme_void() +
             scale_x_continuous(expand = expansion(expand)) +
@@ -437,8 +400,47 @@ setMethod(
             labs(fill = NULL) +
             guides(alpha = "none", fill = "none")
 
-        p + lg1 + lg2 + plot_layout(design = layout)
+        plt + lg1 + lg2 + plot_layout(design = layout)
 
     }
 
 )
+#' @keywords internal
+#' @importFrom rlang sym '!!'
+.addLabel <- function(
+        plt, df, label_type, label_colour, label_size, label_alpha, min_p, max_p,
+        pattern, nudge_r, r, .x, .ring
+) {
+    lab_fun <- match.fun(paste0("geom_", label_type))
+    if (label_colour != "palette") {
+        plt <- plt + lab_fun(
+            aes(
+                x = sin(!!sym("mid")) * (!!sym(.x) + nudge_r * r) + !!sym("x0") ,
+                y = cos(!!sym("mid")) * (!!sym(.x) + nudge_r * r) + !!sym("y0"),
+                label = !!sym("lab")
+            ),
+            data = dplyr::filter(
+                df, !!sym("ring") == .ring,
+                !!sym("p") >= min_p, !!sym("p") <= max_p,
+                grepl(pattern, !!sym("lab"))
+            ),
+            size = label_size, alpha = label_alpha, colour = label_colour
+        )
+    } else {
+        plt <- plt + lab_fun(
+            aes(
+                x = sin(!!sym("mid")) * (!!sym(.x) + nudge_r * r) + !!sym("x0"),
+                y = cos(!!sym("mid")) * (!!sym(.x) + nudge_r * r) + !!sym("y0"),
+                colour = !!sym("colour"), label = !!sym("lab")
+            ),
+            data = dplyr::filter(
+                df, !!sym("ring") == .ring,
+                !!sym("p") >= min_p, !!sym("p") <= max_p,
+                grepl(pattern, !!sym("lab"))
+            ),
+            size = label_size, alpha = label_alpha, show.legend = FALSE
+        )
+    }
+    plt
+
+}
