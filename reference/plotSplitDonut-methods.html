@@ -110,6 +110,8 @@
 <span>  max_p <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  inner_max_p <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  outer_max_p <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  inner_pattern <span class="op">=</span> <span class="st">"."</span>,</span>
+<span>  outer_pattern <span class="op">=</span> <span class="st">"."</span>,</span>
 <span>  explode_inner <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  explode_outer <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  explode_query <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AND"</span>, <span class="st">"OR"</span><span class="op">)</span>,</span>
@@ -222,6 +224,11 @@ are specified, the values in <code>min_p</code> will be ignored for that layer</
 <dd><p>only display labels for segments
 representing less than this proportion of the total. If inner/outer values
 are specified, the values in <code>max_p</code> will be ignored for that layer</p></dd>
+
+
+<dt>inner_pattern, outer_pattern</dt>
+<dd><p>Regular expressions which are combined
+with max_p and min_p values for accurately choosing labels</p></dd>
 
 
 <dt>explode_inner, explode_outer</dt>
