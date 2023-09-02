@@ -77,6 +77,9 @@
 #' are specified, the values in `max_p` will be ignored for that layer
 #' @param inner_pattern,outer_pattern Regular expressions which are combined
 #' with max_p and min_p values for accurately choosing labels
+#' @param inner_rotate,outer_rotate logical(1). Rotate labels for inner or outer
+#' rings. This will be ignored by when setting the geom as "label".
+#' See \link[ggplot2]{geom_text}
 #' @param explode_inner,explode_outer Regular expressions from either the inner
 #' or outer ring for which segments will be 'exploded'
 #' @param explode_query Setting to AND and specifying values for both the inner
@@ -173,8 +176,8 @@ setMethod(
         outer_label_colour = NULL,
         min_p = 0.05, inner_min_p = NULL, outer_min_p = NULL,
         max_p = 1, inner_max_p = NULL, outer_max_p = NULL,
-        inner_pattern = ".", outer_pattern = ".",
-        explode_inner = NULL, explode_outer = NULL,
+        inner_pattern = ".", outer_pattern = ".", inner_rotate = FALSE,
+        outer_rotate = FALSE, explode_inner = NULL, explode_outer = NULL,
         explode_query = c("AND", "OR"), explode_x = 0, explode_y = 0,
         explode_r = 0,
         nudge_r = 0.5, inner_nudge_r = NULL, outer_nudge_r = NULL,
@@ -375,7 +378,8 @@ setMethod(
                 label_colour = inner_label_colour, label_size = inner_label_size,
                 label_alpha = inner_label_alpha, min_p = inner_min_p,
                 max_p = inner_max_p, pattern = inner_pattern,
-                nudge_r = inner_nudge_r, r = r_inner, .x = "x", .ring = "inner"
+                nudge_r = inner_nudge_r, r = r_inner, .x = "x", .ring = "inner",
+                rotate = inner_rotate
             )
         }
         if (outer_label != "none") {
@@ -384,7 +388,8 @@ setMethod(
                 label_colour = outer_label_colour, label_size = outer_label_size,
                 label_alpha = outer_label_alpha, min_p = outer_min_p,
                 max_p = outer_max_p, pattern = outer_pattern,
-                nudge_r = outer_nudge_r, r = 1, .x = "x1", .ring = "outer"
+                nudge_r = outer_nudge_r, r = 1, .x = "x1", .ring = "outer",
+                rotate = outer_rotate
             )
         }
 
@@ -409,15 +414,28 @@ setMethod(
 #' @importFrom rlang sym '!!'
 .addLabel <- function(
         plt, df, label_type, label_colour, label_size, label_alpha, min_p, max_p,
-        pattern, nudge_r, r, .x, .ring
+        pattern, nudge_r, r, .x, .ring, rotate
 ) {
+    df$angle <- 0
+    if (rotate) {
+        text_angle <- lapply(
+            split(df, df$ring),
+            function(x) {
+                angle <- 90 + (cumsum(-x$p) + 0.5 * x$p) * 360
+                i <- abs(angle) > 90
+                angle[i] <- angle[i] + 180
+                angle
+            }
+        )
+        df$angle <- as.numeric(unlist(text_angle))
+    }
     lab_fun <- match.fun(paste0("geom_", label_type))
     if (label_colour != "palette") {
         plt <- plt + lab_fun(
             aes(
                 x = sin(!!sym("mid")) * (!!sym(.x) + nudge_r * r) + !!sym("x0") ,
                 y = cos(!!sym("mid")) * (!!sym(.x) + nudge_r * r) + !!sym("y0"),
-                label = !!sym("lab")
+                angle = !!sym("angle"), label = !!sym("lab")
             ),
             data = dplyr::filter(
                 df, !!sym("ring") == .ring,
@@ -431,7 +449,8 @@ setMethod(
             aes(
                 x = sin(!!sym("mid")) * (!!sym(.x) + nudge_r * r) + !!sym("x0"),
                 y = cos(!!sym("mid")) * (!!sym(.x) + nudge_r * r) + !!sym("y0"),
-                colour = !!sym("colour"), label = !!sym("lab")
+                colour = !!sym("colour"), angle = !!sym("angle"),
+                label = !!sym("lab")
             ),
             data = dplyr::filter(
                 df, !!sym("ring") == .ring,

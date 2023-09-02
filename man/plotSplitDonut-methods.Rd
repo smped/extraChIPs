@@ -47,6 +47,8 @@ plotSplitDonut(object, ...)
   outer_max_p = NULL,
   inner_pattern = ".",
   outer_pattern = ".",
+  inner_rotate = FALSE,
+  outer_rotate = FALSE,
   explode_inner = NULL,
   explode_outer = NULL,
   explode_query = c("AND", "OR"),
@@ -125,6 +127,10 @@ are specified, the values in \code{max_p} will be ignored for that layer}
 
 \item{inner_pattern, outer_pattern}{Regular expressions which are combined
 with max_p and min_p values for accurately choosing labels}
+
+\item{inner_rotate, outer_rotate}{logical(1). Rotate labels for inner or outer
+rings. This will be ignored by when setting the geom as "label".
+See \link[ggplot2]{geom_text}}
 
 \item{explode_inner, explode_outer}{Regular expressions from either the inner
 or outer ring for which segments will be 'exploded'}
