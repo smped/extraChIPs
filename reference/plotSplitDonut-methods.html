@@ -112,6 +112,8 @@
 <span>  outer_max_p <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  inner_pattern <span class="op">=</span> <span class="st">"."</span>,</span>
 <span>  outer_pattern <span class="op">=</span> <span class="st">"."</span>,</span>
+<span>  inner_rotate <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  outer_rotate <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  explode_inner <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  explode_outer <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  explode_query <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AND"</span>, <span class="st">"OR"</span><span class="op">)</span>,</span>
@@ -229,6 +231,12 @@ are specified, the values in <code>max_p</code> will be ignored for that layer</
 <dt>inner_pattern, outer_pattern</dt>
 <dd><p>Regular expressions which are combined
 with max_p and min_p values for accurately choosing labels</p></dd>
+
+
+<dt>inner_rotate, outer_rotate</dt>
+<dd><p>logical(1). Rotate labels for inner or outer
+rings. This will be ignored by when setting the geom as "label".
+See <a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></p></dd>
 
 
 <dt>explode_inner, explode_outer</dt>
