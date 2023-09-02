@@ -112,7 +112,7 @@
 #'   inner_label_alpha = 0.5, r_centre = 0,
 #'   outer_glue = "{.data[[outer]]}\n(n = {n})", outer_label = "text",
 #'   explode_inner = "Up", explode_outer = "Prom|Enh",
-#'   explode_query = "AND", explode_r = 0.4,
+#'   explode_query = "AND", explode_r = 0.4, outer_rotate = TRUE,
 #'   inner_palette = hcl.colors(3, "Spectral", rev = TRUE),
 #'   outer_palette = hcl.colors(3, "Cividis")
 #' )
@@ -183,7 +183,7 @@ setMethod(
         nudge_r = 0.5, inner_nudge_r = NULL, outer_nudge_r = NULL,
         expand = 0.1, inner_palette = NULL, outer_palette = NULL,
         inner_legend = TRUE, outer_legend = TRUE,
-        layout = c(main = area(1, 1, 6, 6), lg1 = area(2, 7), lg2 = area(4, 7)),
+        layout = c(main = area(1, 1, 12, 12), lg1 = area(2, 12), lg2 = area(11, 12)),
         ...
     ) {
 

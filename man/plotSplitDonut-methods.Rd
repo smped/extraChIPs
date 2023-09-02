@@ -63,7 +63,7 @@ plotSplitDonut(object, ...)
   outer_palette = NULL,
   inner_legend = TRUE,
   outer_legend = TRUE,
-  layout = c(main = area(1, 1, 6, 6), lg1 = area(2, 7), lg2 = area(4, 7)),
+  layout = c(main = area(1, 1, 12, 12), lg1 = area(2, 12), lg2 = area(11, 12)),
   ...
 )
 }
@@ -210,7 +210,7 @@ plotSplitDonut(
   inner_label_alpha = 0.5, r_centre = 0,
   outer_glue = "{.data[[outer]]}\n(n = {n})", outer_label = "text",
   explode_inner = "Up", explode_outer = "Prom|Enh",
-  explode_query = "AND", explode_r = 0.4,
+  explode_query = "AND", explode_r = 0.4, outer_rotate = TRUE,
   inner_palette = hcl.colors(3, "Spectral", rev = TRUE),
   outer_palette = hcl.colors(3, "Cividis")
 )
