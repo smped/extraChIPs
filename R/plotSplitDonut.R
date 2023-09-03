@@ -87,10 +87,13 @@
 #' @param explode_x,explode_y Numeric values for shifting exploded values
 #' @param explode_r Radius expansion for exploded values
 #' @param nudge_r,inner_nudge_r,outer_nudge_r Radius expansion for labels
-#' @param expand Passed to \link[ggplot2]{expansion} for both x and y axes
+#' @param expand Passed to \link[ggplot2]{expansion} for both x and y axes.
+#' Can be helpful if labels are clipped by plot limits
 #' @param inner_palette Colour palette for the inner ring
 #' @param outer_palette Optional colour palette for the outer ring
 #' @param inner_legend,outer_legend logical(1). Show legends for either layer
+#' @param outer_p_by Scale the proportions for outer segments by the complete
+#' dataset, or within each inner segment
 #' @param layout Passed to \link[patchwork]{plot_layout}
 #' @param ... Not used
 #'
@@ -176,13 +179,15 @@ setMethod(
         outer_label_colour = NULL,
         min_p = 0.05, inner_min_p = NULL, outer_min_p = NULL,
         max_p = 1, inner_max_p = NULL, outer_max_p = NULL,
-        inner_pattern = ".", outer_pattern = ".", inner_rotate = FALSE,
-        outer_rotate = FALSE, explode_inner = NULL, explode_outer = NULL,
+        inner_pattern = ".", outer_pattern = ".",
+        inner_rotate = FALSE, outer_rotate = FALSE,
+        explode_inner = NULL, explode_outer = NULL,
         explode_query = c("AND", "OR"), explode_x = 0, explode_y = 0,
         explode_r = 0,
         nudge_r = 0.5, inner_nudge_r = NULL, outer_nudge_r = NULL,
         expand = 0.1, inner_palette = NULL, outer_palette = NULL,
         inner_legend = TRUE, outer_legend = TRUE,
+        outer_p_by = c("all", "inner"),
         layout = c(main = area(1, 1, 12, 12), lg1 = area(2, 12), lg2 = area(11, 12)),
         ...
     ) {
@@ -201,6 +206,7 @@ setMethod(
         total_label <- match.arg(total_label)
         inner_label <- match.arg(inner_label)
         outer_label <- match.arg(outer_label)
+        outer_p_by <- match.arg(outer_p_by)
         if (is.null(explode_inner)) explode_inner <- "^$"
         if (is.null(explode_outer)) explode_outer <- "^$"
         if (any(c(explode_inner, explode_outer) == "^$")) explode_query <- "OR"
@@ -237,8 +243,13 @@ setMethod(
             ring = "inner", p = n / sum(n),
             x = r_centre, x1 = x + r_inner,
             y = cumsum(c(0, p[seq_len(nrow(inner_df) - 1)])),
-            yend = cumsum(p)
+            yend = cumsum(p),
+            angle =  90 + (0.5 * p - cumsum(p)) * 360,
+            angle = ifelse(
+                abs(!!sym("angle")) > 90, !!sym("angle") + 180, !!sym("angle")
+            )
         )
+        if (!inner_rotate) inner_df$angle <- 0
         lev_inner <- levels(inner_df[[inner]])
 
         outer_df <- ungroup(summ_df)
@@ -247,8 +258,15 @@ setMethod(
             ring = "outer", p = n / sum(n),
             x = r_inner + r_centre, x1 = x + r_outer,
             y = cumsum(c(0, p[seq_len(nrow(outer_df) - 1)])),
-            yend = cumsum(p)
+            yend = cumsum(p),
+            angle =  90 + (0.5 * p - cumsum(p)) * 360,
+            angle = ifelse(
+                abs(!!sym("angle")) > 90, !!sym("angle") + 180, !!sym("angle")
+            )
         )
+        if (!outer_rotate) outer_df$angle <- 0
+        if (outer_p_by == "inner")
+            outer_df <- mutate(outer_df, p = p / sum(p), .by = !!sym(inner))
         lev_outer <- levels(outer_df[[outer]])
         lev_all <- unique(c(lev_inner, lev_outer))
 
@@ -378,8 +396,7 @@ setMethod(
                 label_colour = inner_label_colour, label_size = inner_label_size,
                 label_alpha = inner_label_alpha, min_p = inner_min_p,
                 max_p = inner_max_p, pattern = inner_pattern,
-                nudge_r = inner_nudge_r, r = r_inner, .x = "x", .ring = "inner",
-                rotate = inner_rotate
+                nudge_r = inner_nudge_r, r = r_inner, .x = "x", .ring = "inner"
             )
         }
         if (outer_label != "none") {
@@ -388,8 +405,7 @@ setMethod(
                 label_colour = outer_label_colour, label_size = outer_label_size,
                 label_alpha = outer_label_alpha, min_p = outer_min_p,
                 max_p = outer_max_p, pattern = outer_pattern,
-                nudge_r = outer_nudge_r, r = 1, .x = "x1", .ring = "outer",
-                rotate = outer_rotate
+                nudge_r = outer_nudge_r, r = 1, .x = "x1", .ring = "outer"
             )
         }
 
@@ -414,21 +430,16 @@ setMethod(
 #' @importFrom rlang sym '!!'
 .addLabel <- function(
         plt, df, label_type, label_colour, label_size, label_alpha, min_p, max_p,
-        pattern, nudge_r, r, .x, .ring, rotate
+        pattern, nudge_r, r, .x, .ring
 ) {
-    df$angle <- 0
-    if (rotate) {
-        text_angle <- lapply(
-            split(df, df$ring),
-            function(x) {
-                angle <- 90 + (cumsum(-x$p) + 0.5 * x$p) * 360
-                i <- abs(angle) > 90
-                angle[i] <- angle[i] + 180
-                angle
-            }
-        )
-        df$angle <- as.numeric(unlist(text_angle))
-    }
+
+    ## Filter df for key parameters
+    df <- dplyr::filter(
+        df,
+        !!sym("ring") == .ring, grepl(pattern, !!sym("lab"),
+        !!sym("p") >= min_p, !!sym("p") <= max_p, )
+    )
+    ## Add labels
     lab_fun <- match.fun(paste0("geom_", label_type))
     if (label_colour != "palette") {
         plt <- plt + lab_fun(
@@ -437,11 +448,7 @@ setMethod(
                 y = cos(!!sym("mid")) * (!!sym(.x) + nudge_r * r) + !!sym("y0"),
                 angle = !!sym("angle"), label = !!sym("lab")
             ),
-            data = dplyr::filter(
-                df, !!sym("ring") == .ring,
-                !!sym("p") >= min_p, !!sym("p") <= max_p,
-                grepl(pattern, !!sym("lab"))
-            ),
+            data = df,
             size = label_size, alpha = label_alpha, colour = label_colour
         )
     } else {
@@ -452,11 +459,7 @@ setMethod(
                 colour = !!sym("colour"), angle = !!sym("angle"),
                 label = !!sym("lab")
             ),
-            data = dplyr::filter(
-                df, !!sym("ring") == .ring,
-                !!sym("p") >= min_p, !!sym("p") <= max_p,
-                grepl(pattern, !!sym("lab"))
-            ),
+            data = df,
             size = label_size, alpha = label_alpha, show.legend = FALSE
         )
     }

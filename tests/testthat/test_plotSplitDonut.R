@@ -34,24 +34,30 @@ test_that("plotSplitDonut Errors where expected", {
 test_that("plotSplitDonut produces the expected output", {
 
     p <- plotSplitDonut(df, inner = "TF1", outer = "TF2")
-    expect_equal(dim(p[[1]]$data), c(12, 18))
+    expect_equal(dim(p[[1]]$data), c(12, 19))
     expect_equal(sum(p[[1]]$data$n), 200 * 2)
     expect_equal(
         levels(p[[1]]$data$colour), paste("TF1", c("Down", "Unchanged", "Up"))
     )
     expect_true(all(!p[[1]]$data$explode))
+    expect_true(all(p[[1]]$data$angle == 0))
     expect_true(is(p[[2]], "wrapped_patch"))
     expect_true(is(p[[3]], "spacer"))
+    expect_true(
+        sum(dplyr::filter(p[[1]]$data, ring == "outer")$p) == 1
+    )
 
     p <- plotSplitDonut(
         gr, inner = "TF1", outer = "feature", scale_by = "width",
         outer_glue = "{.data[[outer]]}\n({round(n, 1)}kb)",
         explode_inner = "Up", explode_outer = "Prom", explode_r = 0.2,
         inner_palette = hcl.colors(3, "Spectral", rev = TRUE),
-        outer_palette = hcl.colors(3, "Cividis")
+        outer_palette = hcl.colors(3, "Cividis"),
+        inner_rotate = TRUE, outer_rotate = TRUE
     )
     expect_true(is(p[[3]], "wrapped_patch"))
     expect_equal(sum(p[[1]]$data$n), sum(width(gr)/1e3)*2)
+    expect_true(!any(p[[1]]$data$angle == 0))
     expect_equal(
         levels(p[[1]]$data$colour),
         c(
@@ -64,6 +70,11 @@ test_that("plotSplitDonut produces the expected output", {
     expect_true(all(p[[1]]$data$alpha == 1))
     expect_true(all(!grepl("feature", p[[1]]$data$lab)))
     expect_equal(sum(grepl("kb", p[[1]]$data$lab)), 9)
+
+    p <- plotSplitDonut(df, inner = "TF1", outer = "TF2", outer_p_by = "inner")
+    expect_true(
+        sum(dplyr::filter(p[[1]]$data, ring == "outer")$p) == 3
+    )
 
 })
 
@@ -87,6 +98,6 @@ test_that("label types are handled correctly",{
         df, inner = "TF1", outer = "TF2", total_label = "none",
         inner_label = "none", outer_label = "none"
     )
-    p_build <-ggplot_build(p[[1]])
+    p_build <- ggplot_build(p[[1]])
     expect_true(length(p_build$data) == 1)
 })

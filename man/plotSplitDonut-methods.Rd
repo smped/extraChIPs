@@ -63,6 +63,7 @@ plotSplitDonut(object, ...)
   outer_palette = NULL,
   inner_legend = TRUE,
   outer_legend = TRUE,
+  outer_p_by = c("all", "inner"),
   layout = c(main = area(1, 1, 12, 12), lg1 = area(2, 12), lg2 = area(11, 12)),
   ...
 )
@@ -144,13 +145,17 @@ and outer ring will require matches in both categories}
 
 \item{nudge_r, inner_nudge_r, outer_nudge_r}{Radius expansion for labels}
 
-\item{expand}{Passed to \link[ggplot2]{expansion} for both x and y axes}
+\item{expand}{Passed to \link[ggplot2]{expansion} for both x and y axes.
+Can be helpful if labels are clipped by plot limits}
 
 \item{inner_palette}{Colour palette for the inner ring}
 
 \item{outer_palette}{Optional colour palette for the outer ring}
 
 \item{inner_legend, outer_legend}{logical(1). Show legends for either layer}
+
+\item{outer_p_by}{Scale the proportions for outer segments by the complete
+dataset, or within each inner segment}
 
 \item{layout}{Passed to \link[patchwork]{plot_layout}}
 }
