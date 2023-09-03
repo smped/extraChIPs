@@ -101,6 +101,7 @@
 <span>  cat_size <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  cat_alpha <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  cat_adj <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  hole_width <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -191,6 +192,12 @@ for category labels</p></dd>
 <dt>cat_adj</dt>
 <dd><p>Adjust category labels</p></dd>
 
+
+<dt>hole_width</dt>
+<dd><p>Add a hole in the middle to turn the plot into a donut.
+Values between zero and 1 work best. Only implemented for pie charts using
+one value (i.e. fill)</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -260,10 +267,10 @@ Parameters for these labels are customisable</p>
 <span class="r-in"><span><span class="co">## Show values by counts</span></span></span>
 <span class="r-in"><span><span class="fu">plotPie</span><span class="op">(</span><span class="va">gr</span>, fill <span class="op">=</span> <span class="st">"feature"</span>, total_size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotPie-methods-5.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="co">## Show values scaled by width of each range</span></span></span>
+<span class="r-in"><span><span class="co">## Show values scaled by width of each range as a donut plot</span></span></span>
 <span class="r-in"><span><span class="fu">plotPie</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">gr</span>, fill <span class="op">=</span> <span class="st">"feature"</span>, scale_by <span class="op">=</span> <span class="st">"width"</span>, total_glue <span class="op">=</span> <span class="st">"{round(N, 1)}kb"</span>,</span></span>
-<span class="r-in"><span>  cat_glue <span class="op">=</span> <span class="st">"{percent(p, 0.1)}"</span>, cat_size <span class="op">=</span> <span class="fl">4</span>, total_size <span class="op">=</span> <span class="fl">5</span></span></span>
+<span class="r-in"><span>  cat_glue <span class="op">=</span> <span class="st">"{percent(p, 0.1)}"</span>, cat_size <span class="op">=</span> <span class="fl">4</span>, total_size <span class="op">=</span> <span class="fl">5</span>, hole_width <span class="op">=</span> <span class="fl">0.2</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotPie-methods-6.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
