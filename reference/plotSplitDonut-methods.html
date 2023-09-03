@@ -128,6 +128,7 @@
 <span>  outer_palette <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  inner_legend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  outer_legend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  outer_p_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span>, <span class="st">"inner"</span><span class="op">)</span>,</span>
 <span>  layout <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>main <span class="op">=</span> <span class="fu">area</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">12</span>, <span class="fl">12</span><span class="op">)</span>, lg1 <span class="op">=</span> <span class="fu">area</span><span class="op">(</span><span class="fl">2</span>, <span class="fl">12</span><span class="op">)</span>, lg2 <span class="op">=</span> <span class="fu">area</span><span class="op">(</span><span class="fl">11</span>, <span class="fl">12</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -262,7 +263,8 @@ and outer ring will require matches in both categories</p></dd>
 
 
 <dt>expand</dt>
-<dd><p>Passed to <a href="https://ggplot2.tidyverse.org/reference/expansion.html" class="external-link">expansion</a> for both x and y axes</p></dd>
+<dd><p>Passed to <a href="https://ggplot2.tidyverse.org/reference/expansion.html" class="external-link">expansion</a> for both x and y axes.
+Can be helpful if labels are clipped by plot limits</p></dd>
 
 
 <dt>inner_palette</dt>
@@ -275,6 +277,11 @@ and outer ring will require matches in both categories</p></dd>
 
 <dt>inner_legend, outer_legend</dt>
 <dd><p>logical(1). Show legends for either layer</p></dd>
+
+
+<dt>outer_p_by</dt>
+<dd><p>Scale the proportions for outer segments by the complete
+dataset, or within each inner segment</p></dd>
 
 
 <dt>layout</dt>
