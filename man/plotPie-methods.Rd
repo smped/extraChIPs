@@ -36,6 +36,7 @@ plotPie(object, ...)
   cat_size = 3,
   cat_alpha = 1,
   cat_adj = 0,
+  hole_width = 0,
   ...
 )
 }
@@ -90,6 +91,10 @@ be used to print totals and proportions for each slice.}
 for category labels}
 
 \item{cat_adj}{Adjust category labels}
+
+\item{hole_width}{Add a hole in the middle to turn the plot into a donut.
+Values between zero and 1 work best. Only implemented for pie charts using
+one value (i.e. fill)}
 }
 \value{
 A ggplot2 object able to be customised with colour scales and themes.
@@ -150,10 +155,10 @@ gr <- ex_prom
 mcols(gr) <- df[seq_along(gr),]
 ## Show values by counts
 plotPie(gr, fill = "feature", total_size = 5)
-## Show values scaled by width of each range
+## Show values scaled by width of each range as a donut plot
 plotPie(
   gr, fill = "feature", scale_by = "width", total_glue = "{round(N, 1)}kb",
-  cat_glue = "{percent(p, 0.1)}", cat_size = 4, total_size = 5
+  cat_glue = "{percent(p, 0.1)}", cat_size = 4, total_size = 5, hole_width = 0.2
 )
 
 }

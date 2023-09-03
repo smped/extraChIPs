@@ -61,6 +61,9 @@
 #' @param cat_colour,cat_fill,cat_size,cat_alpha Colour, fill, size and alpha
 #' for category labels
 #' @param cat_adj Adjust category labels
+#' @param hole_width Add a hole in the middle to turn the plot into a donut.
+#' Values between zero and 1 work best. Only implemented for pie charts using
+#' one value (i.e. fill)
 #' @param ... Not used
 #'
 #' @examples
@@ -93,10 +96,10 @@
 #' mcols(gr) <- df[seq_along(gr),]
 #' ## Show values by counts
 #' plotPie(gr, fill = "feature", total_size = 5)
-#' ## Show values scaled by width of each range
+#' ## Show values scaled by width of each range as a donut plot
 #' plotPie(
 #'   gr, fill = "feature", scale_by = "width", total_glue = "{round(N, 1)}kb",
-#'   cat_glue = "{percent(p, 0.1)}", cat_size = 4, total_size = 5
+#'   cat_glue = "{percent(p, 0.1)}", cat_size = 4, total_size = 5, hole_width = 0.2
 #' )
 #'
 #' @importClassesFrom GenomicRanges GRanges
@@ -139,7 +142,7 @@ setMethod(
         cat_geom = c("label", "text", "none"),
         cat_glue = "{.data[[fill]]}\n{comma(n, 1)}\n({percent(p, 0.1)})",
         cat_colour = "black", cat_fill = "white", cat_size = 3, cat_alpha = 1,
-        cat_adj = 0, ...
+        cat_adj = 0, hole_width = 0, ...
     ) {
 
         if (missing(fill)) stop("The initial category must be defined as 'fill'\n")
@@ -158,7 +161,8 @@ setMethod(
                 .cat_colour = cat_colour, .cat_fill = cat_fill,
                 .cat_size = cat_size, .cat_alpha = cat_alpha,
                 .cat_adj = cat_adj,
-                .scale_by = scale_by, .scale_factor = scale_factor
+                .scale_by = scale_by, .scale_factor = scale_factor,
+                .hole_width = hole_width
             )
         }
 
@@ -206,7 +210,7 @@ setMethod(
         df, fill, width, .total_geom, .total_glue, .total_size, .total_colour,
         .total_fill, .total_alpha, .min_p, .max_p, .cat_geom, .cat_glue,
         .cat_colour, .cat_fill, .cat_size, .cat_alpha, .text_width, .cat_adj,
-        .scale_by, .scale_factor
+        .scale_by, .scale_factor, .hole_width
 ) {
 
     stopifnot(fill %in% colnames(df))
@@ -227,16 +231,19 @@ setMethod(
     summ_df$y <- cumsum(summ_df$p)
     N <- sum(summ_df$n)
 
-    p <- ggplot(data = summ_df, aes(1, p, fill = !!sym(fill))) +
-        geom_col(width = width)
+    x_lim <- c(-(width / 2 + .hole_width), width / 2 + .hole_width + .cat_adj)
+    p <- ggplot(data = summ_df, aes(0, p, fill = !!sym(fill))) +
+        geom_col(width = width) +
+        xlim(x_lim)
 
     if (.cat_geom != "none") {
         geom <- paste0("geom_", .cat_geom)
         args <- list(
-            mapping = aes(x = 1, y = y - p / 2, label = lab),
+            mapping = aes(y = y - p / 2, label = lab),
             data = dplyr::filter(summ_df, p >= .min_p, p <= .max_p),
+            x = .cat_adj,
             colour = .cat_colour, alpha = .cat_alpha, size = .cat_size,
-            nudge_x = .cat_adj, show.legend = FALSE
+            show.legend = FALSE
         )
         if (.cat_geom == "label") args$fill <- .cat_fill
         p <- p + do.call(geom, args)
@@ -246,7 +253,10 @@ setMethod(
         lab_fun <- match.fun(paste0("geom_", .total_geom))
         p <- p + lab_fun(
             aes(x, y, label = lab),
-            data = tibble(x = 1 - width / 2, y = 0, lab = glue(.total_glue)),
+            data = tibble(
+                x = 0 - (width / 2 + .hole_width),
+                y = 0, lab = glue(.total_glue)
+            ),
             fill = .total_fill, colour = .total_colour,
             size = .total_size, alpha = .total_alpha,
             inherit.aes = FALSE
