@@ -104,6 +104,19 @@ test_that("dualFilter runs as expected", {
 
 })
 
+test_that("bg selection runs as expected", {
+
+    filtcounts_char <- dualFilter(
+        x = wincounts, bg = "input", ref = peaks, q = 0.8
+    )
+    filtcounts_log <- dualFilter(
+        x = wincounts, bg = c(FALSE, FALSE, TRUE), ref = peaks, q = 0.8
+    )
+
+    expect_equal(filtcounts_log, filtcounts_char)
+
+})
+
 test_that("dualFilter runs as expected without 'bg'", {
 
     expect_message(

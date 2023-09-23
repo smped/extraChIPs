@@ -6,18 +6,22 @@
 \usage{
 dualFilter(
   x,
-  bg,
+  bg = NULL,
   ref,
   q = 0.5,
   logCPM = TRUE,
   keep.totals = TRUE,
+  bin.size = NULL,
+  prior.count = 2,
   BPPARAM = bpparam()
 )
 }
 \arguments{
 \item{x}{RangedSummarizedExperiment containing sample counts}
 
-\item{bg}{RangedSummarizedExperiment containing background/input counts}
+\item{bg}{RangedSummarizedExperiment containing background/input counts,
+or alternate method for selecting samples from within x, such as a logical,
+numeric or character vector}
 
 \item{ref}{GRanges object containing ranges where signal is expected}
 
@@ -28,6 +32,13 @@ when tuning the filtering criteria}
 
 \item{keep.totals}{logical(1) Keep the original library sizes or replace
 using only the retained windows}
+
+\item{bin.size}{Bin sizes when calling \link[csaw]{filterWindowsControl}.
+If not specified will default to the largest of 2000bp or 10x the window
+size}
+
+\item{prior.count}{Passed to \link[csaw]{filterWindowsControl} and
+\link[csaw]{filterWindowsProportion}}
 
 \item{BPPARAM}{Settings for running in parallel}
 }
@@ -118,11 +129,10 @@ peaks <- import.bed(
     system.file("extdata", "peaks.bed.gz", package = "extraChIPs")
 )
 filtcounts <- dualFilter(
-    x = wincounts[, !is.na(wincounts$treat)],
-    bg = wincounts[, is.na(wincounts$treat)],
-    ref = peaks,
+    x = wincounts, bg = "input", ref = peaks,
     q = 0.8 # Better to use q = 0.5 on real data
 )
+filtcounts
 
 }
 
