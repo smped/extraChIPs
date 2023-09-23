@@ -24,4 +24,7 @@ test_that("addDiffStatus performs correctly", {
   grl <- addDiffStatus(grl)
   expect_true(is(grl, "GRangesList"))
   expect_equal(colnames(mcols(grl[[1]])),  c("logFC", "FDR", "status"))
+  expect_equal(
+    levels(addDiffStatus(df[-1,], drop = TRUE)$status), lv[1:3]
+  )
 })

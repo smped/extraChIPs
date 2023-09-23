@@ -18,6 +18,7 @@
 #' criteria
 #' @param missing Value to add when either fc_col or sig_col has NA values
 #' @param new_col name of the new column to be added
+#' @param drop logical(1) Drop unused factor levels from the status column
 #' @param ... Used to pass arguments between methods
 #'
 #' @return An object of the same type as provided
@@ -50,7 +51,8 @@ setMethod(
   function(
     x, fc_col = "logFC", sig_col = c("FDR", "hmp_fdr", "p_fdr", "adj.P.Value"),
     alpha = 0.05, cutoff = 0, up = "Increased", down = "Decreased",
-    other = "Unchanged", missing = "Undetected", new_col = "status", ...
+    other = "Unchanged", missing = "Undetected", new_col = "status",
+    drop = FALSE, ...
   ) {
 
     # Start with a df
@@ -71,6 +73,7 @@ setMethod(
     )
     ## Do we need to add an explicit NA value here?
     lv <- unique(c(other, down, up, missing))
+    if (drop) lv <- intersect(lv, status)
     x[[new_col]] <- factor(status, levels = lv)
     x
   }
@@ -78,11 +81,11 @@ setMethod(
 #' @rdname addDiffStatus-methods
 #' @export
 setMethod(
-  "addDiffStatus", signature = signature(x = "DataFrame"), function(x, ...) {
+  "addDiffStatus", signature = signature(x = "DataFrame"),
+  function(x, new_col = "status", ...) {
     df <- as.data.frame(x)
     orig_names <- colnames(df)
-    df <- addDiffStatus(df, ...)
-    new_col <- setdiff(colnames(df), orig_names)
+    df <- addDiffStatus(df, new_col = new_col, ...)
     x[[new_col]] <- df[[new_col]]
     x
   }

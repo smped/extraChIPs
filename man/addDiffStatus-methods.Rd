@@ -22,10 +22,11 @@ addDiffStatus(x, ...)
   other = "Unchanged",
   missing = "Undetected",
   new_col = "status",
+  drop = FALSE,
   ...
 )
 
-\S4method{addDiffStatus}{DataFrame}(x, ...)
+\S4method{addDiffStatus}{DataFrame}(x, new_col = "status", ...)
 
 \S4method{addDiffStatus}{GRanges}(x, ...)
 
@@ -53,6 +54,8 @@ criteria}
 \item{missing}{Value to add when either fc_col or sig_col has NA values}
 
 \item{new_col}{name of the new column to be added}
+
+\item{drop}{logical(1) Drop unused factor levels from the status column}
 }
 \value{
 An object of the same type as provided
