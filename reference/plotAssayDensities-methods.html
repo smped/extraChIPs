@@ -75,8 +75,8 @@
 <span><span class="fu">plotAssayDensities</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  assay <span class="op">=</span> <span class="st">"counts"</span>,</span>
-<span>  colour <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  linetype <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">colour</span>,</span>
+<span>  <span class="va">linetype</span>,</span>
 <span>  <span class="va">group</span>,</span>
 <span>  trans <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  n_max <span class="op">=</span> <span class="cn">Inf</span>,</span>
@@ -99,7 +99,7 @@
 
 
 <dt>colour</dt>
-<dd><p>The column in colData to colour lines by. To remove any
+<dd><p>Optional column in colData to colour lines by. To remove any
 colours, set this argument to <code>NULL</code></p></dd>
 
 
@@ -143,10 +143,10 @@ assay</p>
 <span class="r-in"><span><span class="fu">plotAssayDensities</span><span class="op">(</span><span class="va">se</span>, colour <span class="op">=</span> <span class="st">"treatment"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAssayDensities-methods-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co">## Plot combined within treatment groups</span></span></span>
-<span class="r-in"><span><span class="fu">plotAssayDensities</span><span class="op">(</span><span class="va">se</span>, colour <span class="op">=</span> <span class="st">"treatment"</span>, group <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plotAssayDensities</span><span class="op">(</span><span class="va">se</span>, colour <span class="op">=</span> <span class="st">"treatment"</span>, group <span class="op">=</span> <span class="st">"treatment"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAssayDensities-methods-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co">## Use a data transformation</span></span></span>
-<span class="r-in"><span><span class="fu">plotAssayDensities</span><span class="op">(</span><span class="va">se</span>, trans <span class="op">=</span> <span class="st">"log1p"</span>, colour <span class="op">=</span> <span class="st">"treatment"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plotAssayDensities</span><span class="op">(</span><span class="va">se</span>, trans <span class="op">=</span> <span class="st">"log1p"</span>, colour <span class="op">=</span> <span class="st">"treat"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAssayDensities-methods-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
