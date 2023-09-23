@@ -121,6 +121,7 @@
 #' )
 #'
 #' @importClassesFrom GenomicRanges GRanges
+#' @importFrom rlang '!!' sym
 #' @rdname plotSplitDonut-methods
 #' @export
 setMethod(
@@ -132,7 +133,7 @@ setMethod(
         if (scale_by == "n") df[["n"]] <- 1
         ## Set width to be in Kb by default
         if (scale_by == "width") df[["width"]] <- width(object)
-        plotSplitDonut(df, scale_by = scale_by, ...)
+        plotSplitDonut(df, scale_by = !!sym(scale_by), ...)
     }
 )
 #' @importClassesFrom S4Vectors DataFrame
@@ -151,7 +152,7 @@ setMethod(
 #'
 #' @importFrom dplyr group_by summarise mutate ungroup bind_rows case_when
 #' @importFrom patchwork plot_layout area plot_spacer
-#' @importFrom rlang '!!' '!!!' sym syms .data
+#' @importFrom rlang '!!' '!!!' sym syms .data ensym
 #' @importFrom scales comma percent
 #' @importFrom ggforce geom_arc_bar
 #' @importFrom stringr str_replace_all
@@ -164,7 +165,7 @@ setMethod(
     "plotSplitDonut",
     signature = signature(object = "data.frame"),
     function(
-        object, inner, outer, scale_by = NULL, scale_factor = 1e3,
+        object, inner, outer, scale_by, scale_factor = 1e3,
         r_centre = 0.5, r_inner = 1, r_outer = 1,
         total_glue = "{comma(N)}",
         total_size = 5, total_colour = "black",
@@ -195,9 +196,15 @@ setMethod(
         ## R CMD check declarations
         x <- y <- x0 <- y0 <- x1 <- yend <- explode <- ring <- p <- c()
 
-        inner <- inner[[1]]
-        outer <- outer[[1]]
-        scale_by <- scale_by[[1]]
+        if (missing(inner)) stop('argument "inner" is missing')
+        if (missing(outer)) stop('argument "outer" is missing')
+        inner <- as.character(ensym(inner))
+        outer <- as.character(ensym(outer))
+        if (missing(scale_by)) {
+            scale_by <- NULL
+        } else {
+            scale_by <- as.character(ensym(scale_by))
+        }
         stopifnot(all(c(inner, outer, scale_by) %in% colnames(object)))
         stopifnot(inner != outer)
         object[[inner]] <- as.factor(object[[inner]])
@@ -436,8 +443,8 @@ setMethod(
     ## Filter df for key parameters
     df <- dplyr::filter(
         df,
-        !!sym("ring") == .ring, grepl(pattern, !!sym("lab"),
-        !!sym("p") >= min_p, !!sym("p") <= max_p, )
+        !!sym("ring") == .ring, grepl(pattern, !!sym("lab")),
+        !!sym("p") >= min_p, !!sym("p") <= max_p
     )
     ## Add labels
     lab_fun <- match.fun(paste0("geom_", label_type))

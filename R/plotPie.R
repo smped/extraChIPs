@@ -130,6 +130,7 @@ setMethod(
 )
 #'
 #' @rdname plotPie-methods
+#' @importFrom rlang ensym
 #' @export
 setMethod(
     "plotPie",
@@ -148,7 +149,9 @@ setMethod(
         if (missing(fill)) stop("The initial category must be defined as 'fill'\n")
         total_geom <- match.arg(total_geom)
         cat_geom <- match.arg(cat_geom)
-        fill <- fill[[1]]
+        fill <- as.character(ensym(fill))
+        if (!missing(x)) x <- as.character(ensym(x))
+        if (!missing(y)) y <- as.character(ensym(y))
 
         if (missing(x) & missing(y)) {
             p <- .plotSinglePie(
@@ -281,7 +284,6 @@ setMethod(
         .scale_by, .scale_factor
 ) {
 
-    x <- x[[1]]
     stopifnot(all(c(x, fill) %in% colnames(df)))
     df[[x]] <- as.factor(df[[x]])
     df[[fill]] <- as.factor(df[[fill]])
@@ -320,8 +322,8 @@ setMethod(
     p <- ggplot(data = summ_df) +
         ggforce::stat_pie(
             aes(
-                x0 = x, y0 = 1, r0 = 0, r = width * r,
-                fill = !!sym(fill), amount = value
+                x0 = x, y0 = 1, r0 = 0, r = width * r, fill = !!sym(fill),
+                amount = value
             )
         ) +
         coord_equal() +
@@ -382,10 +384,7 @@ setMethod(
         .scale_by, .scale_factor
 ) {
 
-    x <- x[[1]]
-    y <- y[[1]]
     stopifnot(all(c(x, y, fill) %in% colnames(df)))
-
     df[[x]] <- as.factor(df[[x]])
     df[[y]] <- as.factor(df[[y]])
     df[[fill]] <- as.factor(df[[fill]])
@@ -423,8 +422,8 @@ setMethod(
     p <- ggplot(data = summ_df) +
         ggforce::stat_pie(
             aes(
-                x0 = x, y0 = y, r0 = 0, r = width * r,
-                fill = !!sym(fill), amount = value
+                x0 = x, y0 = y, r0 = 0, r = width * r, fill = !!sym(fill),
+                amount = value
             )
         ) +
         coord_equal() +
@@ -441,7 +440,7 @@ setMethod(
         lab_df <- dplyr::filter(lab_df, N > .min_p * sum(N))
         lab_df <- mutate(lab_df, lab = glue(.total_glue))
         p <- p + lab_fun(
-            aes(x, y, label = !!sym("lab")),
+            aes(!!sym(x), !!sym(y), label = !!sym("lab")),
             data = lab_df,
             fill = .total_fill, colour = .total_colour,
             size = .total_size, alpha = .total_alpha,

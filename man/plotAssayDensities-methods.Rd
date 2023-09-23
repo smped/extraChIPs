@@ -10,8 +10,8 @@ plotAssayDensities(x, ...)
 \S4method{plotAssayDensities}{SummarizedExperiment}(
   x,
   assay = "counts",
-  colour = NULL,
-  linetype = NULL,
+  colour,
+  linetype,
   group,
   trans = NULL,
   n_max = Inf,
@@ -25,7 +25,7 @@ plotAssayDensities(x, ...)
 
 \item{assay}{An assay within x}
 
-\item{colour}{The column in colData to colour lines by. To remove any
+\item{colour}{Optional column in colData to colour lines by. To remove any
 colours, set this argument to \code{NULL}}
 
 \item{linetype}{Any optional column in colData used to determine linetype}
@@ -56,8 +56,8 @@ se$treatment <- c("E2", "E2", "E2", "E2DHT", "E2DHT", "E2DHT")
 ## Plot individual samples
 plotAssayDensities(se, colour = "treatment")
 ## Plot combined within treatment groups
-plotAssayDensities(se, colour = "treatment", group = NULL)
+plotAssayDensities(se, colour = "treatment", group = "treatment")
 ## Use a data transformation
-plotAssayDensities(se, trans = "log1p", colour = "treatment")
+plotAssayDensities(se, trans = "log1p", colour = "treat")
 
 }

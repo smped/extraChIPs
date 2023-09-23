@@ -16,13 +16,13 @@
 #' ## Plot individual samples
 #' plotAssayDensities(se, colour = "treatment")
 #' ## Plot combined within treatment groups
-#' plotAssayDensities(se, colour = "treatment", group = NULL)
+#' plotAssayDensities(se, colour = "treatment", group = "treatment")
 #' ## Use a data transformation
-#' plotAssayDensities(se, trans = "log1p", colour = "treatment")
+#' plotAssayDensities(se, trans = "log1p", colour = "treat")
 #'
 #' @param x A SummarizedExperiment object
 #' @param assay An assay within x
-#' @param colour The column in colData to colour lines by. To remove any
+#' @param colour Optional column in colData to colour lines by. To remove any
 #' colours, set this argument to `NULL`
 #' @param linetype Any optional column in colData used to determine linetype
 #' @param group Used by \link[ggplot2]{geom_line}. Defaults to the sample names
@@ -47,7 +47,7 @@ setGeneric(
 #' @importFrom tidyselect everything all_of
 #' @importFrom dplyr group_by summarise
 #' @importFrom methods as
-#' @importFrom rlang sym syms .data '!!!'
+#' @importFrom rlang sym syms .data '!!!' ensym
 #' @import ggplot2
 #'
 #' @rdname plotAssayDensities-methods
@@ -56,8 +56,8 @@ setMethod(
     "plotAssayDensities",
     signature = signature(x = "SummarizedExperiment"),
     function(
-        x, assay = "counts", colour = NULL, linetype = NULL, group,
-        trans = NULL, n_max = Inf, ...
+        x, assay = "counts", colour, linetype, group, trans = NULL,
+        n_max = Inf, ...
     ) {
 
         ## Check column names & set plot aesthetics
@@ -67,8 +67,18 @@ setMethod(
         msg <-
             "Any columns named 'colnames', 'vals' or 'dens' will be overwritten"
         if (any(args %in% c("colnames", "vals", "dens"))) message(msg)
-        if (!is.null(colour)) colour <- sym(match.arg(colour, args))
-        if (!is.null(linetype)) linetype <- sym(match.arg(linetype, args))
+        if (!missing(colour)) {
+            colour <- as.character(ensym(colour))
+            colour <- sym(match.arg(colour, args))
+        } else {
+            colour <- NULL
+        }
+        if (!missing(linetype)) {
+            linetype <- as.character(ensym(linetype))
+            linetype <- sym(match.arg(linetype, args))
+        } else {
+            linetype <- NULL
+        }
         ## By default, the plot should draw densities by sample.
         ## However,this should be able to be turned off by setting group to NULL
         if (missing(group)) {
@@ -76,7 +86,8 @@ setMethod(
             col_data$colnames <- colnames(x)
             group <- sym("colnames")
         } else{
-            if (!is.null(group)) group <- sym(match.arg(group, args))
+            group <- as.character(ensym(group))
+            group <- sym(match.arg(group, args))
         }
 
         ## Subsample if required

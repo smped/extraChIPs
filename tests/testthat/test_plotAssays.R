@@ -59,10 +59,10 @@ test_that("colours/size are added correctly", {
   p <- plotAssayPCA(se, colour = "treat", size = "totals")
   expect_equal(rlang::as_label(p$mapping$colour), "treat")
   expect_equal(
-    grepl("PC", unlist(p$labels)), c(TRUE, TRUE, FALSE, FALSE)
+    grepl("PC", unlist(p$labels))[1:4], c(TRUE, TRUE, FALSE, FALSE)
   )
-  expect_equal(p$labels$colour, sym("treat"))
-  expect_equal(p$labels$size, sym("totals"))
+  expect_equal(p$labels$colour, "treat")
+  expect_equal(p$labels$size, "totals")
 })
 
 test_that("labels repel correctly", {
@@ -82,10 +82,10 @@ test_that("data is transformed correctly", {
 
 test_that("plotAssayRle errors correctly", {
   err <- "'arg' should be one of .+"
-  expect_error(plotAssayRle(se, "counts", colour = ""), err)
-  expect_error(plotAssayRle(se, "counts", fill = ""), err)
-  expect_error(plotAssayRle(se, "counts", rle_group = ""), err)
-  expect_error(plotAssayRle(se, "counts", by_x = ""), err)
+  expect_error(plotAssayRle(se, "counts", colour = "a"), err)
+  expect_error(plotAssayRle(se, "counts", fill = "a"), err)
+  expect_error(plotAssayRle(se, "counts", rle_group = "a"), err)
+  expect_error(plotAssayRle(se, "counts", by_x = "a"), err)
   expect_error(
     plotAssayRle(se, "counts", trans = "a"),
     "object 'a' of mode 'function' was not found"
@@ -103,7 +103,7 @@ test_that("plotAssayRle creates a plot", {
   expect_equal(dim(p$data), c(100*ncols, 5))
   expect_equal(
     unlist(p$labels),
-    c(x = "Sample", y = "RLE", fill = "treat", colour = "colour")
+    c(x = "Sample", y = "RLE (counts)", fill = "treat", colour = "colour")
   )
   p <- plotAssayRle(se, "counts", by_x = "treat")
   expect_equal(unlist(p$labels)[["x"]], "treat")

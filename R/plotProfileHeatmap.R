@@ -81,6 +81,7 @@ setGeneric(
 #' @rdname plotProfileHeatmap-methods
 #' @import methods
 #' @importFrom forcats fct_inorder
+#' @importFrom rlang ensym
 #' @export
 setMethod(
     "plotProfileHeatmap",
@@ -106,7 +107,13 @@ setMethod(
         stopifnot(is(gr, "GRanges"))
         gr$name <- fct_inorder(names(gr))
         names(gr) <- NULL
+        ## Handle variables including unquoted ones
         if (is.null(facetX)) facetX <- "name"
+        xValue <- as.character(ensym(xValue))
+        fillValue <- as.character(ensym(fillValue))
+        if (!is.null(facetY)) facetY <- as.character(ensym(facetY))
+        if (!is.null(colour)) colour <- as.character(ensym(colour))
+        if (!is.null(linetype)) linetype <- as.character(ensym(linetype))
         plotProfileHeatmap(
             object = gr, profileCol = profileCol, xValue = xValue,
             fillValue = fillValue, facetX = facetX, facetY = facetY,
@@ -119,7 +126,7 @@ setMethod(
 #' @import methods
 #' @importFrom S4Vectors mcols
 #' @importFrom tidyr unnest
-#' @importFrom rlang '!!' sym
+#' @importFrom rlang '!!' sym ensym
 #' @importFrom dplyr arrange desc bind_cols
 #' @importFrom forcats fct_rev fct_inorder
 #' @rdname plotProfileHeatmap-methods
@@ -140,6 +147,14 @@ setMethod(
         df <- mcols(object)
         stopifnot(profileCol %in% colnames(df))
         stopifnot(.checkProfileDataFrames(df[[profileCol]], xValue, fillValue))
+
+        ## Handle variables including unquoted ones
+        xValue <- as.character(ensym(xValue))
+        fillValue <- as.character(ensym(fillValue))
+        if (!is.null(facetX)) facetX <- as.character(ensym(facetX))
+        if (!is.null(facetY)) facetY <- as.character(ensym(facetY))
+        if (!is.null(colour)) colour <- as.character(ensym(colour))
+        if (!is.null(linetype)) linetype <- as.character(ensym(linetype))
 
         ## Check the other columns exist
         keepCols <- setdiff(colnames(df), profileCol)

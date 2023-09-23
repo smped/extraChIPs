@@ -105,10 +105,10 @@
 #'   guides(fill = "none")
 #'
 #' @importFrom S4Vectors mcols
-#' @importFrom rlang '!!' sym
+#' @importFrom rlang '!!' sym ensym
 #' @export
 plotPairwise <- function(
-        x, var, colour = NULL, label = NULL, index = c(1, 2),
+        x, var, colour, label, index = c(1, 2),
         p = 0, method = "union", ignore.strand = TRUE, min_width = 0,
         xside = c("boxplot", "density", "violin", "none"),
         yside = c("boxplot", "density", "violin", "none"),
@@ -131,13 +131,25 @@ plotPairwise <- function(
     stopifnot(length(nm) == 2)
     stopifnot(is(plot_theme, "theme"))
 
-    mc_names <- names(mcols(x[[1]]))
+    mc_names <- .mcolnames(x[[1]])
+    var <- as.character(ensym(var))
     var <- match.arg(var, mc_names)
     stopifnot(is.numeric(mcols(x[[1]])[[var]]))
-    if (!is.null(colour)) colour <- sym(match.arg(colour, mc_names))
-    if (!is.null(label)) label <- sym(match.arg(label, mc_names))
     x_lab <- paste(nm[[1]], var, sep = name_sep)
     y_lab <- paste(nm[[2]], var, sep = name_sep)
+
+    if (missing(colour)) {
+        colour <- NULL
+    } else {
+        colour <- as.character(ensym(colour))
+        colour <- sym(match.arg(colour, mc_names))
+    }
+    if (missing(label)) {
+        label <- NULL
+    } else {
+        label <- as.character(ensym(label))
+        label <- sym(match.arg(label, mc_names))
+    }
 
     xside <- match.arg(xside)
     yside <- match.arg(yside)
@@ -155,7 +167,7 @@ plotPairwise <- function(
 
     df <- dplyr::filter(ol, !!sym("detected") == "Both Detected")
     p <- ggplot(df, aes(!!sym(x_lab), !!sym(y_lab))) +
-        geom_point(aes(colour = {{ colour }}), ...) +
+        geom_point(aes(colour = !!colour), ...) +
         plot_theme
 
     if (xside != "none")

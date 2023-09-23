@@ -14,14 +14,14 @@ mcols(gr) <- df
 test_that("plotSplitDonut Errors where expected", {
 
     expect_error(plotSplitDonut(NULL))
-    expect_error(plotSplitDonut(df), 'argument "inner" is missing')
+    expect_error(plotSplitDonut(df), 'argument .+ is missing')
     expect_error(plotSplitDonut(df, inner = "TF1"), 'argument "outer" is missing')
     expect_error(
         plotSplitDonut(df, inner = "TF1", outer = "TF1"),
         'inner != outer is not TRUE'
     )
     expect_error(
-        plotSplitDonut(df, inner = "TF1", outer = "feature", scale_by = ""),
+        plotSplitDonut(df, inner = "TF1", outer = "feature", scale_by = "a"),
         "all\\(c\\(inner, outer, scale_by\\) %in% colnames\\(object\\)\\) is not TRUE"
     )
     expect_error(

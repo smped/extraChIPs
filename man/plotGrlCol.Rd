@@ -7,11 +7,11 @@
 plotGrlCol(
   x,
   var = "width",
-  geom = c("boxplot", "violin"),
+  geom = c("boxplot", "violin", "point", "jitter"),
   .id = "sample",
   df,
-  fill = NULL,
-  colour = NULL,
+  fill,
+  colour,
   q = 0.1,
   q_size = 3.5,
   qline_type = 2,
@@ -29,9 +29,11 @@ plotGrlCol(
 \arguments{
 \item{x}{A GRangesList}
 
-\item{var}{The variable to plot. Either a column in the mcols element or width}
+\item{var}{The variable to plot. Either a column in the mcols element or
+width. Can be quoted or unquoted}
 
-\item{geom}{Choose between a boxplot or violinplot}
+\item{geom}{Choose between different geoms, or even provide a geom_*()
+function}
 
 \item{.id}{The column name to place the element names. Passed internally to
 the same argument in \link[dplyr]{bind_rows}}
@@ -40,7 +42,8 @@ the same argument in \link[dplyr]{bind_rows}}
 fill parameters. Must contain a column with the same name as the
 value passed to the \code{.id} argument.}
 
-\item{fill, colour}{Optional column names found in the df}
+\item{fill, colour}{Optional column names found in the df. Can be quoted or
+unquoted}
 
 \item{q}{The overall percentile to be drawn as a labelled, horizontal line.
 Set q = 0 to hide this line}
@@ -62,8 +65,8 @@ totals}
 
 \item{total_adj}{Adjustment for labels}
 
-\item{...}{Passed to \link[ggplot2]{geom_boxplot} or
-\link[ggplot2]{geom_violin}}
+\item{...}{Passed to the geom if selecting via character string. Ignored
+otherwise}
 
 \item{digits}{Number of decimal places for the horizontal line label}
 }
@@ -103,6 +106,17 @@ plotGrlCol(
   peaks, geom = "violin", total_pos = "bottom", total_adj = 0.05,
   df = df, fill = "treat",
   draw_quantiles = 0.5, trim = FALSE, width = 0.7, alpha = 0.7
+) +
+scale_y_log10()
+
+plotGrlCol(
+  peaks, var = score, geom = "jitter", total_pos = "bottom", total_adj = 0.05,
+  df = df, colour = treat, width = 0.2, height = 0
+)
+
+plotGrlCol(
+  peaks, geom = geom_boxplot(colour = "grey70"), df = df, fill = treat,
+  total_pos = "bottom", total_adj = 0.05,
 ) +
 scale_y_log10()
 

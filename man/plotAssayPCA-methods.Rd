@@ -10,10 +10,10 @@ plotAssayPCA(x, ...)
 \S4method{plotAssayPCA}{SummarizedExperiment}(
   x,
   assay = "counts",
-  colour = NULL,
-  shape = NULL,
-  size = NULL,
-  label = NULL,
+  colour,
+  shape,
+  size,
+  label,
   show_points = TRUE,
   pc_x = 1,
   pc_y = 2,
@@ -71,6 +71,10 @@ data("se")
 se$treatment <- c("E2", "E2", "E2", "E2DHT", "E2DHT", "E2DHT")
 se$sample <- colnames(se)
 plotAssayPCA(se, trans = "log1p", colour = "treatment", label = "sample")
+plotAssayPCA(
+  se, trans = "log1p", colour = "treatment", label = "sample",
+  size = totals / 1e3
+)
 plotAssayPCA(
   se, trans = "log1p", colour = "treatment", label = "sample",
   show_points = FALSE

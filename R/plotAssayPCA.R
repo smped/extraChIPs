@@ -35,6 +35,10 @@
 #' plotAssayPCA(se, trans = "log1p", colour = "treatment", label = "sample")
 #' plotAssayPCA(
 #'   se, trans = "log1p", colour = "treatment", label = "sample",
+#'   size = totals / 1e3
+#' )
+#' plotAssayPCA(
+#'   se, trans = "log1p", colour = "treatment", label = "sample",
 #'   show_points = FALSE
 #' )
 #'
@@ -55,6 +59,7 @@ setGeneric(
 #' @importFrom stats prcomp
 #' @importFrom ggrepel geom_text_repel
 #' @importFrom matrixStats rowSds
+#' @importFrom rlang sym ensym enexpr '!!'
 #' @import ggplot2
 #'
 #' @rdname plotAssayPCA-methods
@@ -63,19 +68,40 @@ setMethod(
     "plotAssayPCA",
     signature = signature(x = "SummarizedExperiment"),
     function(
-        x, assay = "counts", colour = NULL, shape = NULL, size = NULL,
-        label = NULL, show_points = TRUE, pc_x = 1, pc_y = 2, trans = NULL,
-        n_max = Inf, tol = sqrt(.Machine$double.eps), rank = NULL, ...
+        x, assay = "counts", colour, shape, size, label, show_points = TRUE,
+        pc_x = 1, pc_y = 2, trans = NULL, n_max = Inf,
+        tol = sqrt(.Machine$double.eps), rank = NULL, ...
     ) {
 
         if (is.null(colnames(x))) colnames(x) <- as.character(seq_len(ncol(x)))
         df <- as.data.frame(colData(x))
         args <- colnames(df)
         df$row <- rownames(df) ## To match tidy(pca) later
-        if (!is.null(colour)) colour <- sym(match.arg(colour, args))
-        if (!is.null(shape)) shape <- sym(match.arg(shape, args))
-        if (!is.null(size)) size <- sym(match.arg(size, args))
-        if (!is.null(label)) label <- sym(match.arg(label, args))
+        if (missing(colour)) {
+            colour <- NULL
+        } else {
+            colour <- as.character(ensym(colour))
+            colour <- sym(match.arg(colour, args))
+        }
+        if (missing(shape)) {
+            shape <- NULL
+        } else {
+            shape <- as.character(ensym(shape))
+            shape <- sym(match.arg(shape, args))
+        }
+        if (missing(size)) {
+            size <- NULL
+        } else {
+            ## This may be passed as a manpulation of data
+            size <- enexpr(size)
+            if (is.character(size)) size <- ensym(size)
+        }
+        if (missing(label)) {
+            label <- NULL
+        } else {
+            label <- as.character(ensym(label))
+            label <- sym(match.arg(label, args))
+        }
         stopifnot(is.logical(show_points))
 
         n_max <- min(nrow(x), n_max)
@@ -123,10 +149,9 @@ setMethod(
         y <- sym(paste0("PC", pc_y))
 
         plot_aes <- aes(
-            x = {{ x }}, y = {{ y }}, colour = {{ colour }},
-            shape = {{ shape }}, size = {{ size }}
+            x = !!x, y = !!y, colour = !!colour, shape = !!shape, size = !!size
         )
-        p <- ggplot(pca_df, plot_aes)
+        p <- ggplot(pca_df, plot_aes) + xlab(labs$x) + ylab(labs$y)
         if (show_points) p <- p + geom_point()
         if (!is.null(label)) {
             lab_fun <- ifelse(show_points, geom_text_repel, geom_text)
@@ -136,9 +161,7 @@ setMethod(
                     aes(x = {{ x }}, y = {{ y }}, label = {{ label }}), ...
                 )
         }
-
-        p +  labs(
-            x = labs$x, y = labs$y, shape = shape, colour = colour, size = size
-        )
+        p
     }
 )
+

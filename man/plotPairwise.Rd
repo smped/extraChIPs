@@ -7,8 +7,8 @@
 plotPairwise(
   x,
   var,
-  colour = NULL,
-  label = NULL,
+  colour,
+  label,
   index = c(1, 2),
   p = 0,
   method = "union",

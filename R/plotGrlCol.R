@@ -23,14 +23,17 @@
 #' extremes of the plot.
 #'
 #' @param x A GRangesList
-#' @param var The variable to plot. Either a column in the mcols element or width
-#' @param geom Choose between a boxplot or violinplot
+#' @param var The variable to plot. Either a column in the mcols element or
+#' width. Can be quoted or unquoted
+#' @param geom Choose between different geoms, or even provide a geom_*()
+#' function
 #' @param .id The column name to place the element names. Passed internally to
 #' the same argument in \link[dplyr]{bind_rows}
 #' @param df Optional data.frame with columns to be passed to the colour or
 #' fill parameters. Must contain a column with the same name as the
 #' value passed to the `.id` argument.
-#' @param fill,colour Optional column names found in the df
+#' @param fill,colour Optional column names found in the df. Can be quoted or
+#' unquoted
 #' @param q The overall percentile to be drawn as a labelled, horizontal line.
 #' Set q = 0 to hide this line
 #' @param q_size Text size of percentile label
@@ -43,8 +46,8 @@
 #' @param total_size,total_alpha Size and transparency of totals
 #' @param total_pos Position for placing totals
 #' @param total_adj Adjustment for labels
-#' @param ... Passed to \link[ggplot2]{geom_boxplot} or
-#' \link[ggplot2]{geom_violin}
+#' @param ... Passed to the geom if selecting via character string. Ignored
+#' otherwise
 #' @param digits Number of decimal places for the horizontal line label
 #'
 #' @examples
@@ -64,15 +67,27 @@
 #' ) +
 #' scale_y_log10()
 #'
+#' plotGrlCol(
+#'   peaks, var = score, geom = "jitter", total_pos = "bottom", total_adj = 0.05,
+#'   df = df, colour = treat, width = 0.2, height = 0
+#' )
+#'
+#' plotGrlCol(
+#'   peaks, geom = geom_boxplot(colour = "grey70"), df = df, fill = treat,
+#'   total_pos = "bottom", total_adj = 0.05,
+#' ) +
+#' scale_y_log10()
+#'
 #' @importFrom tibble tibble
 #' @importFrom S4Vectors mcols
 #' @importFrom dplyr bind_rows left_join summarise
-#' @importFrom rlang ':=' '!!' sym
+#' @importFrom rlang ':=' '!!' sym enquo
 #' @importFrom glue glue
+#' @importFrom scales comma
 #' @export
 plotGrlCol <- function(
-        x, var = "width", geom = c("boxplot", "violin"), .id = "sample",
-        df, fill = NULL, colour = NULL,
+        x, var = "width", geom = c("boxplot", "violin", "point", "jitter"),
+        .id = "sample", df, fill, colour,
         q = 0.1, q_size = 3.5, qline_type = 2, qline_col = "blue",
         total = "{comma(n)}", total_geom = c("label", "text", "none"),
         total_pos = c("median", "top", "bottom"),
@@ -83,13 +98,18 @@ plotGrlCol <- function(
 
     ## Create basic data.frame
     mcnames <- .mcolnames(x[[1]])
-    var <- match.arg(var, c("width", mcnames))
-    if (var == "width") {
+    var <- ensym(var)
+    var <- match.arg(as.character(var), c("width", mcnames))
+    var <- sym(var)
+    if (var == sym("width")) {
         df_list <- lapply(x, function(x) tibble(width = width(x)))
     } else {
-        df_list <- lapply(x, function(x) tibble("{var}" := mcols(x)[[var]]))
+        df_list <- lapply(x, function(gr) as_tibble(mcols(gr)))
+        df_list <- lapply(df_list, dplyr::select, !!var)
     }
     plot_df <- bind_rows(df_list, .id = .id)
+    if (!missing(fill)) fill <- ensym(fill)
+    if (!missing(colour))  colour <- ensym(colour)
 
     ## Add any annotations
     if (!missing(df)) {
@@ -98,10 +118,6 @@ plotGrlCol <- function(
         if (!.id %in% ann_cols)
             stop(.id, " must be in the supplied annotations")
         plot_df <- left_join(plot_df, df, by = .id)
-        if (!is.null(fill)) fill <- sym(match.arg(fill, ann_cols))
-        if (!is.null(colour)) colour <- sym(match.arg(colour, ann_cols))
-    } else{
-        fill <- colour <- NULL
     }
 
     ## Summary values
@@ -109,16 +125,18 @@ plotGrlCol <- function(
     n <- vapply(x, length, integer(1))
     totals_df <- tibble("{.id}" := names(x), label = glue(total))
 
-    ## The plotting genometry
-    geom <- match.arg(geom)
-    geom_fun <- match.fun(paste0("geom_", geom))
+    ## The plotting geometry
+    if (is.character(geom)) {
+        geom <- match.arg(geom)
+        geom <- match.fun(paste0("geom_", geom))(...)
+    }
 
     ## The basic plot
     p <- ggplot(
         plot_df,
         aes(!!sym(.id), !!sym(var), fill = {{ fill }}, colour = {{ colour }})
     ) +
-        geom_fun(...)
+        geom
 
     ## Totals
     total_geom <- match.arg(total_geom)

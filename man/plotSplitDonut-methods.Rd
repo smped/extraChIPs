@@ -17,7 +17,7 @@ plotSplitDonut(object, ...)
   object,
   inner,
   outer,
-  scale_by = NULL,
+  scale_by,
   scale_factor = 1000,
   r_centre = 0.5,
   r_inner = 1,
