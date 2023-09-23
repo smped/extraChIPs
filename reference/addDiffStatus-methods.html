@@ -83,11 +83,12 @@
 <span>  other <span class="op">=</span> <span class="st">"Unchanged"</span>,</span>
 <span>  missing <span class="op">=</span> <span class="st">"Undetected"</span>,</span>
 <span>  new_col <span class="op">=</span> <span class="st">"status"</span>,</span>
+<span>  drop <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for DataFrame</span></span>
-<span><span class="fu">addDiffStatus</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">addDiffStatus</span><span class="op">(</span><span class="va">x</span>, new_col <span class="op">=</span> <span class="st">"status"</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for GRanges</span></span>
 <span><span class="fu">addDiffStatus</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
@@ -137,6 +138,10 @@ criteria</p></dd>
 
 <dt>new_col</dt>
 <dd><p>name of the new column to be added</p></dd>
+
+
+<dt>drop</dt>
+<dd><p>logical(1) Drop unused factor levels from the status column</p></dd>
 
 </dl></div>
     <div id="value">
