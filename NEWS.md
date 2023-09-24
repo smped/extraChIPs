@@ -86,3 +86,9 @@
 # Changes in 1.5.12 (23-08-30)
 
 - Added `plotGrlCol()`
+
+# Changes in 1.5.13 (23-09-24)
+
+- Added handling of unquoted column names to most plotting functions
+- Added passing of specific columns to dualFilter
+- Added `drop` to addDiffStatus
