@@ -26,6 +26,9 @@ test_that(
 
     p <- plotPairwise(grl, var = "logFC")
     expect_true(is(p, "ggside"))
+    expect_true(is(p$layers[[4]]$geom, "GeomSmooth"))
+    p <- plotPairwise(grl, var = "logFC", smooth = FALSE)
+    expect_true(is(p$layers[[4]]$geom, "GeomText"))
 
     p <- plotPairwise(grl, var = "logFC", xside = "none", yside = "none")
     expect_true(is(p, "gg"))

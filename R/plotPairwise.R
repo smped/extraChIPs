@@ -48,8 +48,9 @@
 #' a discrete axis
 #' @param yside_axis_label Wrapping for axis labels on the right-side panel when
 #' using a discrete axis. Set to waiver() to turn off wrapping
-#' @param line_col,line_type,line_width Parameters for adding a regression line
-#' through the points. Set linecol to either `NULL` or `NA` to hide this line
+#' @param smooth logical(1). If TRUE a regression line will be drawn using
+#' \link[ggplot2]{geom_smooth}. To add this manually, set to FALSE and call
+#' this geom with any custom parameters after creating the plot
 #' @param rho_geom Used to add correlation coefficients for the two values
 #' @param rho_pos Place the correlation coefficient within the plotting region
 #' @param rho_col,rho_size,rho_alpha Parameters for displaying the correlation
@@ -96,7 +97,7 @@
 #' # Turning off side panels, regression line and correlations
 #' plotPairwise(
 #'   grl, var = "logFC", xside = "none", yside = "none",
-#'   rho_geom = "none", line_col = NULL
+#'   rho_geom = "none", smooth = FALSE
 #' )
 #'
 #' # Add colours using the status column
@@ -114,8 +115,7 @@ plotPairwise <- function(
         yside = c("boxplot", "density", "violin", "none"),
         side_panel_width = c(0.3, 0.4), side_alpha = 1,
         xside_axis_pos = "right", yside_axis_label = scales::label_wrap(10),
-        line_col = "blue", line_type = 1, line_width = 1,
-        rho_geom = c("text", "label", "none"), rho_col = "black",
+        smooth = TRUE, rho_geom = c("text", "label", "none"), rho_col = "black",
         rho_size = 4, rho_pos = c(0.05, 0.95),  rho_alpha = 1,
         label_geom = c("label_repel", "label", "text_repel", "text", "none"),
         label_width = 20, label_sep = "; ", label_size = 3.5, label_alpha = 0.7,
@@ -185,13 +185,11 @@ plotPairwise <- function(
             axis.title.y = element_text(hjust = 0.5 * (1 - w_x))
         )
     }
-    if (!is.null(line_col)) {
-        p <- p +
-            geom_smooth(
-                method = "lm", se = FALSE, formula = y ~ x,
-                colour = line_col, linetype = line_type, linewidth = line_width
-            )
-    }
+    if (smooth)
+        p <- p + geom_smooth(
+            method = "lm", se = FALSE, colour = "blue", formula = "y ~ x"
+        )
+
     if (rho_geom != "none")
         p <- .addRho(
             p, ol[[x_lab]], ol[[y_lab]], rho_geom, rho_pos, rho_col, rho_size,

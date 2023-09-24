@@ -20,9 +20,7 @@ plotPairwise(
   side_alpha = 1,
   xside_axis_pos = "right",
   yside_axis_label = scales::label_wrap(10),
-  line_col = "blue",
-  line_type = 1,
-  line_width = 1,
+  smooth = TRUE,
   rho_geom = c("text", "label", "none"),
   rho_col = "black",
   rho_size = 4,
@@ -69,8 +67,9 @@ a discrete axis}
 \item{yside_axis_label}{Wrapping for axis labels on the right-side panel when
 using a discrete axis. Set to waiver() to turn off wrapping}
 
-\item{line_col, line_type, line_width}{Parameters for adding a regression line
-through the points. Set linecol to either \code{NULL} or \code{NA} to hide this line}
+\item{smooth}{logical(1). If TRUE a regression line will be drawn using
+\link[ggplot2]{geom_smooth}. To add this manually, set to FALSE and call
+this geom with any custom parameters after creating the plot}
 
 \item{rho_geom}{Used to add correlation coefficients for the two values}
 
@@ -163,7 +162,7 @@ plotPairwise(
 # Turning off side panels, regression line and correlations
 plotPairwise(
   grl, var = "logFC", xside = "none", yside = "none",
-  rho_geom = "none", line_col = NULL
+  rho_geom = "none", smooth = FALSE
 )
 
 # Add colours using the status column
