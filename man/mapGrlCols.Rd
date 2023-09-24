@@ -10,6 +10,7 @@ mapGrlCols(
   collapse = NULL,
   collapse_sep = "; ",
   name_sep = "_",
+  include = FALSE,
   ...
 )
 }
@@ -21,14 +22,20 @@ mapGrlCols(
 \item{collapse}{Columns specified here will be simplified into a single
 column. Should only be character or factor columns}
 
-\item{collapse_sep, }{String to separate values whe collapsing columns}
+\item{collapse_sep, }{String to separate values when collapsing columns}
 
-\item{name_sep}{String to separate values when add ing column names}
+\item{name_sep}{String to separate values when adding column names}
+
+\item{include}{logical(1) Include the original ranges as character columns}
 
 \item{...}{Passed to makeConsensus}
 }
 \value{
-GRanges object
+GRanges object with a set of consensus ranges across all list
+elements and values from each element mapped to these consensus ranges.
+
+If requested (\code{include = TRUE}) the original ranges are returned as
+character columns, as there will be multiple NA values in each.
 }
 \description{
 Make consensus peaks and add individual columns from each original
@@ -59,6 +66,9 @@ mapGrlCols(grl, var = "logFC", method = "coverage", p = 1)
 
 ## Columns can be collapsed to merge into a single column
 mapGrlCols(grl, var = "logFC", collapse = "genes")
+
+## Original ranges can also be included
+mapGrlCols(grl, collapse = "genes", include = TRUE)
 
 
 }

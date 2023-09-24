@@ -186,9 +186,7 @@ plotPairwise <- function(
         )
     }
     if (smooth)
-        p <- p + geom_smooth(
-            method = "lm", se = FALSE, colour = "blue", formula = "y ~ x"
-        )
+        p <- p + geom_smooth(method = "lm", se = FALSE, formula = "y ~ x")
 
     if (rho_geom != "none")
         p <- .addRho(

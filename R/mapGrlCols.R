@@ -12,11 +12,16 @@
 #' @param var Column(s) to map onto the set of consensus peaks
 #' @param collapse Columns specified here will be simplified into a single
 #' column. Should only be character or factor columns
-#' @param collapse_sep, String to separate values whe collapsing columns
-#' @param name_sep String to separate values when add ing column names
+#' @param collapse_sep, String to separate values when collapsing columns
+#' @param name_sep String to separate values when adding column names
+#' @param include logical(1) Include the original ranges as character columns
 #' @param ... Passed to makeConsensus
 #'
-#' @return GRanges object
+#' @return GRanges object with a set of consensus ranges across all list
+#' elements and values from each element mapped to these consensus ranges.
+#'
+#' If requested (`include = TRUE`) the original ranges are returned as
+#' character columns, as there will be multiple NA values in each.
 #'
 #' @examples
 #' a <- GRanges(paste0("chr1:", seq(1, 61, by = 20)))
@@ -40,13 +45,21 @@
 #' ## Columns can be collapsed to merge into a single column
 #' mapGrlCols(grl, var = "logFC", collapse = "genes")
 #'
+#' ## Original ranges can also be included
+#' mapGrlCols(grl, collapse = "genes", include = TRUE)
+#'
 #'
 #' @importFrom S4Vectors mcols 'mcols<-'
+#' @importFrom dplyr pick distinct
+#' @importFrom tidyselect all_of
 #' @export
 mapGrlCols <- function(
-        x, var = NULL, collapse = NULL, collapse_sep = "; ", name_sep = "_", ...
+        x, var = NULL, collapse = NULL, collapse_sep = "; ", name_sep = "_",
+        include = FALSE, ...
 ){
-    stopifnot(is(x, "GRangesList"))
+    stopifnot(is(x, "GRangesList") & length(x) > 1)
+    nm <- names(x)
+    stopifnot(length(nm) == length(x))
     consensus <- granges(makeConsensus(x, ...))
     if (is.null(var) & is.null(collapse)) return(consensus)
 
@@ -55,12 +68,19 @@ mapGrlCols <- function(
     if (!is.null(collapse))
         collapse <- match.arg(collapse, mcnames, several.ok = TRUE)
     var <- unique(c(var, collapse))
-
     map <- .mapHits(x, consensus)
     map <- .addCols(x, map, var, collapse, collapse_sep, name_sep )
+    ## Some ranges will map to multiple in one, but with the same values
+    if (include) {
+        # This returns the original ranges as characters to avoid NA issues
+        map[nm] <- lapply(nm, \(i) as.character(x[[i]])[map[[i]]])
+    } else {
+        ## Just return the same values for the consensus, deleting these cols
+        map <- distinct(map, pick(-all_of(nm)))
+    }
 
     gr <- consensus[map$consensus_peak]
-    df <- dplyr::select(map, -all_of(c("consensus_peak", names(x))))
+    df <- dplyr::select(map, -all_of(c("consensus_peak")))
     mcols(gr) <- as.data.frame(df)
 
     ## Return any list columns as S4 lists again
@@ -154,8 +174,10 @@ mapGrlCols <- function(
 
 
 #' @importFrom tidyr unnest
+#' @importFrom tidyselect all_of
+#' @importFrom dplyr distinct pick
 .unnest_by_col <- function(data, cols, ...) {
     cols <- match.arg(cols, colnames(data), several.ok = TRUE)
     for (i in cols) data <- unnest(data, all_of(i), ...)
-    data
+    distinct(data, pick(all_of(cols)), .keep_all = TRUE)
 }
