@@ -35,7 +35,15 @@
 #' Any existing columns not contained in the differential ChIP results will be
 #' retained.
 #' Results from testing will contain logCPM, logFC, PValue and the t/F
-#' statistic as appropriate, along with an FDR-adjusted p-value
+#' statistic as appropriate, along with an FDR-adjusted p-value.
+#'
+#' If specifying a range-based H0 by setting lfc != 0, an additional column
+#' p_mu0 will be included which is the p-value for the point H0: logFC = 0.
+#' These are not used for FDR-adjusted p-values but can be helpful when
+#' integrating multiple ChIP targets due to the increase in false-negatives when
+#' using a range-based H0, and when requiring more accurate identification of
+#' truly unchanged sites, as opposed to those which simply fail to achieve
+#' significance using a range-based H0.
 #'
 #' @param x a SummarizedExperiment object
 #' @param assay The assay to use for analysis
@@ -110,6 +118,7 @@ setMethod(
         method <- match.arg(method)
         norm <- match.arg(norm)
         args <- colnames(colData(x))
+        n <- nrow(x)
         if (is.null(design)) stop("A design matrix must be specified")
         stopifnot(nrow(design) == ncol(x))
         if (is.null(coef)) coef <- colnames(design)[ncol(design)]
@@ -123,29 +132,32 @@ setMethod(
             fit <- .se2DGEGLM(
                 x, assay, design, lib.size, norm, groups, offset, weighted, ...
             )
-            if (lfc == 0) {
-                fit <- glmQLFTest(fit, coef = coef)
-            } else {
+            fit0 <- glmQLFTest(fit, coef = coef) # fits mu0
+            res0 <- topTags(fit0, n = n, adjust.method = "none", sort.by = "none")$table
+            res <- res0
+            p_mu0 <- res0$PValue
+            if (lfc != 0) {
                 null <- match.arg(null)
                 fit <- glmTreat(fit, coef, lfc = lfc, null = null)
+                res <- topTags(
+                    fit, n = n, adjust.method = "none", sort.by = "none"
+                )$table
+                res <- res[!colnames(res) %in% "unshrunk.logFC"]
             }
-            res <- topTags(
-                fit, n = nrow(x), adjust.method = "none", sort.by = "none"
-            )$table
-            res <- res[!colnames(res) %in% "unshrunk.logFC"]
         }
         if (method == "lt") {
             fit <- .se2LT(x, assay, design, ...)
-            if (lfc == 0) {
-                fit <- eBayes(fit, trend = TRUE, ...)
-                res <- topTable(
-                    fit, coef = coef, number = nrow(x), sort.by = "none",
-                    adjust.method = "none"
-                )
-            } else {
+            fit0 <- eBayes(fit, trend = TRUE, ...)
+            res0 <- topTable(
+                fit0, coef = coef, number = n, sort.by = "none",
+                adjust.method = "none"
+            )
+            res <- res0
+            p_mu0 <- res0$P.Value
+            if (lfc != 0) {
                 fit <- treat(fit, lfc = lfc, trend = TRUE, ...)
                 res <- topTreat(
-                    fit, coef = coef, number = nrow(x), sort.by = "none",
+                    fit, coef = coef, number = n, sort.by = "none",
                     adjust.method = "none"
                 )
             }
@@ -154,6 +166,9 @@ setMethod(
             colnames(res) <- gsub("P.Value", "PValue", colnames(res))
         }
         res[["FDR"]] <- p.adjust(res[["PValue"]], "fdr")
+        ## Add the p-value for H0: fc = 0
+        if (lfc != 0) res$p_mu0 <- p_mu0
+
         keep_cols <- setdiff(colnames(rowData(x)), colnames(res))
         any_gr <- vapply(
             keep_cols, function(i) is(rowData(x)[[i]], "GRanges"), logical(1)
@@ -175,7 +190,7 @@ setMethod(
             if (is.null(rowRanges(x))) {
                 warning(
                     "No ranges found. Results will be returned in the rowData",
-                     "element of the original object"
+                    "element of the original object"
                 )
             } else {
                 return(rowRanges(x))

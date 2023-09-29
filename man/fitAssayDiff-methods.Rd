@@ -76,7 +76,15 @@ A SummarizedExperiment object with results set as the \code{rowData} element.
 Any existing columns not contained in the differential ChIP results will be
 retained.
 Results from testing will contain logCPM, logFC, PValue and the t/F
-statistic as appropriate, along with an FDR-adjusted p-value
+statistic as appropriate, along with an FDR-adjusted p-value.
+
+If specifying a range-based H0 by setting lfc != 0, an additional column
+p_mu0 will be included which is the p-value for the point H0: logFC = 0.
+These are not used for FDR-adjusted p-values but can be helpful when
+integrating multiple ChIP targets due to the increase in false-negatives when
+using a range-based H0, and when requiring more accurate identification of
+truly unchanged sites, as opposed to those which simply fail to achieve
+significance using a range-based H0.
 }
 \description{
 Detect differential ChIP signal using one of many approaches

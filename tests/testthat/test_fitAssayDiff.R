@@ -31,7 +31,7 @@ test_that("Results appear correct", {
         fitAssayDiff(se, design = X, fc = 1.2)
     )
     row_data <- rowData(new_se)
-    cols <- c("range", "logFC", "logCPM", "PValue", "FDR")
+    cols <- c("range", "logFC", "logCPM", "PValue", "FDR", "p_mu0")
     expect_equal(colnames(row_data), cols)
     expect_equal(sq, seqinfo(row_data$range))
     new_se <- suppressMessages(
