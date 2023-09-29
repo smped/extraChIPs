@@ -43,6 +43,9 @@
 #' Represents the fraction of the plotting area taken up by the summary panel.
 #' @param summaryLabelSide Side to place y-axis for the summary plot in the top
 #' panel
+#' @param respectLevels logical(1) If FALSE, facets along the y-axis will be
+#' arranged in descending order of signal, otherwise any original factor levels
+#' will be retained
 #' @param ... Passed to \link[ggplot2]{facet_grid} internally. Can be utilised
 #' for switching panel strips or passing a labeller function
 #'
@@ -140,7 +143,7 @@ setMethod(
         facetX = NULL, facetY = NULL, colour = facetY, linetype = NULL,
         summariseBy = c("mean", "median", "min", "max", "none"),
         xLab = xValue, yLab = NULL, fillLab = fillValue, relHeight = 0.3,
-        summaryLabelSide = "left", ...
+        summaryLabelSide = "left", respectLevels = FALSE, ...
     ) {
 
         ## Check the profile data.frames for identical dims & required cols
@@ -171,7 +174,7 @@ setMethod(
         tbl <- arrange(tbl, desc(!!sym(fillValue)))
         ## Ensure the ranges are shown with the strongest signal at the top
         tbl$range <- fct_rev(fct_inorder(tbl$range))
-        if (!is.null(facetY))
+        if (!is.null(facetY) & !respectLevels)
             tbl[[facetY]] <- fct_inorder(as.character(tbl[[facetY]]))
 
         ## Pass to the private function

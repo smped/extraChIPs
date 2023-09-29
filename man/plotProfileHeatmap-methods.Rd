@@ -40,6 +40,7 @@ plotProfileHeatmap(object, ...)
   fillLab = fillValue,
   relHeight = 0.3,
   summaryLabelSide = "left",
+  respectLevels = FALSE,
   ...
 )
 }
@@ -73,6 +74,10 @@ Represents the fraction of the plotting area taken up by the summary panel.}
 
 \item{summaryLabelSide}{Side to place y-axis for the summary plot in the top
 panel}
+
+\item{respectLevels}{logical(1) If FALSE, facets along the y-axis will be
+arranged in descending order of signal, otherwise any original factor levels
+will be retained}
 }
 \value{
 A \code{ggplot2} object, able to be customised using standard \code{ggplot2} syntax

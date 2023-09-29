@@ -84,7 +84,7 @@ These are not used for FDR-adjusted p-values but can be helpful when
 integrating multiple ChIP targets due to the increase in false-negatives when
 using a range-based H0, and when requiring more accurate identification of
 truly unchanged sites, as opposed to those which simply fail to achieve
-significance using a range-based H0.
+significance using a range-based H0 where arbitrary cutoff values are used.
 }
 \description{
 Detect differential ChIP signal using one of many approaches

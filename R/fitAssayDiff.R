@@ -43,7 +43,7 @@
 #' integrating multiple ChIP targets due to the increase in false-negatives when
 #' using a range-based H0, and when requiring more accurate identification of
 #' truly unchanged sites, as opposed to those which simply fail to achieve
-#' significance using a range-based H0.
+#' significance using a range-based H0 where arbitrary cutoff values are used.
 #'
 #' @param x a SummarizedExperiment object
 #' @param assay The assay to use for analysis
