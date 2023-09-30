@@ -74,7 +74,7 @@
 <span><span class="co"># S4 method for GenomicRangesList</span></span>
 <span><span class="fu">plotProfileHeatmap</span><span class="op">(</span></span>
 <span>  <span class="va">object</span>,</span>
-<span>  <span class="va">profileCol</span>,</span>
+<span>  profileCol <span class="op">=</span> <span class="st">"profile_data"</span>,</span>
 <span>  xValue <span class="op">=</span> <span class="st">"bp"</span>,</span>
 <span>  fillValue <span class="op">=</span> <span class="st">"score"</span>,</span>
 <span>  facetX <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -86,13 +86,15 @@
 <span>  yLab <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  fillLab <span class="op">=</span> <span class="va">fillValue</span>,</span>
 <span>  relHeight <span class="op">=</span> <span class="fl">0.3</span>,</span>
+<span>  sortFilter <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  maxDist <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for GenomicRanges</span></span>
 <span><span class="fu">plotProfileHeatmap</span><span class="op">(</span></span>
 <span>  <span class="va">object</span>,</span>
-<span>  <span class="va">profileCol</span>,</span>
+<span>  profileCol <span class="op">=</span> <span class="st">"profile_data"</span>,</span>
 <span>  xValue <span class="op">=</span> <span class="st">"bp"</span>,</span>
 <span>  fillValue <span class="op">=</span> <span class="st">"score"</span>,</span>
 <span>  facetX <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -106,6 +108,8 @@
 <span>  relHeight <span class="op">=</span> <span class="fl">0.3</span>,</span>
 <span>  summaryLabelSide <span class="op">=</span> <span class="st">"left"</span>,</span>
 <span>  respectLevels <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  sortFilter <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  maxDist <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -130,7 +134,7 @@ for switching panel strips or passing a labeller function</p></dd>
 
 
 <dt>facetX, facetY</dt>
-<dd><p>Column used for facetting across the x- or y-axis
+<dd><p>Columns used for faceting across the x- or y-axis
 respectively</p></dd>
 
 
@@ -157,6 +161,21 @@ using labs() on any returned object</p></dd>
 <dt>relHeight</dt>
 <dd><p>The relative height of the top summary panel.
 Represents the fraction of the plotting area taken up by the summary panel.</p></dd>
+
+
+<dt>sortFilter</dt>
+<dd><p>If calling on a GRangesList, a method for subsetting the
+original object (e.g. 1:2). If calling on a GRanges object should be and
+expression able to be parsed as a filtering expression using
+<a href="https://rlang.r-lib.org/reference/eval_tidy.html" class="external-link">eval_tidy</a>. This is applied when sorting the range order down
+the heatmap such that ranges can be sorted by one or specific samples, or
+all. Ranges will always be sorted such that those with the strongest signal
+are at the top of the plot</p></dd>
+
+
+<dt>maxDist</dt>
+<dd><p>Maximum distance from the centre to find the strongest signal
+when arranging the ranges</p></dd>
 
 
 <dt>summaryLabelSide</dt>
