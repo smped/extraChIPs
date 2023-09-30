@@ -218,7 +218,6 @@ setMethod(
 
     stopifnot(fill %in% colnames(df))
     df[[fill]] <- as.factor(df[[fill]])
-    x <- y <- lab <- c() # R CMD check error avoidance
 
     grp_df <- group_by(df, !!sym(fill))
     if (missing(.scale_by)) {
@@ -287,7 +286,6 @@ setMethod(
     stopifnot(all(c(x, fill) %in% colnames(df)))
     df[[x]] <- as.factor(df[[x]])
     df[[fill]] <- as.factor(df[[fill]])
-    r <- N <- value <- p <- c() # R CMD check error avoidance
 
     grp_df <- group_by(df, !!sym(x), !!sym(fill))
     if (missing(.scale_by)) {
@@ -388,7 +386,6 @@ setMethod(
     df[[x]] <- as.factor(df[[x]])
     df[[y]] <- as.factor(df[[y]])
     df[[fill]] <- as.factor(df[[fill]])
-    r <- N <- p <- value <- c() # R CMD check error avoidance
 
     grp_df <- group_by(df, !!sym(x), !!sym(y), !!sym(fill))
     if (missing(.scale_by)) {

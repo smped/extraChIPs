@@ -194,7 +194,7 @@ setMethod(
     ) {
 
         ## R CMD check declarations
-        x <- y <- x0 <- y0 <- x1 <- yend <- explode <- ring <- p <- c()
+        x0 <- y0 <- x1 <- yend <- explode <- ring <- c()
 
         if (missing(inner)) stop('argument "inner" is missing')
         if (missing(outer)) stop('argument "outer" is missing')

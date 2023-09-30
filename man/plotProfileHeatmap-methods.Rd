@@ -10,7 +10,7 @@ plotProfileHeatmap(object, ...)
 
 \S4method{plotProfileHeatmap}{GenomicRangesList}(
   object,
-  profileCol,
+  profileCol = "profile_data",
   xValue = "bp",
   fillValue = "score",
   facetX = NULL,
@@ -22,12 +22,14 @@ plotProfileHeatmap(object, ...)
   yLab = NULL,
   fillLab = fillValue,
   relHeight = 0.3,
+  sortFilter = NULL,
+  maxDist = 100,
   ...
 )
 
 \S4method{plotProfileHeatmap}{GenomicRanges}(
   object,
-  profileCol,
+  profileCol = "profile_data",
   xValue = "bp",
   fillValue = "score",
   facetX = NULL,
@@ -41,6 +43,8 @@ plotProfileHeatmap(object, ...)
   relHeight = 0.3,
   summaryLabelSide = "left",
   respectLevels = FALSE,
+  sortFilter = NULL,
+  maxDist = 100,
   ...
 )
 }
@@ -54,7 +58,7 @@ for switching panel strips or passing a labeller function}
 
 \item{xValue, fillValue}{Columns within the profile DataFrames for heatmaps}
 
-\item{facetX, facetY}{Column used for facetting across the x- or y-axis
+\item{facetX, facetY}{Columns used for faceting across the x- or y-axis
 respectively}
 
 \item{colour}{Column used for colouring lines in the summary panel. Defaults
@@ -71,6 +75,17 @@ using labs() on any returned object}
 
 \item{relHeight}{The relative height of the top summary panel.
 Represents the fraction of the plotting area taken up by the summary panel.}
+
+\item{sortFilter}{If calling on a GRangesList, a method for subsetting the
+original object (e.g. 1:2). If calling on a GRanges object should be and
+expression able to be parsed as a filtering expression using
+\link[rlang]{eval_tidy}. This is applied when sorting the range order down
+the heatmap such that ranges can be sorted by one or specific samples, or
+all. Ranges will always be sorted such that those with the strongest signal
+are at the top of the plot}
+
+\item{maxDist}{Maximum distance from the centre to find the strongest signal
+when arranging the ranges}
 
 \item{summaryLabelSide}{Side to place y-axis for the summary plot in the top
 panel}

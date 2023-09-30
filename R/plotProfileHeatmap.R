@@ -29,7 +29,7 @@
 #' @param object A GRanges or GRangesList object
 #' @param profileCol Column name specifying where to find the profile DataFrames
 #' @param xValue,fillValue Columns within the profile DataFrames for heatmaps
-#' @param facetX,facetY Column used for facetting across the x- or y-axis
+#' @param facetX,facetY Columns used for faceting across the x- or y-axis
 #' respectively
 #' @param colour Column used for colouring lines in the summary panel. Defaults
 #' to any column used for facetY
@@ -46,6 +46,15 @@
 #' @param respectLevels logical(1) If FALSE, facets along the y-axis will be
 #' arranged in descending order of signal, otherwise any original factor levels
 #' will be retained
+#' @param sortFilter If calling on a GRangesList, a method for subsetting the
+#' original object (e.g. 1:2). If calling on a GRanges object should be and
+#' expression able to be parsed as a filtering expression using
+#' \link[rlang]{eval_tidy}. This is applied when sorting the range order down
+#' the heatmap such that ranges can be sorted by one or specific samples, or
+#' all. Ranges will always be sorted such that those with the strongest signal
+#' are at the top of the plot
+#' @param maxDist Maximum distance from the centre to find the strongest signal
+#' when arranging the ranges
 #' @param ... Passed to \link[ggplot2]{facet_grid} internally. Can be utilised
 #' for switching panel strips or passing a labeller function
 #'
@@ -91,11 +100,11 @@ setMethod(
     signature = signature(object = "GenomicRangesList"),
     function(
         object,
-        profileCol, xValue = "bp", fillValue = "score",
+        profileCol = "profile_data", xValue = "bp", fillValue = "score",
         facetX = NULL, facetY = NULL, colour = facetY, linetype = NULL,
         summariseBy = c("mean", "median", "min", "max", "none"),
         xLab = xValue, yLab = NULL, fillLab = fillValue, relHeight = 0.3,
-        ...
+        sortFilter = NULL, maxDist = 100, ...
     ) {
 
         ## All elements of the list should usually have identical ranges,
@@ -106,6 +115,14 @@ setMethod(
         ## for facetting along the x-axis
         if (is.null(names(object)))
             names(object) <- paste0("X.", seq_along(object))
+        ## Set the samples to subset by when sorting
+        if (is.null(sortFilter)) sortFilter <- names(object)
+        if (!is.character(sortFilter)) {
+            sortFilter <- names(object)[sortFilter]
+        } else {
+            sortFilter <- match.arg(sortFilter, names(object), several.ok = TRUE)
+        }
+
         gr <- unlist(object)
         stopifnot(is(gr, "GRanges"))
         gr$name <- fct_inorder(names(gr))
@@ -122,14 +139,14 @@ setMethod(
             fillValue = fillValue, facetX = facetX, facetY = facetY,
             colour = colour, linetype = linetype, summariseBy = summariseBy,
             xLab = xLab, yLab = yLab, fillLab = fillLab, relHeight = relHeight,
-            ...
+            sortFilter = name %in% sortFilter, maxDist = maxDist, ...
         )
     }
 )
 #' @import methods
 #' @importFrom S4Vectors mcols
-#' @importFrom tidyr unnest
-#' @importFrom rlang '!!' sym ensym
+#' @importFrom tidyr unnest nest
+#' @importFrom rlang '!!' sym ensym eval_tidy enquo quo_is_null
 #' @importFrom dplyr arrange desc bind_cols
 #' @importFrom forcats fct_rev fct_inorder
 #' @rdname plotProfileHeatmap-methods
@@ -139,43 +156,58 @@ setMethod(
     signature = signature(object = "GenomicRanges"),
     function(
         object,
-        profileCol, xValue = "bp", fillValue = "score",
+        profileCol = "profile_data", xValue = "bp", fillValue = "score",
         facetX = NULL, facetY = NULL, colour = facetY, linetype = NULL,
         summariseBy = c("mean", "median", "min", "max", "none"),
         xLab = xValue, yLab = NULL, fillLab = fillValue, relHeight = 0.3,
-        summaryLabelSide = "left", respectLevels = FALSE, ...
+        summaryLabelSide = "left", respectLevels = FALSE, sortFilter = NULL,
+        maxDist = 100, ...
     ) {
 
         ## Check the profile data.frames for identical dims & required cols
         df <- mcols(object)
-        stopifnot(profileCol %in% colnames(df))
+        profileCol <- match.arg(profileCol, colnames(df))
         stopifnot(.checkProfileDataFrames(df[[profileCol]], xValue, fillValue))
 
         ## Handle variables including unquoted ones
         xValue <- as.character(ensym(xValue))
         fillValue <- as.character(ensym(fillValue))
-        if (!is.null(facetX)) facetX <- as.character(ensym(facetX))
-        if (!is.null(facetY)) facetY <- as.character(ensym(facetY))
+        if (!is.null(facetX))
+            facetX <- unlist(lapply(facetX, \(x) as.character(ensym(x))))
+        if (!is.null(facetY))
+            facetY <- unlist(lapply(facetY, \(x) as.character(ensym(x))))
         if (!is.null(colour)) colour <- as.character(ensym(colour))
         if (!is.null(linetype)) linetype <- as.character(ensym(linetype))
+        filter <- enquo(sortFilter)
 
         ## Check the other columns exist
         keepCols <- setdiff(colnames(df), profileCol)
-        specCols <- unique(c(facetX, facetY, colour, linetype))
+        specCols <- unique(unlist(c(facetX, facetY, colour, linetype)))
         if (!is.null(specCols)) stopifnot(all(specCols %in% keepCols))
 
         ## Tidy the data
-        profiles <- c() # Avoiding incorrect R CMD check errors
         tbl <- as_tibble(granges(object))
         if (length(keepCols) > 0)
             tbl <- bind_cols(tbl, as_tibble(df[keepCols]))
-        tbl$profiles <- lapply(df[[profileCol]], as_tibble)
-        tbl <- unnest(tbl, profiles)
-        tbl <- arrange(tbl, desc(!!sym(fillValue)))
+        pfl <- setNames(df[[profileCol]], seq_along(df[[profileCol]]))
+        pf <- unlist(pfl, use.names = TRUE)
+        pf_tbl <- as_tibble(pf, rownames = "id")
+        pf_tbl$id <- gsub("^([0-9]+).+", "\\1", pf_tbl$id)
+        pf_nest <- nest(pf_tbl, "profiles" = all_of(colnames(pfl[[1]])))
+        tbl$profiles <- pf_nest$profiles
+        tbl <- unnest(tbl, !!sym("profiles"))
         ## Ensure the ranges are shown with the strongest signal at the top
-        tbl$range <- fct_rev(fct_inorder(tbl$range))
+        ## Use the 4 bins aronud the centre to pick the strongest signal
+        tbl4sort <- dplyr::filter(tbl, abs(!!sym(xValue)) <= maxDist)
+        if (!quo_is_null(filter)) {
+            keep <- eval_tidy(filter, tbl4sort)
+            tbl4sort <- tbl4sort[keep,]
+        }
+        lv <- unique(arrange(tbl4sort, desc(!!sym(fillValue)))$range)
+        tbl$range <- fct_rev(factor(tbl$range, levels = lv))
+        tbl <- arrange(tbl, desc(!!sym("range")))
         if (!is.null(facetY) & !respectLevels)
-            tbl[[facetY]] <- fct_inorder(as.character(tbl[[facetY]]))
+            tbl[facetY] <- lapply(tbl[facetY], \(x) fct_inorder(as.character(x)))
 
         ## Pass to the private function
         summariseBy <- match.arg(summariseBy)
@@ -207,7 +239,7 @@ setMethod(
 #'
 #' @import ggside
 #' @importFrom dplyr group_by summarise
-#' @importFrom rlang '!!' sym '!!!' syms
+#' @importFrom rlang '!!' sym '!!!' syms quos
 #' @importFrom stats as.formula
 #' @import ggplot2
 #' @keywords internal
@@ -224,11 +256,14 @@ setMethod(
     stopifnot(is(data, "data.frame"))
     args <- colnames(data)
     stopifnot(all(all_vars %in% args))
-    if (!is.null(fill)) fill <- sym(match.arg(fill, args))
-    if (!is.null(colour)) colour <- sym(match.arg(colour, args))
-    if (!is.null(linetype)) linetype <- sym(match.arg(linetype, args))
+    if (!is.null(fill)) fill <- sym(fill)
+    if (!is.null(colour)) colour <- sym(colour)
+    if (!is.null(linetype)) linetype <- sym(linetype)
+    if (!is.null(x)) x <- sym(x)
+    if (!is.null(y)) y <- sym(y)
+    if (!is.null(facet_x)) facet_x <- syms(facet_x)
+    if (!is.null(facet_y)) facet_y <- syms(facet_y)
     label_side <- match.arg(label_side)
-
     summary_fun <- match.arg(summary_fun)
 
     ## The basic plot
@@ -238,7 +273,7 @@ setMethod(
     p <- ggplot(
         data,
         aes(
-            !!sym(x), !!sym(y), fill = {{ fill }}, colour = {{ colour }},
+            {{ x }}, {{ y }}, fill = {{ fill }}, colour = {{ colour }},
             linetype = {{ linetype }}
         )
     ) +
@@ -252,33 +287,29 @@ setMethod(
     if (!is.null(colour) | !is.null(linetype))
         p <- p + geom_segment(
             aes(
-                !!sym(x), !!sym(y), xend = !!sym(x), yend = !!sym(y),
+                {{ x }}, {{ y }}, xend = {{ x }}, yend = {{ y }},
                 colour = {{ colour }}, linetype = {{ linetype }}
             ),
             data = data[1,], inherit.aes = FALSE
         )
     ## Only add the top summary if this is called
     if (summary_fun != "none") {
-        breaks <- waiver()
+        brks <- waiver()
         if (label_side == "none") {
-            breaks <- NULL
+            brks <- NULL
             label_side <- "left"
         }
-        y <- c() ## R CMD check
         f <- match.fun(summary_fun)
-        grp_vars <- unique(
-            c(x, facet_x, facet_y, as.character(colour), as.character(linetype))
-        )
-        grp_df <- group_by(data, !!!syms(grp_vars))
-        summ_df <- summarise(grp_df, y = f(!!fill), .groups = "drop")
+        grp_vars <- c(x, facet_x, facet_y, colour, linetype)
+        grp_vars <- unlist(lapply(grp_vars, as.character))
+        summ_df <- summarise(data, y = f(!!fill), .by = all_of(grp_vars))
         p <- p + geom_xsideline(
-            aes(!!sym(x), y, colour = {{ colour }}, linetype = {{ linetype }}),
+            aes({{ x }}, y, colour = {{ colour }}, linetype = {{ linetype }}),
             data = summ_df, inherit.aes = FALSE
         ) +
             ggside(collapse = "x") +
             scale_xsidey_continuous(
-                expand = c(0.1, 0, 0.1, 0), position = label_side,
-                breaks = breaks
+                expand = c(0.1, 0, 0.1, 0), position = label_side, breaks = brks
             ) +
             theme(
                 panel.grid.minor = element_blank(),
@@ -287,10 +318,10 @@ setMethod(
     }
     ## Add the faceting information
     if (!is.null(facet_x) | !is.null(facet_y)) {
-        facet_x <- ifelse(is.null(facet_x), ".", facet_x)
-        facet_y <- ifelse(is.null(facet_y), ".", facet_y)
-        fm <- as.formula(paste(facet_y, facet_x, sep = "~"))
-        p <- p + facet_grid(fm, scales = "free_y", space = "free_y", ...)
+        p <- p + facet_grid(
+            cols = quos(!!!facet_x), rows = quos(!!!facet_y),
+            space = "free_y", scales = "free_y", ...
+        )
     }
     p
 

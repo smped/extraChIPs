@@ -85,8 +85,6 @@ setMethod(
       stop("UpSet plots can only be drawn using more than one group")
     if (!is.null(var)) var <- match.arg(var[[1]], .mcolnames(x[[1]]))
 
-    ## Dummy variables for R CMD check
-    count <- range <- intersection <- c()
     # Collapse as required
     gr <- makeConsensus(
       x, var = var,
@@ -118,7 +116,7 @@ setMethod(
       ## Setup the boxplot & key inputs
       ann <- list2(
         "{var}" := list(
-          aes = aes(x = intersection, y = !!sym(var)),
+          aes = aes(x = !!sym("intersection"), y = !!sym(var)),
           geom = geom_boxplot(na.rm = TRUE)
         )
       )

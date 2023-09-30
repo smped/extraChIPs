@@ -213,7 +213,6 @@ plotPairwise <- function(
         x, p, ol, label, colour, x_lab, y_lab, min_d, .alpha, .size, .sep, .geom,
         .width
 ) {
-    d <- c() # R CMD check
     grp_col <- "detected"
     if (!is.null(colour)) grp_col <- as.character(colour)
     nm <- names(x)

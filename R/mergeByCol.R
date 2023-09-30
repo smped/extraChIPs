@@ -121,7 +121,6 @@ setMethod(
         ol <- findOverlaps(x, ranges_out, ignore.strand = ignore_strand)
 
         ## Merged the data.frame rows
-        i <- NULL # Avoid R CMD check issues
         grp_df <- as.data.frame(ol)
         grp_df[["keyval_range"]] <- queryHits(ol)
         grp_df <- cbind(grp_df, df[queryHits(ol),])
