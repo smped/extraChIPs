@@ -92,3 +92,9 @@
 - Added handling of unquoted column names to most plotting functions
 - Added passing of specific columns to dualFilter
 - Added `drop` to addDiffStatus
+
+# Changes in 1.5.14 (23-09-24)
+
+- Added p_mu0 to output of `fitAssayDiff()`
+- Added `respectLevels` and filtering to `plotProfileHeatmap()`
+
