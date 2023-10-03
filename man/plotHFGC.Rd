@@ -57,7 +57,9 @@ on a separate track. If this argument is not specified, no feature track will
 be drawn. Features will be drawn with colours provided in  \code{featcol}.}
 
 \item{genes}{A GRanges object with exon structure for each transcript/gene.
-If not included, no track will be drawn for gene/transcript structure}
+If not included, no track will be drawn for gene/transcript structure.
+The expected mcols in this object are \code{type}, \code{gene}, \code{exon} \code{transcript}
+and \code{symbol}. See data(ex_trans) for an example.}
 
 \item{coverage}{A named list of BigWigFileList objects containing the
 primary tracks to show coverage for. Each list element will be drawn on a

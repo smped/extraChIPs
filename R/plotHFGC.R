@@ -222,7 +222,9 @@
 #' on a separate track. If this argument is not specified, no feature track will
 #' be drawn. Features will be drawn with colours provided in  `featcol`.
 #' @param genes A GRanges object with exon structure for each transcript/gene.
-#' If not included, no track will be drawn for gene/transcript structure
+#' If not included, no track will be drawn for gene/transcript structure.
+#' The expected mcols in this object are `type`, `gene`, `exon` `transcript`
+#' and `symbol`. See data(ex_trans) for an example.
 #' @param coverage A named list of BigWigFileList objects containing the
 #' primary tracks to show coverage for. Each list element will be drawn on a
 #' separate track, with elements within each BigWigFileList shown on the same
