@@ -131,7 +131,9 @@ be drawn. Features will be drawn with colours provided in  <code>featcol</code>.
 
 <dt>genes</dt>
 <dd><p>A GRanges object with exon structure for each transcript/gene.
-If not included, no track will be drawn for gene/transcript structure</p></dd>
+If not included, no track will be drawn for gene/transcript structure.
+The expected mcols in this object are <code>type</code>, <code>gene</code>, <code>exon</code> <code>transcript</code>
+and <code>symbol</code>. See data(ex_trans) for an example.</p></dd>
 
 
 <dt>coverage</dt>
