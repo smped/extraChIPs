@@ -131,19 +131,13 @@ file.exists(path(bfl))
 
     ## [1] TRUE TRUE TRUE TRUE TRUE TRUE
 
-This also enables creation of a `Seqinfo` object based on
-the actual reference genome to which the reads were aligned during data
-preparation. `Seqinfo` objects are the foundation of working with
-GRanges, so defining an object at the start of a workflow is good
-practice.
-As is common practice for ChIP-Seq analyses, we'll restrict our focus to the 
-standard chromosomes.
+`Seqinfo` objects are the foundation of working with GRanges, so
+defining an object at the start of a workflow is good practice. This is
+simply enabled with `extraChIPs` by using `defineSeqinfo()` and
+specifying the appropriate genome.
 
-```{r sq, eval = FALSE}
-sq <- seqinfo(bfl)
-sq <- keepStandardChromosomes(sq)
-isCircular(sq) <- rep(FALSE, length(seqlevels(sq)))
-genome(sq) <- "GRCh37"
+```{r sq}
+sq <- defineSeqinfo("GRCh37")
 ```
 
 Another key preparatory step for working with peaks is to define a set
@@ -349,11 +343,9 @@ colData(se) <- colData(se) %>%
   left_join(samples) %>% 
   mutate(sample = accession) %>% 
   as.data.frame() %>% 
-  column_to_rownames("accession") %>% 
-  DataFrame()
+  DataFrame(row.names = .$accession)
 colData(se)
 ```
-
 
 For QC and visualisation, we can add an additional `logCPM` assay to our
 object as well.
@@ -545,17 +537,11 @@ mapped to genes.
 tmm_mapped_res <- tmm_res %>% 
   colToRanges("union_peak") %>% 
   mapByFeature(genes = gencode$gene, prom = promoters) %>% 
-  mutate(
-    status = case_when(
-      FDR >= .05 ~ "Unchanged",
-      logFC > 0 ~ "Increased",
-      logFC < 0 ~ "Decreased"
-    )
-  )
+  addDiffStatus()
 arrange(tmm_mapped_res, PValue)
 ```
 
-    ## GRanges object with 188 ranges and 10 metadata columns:
+    ## GRanges object with 188 ranges and 11 metadata columns:
     ##         seqnames            ranges strand |        E2     E2DHT         n
     ##            <Rle>         <IRanges>  <Rle> | <logical> <logical> <numeric>
     ##     [1]    chr10 81101906-81102928      * |      TRUE      TRUE         2
@@ -564,24 +550,24 @@ arrange(tmm_mapped_res, PValue)
     ##     [4]    chr10 52233596-52233998      * |      TRUE      TRUE         2
     ##     [5]    chr10 91651138-91651433      * |     FALSE      TRUE         1
     ##     ...      ...               ...    ... .       ...       ...       ...
-    ##   [184]    chr10 89395292-89395626      * |      TRUE      TRUE         2
-    ##   [185]    chr10 82723984-82724328      * |      TRUE      TRUE         2
+    ##   [184]    chr10 57899195-57899649      * |      TRUE      TRUE         2
+    ##   [185]    chr10 79190987-79191351      * |     FALSE      TRUE         1
     ##   [186]    chr10 93120411-93121224      * |      TRUE      TRUE         2
-    ##   [187]    chr10 95755308-95755721      * |      TRUE      TRUE         2
-    ##   [188]    chr10 79190987-79191351      * |     FALSE      TRUE         1
-    ##               logFC    logCPM      PValue         FDR
-    ##           <numeric> <numeric>   <numeric>   <numeric>
-    ##     [1]    1.880493   7.91492 2.50406e-25 4.70764e-23
-    ##     [2]    0.940221   8.07204 8.07816e-08 7.59347e-06
-    ##     [3]    1.578056   6.16574 4.18078e-07 2.61995e-05
-    ##     [4]    1.057814   6.67466 5.73897e-05 2.69732e-03
-    ##     [5]    1.546530   5.15431 1.75562e-04 6.60112e-03
-    ##     ...         ...       ...         ...         ...
-    ##   [184] -0.01346141   6.36140    0.961749    0.982656
-    ##   [185] -0.00855862   6.91968    0.972422    0.988154
-    ##   [186] -0.01173559   9.32397    0.979561    0.988154
-    ##   [187]  0.00721240   5.88042    0.982898    0.988154
-    ##   [188] -0.00157801   6.41182    0.994914    0.994914
+    ##   [187]    chr10 84812327-84812615      * |      TRUE     FALSE         1
+    ##   [188]    chr10 95755308-95755721      * |      TRUE      TRUE         2
+    ##               logFC    logCPM      PValue         FDR       p_mu0
+    ##           <numeric> <numeric>   <numeric>   <numeric>   <numeric>
+    ##     [1]    1.871060   7.93229 3.32981e-24 6.26004e-22 5.86555e-30
+    ##     [2]    0.931608   8.06748 1.77568e-07 1.66914e-05 7.16573e-11
+    ##     [3]    1.570273   6.17416 6.05081e-07 3.79184e-05 6.73569e-08
+    ##     [4]    1.049765   6.68775 5.82639e-05 2.73840e-03 5.28527e-06
+    ##     [5]    1.539043   5.15469 1.94038e-04 7.29583e-03 6.91838e-05
+    ##     ...         ...       ...         ...         ...         ...
+    ##   [184]  0.01656860   6.74759    0.949645    0.970289    0.939137
+    ##   [185] -0.01280716   6.39247    0.963207    0.972684    0.958637
+    ##   [186] -0.02142115   9.32215    0.963659    0.972684    0.831820
+    ##   [187]  0.01237140   6.19732    0.967510    0.972684    0.963156
+    ##   [188] -0.00530365   5.86168    0.986505    0.986505    0.985630
     ##                                            gene_id
     ##                                    <CharacterList>
     ##     [1]                       ENSG00000108179.14_6
@@ -590,26 +576,26 @@ arrange(tmm_mapped_res, PValue)
     ##     [4] ENSG00000198964.14_10,ENSG00000225303.2_10
     ##     [5]                        ENSG00000280560.3_9
     ##     ...                                        ...
-    ##   [184]   ENSG00000225913.2_9,ENSG00000196566.2_10
-    ##   [185]                        ENSG00000227209.1_5
+    ##   [184]                                           
+    ##   [185]                      ENSG00000156113.25_17
     ##   [186]                        ENSG00000289228.2_2
-    ##   [187]                      ENSG00000138193.17_12
-    ##   [188]                      ENSG00000156113.25_17
-    ##                               gene_name      status
-    ##                         <CharacterList> <character>
-    ##     [1]                            PPIF   Increased
-    ##     [2]                            DLG5   Increased
-    ##     [3] ENSG00000225913,ENSG00000196566   Increased
-    ##     [4]           SGMS1,ENSG00000225303   Increased
-    ##     [5]                       LINC01374   Increased
-    ##     ...                             ...         ...
-    ##   [184] ENSG00000225913,ENSG00000196566   Unchanged
-    ##   [185]                         WARS2P1   Unchanged
-    ##   [186]                 ENSG00000289228   Unchanged
-    ##   [187]                           PLCE1   Unchanged
-    ##   [188]                          KCNMA1   Unchanged
+    ##   [187]                          ENSG00000200774.1
+    ##   [188]                      ENSG00000138193.17_12
+    ##                               gene_name    status
+    ##                         <CharacterList>  <factor>
+    ##     [1]                            PPIF Increased
+    ##     [2]                            DLG5 Increased
+    ##     [3] ENSG00000225913,ENSG00000196566 Increased
+    ##     [4]           SGMS1,ENSG00000225303 Increased
+    ##     [5]                       LINC01374 Increased
+    ##     ...                             ...       ...
+    ##   [184]                                 Unchanged
+    ##   [185]                          KCNMA1 Unchanged
+    ##   [186]                 ENSG00000289228 Unchanged
+    ##   [187]                       RNU6-478P Unchanged
+    ##   [188]                           PLCE1 Unchanged
     ##   -------
-    ##   seqinfo: 1 sequence from an unspecified genome; no seqlengths
+    ##   seqinfo: 24 sequences from GRCh37 genome
 
 # Inspection of Results
 

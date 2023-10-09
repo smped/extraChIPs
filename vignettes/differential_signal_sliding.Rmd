@@ -157,20 +157,21 @@ file.exists(path(bfl))
 
     ## [1] TRUE TRUE TRUE TRUE TRUE TRUE TRUE
 
-```{r sq, eval = FALSE}
-sq <- seqinfo(bfl) %>% 
-  sortSeqlevels() %>% 
-  keepStandardChromosomes()
-isCircular(sq) <- rep(FALSE, length(seqlevels(sq)))
-genome(sq) <- "GRCh37"
+`Seqinfo` objects are the foundation of working with GRanges, so
+defining an object at the start of a workflow is good practice. This is
+simply enabled with `extraChIPs` by using `defineSeqinfo()` and
+specifying the appropriate genome.
+
+```{r sq}
+sq <- defineSeqinfo("GRCh37")
 ```
 
 **NB:** It should also be noted that counting all reads across a
-`BamFileList` using sliding windows, **will require a significant amount
-of RAM** and will be beyond the capacity of most laptops as of the time
-of writing. When working with complete datasets, this particular step is
-best performed on an HPC or a similar interactive server with a large
-amount of memory.
+`BamFileList` using sliding windows, **will require \>50Gb of RAM** and
+will be beyond the capacity of most laptops as of the time of writing.
+When working with complete datasets, this particular step is best
+performed on an HPC or a similar interactive server with a large amount
+of memory.
 
 The approach taken below is to first define a set of sliding windows
 across the genome, using the capabilities of `csaw`. After counting
@@ -275,8 +276,7 @@ colData(wincounts) <- colData(wincounts) %>%
     treatment = str_replace_na(treatment, "Input") %>% 
       as.factor()
   ) %>% 
-  DataFrame() %>% 
-  set_rownames(.$accession)
+  DataFrame(row.names = .$accession)
 ```
 
 A density plot can be simply drawn of these counts, with the vast
@@ -321,10 +321,7 @@ can be accessed using `?csaw::filterWindows`
 guide_regions <- here("data", "H3K27ac", "H3K27ac_chr10.bed") %>% 
   import.bed(seqinfo = sq)
 filtcounts <- dualFilter(
-  x = wincounts[, wincounts$target == "H3K27ac"],
-  bg = wincounts[, wincounts$target == "Input"], 
-  ref = guide_regions,
-  q = 0.6
+  x = wincounts, bg = "SRR8315192", ref = guide_regions, q = 0.6
 )
 ```
 
@@ -492,13 +489,7 @@ the original window with the lowest p-value is returned.
 
 ```{r results-gr, eval = FALSE}
 results_gr <- mergeByHMP(fit_gr, inc_cols = "overlaps_ref", merge_within = 120) %>% 
-  mutate(
-    status <- case_when(
-      hmp_fdr > 0.05 ~ "Unchanged",
-      logFC > 0 ~ "Increased",
-      logFC < 0 ~ "Decreased"
-    )
-  )
+  addDiffStatus(drop = TRUE)
 arrange(results_gr, hmp)[1:5]
 ```
 
@@ -512,20 +503,20 @@ arrange(results_gr, hmp)[1:5]
     ##   [5]    chr10 63859401-63859760      * |         7         1         0
     ##       overlaps_ref            keyval_range    logCPM     logFC         hmp
     ##          <logical>               <GRanges> <numeric> <numeric>   <numeric>
-    ##   [1]         TRUE chr10:79257761-79257880   7.02801   1.83161 1.84310e-12
-    ##   [2]         TRUE chr10:43689681-43689800   6.50461   1.78769 8.00605e-09
-    ##   [3]         TRUE chr10:74008441-74008560   6.49284   1.81722 9.04613e-09
-    ##   [4]         TRUE chr10:63858881-63859000   5.99283   1.75275 5.91544e-07
-    ##   [5]         TRUE chr10:63859601-63859720   5.99405   1.82278 9.46455e-07
-    ##           hmp_fdr status.......
-    ##         <numeric>   <character>
-    ##   [1] 1.32519e-09     Increased
-    ##   [2] 2.16805e-06     Increased
-    ##   [3] 2.16805e-06     Increased
-    ##   [4] 1.06330e-04     Increased
-    ##   [5] 1.36100e-04     Increased
+    ##   [1]         TRUE chr10:79257761-79257880   7.01563   1.82950 2.08382e-12
+    ##   [2]         TRUE chr10:43689681-43689800   6.49125   1.78743 8.37664e-09
+    ##   [3]         TRUE chr10:74008441-74008560   6.48379   1.81692 9.27730e-09
+    ##   [4]         TRUE chr10:63858881-63859000   5.98361   1.75311 6.38262e-07
+    ##   [5]         TRUE chr10:63859601-63859720   5.98163   1.82260 1.02640e-06
+    ##           hmp_fdr    status
+    ##         <numeric>  <factor>
+    ##   [1] 1.49827e-09 Increased
+    ##   [2] 2.22346e-06 Increased
+    ##   [3] 2.22346e-06 Increased
+    ##   [4] 1.14728e-04 Increased
+    ##   [5] 1.47597e-04 Increased
     ##   -------
-    ##   seqinfo: 25 sequences from GRCh37 genome
+    ##   seqinfo: 24 sequences from GRCh37 genome
 
 In the above, we returned 19 ranges which we might consider using the
 significance threshold $\alpha$ = 0.05. As is common, we can assess our
@@ -638,19 +629,13 @@ tmm_gr <- fitAssayDiff(
   filtcounts, design = X, fc = 1.2, norm = "TMM", asRanges = TRUE
 )
 tmm_results <- mergeByHMP(tmm_gr, inc_cols = "overlaps_ref", merge_within = 120) %>% 
-  mutate(
-    status = case_when(
-      hmp_fdr > 0.05 ~ "Unchanged",
-      logFC < 0 ~ "Decreased",
-      logFC > 0 ~ "Increased"
-    )
-  )
+  addDiffStatus(drop = TRUE)
 table(tmm_results$status)
 ```
 
     ## 
-    ## Increased Unchanged 
-    ##        21       698
+    ## Unchanged Increased 
+    ##       698        21
 
 As might be expected, the results are highly concordant, with
 TMM-normalisation providing a moderate improvement in statistical power,
