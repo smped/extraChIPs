@@ -209,17 +209,12 @@ with all of these files.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html" class="external-link">str_remove_all</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>, <span class="st">".bam"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/path.html" class="external-link">path</a></span><span class="op">(</span><span class="va">bfl</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] TRUE TRUE TRUE TRUE TRUE TRUE</span></span></code></pre>
-<p>This also enables creation of a <code>Seqinfo</code> object based on
-the actual reference genome to which the reads were aligned during data
-preparation. <code>Seqinfo</code> objects are the foundation of working
-with GRanges, so defining an object at the start of a workflow is good
-practice. As is common practice for ChIP-Seq analyses, we’ll restrict
-our focus to the standard chromosomes.</p>
+<p><code>Seqinfo</code> objects are the foundation of working with
+GRanges, so defining an object at the start of a workflow is good
+practice. This is simply enabled with <code>extraChIPs</code> by using
+<code><a href="../reference/defineSeqinfo.html">defineSeqinfo()</a></code> and specifying the appropriate genome.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqinfo</a></span><span class="op">(</span><span class="va">bfl</span><span class="op">)</span></span>
-<span><span class="va">sq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqlevels-wrappers.html" class="external-link">keepStandardChromosomes</a></span><span class="op">(</span><span class="va">sq</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">isCircular</a></span><span class="op">(</span><span class="va">sq</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqlevels</a></span><span class="op">(</span><span class="va">sq</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">genome</a></span><span class="op">(</span><span class="va">sq</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"GRCh37"</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">sq</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/defineSeqinfo.html">defineSeqinfo</a></span><span class="op">(</span><span class="st">"GRCh37"</span><span class="op">)</span></span></code></pre></div>
 <p>Another key preparatory step for working with peaks is to define a
 set of regions as either blacklisted or grey-listed regions. The former
 are known problematic regions based on each genome, with data freely
@@ -431,26 +426,25 @@ required <code>DataFrame()</code> structure.</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">samples</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>sample <span class="op">=</span> <span class="va">accession</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">column_to_rownames</a></span><span class="op">(</span><span class="st">"accession"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu">DataFrame</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu">DataFrame</span><span class="op">(</span>row.names <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">accession</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## DataFrame with 6 rows and 7 columns</span></span>
-<span><span class="co">##                         bam.files    totals       ext      rlen      target</span></span>
-<span><span class="co">##                       &lt;character&gt; &lt;integer&gt; &lt;integer&gt; &lt;integer&gt; &lt;character&gt;</span></span>
-<span><span class="co">## SRR8315180 /home/steviep/github..    317845       200        75          ER</span></span>
-<span><span class="co">## SRR8315181 /home/steviep/github..    337623       200        75          ER</span></span>
-<span><span class="co">## SRR8315182 /home/steviep/github..    341998       200        75          ER</span></span>
-<span><span class="co">## SRR8315183 /home/steviep/github..    315872       200        75          ER</span></span>
-<span><span class="co">## SRR8315184 /home/steviep/github..    352908       200        75          ER</span></span>
-<span><span class="co">## SRR8315185 /home/steviep/github..    347709       200        75          ER</span></span>
-<span><span class="co">##            treatment      sample</span></span>
-<span><span class="co">##             &lt;factor&gt; &lt;character&gt;</span></span>
-<span><span class="co">## SRR8315180     E2     SRR8315180</span></span>
-<span><span class="co">## SRR8315181     E2     SRR8315181</span></span>
-<span><span class="co">## SRR8315182     E2     SRR8315182</span></span>
-<span><span class="co">## SRR8315183     E2DHT  SRR8315183</span></span>
-<span><span class="co">## SRR8315184     E2DHT  SRR8315184</span></span>
-<span><span class="co">## SRR8315185     E2DHT  SRR8315185</span></span></code></pre>
+<pre><code><span><span class="co">## DataFrame with 6 rows and 8 columns</span></span>
+<span><span class="co">##              accession              bam.files    totals       ext      rlen</span></span>
+<span><span class="co">##            &lt;character&gt;            &lt;character&gt; &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;</span></span>
+<span><span class="co">## SRR8315180  SRR8315180 /home/steviep/github..    317845       200        75</span></span>
+<span><span class="co">## SRR8315181  SRR8315181 /home/steviep/github..    337623       200        75</span></span>
+<span><span class="co">## SRR8315182  SRR8315182 /home/steviep/github..    341998       200        75</span></span>
+<span><span class="co">## SRR8315183  SRR8315183 /home/steviep/github..    315872       200        75</span></span>
+<span><span class="co">## SRR8315184  SRR8315184 /home/steviep/github..    352908       200        75</span></span>
+<span><span class="co">## SRR8315185  SRR8315185 /home/steviep/github..    347709       200        75</span></span>
+<span><span class="co">##                 target treatment      sample</span></span>
+<span><span class="co">##            &lt;character&gt;  &lt;factor&gt; &lt;character&gt;</span></span>
+<span><span class="co">## SRR8315180          ER     E2     SRR8315180</span></span>
+<span><span class="co">## SRR8315181          ER     E2     SRR8315181</span></span>
+<span><span class="co">## SRR8315182          ER     E2     SRR8315182</span></span>
+<span><span class="co">## SRR8315183          ER     E2DHT  SRR8315183</span></span>
+<span><span class="co">## SRR8315184          ER     E2DHT  SRR8315184</span></span>
+<span><span class="co">## SRR8315185          ER     E2DHT  SRR8315185</span></span></code></pre>
 <p>For QC and visualisation, we can add an additional
 <code>logCPM</code> assay to our object as well.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
@@ -643,15 +637,9 @@ region is mapped to genes.</p>
 <code class="sourceCode R"><span><span class="va">tmm_mapped_res</span> <span class="op">&lt;-</span> <span class="va">tmm_res</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/colToRanges-methods.html">colToRanges</a></span><span class="op">(</span><span class="st">"union_peak"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/mapByFeature.html">mapByFeature</a></span><span class="op">(</span>genes <span class="op">=</span> <span class="va">gencode</span><span class="op">$</span><span class="va">gene</span>, prom <span class="op">=</span> <span class="va">promoters</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>    status <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
-<span>      <span class="va">FDR</span> <span class="op">&gt;=</span> <span class="fl">.05</span> <span class="op">~</span> <span class="st">"Unchanged"</span>,</span>
-<span>      <span class="va">logFC</span> <span class="op">&gt;</span> <span class="fl">0</span> <span class="op">~</span> <span class="st">"Increased"</span>,</span>
-<span>      <span class="va">logFC</span> <span class="op">&lt;</span> <span class="fl">0</span> <span class="op">~</span> <span class="st">"Decreased"</span></span>
-<span>    <span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
+<span>  <span class="fu"><a href="../reference/addDiffStatus-methods.html">addDiffStatus</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">tmm_mapped_res</span>, <span class="va">PValue</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## GRanges object with 188 ranges and 10 metadata columns:</span></span>
+<pre><code><span><span class="co">## GRanges object with 188 ranges and 11 metadata columns:</span></span>
 <span><span class="co">##         seqnames            ranges strand |        E2     E2DHT         n</span></span>
 <span><span class="co">##            &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; | &lt;logical&gt; &lt;logical&gt; &lt;numeric&gt;</span></span>
 <span><span class="co">##     [1]    chr10 81101906-81102928      * |      TRUE      TRUE         2</span></span>
@@ -660,24 +648,24 @@ region is mapped to genes.</p>
 <span><span class="co">##     [4]    chr10 52233596-52233998      * |      TRUE      TRUE         2</span></span>
 <span><span class="co">##     [5]    chr10 91651138-91651433      * |     FALSE      TRUE         1</span></span>
 <span><span class="co">##     ...      ...               ...    ... .       ...       ...       ...</span></span>
-<span><span class="co">##   [184]    chr10 89395292-89395626      * |      TRUE      TRUE         2</span></span>
-<span><span class="co">##   [185]    chr10 82723984-82724328      * |      TRUE      TRUE         2</span></span>
+<span><span class="co">##   [184]    chr10 57899195-57899649      * |      TRUE      TRUE         2</span></span>
+<span><span class="co">##   [185]    chr10 79190987-79191351      * |     FALSE      TRUE         1</span></span>
 <span><span class="co">##   [186]    chr10 93120411-93121224      * |      TRUE      TRUE         2</span></span>
-<span><span class="co">##   [187]    chr10 95755308-95755721      * |      TRUE      TRUE         2</span></span>
-<span><span class="co">##   [188]    chr10 79190987-79191351      * |     FALSE      TRUE         1</span></span>
-<span><span class="co">##               logFC    logCPM      PValue         FDR</span></span>
-<span><span class="co">##           &lt;numeric&gt; &lt;numeric&gt;   &lt;numeric&gt;   &lt;numeric&gt;</span></span>
-<span><span class="co">##     [1]    1.880493   7.91492 2.50406e-25 4.70764e-23</span></span>
-<span><span class="co">##     [2]    0.940221   8.07204 8.07816e-08 7.59347e-06</span></span>
-<span><span class="co">##     [3]    1.578056   6.16574 4.18078e-07 2.61995e-05</span></span>
-<span><span class="co">##     [4]    1.057814   6.67466 5.73897e-05 2.69732e-03</span></span>
-<span><span class="co">##     [5]    1.546530   5.15431 1.75562e-04 6.60112e-03</span></span>
-<span><span class="co">##     ...         ...       ...         ...         ...</span></span>
-<span><span class="co">##   [184] -0.01346141   6.36140    0.961749    0.982656</span></span>
-<span><span class="co">##   [185] -0.00855862   6.91968    0.972422    0.988154</span></span>
-<span><span class="co">##   [186] -0.01173559   9.32397    0.979561    0.988154</span></span>
-<span><span class="co">##   [187]  0.00721240   5.88042    0.982898    0.988154</span></span>
-<span><span class="co">##   [188] -0.00157801   6.41182    0.994914    0.994914</span></span>
+<span><span class="co">##   [187]    chr10 84812327-84812615      * |      TRUE     FALSE         1</span></span>
+<span><span class="co">##   [188]    chr10 95755308-95755721      * |      TRUE      TRUE         2</span></span>
+<span><span class="co">##               logFC    logCPM      PValue         FDR       p_mu0</span></span>
+<span><span class="co">##           &lt;numeric&gt; &lt;numeric&gt;   &lt;numeric&gt;   &lt;numeric&gt;   &lt;numeric&gt;</span></span>
+<span><span class="co">##     [1]    1.871060   7.93229 3.32981e-24 6.26004e-22 5.86555e-30</span></span>
+<span><span class="co">##     [2]    0.931608   8.06748 1.77568e-07 1.66914e-05 7.16573e-11</span></span>
+<span><span class="co">##     [3]    1.570273   6.17416 6.05081e-07 3.79184e-05 6.73569e-08</span></span>
+<span><span class="co">##     [4]    1.049765   6.68775 5.82639e-05 2.73840e-03 5.28527e-06</span></span>
+<span><span class="co">##     [5]    1.539043   5.15469 1.94038e-04 7.29583e-03 6.91838e-05</span></span>
+<span><span class="co">##     ...         ...       ...         ...         ...         ...</span></span>
+<span><span class="co">##   [184]  0.01656860   6.74759    0.949645    0.970289    0.939137</span></span>
+<span><span class="co">##   [185] -0.01280716   6.39247    0.963207    0.972684    0.958637</span></span>
+<span><span class="co">##   [186] -0.02142115   9.32215    0.963659    0.972684    0.831820</span></span>
+<span><span class="co">##   [187]  0.01237140   6.19732    0.967510    0.972684    0.963156</span></span>
+<span><span class="co">##   [188] -0.00530365   5.86168    0.986505    0.986505    0.985630</span></span>
 <span><span class="co">##                                            gene_id</span></span>
 <span><span class="co">##                                    &lt;CharacterList&gt;</span></span>
 <span><span class="co">##     [1]                       ENSG00000108179.14_6</span></span>
@@ -686,26 +674,26 @@ region is mapped to genes.</p>
 <span><span class="co">##     [4] ENSG00000198964.14_10,ENSG00000225303.2_10</span></span>
 <span><span class="co">##     [5]                        ENSG00000280560.3_9</span></span>
 <span><span class="co">##     ...                                        ...</span></span>
-<span><span class="co">##   [184]   ENSG00000225913.2_9,ENSG00000196566.2_10</span></span>
-<span><span class="co">##   [185]                        ENSG00000227209.1_5</span></span>
+<span><span class="co">##   [184]                                           </span></span>
+<span><span class="co">##   [185]                      ENSG00000156113.25_17</span></span>
 <span><span class="co">##   [186]                        ENSG00000289228.2_2</span></span>
-<span><span class="co">##   [187]                      ENSG00000138193.17_12</span></span>
-<span><span class="co">##   [188]                      ENSG00000156113.25_17</span></span>
-<span><span class="co">##                               gene_name      status</span></span>
-<span><span class="co">##                         &lt;CharacterList&gt; &lt;character&gt;</span></span>
-<span><span class="co">##     [1]                            PPIF   Increased</span></span>
-<span><span class="co">##     [2]                            DLG5   Increased</span></span>
-<span><span class="co">##     [3] ENSG00000225913,ENSG00000196566   Increased</span></span>
-<span><span class="co">##     [4]           SGMS1,ENSG00000225303   Increased</span></span>
-<span><span class="co">##     [5]                       LINC01374   Increased</span></span>
-<span><span class="co">##     ...                             ...         ...</span></span>
-<span><span class="co">##   [184] ENSG00000225913,ENSG00000196566   Unchanged</span></span>
-<span><span class="co">##   [185]                         WARS2P1   Unchanged</span></span>
-<span><span class="co">##   [186]                 ENSG00000289228   Unchanged</span></span>
-<span><span class="co">##   [187]                           PLCE1   Unchanged</span></span>
-<span><span class="co">##   [188]                          KCNMA1   Unchanged</span></span>
+<span><span class="co">##   [187]                          ENSG00000200774.1</span></span>
+<span><span class="co">##   [188]                      ENSG00000138193.17_12</span></span>
+<span><span class="co">##                               gene_name    status</span></span>
+<span><span class="co">##                         &lt;CharacterList&gt;  &lt;factor&gt;</span></span>
+<span><span class="co">##     [1]                            PPIF Increased</span></span>
+<span><span class="co">##     [2]                            DLG5 Increased</span></span>
+<span><span class="co">##     [3] ENSG00000225913,ENSG00000196566 Increased</span></span>
+<span><span class="co">##     [4]           SGMS1,ENSG00000225303 Increased</span></span>
+<span><span class="co">##     [5]                       LINC01374 Increased</span></span>
+<span><span class="co">##     ...                             ...       ...</span></span>
+<span><span class="co">##   [184]                                 Unchanged</span></span>
+<span><span class="co">##   [185]                          KCNMA1 Unchanged</span></span>
+<span><span class="co">##   [186]                 ENSG00000289228 Unchanged</span></span>
+<span><span class="co">##   [187]                       RNU6-478P Unchanged</span></span>
+<span><span class="co">##   [188]                           PLCE1 Unchanged</span></span>
 <span><span class="co">##   -------</span></span>
-<span><span class="co">##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</span></span></code></pre>
+<span><span class="co">##   seqinfo: 24 sequences from GRCh37 genome</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -782,7 +770,7 @@ log-transformation so we’ll set <code>log = FALSE</code> in our call to
 <span><span class="co">## [17] MatrixGenerics_1.12.3       matrixStats_1.0.0          </span></span>
 <span><span class="co">## [19] Rsamtools_2.16.0            Biostrings_2.68.1          </span></span>
 <span><span class="co">## [21] XVector_0.40.0              GenomicRanges_1.52.0       </span></span>
-<span><span class="co">## [23] GenomeInfoDb_1.36.3         IRanges_2.34.1             </span></span>
+<span><span class="co">## [23] GenomeInfoDb_1.36.4         IRanges_2.34.1             </span></span>
 <span><span class="co">## [25] S4Vectors_0.38.2            BiocGenerics_0.46.0        </span></span>
 <span><span class="co">## [27] lubridate_1.9.3             forcats_1.0.0              </span></span>
 <span><span class="co">## [29] stringr_1.5.0               dplyr_1.1.3                </span></span>
@@ -820,7 +808,7 @@ log-transformation so we’ll set <code>log = FALSE</code> in our call to
 <span><span class="co">##  [51] yaml_2.3.7                 rhdf5_2.44.0              </span></span>
 <span><span class="co">##  [53] BiocFileCache_2.8.0        grid_4.3.1                </span></span>
 <span><span class="co">##  [55] blob_1.2.4                 crayon_1.5.2              </span></span>
-<span><span class="co">##  [57] lattice_0.21-8             ComplexUpset_1.3.3        </span></span>
+<span><span class="co">##  [57] lattice_0.21-9             ComplexUpset_1.3.3        </span></span>
 <span><span class="co">##  [59] GenomicFeatures_1.52.2     annotate_1.78.0           </span></span>
 <span><span class="co">##  [61] KEGGREST_1.40.1            pillar_1.9.0              </span></span>
 <span><span class="co">##  [63] knitr_1.44                 ComplexHeatmap_2.16.0     </span></span>
@@ -838,7 +826,7 @@ log-transformation so we’ll set <code>log = FALSE</code> in our call to
 <span><span class="co">##  [87] colorspace_2.1-0           DBI_1.1.3                 </span></span>
 <span><span class="co">##  [89] Hmisc_5.1-1                nnet_7.3-19               </span></span>
 <span><span class="co">##  [91] tidyselect_1.2.0           bit_4.0.5                 </span></span>
-<span><span class="co">##  [93] compiler_4.3.1             curl_5.0.2                </span></span>
+<span><span class="co">##  [93] compiler_4.3.1             curl_5.1.0                </span></span>
 <span><span class="co">##  [95] htmlTable_2.4.1            xml2_1.3.5                </span></span>
 <span><span class="co">##  [97] desc_1.4.2                 DelayedArray_0.26.7       </span></span>
 <span><span class="co">##  [99] bookdown_0.35              checkmate_2.2.0           </span></span>
@@ -859,14 +847,14 @@ log-transformation so we’ll set <code>log = FALSE</code> in our call to
 <span><span class="co">## [129] munsell_0.5.0              Rcpp_1.0.11               </span></span>
 <span><span class="co">## [131] stringi_1.7.12             zlibbioc_1.46.0           </span></span>
 <span><span class="co">## [133] MASS_7.3-60                bumphunter_1.42.0         </span></span>
-<span><span class="co">## [135] plyr_1.8.8                 minfi_1.46.0              </span></span>
+<span><span class="co">## [135] plyr_1.8.9                 minfi_1.46.0              </span></span>
 <span><span class="co">## [137] parallel_4.3.1             deldir_1.0-9              </span></span>
 <span><span class="co">## [139] splines_4.3.1              multtest_2.56.0           </span></span>
 <span><span class="co">## [141] hms_1.1.3                  circlize_0.4.15           </span></span>
 <span><span class="co">## [143] locfit_1.5-9.8             igraph_1.5.1              </span></span>
 <span><span class="co">## [145] rngtools_1.5.2             biomaRt_2.56.1            </span></span>
 <span><span class="co">## [147] futile.options_1.0.1       XML_3.99-0.14             </span></span>
-<span><span class="co">## [149] evaluate_0.21              latticeExtra_0.6-30       </span></span>
+<span><span class="co">## [149] evaluate_0.22              latticeExtra_0.6-30       </span></span>
 <span><span class="co">## [151] biovizBase_1.48.0          lambda.r_1.2.4            </span></span>
 <span><span class="co">## [153] BiocManager_1.30.22        tzdb_0.4.0                </span></span>
 <span><span class="co">## [155] foreach_1.5.2              tweenr_2.0.2              </span></span>

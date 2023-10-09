@@ -234,18 +234,18 @@ all as a <code>BamFileList</code>.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html" class="external-link">str_remove_all</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>, <span class="st">".bam"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/path.html" class="external-link">path</a></span><span class="op">(</span><span class="va">bfl</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] TRUE TRUE TRUE TRUE TRUE TRUE TRUE</span></span></code></pre>
+<p><code>Seqinfo</code> objects are the foundation of working with
+GRanges, so defining an object at the start of a workflow is good
+practice. This is simply enabled with <code>extraChIPs</code> by using
+<code><a href="../reference/defineSeqinfo.html">defineSeqinfo()</a></code> and specifying the appropriate genome.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqinfo</a></span><span class="op">(</span><span class="va">bfl</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">sortSeqlevels</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqlevels-wrappers.html" class="external-link">keepStandardChromosomes</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">isCircular</a></span><span class="op">(</span><span class="va">sq</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqlevels</a></span><span class="op">(</span><span class="va">sq</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">genome</a></span><span class="op">(</span><span class="va">sq</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"GRCh37"</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">sq</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/defineSeqinfo.html">defineSeqinfo</a></span><span class="op">(</span><span class="st">"GRCh37"</span><span class="op">)</span></span></code></pre></div>
 <p><strong>NB:</strong> It should also be noted that counting all reads
 across a <code>BamFileList</code> using sliding windows, <strong>will
-require a significant amount of RAM</strong> and will be beyond the
-capacity of most laptops as of the time of writing. When working with
-complete datasets, this particular step is best performed on an HPC or a
-similar interactive server with a large amount of memory.</p>
+require &gt;50Gb of RAM</strong> and will be beyond the capacity of most
+laptops as of the time of writing. When working with complete datasets,
+this particular step is best performed on an HPC or a similar
+interactive server with a large amount of memory.</p>
 <p>The approach taken below is to first define a set of sliding windows
 across the genome, using the capabilities of <code>csaw</code>. After
 counting reads across all windows, a set of <em>pre-defined regions</em>
@@ -340,8 +340,7 @@ objects.</p>
 <span>    treatment <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace_na.html" class="external-link">str_replace_na</a></span><span class="op">(</span><span class="va">treatment</span>, <span class="st">"Input"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>      <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu">DataFrame</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://magrittr.tidyverse.org/reference/aliases.html" class="external-link">set_rownames</a></span><span class="op">(</span><span class="va">.</span><span class="op">$</span><span class="va">accession</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu">DataFrame</span><span class="op">(</span>row.names <span class="op">=</span> <span class="va">.</span><span class="op">$</span><span class="va">accession</span><span class="op">)</span></span></code></pre></div>
 <p>A density plot can be simply drawn of these counts, with the vast
 majority of windows receiving very low counts, due to the nature of
 transcription factor binding, where long stretches are unbound. The
@@ -382,10 +381,7 @@ alternative filtering strategies are also provided by the package
 <code class="sourceCode R"><span><span class="va">guide_regions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"H3K27ac"</span>, <span class="st">"H3K27ac_chr10.bed"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/BEDFile-class.html" class="external-link">import.bed</a></span><span class="op">(</span>seqinfo <span class="op">=</span> <span class="va">sq</span><span class="op">)</span></span>
 <span><span class="va">filtcounts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dualFilter.html">dualFilter</a></span><span class="op">(</span></span>
-<span>  x <span class="op">=</span> <span class="va">wincounts</span><span class="op">[</span>, <span class="va">wincounts</span><span class="op">$</span><span class="va">target</span> <span class="op">==</span> <span class="st">"H3K27ac"</span><span class="op">]</span>,</span>
-<span>  bg <span class="op">=</span> <span class="va">wincounts</span><span class="op">[</span>, <span class="va">wincounts</span><span class="op">$</span><span class="va">target</span> <span class="op">==</span> <span class="st">"Input"</span><span class="op">]</span>, </span>
-<span>  ref <span class="op">=</span> <span class="va">guide_regions</span>,</span>
-<span>  q <span class="op">=</span> <span class="fl">0.6</span></span>
+<span>  x <span class="op">=</span> <span class="va">wincounts</span>, bg <span class="op">=</span> <span class="st">"SRR8315192"</span>, ref <span class="op">=</span> <span class="va">guide_regions</span>, q <span class="op">=</span> <span class="fl">0.6</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Thus we have reduced our initial set of 506,538 sliding windows to
 the 23,417 windows most likely to contain true signal from our ChIP
@@ -539,13 +535,7 @@ window, corresponding to the original window with the lowest p-value is
 returned.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">results_gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mergeByHMP-methods.html">mergeByHMP</a></span><span class="op">(</span><span class="va">fit_gr</span>, inc_cols <span class="op">=</span> <span class="st">"overlaps_ref"</span>, merge_within <span class="op">=</span> <span class="fl">120</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>    <span class="va">status</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
-<span>      <span class="va">hmp_fdr</span> <span class="op">&gt;</span> <span class="fl">0.05</span> <span class="op">~</span> <span class="st">"Unchanged"</span>,</span>
-<span>      <span class="va">logFC</span> <span class="op">&gt;</span> <span class="fl">0</span> <span class="op">~</span> <span class="st">"Increased"</span>,</span>
-<span>      <span class="va">logFC</span> <span class="op">&lt;</span> <span class="fl">0</span> <span class="op">~</span> <span class="st">"Decreased"</span></span>
-<span>    <span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
+<span>  <span class="fu"><a href="../reference/addDiffStatus-methods.html">addDiffStatus</a></span><span class="op">(</span>drop <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">results_gr</span>, <span class="va">hmp</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">## GRanges object with 5 ranges and 10 metadata columns:</span></span>
 <span><span class="co">##       seqnames            ranges strand | n_windows      n_up    n_down</span></span>
@@ -557,20 +547,20 @@ returned.</p>
 <span><span class="co">##   [5]    chr10 63859401-63859760      * |         7         1         0</span></span>
 <span><span class="co">##       overlaps_ref            keyval_range    logCPM     logFC         hmp</span></span>
 <span><span class="co">##          &lt;logical&gt;               &lt;GRanges&gt; &lt;numeric&gt; &lt;numeric&gt;   &lt;numeric&gt;</span></span>
-<span><span class="co">##   [1]         TRUE chr10:79257761-79257880   7.02801   1.83161 1.84310e-12</span></span>
-<span><span class="co">##   [2]         TRUE chr10:43689681-43689800   6.50461   1.78769 8.00605e-09</span></span>
-<span><span class="co">##   [3]         TRUE chr10:74008441-74008560   6.49284   1.81722 9.04613e-09</span></span>
-<span><span class="co">##   [4]         TRUE chr10:63858881-63859000   5.99283   1.75275 5.91544e-07</span></span>
-<span><span class="co">##   [5]         TRUE chr10:63859601-63859720   5.99405   1.82278 9.46455e-07</span></span>
-<span><span class="co">##           hmp_fdr status.......</span></span>
-<span><span class="co">##         &lt;numeric&gt;   &lt;character&gt;</span></span>
-<span><span class="co">##   [1] 1.32519e-09     Increased</span></span>
-<span><span class="co">##   [2] 2.16805e-06     Increased</span></span>
-<span><span class="co">##   [3] 2.16805e-06     Increased</span></span>
-<span><span class="co">##   [4] 1.06330e-04     Increased</span></span>
-<span><span class="co">##   [5] 1.36100e-04     Increased</span></span>
+<span><span class="co">##   [1]         TRUE chr10:79257761-79257880   7.01563   1.82950 2.08382e-12</span></span>
+<span><span class="co">##   [2]         TRUE chr10:43689681-43689800   6.49125   1.78743 8.37664e-09</span></span>
+<span><span class="co">##   [3]         TRUE chr10:74008441-74008560   6.48379   1.81692 9.27730e-09</span></span>
+<span><span class="co">##   [4]         TRUE chr10:63858881-63859000   5.98361   1.75311 6.38262e-07</span></span>
+<span><span class="co">##   [5]         TRUE chr10:63859601-63859720   5.98163   1.82260 1.02640e-06</span></span>
+<span><span class="co">##           hmp_fdr    status</span></span>
+<span><span class="co">##         &lt;numeric&gt;  &lt;factor&gt;</span></span>
+<span><span class="co">##   [1] 1.49827e-09 Increased</span></span>
+<span><span class="co">##   [2] 2.22346e-06 Increased</span></span>
+<span><span class="co">##   [3] 2.22346e-06 Increased</span></span>
+<span><span class="co">##   [4] 1.14728e-04 Increased</span></span>
+<span><span class="co">##   [5] 1.47597e-04 Increased</span></span>
 <span><span class="co">##   -------</span></span>
-<span><span class="co">##   seqinfo: 25 sequences from GRCh37 genome</span></span></code></pre>
+<span><span class="co">##   seqinfo: 24 sequences from GRCh37 genome</span></span></code></pre>
 <p>In the above, we returned 19 ranges which we might consider using the
 significance threshold <span class="math inline">\(\alpha\)</span> =
 0.05. As is common, we can assess our results using an MA plot. However,
@@ -680,17 +670,11 @@ this using the argument <code>norm = "TMM"</code> when calling
 <span>  <span class="va">filtcounts</span>, design <span class="op">=</span> <span class="va">X</span>, fc <span class="op">=</span> <span class="fl">1.2</span>, norm <span class="op">=</span> <span class="st">"TMM"</span>, asRanges <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">tmm_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mergeByHMP-methods.html">mergeByHMP</a></span><span class="op">(</span><span class="va">tmm_gr</span>, inc_cols <span class="op">=</span> <span class="st">"overlaps_ref"</span>, merge_within <span class="op">=</span> <span class="fl">120</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>    status <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
-<span>      <span class="va">hmp_fdr</span> <span class="op">&gt;</span> <span class="fl">0.05</span> <span class="op">~</span> <span class="st">"Unchanged"</span>,</span>
-<span>      <span class="va">logFC</span> <span class="op">&lt;</span> <span class="fl">0</span> <span class="op">~</span> <span class="st">"Decreased"</span>,</span>
-<span>      <span class="va">logFC</span> <span class="op">&gt;</span> <span class="fl">0</span> <span class="op">~</span> <span class="st">"Increased"</span></span>
-<span>    <span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
+<span>  <span class="fu"><a href="../reference/addDiffStatus-methods.html">addDiffStatus</a></span><span class="op">(</span>drop <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">tmm_results</span><span class="op">$</span><span class="va">status</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
-<span><span class="co">## Increased Unchanged </span></span>
-<span><span class="co">##        21       698</span></span></code></pre>
+<span><span class="co">## Unchanged Increased </span></span>
+<span><span class="co">##       698        21</span></span></code></pre>
 <p>As might be expected, the results are highly concordant, with
 TMM-normalisation providing a moderate improvement in statistical power,
 returning 21 windows with evidence of differential signal, instead of
@@ -1324,7 +1308,7 @@ the HFGC components.</p>
 <span><span class="co">## [23] Biobase_2.60.0              MatrixGenerics_1.12.3      </span></span>
 <span><span class="co">## [25] matrixStats_1.0.0           Rsamtools_2.16.0           </span></span>
 <span><span class="co">## [27] Biostrings_2.68.1           XVector_0.40.0             </span></span>
-<span><span class="co">## [29] GenomicRanges_1.52.0        GenomeInfoDb_1.36.3        </span></span>
+<span><span class="co">## [29] GenomicRanges_1.52.0        GenomeInfoDb_1.36.4        </span></span>
 <span><span class="co">## [31] IRanges_2.34.1              S4Vectors_0.38.2           </span></span>
 <span><span class="co">## [33] BiocGenerics_0.46.0         lubridate_1.9.3            </span></span>
 <span><span class="co">## [35] forcats_1.0.0               stringr_1.5.0              </span></span>
@@ -1360,7 +1344,7 @@ the HFGC components.</p>
 <span><span class="co">##  [47] lifecycle_1.0.3            yaml_2.3.7                </span></span>
 <span><span class="co">##  [49] rhdf5_2.44.0               BiocFileCache_2.8.0       </span></span>
 <span><span class="co">##  [51] grid_4.3.1                 blob_1.2.4                </span></span>
-<span><span class="co">##  [53] crayon_1.5.2               lattice_0.21-8            </span></span>
+<span><span class="co">##  [53] crayon_1.5.2               lattice_0.21-9            </span></span>
 <span><span class="co">##  [55] ComplexUpset_1.3.3         GenomicFeatures_1.52.2    </span></span>
 <span><span class="co">##  [57] annotate_1.78.0            KEGGREST_1.40.1           </span></span>
 <span><span class="co">##  [59] pillar_1.9.0               knitr_1.44                </span></span>
@@ -1378,7 +1362,7 @@ the HFGC components.</p>
 <span><span class="co">##  [83] colorspace_2.1-0           DBI_1.1.3                 </span></span>
 <span><span class="co">##  [85] Hmisc_5.1-1                nnet_7.3-19               </span></span>
 <span><span class="co">##  [87] tidyselect_1.2.0           bit_4.0.5                 </span></span>
-<span><span class="co">##  [89] compiler_4.3.1             curl_5.0.2                </span></span>
+<span><span class="co">##  [89] compiler_4.3.1             curl_5.1.0                </span></span>
 <span><span class="co">##  [91] htmlTable_2.4.1            xml2_1.3.5                </span></span>
 <span><span class="co">##  [93] desc_1.4.2                 DelayedArray_0.26.7       </span></span>
 <span><span class="co">##  [95] bookdown_0.35              checkmate_2.2.0           </span></span>
@@ -1398,13 +1382,13 @@ the HFGC components.</p>
 <span><span class="co">## [123] munsell_0.5.0              Rcpp_1.0.11               </span></span>
 <span><span class="co">## [125] stringi_1.7.12             zlibbioc_1.46.0           </span></span>
 <span><span class="co">## [127] MASS_7.3-60                bumphunter_1.42.0         </span></span>
-<span><span class="co">## [129] plyr_1.8.8                 minfi_1.46.0              </span></span>
+<span><span class="co">## [129] plyr_1.8.9                 minfi_1.46.0              </span></span>
 <span><span class="co">## [131] parallel_4.3.1             deldir_1.0-9              </span></span>
 <span><span class="co">## [133] multtest_2.56.0            hms_1.1.3                 </span></span>
 <span><span class="co">## [135] circlize_0.4.15            locfit_1.5-9.8            </span></span>
 <span><span class="co">## [137] igraph_1.5.1               rngtools_1.5.2            </span></span>
 <span><span class="co">## [139] biomaRt_2.56.1             futile.options_1.0.1      </span></span>
-<span><span class="co">## [141] XML_3.99-0.14              evaluate_0.21             </span></span>
+<span><span class="co">## [141] XML_3.99-0.14              evaluate_0.22             </span></span>
 <span><span class="co">## [143] latticeExtra_0.6-30        biovizBase_1.48.0         </span></span>
 <span><span class="co">## [145] lambda.r_1.2.4             BiocManager_1.30.22       </span></span>
 <span><span class="co">## [147] tzdb_0.4.0                 foreach_1.5.2             </span></span>
