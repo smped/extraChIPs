@@ -4,6 +4,7 @@
 [![Build Status](https://github.com/smped/extraChIPs/workflows/R-CMD-check-bioc/badge.svg)](https://github.com/smped/extraChIPs/actions)
 [![Codecov test coverage](https://codecov.io/gh/smped/extraChIPs/branch/main/graph/badge.svg)](https://codecov.io/gh/smped/extraChIPs?branch=main)
 [![Repo Status](https://img.shields.io/badge/repo%20status-Active-green.svg)](https://shields.io/)
+[![DOI](https://zenodo.org/badge/399671214.svg)](https://zenodo.org/badge/latestdoi/399671214)
 <!-- badges: end -->
 
 `extraChIPs` is a package primarily designed to enable ChIP-Seq analysis.
