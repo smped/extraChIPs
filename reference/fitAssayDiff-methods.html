@@ -99,7 +99,7 @@
 
 <dt>...</dt>
 <dd><p>Passed to <a href="https://rdrr.io/pkg/edgeR/man/calcNormFactors.html" class="external-link">calcNormFactors</a> and
-<a href="https://rdrr.io/pkg/edgeR/man/glmQLFTest.html" class="external-link">glmQLFit</a> when method = "qlf".
+<a href="https://rdrr.io/pkg/edgeR/man/glmQLFit.html" class="external-link">glmQLFit</a> when method = "qlf".
 If method = "lt", instead passed to <a href="https://rdrr.io/pkg/limma/man/lmFit.html" class="external-link">lmFit</a>, <a href="https://rdrr.io/pkg/limma/man/ebayes.html" class="external-link">treat</a>,
 <a href="https://rdrr.io/pkg/limma/man/ebayes.html" class="external-link">eBayes</a></p></dd>
 
@@ -123,7 +123,7 @@ library size information. If set to NULL, column summaries will be used.</p></dd
 
 <dt>method</dt>
 <dd><p>the analytic method to be used. Can be 'qlf' which will fit
-counts using the <a href="https://rdrr.io/pkg/edgeR/man/glmQLFTest.html" class="external-link">glmQLFit</a> strategy , or 'lt' which fits the
+counts using the <a href="https://rdrr.io/pkg/edgeR/man/glmQLFit.html" class="external-link">glmQLFit</a> strategy , or 'lt' which fits the
 <a href="https://rdrr.io/pkg/limma/man/ebayes.html" class="external-link">limma-trend</a> model on logCPM, or pre-processed logCPM
 values</p></dd>
 
@@ -188,7 +188,7 @@ significance using a range-based H0 where arbitrary cutoff values are used.</p>
     <div id="details">
     <h2>Details</h2>
     <p>Starting with a SummarizedExperiment object this function fits either a
-<a href="https://rdrr.io/pkg/edgeR/man/glmQLFTest.html" class="external-link">glmQLFit</a> model to count data, or the
+<a href="https://rdrr.io/pkg/edgeR/man/glmQLFit.html" class="external-link">glmQLFit</a> model to count data, or the
 <a href="https://rdrr.io/pkg/limma/man/ebayes.html" class="external-link">limma-trend</a> model to logCPM data.</p>
 <p>If fitting Generalised Linear Models via glmQLFit, options for normalisation
 are "none", which normalises to library size. Existing library sizes are
