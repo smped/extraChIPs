@@ -37,7 +37,7 @@
 #' @param w vector of weights to applied when calculating harmonic mean p-values
 #' @param logfc,pval,cpm Column names for the values holding window specific
 #' estimates of change in binding (logfc), overall signal intensity (cpm) and
-#' the significance from statistical testing (pval)
+#' the significance from statistical testing (pval).
 #' @param inc_cols (Optional) Character vector of any additional columns in
 #' `df` to return. Values will correspond to the range in the `keyval_range`
 #' column
@@ -52,6 +52,7 @@
 #' @param keyval Return the key-value range as the window associated with the
 #' minimum p-value, or by merging the ranges from all windows with raw p-values
 #' below the merged harmonic-mean p-value
+#' @param hm_pre Prefix to add to the beginning of all HMP-derived columns
 #' @param ... Not used
 #'
 #' @return
@@ -77,6 +78,8 @@ setGeneric(
 )
 #' @importFrom S4Vectors DataFrame mcols mcols<- subjectHits
 #' @importFrom dplyr group_by summarise arrange distinct left_join bind_rows
+#' @importFrom dplyr across
+#' @importFrom tidyselect all_of
 #' @importFrom rlang := !! sym
 #' @import GenomicRanges
 #' @rdname mergeByHMP-methods
@@ -88,7 +91,7 @@ setMethod(
         x, df = NULL, w = NULL,
         logfc = "logFC", pval = "P", cpm = "logCPM", inc_cols = NULL,
         p_adj_method = "fdr", merge_within = 1L, ignore_strand = TRUE,
-        min_win = 1, keyval = c("min", "merged"), ...
+        min_win = 1, keyval = c("min", "merged"), hm_pre = "hm", ...
     ){
 
         ## Checks & defining the key columns
@@ -97,7 +100,7 @@ setMethod(
         df <- as.data.frame(df)
         df_cols <- colnames(df)
         logfc <- match.arg(logfc, df_cols)
-        pval <- match.arg(pval, df_cols)
+        pval <- match.arg(pval, df_cols, several.ok = TRUE)
         cpm <- match.arg(cpm, df_cols)
         p_adj_method <- match.arg(p_adj_method, c(p.adjust.methods, "fwer"))
         keyval <- match.arg(keyval)
@@ -131,34 +134,44 @@ setMethod(
         ## Summarise the key values
         df[["subjectHits"]] <- subjectHits(ol)
         grp_df <- group_by(df, subjectHits)
+        main_p <- paste0(hm_pre, pval[[1]])
         ret_df <- summarise(
             grp_df,
-            hmp = .ec_HMP(!!sym(pval), !!sym("weights")),
+            across(
+                all_of(pval), \(x) .ec_HMP(x, !!sym("weights")),
+                .names = "{hm_pre}{.col}"
+            ),
             n_windows = dplyr::n(),
-            n_up = sum(!!sym(logfc) > 0 & !!sym(pval) < !!sym("hmp")),
-            n_down = sum(!!sym(logfc) < 0 & !!sym(pval) < !!sym("hmp")),
-            "{cpm}" := sum(!!sym(cpm) / !!sym(pval)) / sum(1 / !!sym(pval)),
-            "{logfc}" :=  sum(!!sym(logfc) / !!sym(pval)) / sum(1 / !!sym(pval))
+            n_up = sum(!!sym(logfc) > 0 & !!sym(pval[[1]]) < !!sym(main_p)),
+            n_down = sum(!!sym(logfc) < 0 & !!sym(pval[[1]]) < !!sym(main_p)),
+            "{cpm}" := sum(!!sym(cpm) / !!sym(pval[[1]])) /
+                sum(1 / !!sym(pval[[1]])),
+            "{logfc}" :=  sum(!!sym(logfc) / !!sym(pval[[1]])) /
+                sum(1 / !!sym(pval[[1]]))
         )
         ## Replace the 'pval' column in the return columns with 'hmp'
-        ret_cols[ret_cols == pval] <- "hmp"
+        new_cols <- paste0(hm_pre, ret_cols[ret_cols %in% pval])
+        ret_cols[ret_cols %in% pval] <- new_cols
 
         ## Remaining columns, including the keyval range are based on the
         ## minimal p-value. Form a separate df with these columns, then merge
         inc_df <- as.data.frame(df[c(pval, inc_cols)])
         inc_df[["keyval_range"]] <- as.character(x)
         inc_df[["subjectHits"]] <- subjectHits(ol)
-        inc_df <- arrange(inc_df, !!sym("subjectHits"), !!sym(pval))
+        inc_df <- arrange(inc_df, !!sym("subjectHits"), !!sym(pval[[1]]))
         inc_df <- distinct(inc_df, !!sym("subjectHits"), .keep_all = TRUE)
         inc_df <- inc_df[!names(inc_df) %in% pval]
 
         ## If keyval = "merged" (as opposed to "min")
         if (keyval == "merged") { ## Reform the keyvalue range by merging
             df$range <- as.character(x)
-            df <- left_join(df, ret_df[c("subjectHits", "hmp")], by = "subjectHits")
+            df <- left_join(
+                df, ret_df[c("subjectHits", new_cols)], by = "subjectHits"
+            )
             df <- dplyr::filter(
                 df,
-                !!sym(pval) <= !!sym("hmp") | !!sym(pval) == min(!!sym(pval)),
+                (!!sym(pval[[1]]) <= !!sym(main_p) |
+                    !!sym(pval[[1]]) == min(!!sym(pval[[1]]))),
                 .by = !!sym("subjectHits")
             )
             kv_gr <- colToRanges(df, "range")
@@ -178,14 +191,15 @@ setMethod(
             ret_df, inc_df, by = "subjectHits", relationship = "one-to-one"
         )
         ret_df <- ret_df[c(n_cols, ret_cols)]
-        adj_col <- paste0("hmp_", p_adj_method)
+        adj_col <- p_adj_method
         if (p_adj_method != "fwer") {
-            ret_df[[adj_col]] <- p.adjust(ret_df$hmp, p_adj_method)
+            ret_df[[adj_col]] <- p.adjust(ret_df[[main_p]], p_adj_method)
         } else {
             ## Apply the FWER adjusted version if requested
             L <- length(x)
             adj_df <- summarise(
-                grp_df, adjp = .ec_HMP_adj(!!sym(pval), !!sym("weights"), L)
+                grp_df,
+                adjp = .ec_HMP_adj(!!sym(pval[[1]]), !!sym("weights"), L)
             )
             ## This could be revisited for better integration with filtering
             ret_df[[adj_col]] <- adj_df[["adjp"]]
@@ -200,7 +214,7 @@ setMethod(
         ranges_out <- ranges_out[ranges_out$n_windows >= min_win]
         ## Re-adjust p-values if using conventional methods
         if (p_adj_method != "fwer") {
-            vals <- p.adjust(ranges_out$hmp, p_adj_method)
+            vals <- p.adjust(mcols(ranges_out)[[main_p]], p_adj_method)
             mcols(ranges_out)[[adj_col]] <- vals
         }
 
@@ -216,7 +230,7 @@ setMethod(
         x, df = NULL, w = NULL,
         logfc = "logFC", pval = "P", cpm = "logCPM", inc_cols = NULL,
         p_adj_method = "fdr", merge_within = 1L, ignore_strand = FALSE,
-        ...
+        hm_pre = "hm", ...
     ) {
 
         gr <- rowRanges(x)

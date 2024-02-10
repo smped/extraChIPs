@@ -21,6 +21,7 @@ mergeByHMP(x, ...)
   ignore_strand = TRUE,
   min_win = 1,
   keyval = c("min", "merged"),
+  hm_pre = "hm",
   ...
 )
 
@@ -35,6 +36,7 @@ mergeByHMP(x, ...)
   p_adj_method = "fdr",
   merge_within = 1L,
   ignore_strand = FALSE,
+  hm_pre = "hm",
   ...
 )
 }
@@ -51,7 +53,7 @@ using a sliding window strategy. If not provided, the columns in the
 
 \item{logfc, pval, cpm}{Column names for the values holding window specific
 estimates of change in binding (logfc), overall signal intensity (cpm) and
-the significance from statistical testing (pval)}
+the significance from statistical testing (pval).}
 
 \item{inc_cols}{(Optional) Character vector of any additional columns in
 \code{df} to return. Values will correspond to the range in the \code{keyval_range}
@@ -72,6 +74,8 @@ vignette("harmonicmeanp") for more details}
 \item{keyval}{Return the key-value range as the window associated with the
 minimum p-value, or by merging the ranges from all windows with raw p-values
 below the merged harmonic-mean p-value}
+
+\item{hm_pre}{Prefix to add to the beginning of all HMP-derived columns}
 }
 \value{
 A GenomicRanges object with merged ranges from the original object along with

@@ -13,7 +13,7 @@ test_that("mergedByHMP behaves correctly for GRanges",{
   expect_equal(length(mergeBySig(x, pval = "p")), 2)
   expect_s4_class(mergeBySig(x, df, pval = "p")$keyval_range, "GRanges")
   expect_equal(as.character(new_gr$keyval_range), as.character(x)[-1])
-  expect_true(all(c("hmp", "hmp_fdr") %in% colnames(mcols(new_gr))))
+  expect_true(all(c("hmp", "fdr") %in% colnames(mcols(new_gr))))
   expect_equal(
     new_gr$hmp[[1]],
     as.numeric(harmonicmeanp::p.hmp(x$p[1:2], L = 2, multilevel = FALSE))
