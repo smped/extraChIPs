@@ -83,7 +83,7 @@
 #' ## more targetted approach. Similarly for the third range
 #' mapByFeature(gr, genes, prom, gr2gene = 25)
 #'
-#' @importFrom S4Vectors mcols subjectHits 'mcols<-'
+#' @importFrom S4Vectors mcols subjectHits mcols<-
 #' @importClassesFrom IRanges CompressedList
 #' @importFrom IRanges overlapsAny
 #' @importFrom dplyr bind_rows distinct across left_join

@@ -38,7 +38,7 @@
 #' @importFrom tidyr unnest
 #' @importFrom tidyselect all_of
 #' @importFrom dplyr group_by mutate ungroup
-#' @importFrom rlang '!!' sym .data ensym
+#' @importFrom rlang !! sym .data ensym
 #' @importFrom stats median
 #' @import ggplot2
 #'

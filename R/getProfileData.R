@@ -50,7 +50,6 @@
 #'
 #' @import GenomicRanges
 #' @importFrom rtracklayer import.bw BigWigFile BigWigFileList
-#' @importFrom EnrichedHeatmap normalizeToMatrix
 #' @importFrom tibble as_tibble
 #' @importFrom tidyr pivot_longer nest
 #' @importFrom tidyselect all_of
@@ -68,6 +67,9 @@ setMethod(
         x, gr, upstream = 2500, downstream = upstream, bins = 100,
         mean_mode = "w0", log = TRUE, offset = 1, n_max = Inf, ...
     ) {
+
+        if (!requireNamespace('EnrichedHeatmap', quietly = TRUE))
+            stop("Please install 'EnrichedHeatmap' to use this function.")
 
         stopifnot(upstream > 0 & downstream > 0 & bins > 0)
         ## Manage the seqinfo objects to avoid warnings & errors
@@ -95,7 +97,7 @@ setMethod(
         stopifnot(is.logical(log) & is.numeric(offset))
         if (log) vals$score <- log2(vals$score + offset)
 
-        mat <- normalizeToMatrix(
+        mat <- EnrichedHeatmap::normalizeToMatrix(
             signal = vals,
             target = resize(gr_resize, width = 1, fix = "center"),
             extend = (upstream + downstream) / 2, w = bin_width,

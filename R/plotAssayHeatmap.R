@@ -67,7 +67,7 @@ setGeneric(
 #' @importFrom tidyselect everything all_of
 #' @importFrom dplyr group_by summarise
 #' @importFrom methods as
-#' @importFrom rlang sym syms .data '!!!'
+#' @importFrom rlang sym syms .data !!!
 #' @importFrom forcats fct_inorder
 #' @import ggside
 #' @import ggplot2

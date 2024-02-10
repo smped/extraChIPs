@@ -206,7 +206,7 @@ setMethod(
 #' @importFrom dplyr group_by summarise mutate arrange
 #' @importFrom glue glue
 #' @importFrom scales comma percent
-#' @importFrom rlang '!!' sym
+#' @importFrom rlang !! sym
 #' @importFrom tidyr complete
 #' @import ggplot2
 .plotSinglePie <- function(
@@ -273,7 +273,7 @@ setMethod(
 #' @importFrom tidyr pivot_wider complete
 #' @importFrom tidyselect all_of
 #' @importFrom scales comma
-#' @importFrom rlang '!!' sym .data
+#' @importFrom rlang !! sym .data
 #' @importFrom ggforce stat_pie
 #' @import ggplot2
 .plotDoublePie <- function(
@@ -371,7 +371,7 @@ setMethod(
 #' @importFrom tidyr pivot_wider complete
 #' @importFrom tidyselect all_of
 #' @importFrom scales comma
-#' @importFrom rlang '!!' sym
+#' @importFrom rlang !! sym
 #' @importFrom ggforce stat_pie
 #' @importFrom glue glue
 #' @import ggplot2

@@ -67,10 +67,10 @@ setGeneric(
     function(x, ...){standardGeneric("mergeByCol")}
 )
 #' @importClassesFrom S4Vectors HitsList
-#' @importFrom GenomeInfoDb seqinfo 'seqinfo<-'
-#' @importFrom S4Vectors subjectHits queryHits 'mcols<-' mcols
+#' @importFrom GenomeInfoDb seqinfo seqinfo<-
+#' @importFrom S4Vectors subjectHits queryHits mcols<- mcols
 #' @importFrom dplyr group_by summarise n across
-#' @importFrom rlang sym '!!'
+#' @importFrom rlang sym !!
 #' @importFrom stats p.adjust p.adjust.methods
 #' @importFrom tidyselect all_of
 #' @import GenomicRanges

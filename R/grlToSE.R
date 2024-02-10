@@ -89,9 +89,9 @@ setMethod(
 )
 
 #' @import GenomicRanges
-#' @importFrom S4Vectors SimpleList queryHits subjectHits 'mcols<-' mcols
+#' @importFrom S4Vectors SimpleList queryHits subjectHits mcols<- mcols
 #' @importFrom dplyr arrange distinct left_join select across
-#' @importFrom rlang '!!!' syms
+#' @importFrom rlang !!! syms
 #' @importFrom tidyr pivot_wider
 #' @importFrom tidyselect all_of
 #' @keywords internal
@@ -156,8 +156,8 @@ setMethod(
 
 }
 
-#' @importFrom rlang '!!' sym
-#' @importFrom S4Vectors mcols 'mcols<-' DataFrame
+#' @importFrom rlang !! sym
+#' @importFrom S4Vectors mcols mcols<- DataFrame
 #' @importFrom dplyr group_by summarise across mutate_all
 #' @importFrom tidyselect all_of everything
 #' @importFrom vctrs vec_proxy

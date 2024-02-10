@@ -59,7 +59,7 @@
 #' @import GenomicRanges
 #' @importFrom S4Vectors endoapply mcols
 #' @importFrom dplyr bind_cols
-#' @importFrom rlang list2 ':=' '!!' sym
+#' @importFrom rlang list2 := !! sym
 #' @importFrom ComplexUpset upset
 #' @import ggplot2
 #' @rdname plotOverlaps-methods
@@ -228,7 +228,7 @@ setMethod(
 
 #' @importFrom ComplexUpset upset_set_size
 #' @importFrom scales comma
-#' @importFrom rlang sym '!!'
+#' @importFrom rlang sym !!
 .makeSetSizes <- function(hj, sz, exp) {
   upset_set_size() +
     geom_text(

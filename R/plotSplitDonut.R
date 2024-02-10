@@ -121,7 +121,7 @@
 #' )
 #'
 #' @importClassesFrom GenomicRanges GRanges
-#' @importFrom rlang '!!' sym
+#' @importFrom rlang !! sym
 #' @rdname plotSplitDonut-methods
 #' @export
 setMethod(
@@ -152,7 +152,7 @@ setMethod(
 #'
 #' @importFrom dplyr group_by summarise mutate ungroup bind_rows case_when
 #' @importFrom patchwork plot_layout area plot_spacer
-#' @importFrom rlang '!!' '!!!' sym syms .data ensym
+#' @importFrom rlang !! !!! sym syms .data ensym
 #' @importFrom scales comma percent
 #' @importFrom ggforce geom_arc_bar
 #' @importFrom stringr str_replace_all
@@ -434,7 +434,7 @@ setMethod(
 
 )
 #' @keywords internal
-#' @importFrom rlang sym '!!'
+#' @importFrom rlang sym !!
 .addLabel <- function(
         plt, df, label_type, label_colour, label_size, label_alpha, min_p, max_p,
         pattern, nudge_r, r, .x, .ring

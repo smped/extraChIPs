@@ -28,7 +28,7 @@
 #'
 #' @importFrom dplyr distinct
 #' @importFrom GenomeInfoDb seqinfo
-#' @importFrom rlang sym '!!'
+#' @importFrom rlang sym !!
 #' @importFrom methods is
 #'
 #' @export

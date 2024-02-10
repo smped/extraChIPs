@@ -59,7 +59,7 @@ setGeneric(
 #' @importFrom stats prcomp
 #' @importFrom ggrepel geom_text_repel
 #' @importFrom matrixStats rowSds
-#' @importFrom rlang sym ensym enexpr '!!'
+#' @importFrom rlang sym ensym enexpr !!
 #' @import ggplot2
 #'
 #' @rdname plotAssayPCA-methods

@@ -59,7 +59,7 @@ setGeneric(
     "mergeBySig",
     function(x, ...){standardGeneric("mergeBySig")}
 )
-#' @importFrom S4Vectors DataFrame mcols 'mcols<-'
+#' @importFrom S4Vectors DataFrame mcols mcols<-
 #' @import GenomicRanges
 #' @rdname mergeBySig-methods
 #' @export

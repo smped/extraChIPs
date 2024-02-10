@@ -81,7 +81,7 @@
 #' @importFrom tibble tibble
 #' @importFrom S4Vectors mcols
 #' @importFrom dplyr bind_rows left_join summarise
-#' @importFrom rlang ':=' '!!' sym enquo
+#' @importFrom rlang := !! sym enquo
 #' @importFrom glue glue
 #' @importFrom scales comma
 #' @export

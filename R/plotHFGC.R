@@ -292,7 +292,6 @@
 #' @importFrom InteractionSet anchors
 #' @importFrom GenomicInteractions calculateDistances
 #' @importFrom grDevices hcl.colors
-#' @importFrom Gviz HighlightTrack GenomeAxisTrack plotTracks
 #' @import GenomicRanges
 #'
 #' @export
@@ -312,6 +311,9 @@ plotHFGC <- function(
         background.title = "lightgray",
         title.width = 1.5
 ) {
+
+    if (!requireNamespace('Gviz', quietly = TRUE))
+        stop("Please install 'Gviz' to use this function.")
 
     ## Argument checks
     ## Add checks for standard chromosomes!!!
@@ -396,7 +398,7 @@ plotHFGC <- function(
     hl_track <- c(hic_track, feature_track, gene_tracks, cov_tracks)
     hl_track <- hl_track[!vapply(hl_track, is.null, logical(1))]
     if (!is.null(highlight))
-        hl_track <- HighlightTrack(
+        hl_track <- Gviz::HighlightTrack(
             trackList = hl_track, range = gr, col = highlight,
             fill = "#FFFFFF00", inBackground = FALSE
         )
@@ -405,11 +407,11 @@ plotHFGC <- function(
     if (!is.null(ideo_track)) plot_list <- list(ideo_track)
     if (axistrack)
         plot_list <- c(
-            plot_list, GenomeAxisTrack(plot_range, fontsize = fontsize)
+            plot_list, Gviz::GenomeAxisTrack(plot_range, fontsize = fontsize)
         )
 
     plot_list <- c(plot_list, hl_track)
-    plotTracks(
+    Gviz::plotTracks(
         plot_list,
         from = start(plot_range), end(plot_range), title.width = title.width
     )
@@ -417,7 +419,6 @@ plotHFGC <- function(
 }
 
 
-#' @importFrom Gviz IdeogramTrack
 #' @importFrom GenomeInfoDb genome seqnames
 #' @importFrom rtracklayer ucscGenomes
 .makeIdeoTrack <- function(.gr, .bands, .fontsize) {
@@ -425,7 +426,7 @@ plotHFGC <- function(
     ## Checks have been done in .checkHFGCArgs
     gen <- as.character(unique(genome(.gr)))
     chr <- as.character(unique(seqnames(.gr)))
-    IdeogramTrack(
+    Gviz::IdeogramTrack(
         chromosome = chr, genome = gen, name = chr, bands = .bands,
         fontsize = .fontsize
     )
@@ -519,7 +520,6 @@ plotHFGC <- function(
 
 #' @import GenomicRanges
 #' @importFrom IRanges subsetByOverlaps
-#' @importFrom Gviz AnnotationTrack
 #' @importFrom stats setNames
 #' @importFrom S4Vectors endoapply
 .makeFeatureTrack <- function(
@@ -541,7 +541,7 @@ plotHFGC <- function(
     .features$feature <- names(.features)
     .features <- subsetByOverlaps(.features, .gr)
     if (length(.features) == 0) return(NULL)
-    AnnotationTrack(
+    Gviz::AnnotationTrack(
         ## Change the name later
         range = .features, name = .name, stacking = .stacking,
         col = "transparent", fill = .fill[.features$feature],
@@ -556,7 +556,6 @@ plotHFGC <- function(
 }
 
 #' @import GenomicRanges
-#' @importFrom Gviz GeneRegionTrack
 #' @importFrom stringr str_to_title str_pad str_count
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom methods is
@@ -586,7 +585,7 @@ plotHFGC <- function(
                     }
                 }
 
-                trackList <- GeneRegionTrack(
+                trackList <- Gviz::GeneRegionTrack(
                     .genes, name = "Genes", transcriptAnnotation = "symbol",
                     collapseTranscripts = .collapse, size = .tracksize,
                     fontsize = .fontsize, col = "transparent", fill = .col[[1]],
@@ -634,7 +633,7 @@ plotHFGC <- function(
             }
             ## This just helps the weird alignment algorithm
             if (.rot == 0) nm <- str_pad(x, min(str_count(x) + 4, 12))
-            GeneRegionTrack(
+            Gviz::GeneRegionTrack(
                 gt, name = str_to_title(nm),
                 transcriptAnnotation = "symbol",
                 collapseTranscripts = cl,
@@ -649,7 +648,6 @@ plotHFGC <- function(
 
 }
 
-#' @importFrom Gviz DataTrack
 #' @importFrom rtracklayer import.bw
 #' @importFrom S4Vectors mcols
 #' @importFrom stringr str_count str_pad
@@ -701,7 +699,7 @@ plotHFGC <- function(
             nm <- x
             ## This just helps the weird alignment algorithm
             if (.rot == 0) nm <- str_pad(x, min(str_count(x) + 4, 12))
-            DataTrack(
+            Gviz::DataTrack(
                 range = unlist(GRangesList(cov)),
                 name = nm, groups = grp, type = .type,
                 fontsize = .fontsize, col = .linecol[[x]], gradient = .gradient,

@@ -106,7 +106,7 @@
 #'   guides(fill = "none")
 #'
 #' @importFrom S4Vectors mcols
-#' @importFrom rlang '!!' sym ensym
+#' @importFrom rlang !! sym ensym
 #' @export
 plotPairwise <- function(
         x, var, colour, label, index = c(1, 2),
@@ -207,7 +207,7 @@ plotPairwise <- function(
 #' @importFrom S4Vectors mcols
 #' @importFrom stringr str_trunc
 #' @importFrom ggrepel geom_text_repel geom_label_repel
-#' @importFrom rlang '!!'
+#' @importFrom rlang !!
 #' @keywords internal
 .addLabels <- function(
         x, p, ol, label, colour, x_lab, y_lab, min_d, .alpha, .size, .sep, .geom,
@@ -264,7 +264,7 @@ plotPairwise <- function(
 
 #' @import ggside
 #' @importFrom S4Vectors mcols
-#' @importFrom rlang '!!' sym
+#' @importFrom rlang !! sym
 #' @importFrom forcats fct_relabel fct_na_value_to_level
 #' @importFrom stringr str_replace_na
 #' @keywords internal
@@ -317,7 +317,7 @@ plotPairwise <- function(
 
 #' @import ggside
 #' @importFrom S4Vectors mcols
-#' @importFrom rlang '!!' sym
+#' @importFrom rlang !! sym
 #' @importFrom forcats fct_relabel fct_na_value_to_level
 #' @importFrom stringr str_replace_na
 #' @keywords internal
@@ -371,7 +371,7 @@ plotPairwise <- function(
 
 #' @importFrom S4Vectors mcols
 #' @importFrom tidyr unite
-#' @importFrom rlang '!!' '!!!' syms
+#' @importFrom rlang !! !!! syms
 #' @importFrom methods is
 #' @importFrom forcats fct_relabel fct_cross fct_na_value_to_level
 #' @importFrom stringr str_replace_na

@@ -31,7 +31,7 @@
 #' partitionRanges(x, y)
 #'
 #' @importFrom S4Vectors mcols queryHits subjectHits DataFrame splitAsList
-#' @importFrom S4Vectors endoapply 'mcols<-'
+#' @importFrom S4Vectors endoapply mcols<-
 #' @import GenomicRanges
 #'
 #' @export

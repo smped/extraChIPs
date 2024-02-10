@@ -71,7 +71,7 @@
 #'
 #'
 #' @import GenomicRanges
-#' @importFrom S4Vectors mcols 'mcols<-'
+#' @importFrom S4Vectors mcols mcols<-
 #' @export
 defineRegions <- function(
     genes, transcripts, exons, promoter = c(2500, 500), upstream = 5000,

@@ -146,7 +146,7 @@ setMethod(
 #' @import methods
 #' @importFrom S4Vectors mcols
 #' @importFrom tidyr unnest nest
-#' @importFrom rlang '!!' sym ensym eval_tidy enquo quo_is_null
+#' @importFrom rlang !! sym ensym eval_tidy enquo quo_is_null
 #' @importFrom dplyr arrange desc bind_cols
 #' @importFrom forcats fct_rev fct_inorder
 #' @rdname plotProfileHeatmap-methods
@@ -239,7 +239,7 @@ setMethod(
 #'
 #' @import ggside
 #' @importFrom dplyr group_by summarise
-#' @importFrom rlang '!!' sym '!!!' syms quos
+#' @importFrom rlang !! sym !!! syms quos
 #' @importFrom stats as.formula
 #' @import ggplot2
 #' @keywords internal

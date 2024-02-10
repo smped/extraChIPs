@@ -49,7 +49,7 @@
 #' mapGrlCols(grl, collapse = "genes", include = TRUE)
 #'
 #'
-#' @importFrom S4Vectors mcols 'mcols<-'
+#' @importFrom S4Vectors mcols mcols<-
 #' @importFrom dplyr pick distinct
 #' @importFrom tidyselect all_of
 #' @export
@@ -93,7 +93,7 @@ mapGrlCols <- function(
 
 #' @importFrom dplyr bind_rows arrange distinct
 #' @importFrom tidyr pivot_wider complete
-#' @importFrom rlang sym syms '!!' '!!!'
+#' @importFrom rlang sym syms !! !!!
 #' @keywords internal
 .mapHits <- function(x, consensus) {
     nm <- names(x)
@@ -114,7 +114,7 @@ mapGrlCols <- function(
 
 #' @importFrom tidyr pivot_longer unnest
 #' @importFrom dplyr distinct summarise left_join arrange bind_cols
-#' @importFrom rlang ':=' '!!' sym
+#' @importFrom rlang := !! sym
 #' @keywords internal
 .addCols <- function(x, map, var, collapse, collapse_sep, name_sep = "_") {
     nm <- names(x)
