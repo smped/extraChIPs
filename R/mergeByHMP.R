@@ -249,7 +249,7 @@ setMethod(
         gr <- rowRanges(x)
         mergeByHMP(
             gr, df, w, logfc, pval, cpm, inc_cols, p_adj_method, merge_within,
-            ignore_strand, ...
+            ignore_strand, hm_pre = hm_pre, ...
         )
 
     }
