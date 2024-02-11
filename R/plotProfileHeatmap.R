@@ -55,6 +55,7 @@
 #' are at the top of the plot
 #' @param maxDist Maximum distance from the centre to find the strongest signal
 #' when arranging the ranges
+#' @param labelFunX Function for formatting x-axis labels
 #' @param ... Passed to \link[ggplot2]{facet_grid} internally. Can be utilised
 #' for switching panel strips or passing a labeller function
 #'
@@ -103,8 +104,8 @@ setMethod(
         profileCol = "profile_data", xValue = "bp", fillValue = "score",
         facetX = NULL, facetY = NULL, colour = facetY, linetype = NULL,
         summariseBy = c("mean", "median", "min", "max", "none"),
-        xLab = xValue, yLab = NULL, fillLab = fillValue, relHeight = 0.3,
-        sortFilter = NULL, maxDist = 100, ...
+        xLab = xValue, yLab = NULL, fillLab = fillValue, labelFunX = waiver(),
+        relHeight = 0.3, sortFilter = NULL, maxDist = 100, ...
     ) {
 
         ## All elements of the list should usually have identical ranges,
@@ -138,8 +139,9 @@ setMethod(
             object = gr, profileCol = profileCol, xValue = xValue,
             fillValue = fillValue, facetX = facetX, facetY = facetY,
             colour = colour, linetype = linetype, summariseBy = summariseBy,
-            xLab = xLab, yLab = yLab, fillLab = fillLab, relHeight = relHeight,
-            sortFilter = name %in% sortFilter, maxDist = maxDist, ...
+            xLab = xLab, yLab = yLab, fillLab = fillLab, labelFunX = labelFunX,
+            relHeight = relHeight, sortFilter = name %in% sortFilter,
+            maxDist = maxDist, ...
         )
     }
 )
@@ -159,9 +161,9 @@ setMethod(
         profileCol = "profile_data", xValue = "bp", fillValue = "score",
         facetX = NULL, facetY = NULL, colour = facetY, linetype = NULL,
         summariseBy = c("mean", "median", "min", "max", "none"),
-        xLab = xValue, yLab = NULL, fillLab = fillValue, relHeight = 0.3,
-        summaryLabelSide = "left", respectLevels = FALSE, sortFilter = NULL,
-        maxDist = 100, ...
+        xLab = xValue, yLab = NULL, fillLab = fillValue, labelFunX = waiver(),
+        relHeight = 0.3, summaryLabelSide = "left", respectLevels = FALSE,
+        sortFilter = NULL, maxDist = 100, ...
     ) {
 
         ## Check the profile data.frames for identical dims & required cols
@@ -216,7 +218,8 @@ setMethod(
             colour = colour, linetype = linetype, facet_x = facetX,
             facet_y = facetY, summary_fun = summariseBy,
             rel_height = relHeight, x_lab = xLab, y_lab = yLab,
-            fill_lab = fillLab, label_side = summaryLabelSide, ...
+            fill_lab = fillLab, lab_fun_x = labelFunX,
+            label_side = summaryLabelSide, ...
         )
     }
 )
@@ -248,7 +251,7 @@ setMethod(
         facet_x = NULL, facet_y = NULL,
         summary_fun = c("mean", "median", "min", "max", "none"),
         rel_height = 0.3, x_lab = NULL, y_lab = NULL, fill_lab = NULL,
-        label_side = c("left", "right", "none"), ...
+        lab_fun_x = waiver(), label_side = c("left", "right", "none"), ...
 ) {
 
     ## data should be a simple data.frame or tibble used to make the final plot
@@ -269,7 +272,7 @@ setMethod(
     ## The basic plot
     x_axis <- scale_x_discrete(expand = rep(0, 4))
     if (is.numeric(data[[x]]))
-        x_axis <-  scale_x_continuous(expand = rep(0, 4))
+        x_axis <-  scale_x_continuous(expand = rep(0, 4), labels = lab_fun_x)
     p <- ggplot(
         data,
         aes(

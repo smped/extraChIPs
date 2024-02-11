@@ -74,8 +74,8 @@
 #' @param weighted logical(1) Passed to  \link[edgeR]{calcNormFactors}
 #' @param ... Passed to \link[edgeR]{calcNormFactors} and
 #' \link[edgeR]{glmQLFit} when method = "qlf".
-#' If method = "lt", instead passed to \link[limma]{lmFit}, \link[limma]{treat},
-#' \link[limma]{eBayes}
+#' If method = "lt", instead passed to \link[limma]{lmFit}
+#' @param robust Passed to \link[limma]{treat} and \link[limma]{eBayes}
 #'
 #' @examples
 #' nrows <- 200; ncols <- 6
@@ -113,7 +113,7 @@ setMethod(
         norm = c("none", "TMM", "RLE", "TMMwsp", "upperquartile"),
         groups = NULL, fc = 1, lfc = log2(fc), asRanges = FALSE,
         offset = NULL, null = c("interval", "worst.case"),
-        weighted = FALSE, ...
+        weighted = FALSE, ..., robust = FALSE
     ) {
         method <- match.arg(method)
         norm <- match.arg(norm)
@@ -133,7 +133,9 @@ setMethod(
                 x, assay, design, lib.size, norm, groups, offset, weighted, ...
             )
             fit0 <- glmQLFTest(fit, coef = coef) # fits mu0
-            res0 <- topTags(fit0, n = n, adjust.method = "none", sort.by = "none")$table
+            res0 <- topTags(
+                fit0, n = n, adjust.method = "none", sort.by = "none"
+            )$table
             res <- res0
             p_mu0 <- res0$PValue
             if (lfc != 0) {
@@ -147,7 +149,7 @@ setMethod(
         }
         if (method == "lt") {
             fit <- .se2LT(x, assay, design, ...)
-            fit0 <- eBayes(fit, trend = TRUE, ...)
+            fit0 <- eBayes(fit, trend = TRUE, robust = robust)
             res0 <- topTable(
                 fit0, coef = coef, number = n, sort.by = "none",
                 adjust.method = "none"
@@ -155,7 +157,7 @@ setMethod(
             res <- res0
             p_mu0 <- res0$P.Value
             if (lfc != 0) {
-                fit <- treat(fit, lfc = lfc, trend = TRUE, ...)
+                fit <- treat(fit, lfc = lfc, trend = TRUE, robust = robust)
                 res <- topTreat(
                     fit, coef = coef, number = n, sort.by = "none",
                     adjust.method = "none"

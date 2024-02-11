@@ -81,6 +81,7 @@ setGeneric(
 #' @importFrom dplyr across
 #' @importFrom tidyselect all_of
 #' @importFrom rlang := !! sym
+#' @importFrom stats weighted.mean
 #' @import GenomicRanges
 #' @rdname mergeByHMP-methods
 #' @export
@@ -138,15 +139,16 @@ setMethod(
         ref_hmp <- paste0(hm_pre, ref_p)
         ret_df <- summarise(
             grp_df,
+            n_windows = dplyr::n(),
+            across(
+                all_of(c(cpm, logfc)), \(x) weighted.mean(x, 1 / !!sym(ref_p))
+            ),
             across(
                 all_of(pcol), \(x) .ec_HMP(x, !!sym("weights")),
                 .names = "{hm_pre}{.col}"
             ),
-            n_windows = dplyr::n(),
             n_up = sum(!!sym(logfc) > 0 & !!sym(ref_p) < !!sym(ref_hmp)),
-            n_down = sum(!!sym(logfc) < 0 & !!sym(ref_p) < !!sym(ref_hmp)),
-            "{cpm}" := sum(!!sym(cpm) / !!sym(ref_p)) / sum(1 / !!sym(ref_p)),
-            "{logfc}" :=  sum(!!sym(logfc) / !!sym(ref_p)) / sum(1 / !!sym(ref_p))
+            n_down = sum(!!sym(logfc) < 0 & !!sym(ref_p) < !!sym(ref_hmp))
         )
         ## Replace the 'pval' column in the return columns with 'hmp'
         new_cols <- paste0(hm_pre, ret_cols[ret_cols %in% pcol])

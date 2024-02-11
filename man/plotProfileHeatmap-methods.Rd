@@ -21,6 +21,7 @@ plotProfileHeatmap(object, ...)
   xLab = xValue,
   yLab = NULL,
   fillLab = fillValue,
+  labelFunX = waiver(),
   relHeight = 0.3,
   sortFilter = NULL,
   maxDist = 100,
@@ -40,6 +41,7 @@ plotProfileHeatmap(object, ...)
   xLab = xValue,
   yLab = NULL,
   fillLab = fillValue,
+  labelFunX = waiver(),
   relHeight = 0.3,
   summaryLabelSide = "left",
   respectLevels = FALSE,
@@ -72,6 +74,8 @@ contain a line-plot representing this summary value for each x-axis bin}
 
 \item{xLab, yLab, fillLab}{Labels for plotting aesthetics. Can be overwritten
 using labs() on any returned object}
+
+\item{labelFunX}{Function for formatting x-axis labels}
 
 \item{relHeight}{The relative height of the top summary panel.
 Represents the fraction of the plotting area taken up by the summary panel.}

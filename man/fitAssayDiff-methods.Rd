@@ -22,7 +22,8 @@ fitAssayDiff(x, ...)
   offset = NULL,
   null = c("interval", "worst.case"),
   weighted = FALSE,
-  ...
+  ...,
+  robust = FALSE
 )
 }
 \arguments{
@@ -30,8 +31,7 @@ fitAssayDiff(x, ...)
 
 \item{...}{Passed to \link[edgeR]{calcNormFactors} and
 \link[edgeR]{glmQLFit} when method = "qlf".
-If method = "lt", instead passed to \link[limma]{lmFit}, \link[limma]{treat},
-\link[limma]{eBayes}}
+If method = "lt", instead passed to \link[limma]{lmFit}}
 
 \item{assay}{The assay to use for analysis}
 
@@ -70,6 +70,8 @@ is created during model fitting}
 \item{null}{Passed to \link[edgeR]{glmTreat}}
 
 \item{weighted}{logical(1) Passed to  \link[edgeR]{calcNormFactors}}
+
+\item{robust}{Passed to \link[limma]{treat} and \link[limma]{eBayes}}
 }
 \value{
 A SummarizedExperiment object with results set as the \code{rowData} element.

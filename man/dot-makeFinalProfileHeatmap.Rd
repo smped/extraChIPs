@@ -18,6 +18,7 @@
   x_lab = NULL,
   y_lab = NULL,
   fill_lab = NULL,
+  lab_fun_x = waiver(),
   label_side = c("left", "right", "none"),
   ...
 )
