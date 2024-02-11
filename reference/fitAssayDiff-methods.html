@@ -87,7 +87,8 @@
 <span>  offset <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  null <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"interval"</span>, <span class="st">"worst.case"</span><span class="op">)</span>,</span>
 <span>  weighted <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  <span class="va">...</span></span>
+<span>  <span class="va">...</span>,</span>
+<span>  robust <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -100,8 +101,7 @@
 <dt>...</dt>
 <dd><p>Passed to <a href="https://rdrr.io/pkg/edgeR/man/calcNormFactors.html" class="external-link">calcNormFactors</a> and
 <a href="https://rdrr.io/pkg/edgeR/man/glmQLFit.html" class="external-link">glmQLFit</a> when method = "qlf".
-If method = "lt", instead passed to <a href="https://rdrr.io/pkg/limma/man/lmFit.html" class="external-link">lmFit</a>, <a href="https://rdrr.io/pkg/limma/man/ebayes.html" class="external-link">treat</a>,
-<a href="https://rdrr.io/pkg/limma/man/ebayes.html" class="external-link">eBayes</a></p></dd>
+If method = "lt", instead passed to <a href="https://rdrr.io/pkg/limma/man/lmFit.html" class="external-link">lmFit</a></p></dd>
 
 
 <dt>assay</dt>
@@ -164,6 +164,10 @@ is created during model fitting</p></dd>
 
 <dt>weighted</dt>
 <dd><p>logical(1) Passed to  <a href="https://rdrr.io/pkg/edgeR/man/calcNormFactors.html" class="external-link">calcNormFactors</a></p></dd>
+
+
+<dt>robust</dt>
+<dd><p>Passed to <a href="https://rdrr.io/pkg/limma/man/ebayes.html" class="external-link">treat</a> and <a href="https://rdrr.io/pkg/limma/man/ebayes.html" class="external-link">eBayes</a></p></dd>
 
 </dl></div>
     <div id="value">

@@ -85,6 +85,7 @@
 <span>  xLab <span class="op">=</span> <span class="va">xValue</span>,</span>
 <span>  yLab <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  fillLab <span class="op">=</span> <span class="va">fillValue</span>,</span>
+<span>  labelFunX <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/waiver.html" class="external-link">waiver</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  relHeight <span class="op">=</span> <span class="fl">0.3</span>,</span>
 <span>  sortFilter <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  maxDist <span class="op">=</span> <span class="fl">100</span>,</span>
@@ -105,6 +106,7 @@
 <span>  xLab <span class="op">=</span> <span class="va">xValue</span>,</span>
 <span>  yLab <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  fillLab <span class="op">=</span> <span class="va">fillValue</span>,</span>
+<span>  labelFunX <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/waiver.html" class="external-link">waiver</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  relHeight <span class="op">=</span> <span class="fl">0.3</span>,</span>
 <span>  summaryLabelSide <span class="op">=</span> <span class="st">"left"</span>,</span>
 <span>  respectLevels <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -156,6 +158,10 @@ contain a line-plot representing this summary value for each x-axis bin</p></dd>
 <dt>xLab, yLab, fillLab</dt>
 <dd><p>Labels for plotting aesthetics. Can be overwritten
 using labs() on any returned object</p></dd>
+
+
+<dt>labelFunX</dt>
+<dd><p>Function for formatting x-axis labels</p></dd>
 
 
 <dt>relHeight</dt>
