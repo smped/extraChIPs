@@ -100,7 +100,7 @@ setMethod(
         df <- as.data.frame(df)
         df_cols <- colnames(df)
         logfc <- match.arg(logfc, df_cols)
-        pval <- match.arg(pval, df_cols, several.ok = TRUE)
+        pcol <- match.arg(pval, df_cols, several.ok = TRUE)
         cpm <- match.arg(cpm, df_cols)
         p_adj_method <- match.arg(p_adj_method, c(p.adjust.methods, "fwer"))
         keyval <- match.arg(keyval)
@@ -112,7 +112,7 @@ setMethod(
         }
 
         ## Define the columns to return
-        ret_cols <- c("keyval_range", cpm, logfc, pval)
+        ret_cols <- c("keyval_range", cpm, logfc, pcol)
         if (!is.null(inc_cols)) {
             inc_cols <- vapply(
                 inc_cols, match.arg, character(1), choices = df_cols
@@ -134,33 +134,32 @@ setMethod(
         ## Summarise the key values
         df[["subjectHits"]] <- subjectHits(ol)
         grp_df <- group_by(df, subjectHits)
-        main_p <- paste0(hm_pre, pval[[1]])
+        ref_p <- pcol[[1]]
+        ref_hmp <- paste0(hm_pre, ref_p)
         ret_df <- summarise(
             grp_df,
             across(
-                all_of(pval), \(x) .ec_HMP(x, !!sym("weights")),
+                all_of(pcol), \(x) .ec_HMP(x, !!sym("weights")),
                 .names = "{hm_pre}{.col}"
             ),
             n_windows = dplyr::n(),
-            n_up = sum(!!sym(logfc) > 0 & !!sym(pval[[1]]) < !!sym(main_p)),
-            n_down = sum(!!sym(logfc) < 0 & !!sym(pval[[1]]) < !!sym(main_p)),
-            "{cpm}" := sum(!!sym(cpm) / !!sym(pval[[1]])) /
-                sum(1 / !!sym(pval[[1]])),
-            "{logfc}" :=  sum(!!sym(logfc) / !!sym(pval[[1]])) /
-                sum(1 / !!sym(pval[[1]]))
+            n_up = sum(!!sym(logfc) > 0 & !!sym(ref_p) < !!sym(ref_hmp)),
+            n_down = sum(!!sym(logfc) < 0 & !!sym(ref_p) < !!sym(ref_hmp)),
+            "{cpm}" := sum(!!sym(cpm) / !!sym(ref_p)) / sum(1 / !!sym(ref_p)),
+            "{logfc}" :=  sum(!!sym(logfc) / !!sym(ref_p)) / sum(1 / !!sym(ref_p))
         )
         ## Replace the 'pval' column in the return columns with 'hmp'
-        new_cols <- paste0(hm_pre, ret_cols[ret_cols %in% pval])
-        ret_cols[ret_cols %in% pval] <- new_cols
+        new_cols <- paste0(hm_pre, ret_cols[ret_cols %in% pcol])
+        ret_cols[ret_cols %in% pcol] <- new_cols
 
         ## Remaining columns, including the keyval range are based on the
         ## minimal p-value. Form a separate df with these columns, then merge
-        inc_df <- as.data.frame(df[c(pval, inc_cols)])
+        inc_df <- as.data.frame(df[c(pcol, inc_cols)])
         inc_df[["keyval_range"]] <- as.character(x)
         inc_df[["subjectHits"]] <- subjectHits(ol)
-        inc_df <- arrange(inc_df, !!sym("subjectHits"), !!sym(pval[[1]]))
+        inc_df <- arrange(inc_df, !!sym("subjectHits"), !!sym(ref_p))
         inc_df <- distinct(inc_df, !!sym("subjectHits"), .keep_all = TRUE)
-        inc_df <- inc_df[!names(inc_df) %in% pval]
+        inc_df <- inc_df[!names(inc_df) %in% pcol]
 
         ## If keyval = "merged" (as opposed to "min")
         if (keyval == "merged") { ## Reform the keyvalue range by merging
@@ -170,8 +169,10 @@ setMethod(
             )
             df <- dplyr::filter(
                 df,
-                (!!sym(pval[[1]]) <= !!sym(main_p) |
-                    !!sym(pval[[1]]) == min(!!sym(pval[[1]]))),
+                (
+                    !!sym(ref_p) <= !!sym(ref_hmp) |
+                     !!sym(ref_p) == min(!!sym(ref_p))
+                ),
                 .by = !!sym("subjectHits")
             )
             kv_gr <- colToRanges(df, "range")
@@ -191,32 +192,44 @@ setMethod(
             ret_df, inc_df, by = "subjectHits", relationship = "one-to-one"
         )
         ret_df <- ret_df[c(n_cols, ret_cols)]
-        adj_col <- p_adj_method
-        if (p_adj_method != "fwer") {
-            ret_df[[adj_col]] <- p.adjust(ret_df[[main_p]], p_adj_method)
-        } else {
+        if (p_adj_method == "fwer") {
             ## Apply the FWER adjusted version if requested
             L <- length(x)
             adj_df <- summarise(
                 grp_df,
-                adjp = .ec_HMP_adj(!!sym(pval[[1]]), !!sym("weights"), L)
+                across(
+                    all_of(pcol), \(x) .ec_HMP_adj(x, !!sym("weights"), L),
+                    .names = "{hm_pre}{.col}_fwer"
+                ), .groups = "drop"
             )
             ## This could be revisited for better integration with filtering
-            ret_df[[adj_col]] <- adj_df[["adjp"]]
+            stopifnot(nrow(ret_df) == nrow(adj_df))
+            ret_df <- bind_cols(ret_df, adj_df)
         }
+
+        ## Apply the filter based on window size
+        stopifnot(is.numeric(min_win))
+        keep_win <- ret_df$n_windows >= min_win
+        ranges_out <- ranges_out[keep_win]
+        ret_df <- ret_df[keep_win,]
+
+        ## Adjust p-values using p.adj.methods (after window size filtering)
+        if (p_adj_method != "fwer") {
+            ## This can now create multiple p-adjust columns.
+            ret_df <- mutate(
+                ret_df,
+                across(
+                    all_of(new_cols), \(x) p.adjust(x, method = p_adj_method),
+                    .names = "{.col}_{p_adj_method}"
+                )
+            )
+        }
+
+        ## Add to mcols to the ranges
         mcols(ranges_out) <- as.data.frame(ret_df)
         ranges_out$keyval_range <- GRanges(
             ranges_out$keyval_range, seqinfo = seqinfo(ranges_out)
         )
-
-        ## Apply the filter based on window size
-        stopifnot(is.numeric(min_win))
-        ranges_out <- ranges_out[ranges_out$n_windows >= min_win]
-        ## Re-adjust p-values if using conventional methods
-        if (p_adj_method != "fwer") {
-            vals <- p.adjust(mcols(ranges_out)[[main_p]], p_adj_method)
-            mcols(ranges_out)[[adj_col]] <- vals
-        }
 
         ranges_out
     }
