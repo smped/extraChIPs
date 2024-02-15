@@ -113,7 +113,7 @@ importPeaks <- function(
     ## Parse
     df <- read.table(x, sep = "\t", col.names = colNames, colClasses = classes)
     if (nameRanges) {
-        rownames(df) <- df[["name"]]
+        if (length(unique(df[[4]])) == nrow(df)) rownames(df) <- df[["name"]]
         df <- df[-4] # The name column has been set as rownames
     }
 
