@@ -38,7 +38,7 @@ Commonly an alternative sample label.}
 
 \item{n_max}{Maximum number of points to plot}
 
-\item{trans}{character(1). NUuerical transformation to apply to the data
+\item{trans}{character(1). Numerical transformation to apply to the data
 prior to RLE calculation}
 }
 \value{

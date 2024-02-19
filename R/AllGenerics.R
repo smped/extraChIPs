@@ -67,6 +67,4 @@ setGeneric(
 #' @export
 #' @name plotOverlaps
 #' @rdname plotOverlaps-methods
-setGeneric(
-    'plotOverlaps', function(x, ...) standardGeneric('plotOverlaps')
-)
+setGeneric('plotOverlaps', function(x, ...) standardGeneric('plotOverlaps'))

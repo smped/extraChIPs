@@ -95,9 +95,7 @@
 #' @rdname fitAssayDiff-methods
 #' @export
 #'
-setGeneric(
-    "fitAssayDiff", function(x, ...){standardGeneric("fitAssayDiff")}
-)
+setGeneric("fitAssayDiff", function(x, ...) standardGeneric("fitAssayDiff"))
 #' @import SummarizedExperiment
 #' @importFrom edgeR glmTreat topTags glmQLFTest
 #' @importFrom limma eBayes treat topTable topTreat

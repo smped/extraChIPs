@@ -19,7 +19,7 @@
 #' @param by_x Boxplots will be drawn by this grouping variable from
 #' `colData(x)`. If not specified, the default values will be `colnames(x)`
 #' @param n_max Maximum number of points to plot
-#' @param trans character(1). NUuerical transformation to apply to the data
+#' @param trans character(1). Numerical transformation to apply to the data
 #' prior to RLE calculation
 #' @param ... Passed to \link[ggplot2]{geom_boxplot}
 #'

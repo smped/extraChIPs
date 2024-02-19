@@ -55,10 +55,7 @@
 #' @name mergeBySig
 #' @rdname mergeBySig-methods
 #' @export
-setGeneric(
-    "mergeBySig",
-    function(x, ...){standardGeneric("mergeBySig")}
-)
+setGeneric("mergeBySig", function(x, ...) standardGeneric("mergeBySig"))
 #' @importFrom S4Vectors DataFrame mcols mcols<-
 #' @import GenomicRanges
 #' @rdname mergeBySig-methods

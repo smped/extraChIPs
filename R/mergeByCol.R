@@ -62,10 +62,7 @@
 #' @rdname mergeByCol-methods
 #' @export
 #'
-setGeneric(
-    "mergeByCol",
-    function(x, ...){standardGeneric("mergeByCol")}
-)
+setGeneric("mergeByCol", function(x, ...) standardGeneric("mergeByCol"))
 #' @importClassesFrom S4Vectors HitsList
 #' @importFrom GenomeInfoDb seqinfo seqinfo<-
 #' @importFrom S4Vectors subjectHits queryHits mcols<- mcols

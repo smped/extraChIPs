@@ -47,10 +47,7 @@
 #' @rdname plotAssayPCA-methods
 #' @export
 #'
-setGeneric(
-    "plotAssayPCA",
-    function(x, ...){standardGeneric("plotAssayPCA")}
-)
+setGeneric("plotAssayPCA", function(x, ...) standardGeneric("plotAssayPCA"))
 #' @import SummarizedExperiment
 #' @importFrom broom tidy
 #' @importFrom dplyr left_join

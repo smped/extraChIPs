@@ -38,8 +38,7 @@
 #' @export
 #'
 setGeneric(
-    "plotAssayDensities",
-    function(x, ...){standardGeneric("plotAssayDensities")}
+    "plotAssayDensities", function(x, ...) standardGeneric("plotAssayDensities")
 )
 #' @import SummarizedExperiment
 #' @importFrom stats density

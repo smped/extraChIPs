@@ -58,8 +58,7 @@
 #' @export
 #'
 setGeneric(
-    "plotAssayHeatmap",
-    function(x, ...){standardGeneric("plotAssayHeatmap")}
+    "plotAssayHeatmap", function(x, ...) standardGeneric("plotAssayHeatmap")
 )
 #'
 #' @import SummarizedExperiment

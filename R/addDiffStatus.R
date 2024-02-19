@@ -39,9 +39,7 @@
 #' @rdname addDiffStatus-methods
 #' @export
 #'
-setGeneric(
-  "addDiffStatus", function(x, ...){standardGeneric("addDiffStatus")}
-)
+setGeneric("addDiffStatus", function(x, ...) standardGeneric("addDiffStatus"))
 #' @importFrom dplyr case_when
 #' @rdname addDiffStatus-methods
 #' @export

@@ -97,8 +97,7 @@ setGeneric(
 #' @importFrom rlang ensym
 #' @export
 setMethod(
-    "plotProfileHeatmap",
-    signature = signature(object = "GenomicRangesList"),
+    "plotProfileHeatmap", signature = signature(object = "GenomicRangesList"),
     function(
         object,
         profileCol = "profile_data", xValue = "bp", fillValue = "score",
@@ -154,8 +153,7 @@ setMethod(
 #' @rdname plotProfileHeatmap-methods
 #' @export
 setMethod(
-    "plotProfileHeatmap",
-    signature = signature(object = "GenomicRanges"),
+    "plotProfileHeatmap", signature = signature(object = "GenomicRanges"),
     function(
         object,
         profileCol = "profile_data", xValue = "bp", fillValue = "score",
