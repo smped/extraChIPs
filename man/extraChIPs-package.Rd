@@ -84,5 +84,6 @@ Useful links:
 
 }
 \author{
-Stephen Pederson
+Stevie Pederson
 }
+\keyword{internal}

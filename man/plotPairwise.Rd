@@ -17,7 +17,6 @@ plotPairwise(
   xside = c("boxplot", "density", "violin", "none"),
   yside = c("boxplot", "density", "violin", "none"),
   side_panel_width = c(0.3, 0.4),
-  side_alpha = 1,
   xside_axis_pos = "right",
   yside_axis_label = scales::label_wrap(10),
   smooth = TRUE,
@@ -58,8 +57,6 @@ extreme changes}
 show additional panels on the top and right of the plot respectively}
 
 \item{side_panel_width}{Set the relative widths of the side panels}
-
-\item{side_alpha}{Set the transparency of any side_(x/y) panels}
 
 \item{xside_axis_pos}{Position for axis_labels in the top panel when using
 a discrete axis}
@@ -156,8 +153,9 @@ plotPairwise(grl, var = "logFC")
 
 # Density plots on the side panels
 plotPairwise(
-  grl, var = "logFC", xside = "density", yside = "density", side_alpha = 0.5
-)
+  grl, var = "logFC", xside = "density", yside = "density"
+) +
+scale_fill_viridis_d(alpha = 0.7)
 
 # Turning off side panels, regression line and correlations
 plotPairwise(

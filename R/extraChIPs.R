@@ -60,8 +60,7 @@
 #'   [edgeR::cpm()] values as input.
 #'
 #' @author
-#' Stephen Pederson
+#' Stevie Pederson
 #'
-#' @docType package
-#' @name extraChIPs-package
-NULL
+#' @keywords internal
+"_PACKAGE"

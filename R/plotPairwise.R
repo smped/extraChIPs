@@ -43,7 +43,6 @@
 #' @param xside,yside Will call geom_(x/y)side* from the package ggside and
 #' show additional panels on the top and right of the plot respectively
 #' @param side_panel_width Set the relative widths of the side panels
-#' @param side_alpha Set the transparency of any side_(x/y) panels
 #' @param xside_axis_pos Position for axis_labels in the top panel when using
 #' a discrete axis
 #' @param yside_axis_label Wrapping for axis labels on the right-side panel when
@@ -91,8 +90,9 @@
 #'
 #' # Density plots on the side panels
 #' plotPairwise(
-#'   grl, var = "logFC", xside = "density", yside = "density", side_alpha = 0.5
-#' )
+#'   grl, var = "logFC", xside = "density", yside = "density"
+#' ) +
+#' scale_fill_viridis_d(alpha = 0.7)
 #'
 #' # Turning off side panels, regression line and correlations
 #' plotPairwise(
@@ -113,7 +113,7 @@ plotPairwise <- function(
         p = 0, method = "union", ignore.strand = TRUE, min_width = 0,
         xside = c("boxplot", "density", "violin", "none"),
         yside = c("boxplot", "density", "violin", "none"),
-        side_panel_width = c(0.3, 0.4), side_alpha = 1,
+        side_panel_width = c(0.3, 0.4),
         xside_axis_pos = "right", yside_axis_label = scales::label_wrap(10),
         smooth = TRUE, rho_geom = c("text", "label", "none"), rho_col = "black",
         rho_size = 4, rho_pos = c(0.05, 0.95),  rho_alpha = 1,
@@ -171,10 +171,10 @@ plotPairwise <- function(
         plot_theme
 
     if (xside != "none")
-        p <- .addXSide(p, ol, x, xside, colour, side_alpha, xside_axis_pos)
+        p <- .addXSide(p, ol, x, xside, colour, xside_axis_pos)
 
     if (yside != "none")
-        p <- .addYSide(p, ol, x, yside, colour, side_alpha, yside_axis_label)
+        p <- .addYSide(p, ol, x, yside, colour, yside_axis_label)
 
     if (xside != "none" | yside != "none") {
         w_x <- side_panel_width[[1]]
@@ -247,7 +247,7 @@ plotPairwise <- function(
 
 #' @importFrom stats cor
 #' @keywords internal
-.addRho <- function(p, xvals, yvals, geom, pos, colour, size, alpha) {
+.addRho <- function(p, xvals, yvals, geom, pos, colour, size, .alpha) {
     pos <- rep_len(pos, 2)
     stopifnot(is.numeric(pos))
     rng_x <- range(xvals, na.rm = TRUE)
@@ -258,7 +258,7 @@ plotPairwise <- function(
     lab <- paste("rho ==", rho)
     p + annotate(
         geom, x = cor_x, y = cor_y, label = lab, parse = TRUE,
-        colour = colour, size = size, alpha = alpha
+        colour = colour, size = size, alpha = .alpha
     )
 }
 
@@ -268,7 +268,7 @@ plotPairwise <- function(
 #' @importFrom forcats fct_relabel fct_na_value_to_level
 #' @importFrom stringr str_replace_na
 #' @keywords internal
-.addXSide <- function(p, ol, x, xside, xside_var, alpha, label_side) {
+.addXSide <- function(p, ol, x, xside, xside_var, label_side) {
     ## NB: This will be drawn above the plot
     nm <- names(x)
     if (is.null(xside_var)) {
@@ -292,21 +292,20 @@ plotPairwise <- function(
         x_lab <- p$labels$x
         p <- p + geom_xsidedensity(
             aes(x = !!sym(x_lab), y = after_stat(density), fill = !!sym(col)),
-            data = ol, colour = NA, alpha = alpha
+            data = ol, colour = NA
         )
     }
     if (xside == "boxplot") {
         p <- p + geom_xsideboxplot(
             aes(y = !!sym(col), fill = !!sym(col)), data = ol,
-            orientation = "y", alpha = alpha
+            orientation = "y"
         ) +
             scale_xsidey_discrete(position = label_side)
     }
     if (xside == "violin") {
         p <- p + geom_xsideviolin(
             aes(y = !!sym(col), fill = !!sym(col)), data = ol,
-            orientation = "y", draw_quantiles = 0.5, trim = FALSE,
-            alpha = alpha
+            orientation = "y", draw_quantiles = 0.5, trim = FALSE
         ) +
             scale_xsidey_discrete(position = label_side)
     }
@@ -321,7 +320,7 @@ plotPairwise <- function(
 #' @importFrom forcats fct_relabel fct_na_value_to_level
 #' @importFrom stringr str_replace_na
 #' @keywords internal
-.addYSide <- function(p, ol, x, yside, yside_var, alpha, lab) {
+.addYSide <- function(p, ol, x, yside, yside_var, lab) {
     ## NB: This will be drawn to the right of the plot
     nm <- names(x)
     if (is.null(yside_var)) {
@@ -346,20 +345,21 @@ plotPairwise <- function(
         y_lab <- p$labels$y
         p <- p + geom_ysidedensity(
             aes(y = !!sym(y_lab), x = after_stat(density), fill = !!sym(col)),
-            data = ol, orientation = "y", colour = NA, alpha = alpha
+            data = ol, orientation = "y", colour = NA
         )
     }
     if (yside == "boxplot") {
         p <- p + geom_ysideboxplot(
             aes(x = !!sym(col), fill = !!sym(col)), data = ol,
-            orientation = "x", alpha = alpha
+            orientation = "x"
         ) +
             scale_ysidex_discrete(labels = lab)
     }
     if (yside == "violin") {
         p <- p + geom_ysideviolin(
-            aes(x = !!sym(col), fill = !!sym(col)), data = ol, alpha = alpha,
-            orientation = "x", draw_quantiles = 0.5, trim = FALSE
+            aes(x = !!sym(col), fill = !!sym(col)), data = ol,
+            orientation = "x", draw_quantiles = 0.5,
+            trim = FALSE
         ) +
             scale_ysidex_discrete(labels = lab)
     }
