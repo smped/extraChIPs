@@ -246,6 +246,14 @@ setMethod(
   if (!'themes' %in% names(dotArgs)) {
     dotArgs$themes <- upset_default_themes(panel.grid = element_blank())
   }
+  ## There is currently an issue with ComplexUpset. This places theme arguments
+  ## which are not supported beyond ggplot2 3.5.0. This will remove them
+  valid_theme_args <- names(formals(theme))
+  dotArgs$themes <- lapply(
+      dotArgs$themes,
+      \(x) lapply(x, \(y) do.call("theme", y[names(y) %in% valid_theme_args]))
+  )
+
   if (!is.null(set_col)) {
     ## Respect any existing set queries
     existing_sets <- unlist(

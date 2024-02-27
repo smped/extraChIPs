@@ -417,13 +417,16 @@ setMethod(
         }
 
         ## Add all remaining elements & formatting
+        colour_scale <- NULL
+        if (any(c(inner_label_colour, outer_label_colour) == "palette"))
+            colour_scale <- scale_colour_manual(values = full_palette)
         plt <- plt +
             coord_equal() +
             theme_void() +
             scale_x_continuous(expand = expansion(expand)) +
             scale_y_continuous(expand = expansion(expand)) +
             scale_fill_manual(values = full_palette) +
-            scale_colour_manual(values = full_palette) +
+            colour_scale +
             scale_alpha_continuous(limits = c(0, 1)) +
             labs(fill = NULL) +
             guides(alpha = "none", fill = "none")
