@@ -22,7 +22,7 @@ Depends:
   R (>= 4.2.0),
   GenomicRanges,
   ggplot2 (>= 3.5.0),
-  ggside (>= 0.2.2),
+  ggside (>= 0.3.0),
   SummarizedExperiment,
   tibble
 Imports:
