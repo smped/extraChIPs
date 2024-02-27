@@ -2,6 +2,7 @@
 % Please edit documentation in R/extraChIPs.R
 \docType{package}
 \name{extraChIPs-package}
+\alias{extraChIPs}
 \alias{extraChIPs-package}
 \title{extraChIPs: A package for enabling and extending ChIP-Seq analysis}
 \description{
@@ -74,6 +75,14 @@ as would be created from counts by \code{\link[limma:voom]{limma::voom()}}, but 
 }
 }
 
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/smped/extraChIPs}
+  \item Report bugs at \url{https://github.com/smped/extraChIPs/issues}
+}
+
+}
 \author{
 Stephen Pederson
 }
