@@ -37,7 +37,7 @@ env:
   has_testthat: 'true'
   run_covr: 'true'
   run_pkgdown: 'true'
-  cache-version: 'cache-v3'
+  cache-version: 'cache-v4'
   run_docker: 'false'
 
 jobs:
