@@ -1,7 +1,7 @@
 Package: extraChIPs
 Version: 1.7.5
 Title: Additional functions for working with ChIP-Seq data
-Authors@R: person("Stephen", "Pederson", 
+Authors@R: person("Stevie", "Pederson", 
   email = "stephen.pederson.au@gmail.com", 
   role = c("aut", "cre"),
   comment = c(ORCID = "0000-0001-8197-3303")
