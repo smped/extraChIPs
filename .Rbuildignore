@@ -1,0 +1,10 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^.github
+^codecov\.yml$
+^data-raw$
+^_pkgdown\.yml$
+^pkgdown$
+^.*TODO\.md$
+^\.github$
+^junk.Rmd$

@@ -1,0 +1,72 @@
+template:
+  params:
+    bootswatch: simplex
+
+authors:
+  Stevie Pederson:
+    href: https://github.com/smped
+
+reference:
+
+- title: Overview
+  contents:
+    - starts_with("extraChIPs")
+
+- title: Range-Based Operations
+  contents:
+    - makeConsensus
+    - mapGrlCols
+    - ends_with("MC")
+    - ends_with("Overlap")
+    - colToRanges
+    - defineRegions
+    - partitionRanges
+    - stitchRanges
+
+- title: Functions For Differential Signal Analysis
+  contents:
+    - dualFilter
+    - importPeaks
+    - fitAssayDiff
+    - getProfileData
+    - grlToSE
+    - mapByFeature
+    - starts_with("mergeBy")
+    - voomWeightsFromCPM
+
+- title: Visualisation
+  contents:
+    - starts_with("plot")
+
+- title: Coercion & Convenience Functions
+  contents:
+    - starts_with("addDiff")
+    - contains("as_tibble")
+    - collapseGenes
+    - defineSeqinfo
+
+- title: Data Objects
+  contents:
+    - contains("cytobands")
+    - starts_with("ex_")
+    - fixed_width_datasets
+
+navbar:
+  type: default
+  left:
+  - text: Reference
+    href: reference/index.html
+  - text: Vignettes
+    menu:
+    - text: Range-based Operations
+      href: articles/range_based_functions.html
+    - text: Differential Signal Using Sliding Windows
+      href: articles/differential_signal_sliding.html
+    - text: Differential Signal Using Fixed-Width Windows
+      href: articles/differential_signal_fixed.html
+  - text: News
+    href: news/index.html
+  right:
+  - icon: fa-github fa-lg
+    href: https://github.com/smped/extraChIPs
+
