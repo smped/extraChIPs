@@ -5,7 +5,8 @@
 \title{Use package data to define a Seqinfo object}
 \usage{
 defineSeqinfo(
-  build = c("GRCh38", "GRCh37", "GRCm39", "GRCm38"),
+  build = c("GRCh38", "GRCh37", "GRCm39", "GRCm38", "hg19", "hg38", "T2T-CHM13v2.0",
+    "mm39", "mm10"),
   chr = TRUE,
   mito,
   ...
