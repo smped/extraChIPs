@@ -3249,8 +3249,8 @@ static void setalpha(double alpha, double oneminusalpha, double twominusalpha)
 
         /* Also calculate Gaussian distribution for tabulated x's for use with table4 */
         for (i=0; i<nx4; i++){
-            f4_alpha2[i]=normaltail(Vx4[i] / M_SQRT2);
-            d4_alpha2[i]=1 / (2 * SQRT_PI * exp(-Vx4[i] * Vx4[i] * .25));
+            f4_alpha2[i] = normaltail(Vx4[i] * M_SQRT1_2);
+            d4_alpha2[i] = 1 / (2 * SQRT_PI * exp(-Vx4[i] * Vx4[i] * .25));
         }
 
     }			/* end of initialization */
@@ -3264,12 +3264,12 @@ static void setalpha(double alpha, double oneminusalpha, double twominusalpha)
     /* Case when alpha > .5 */
     alphastar=alpha;
     ximid=.4;
-    midpoint=(-log(M_PI_2 * ximid)-1)/M_PI_2;
+    midpoint = (-log(M_PI_2 * ximid) - 1) * M_2_PI;
     nu=1;
     eta=0;
     logscalef=log(M_PI_2);
     /* Lower limit where xi=10**30; take density to be zero below here */
-    xlowlimit=-(1 + log(M_PI_2 * 1.E30))/ M_PI_2;
+    xlowlimit=-(1 + log(M_PI_2 * 1.E30)) * M_2_PI;
 
     sa2=twominusalpha/(2 * alpha);
     Clogd=log(nu / sqrt(2 * M_PI * alpha));
@@ -3326,7 +3326,7 @@ void tailsMSS(int n,double x[],double d[],double logd[],double F[],
         }
         /* Case covered by table 1: low range for x */
         else if(z<midpoint){
-            xi = exp(-1 - M_PI_2 * z) / M_PI_2;
+            xi = exp(-1 - M_PI_2 * z) * M_2_PI;
             t = .2 / (alphastar * xi);
             interpolate(t,&ffound,&dfound,nx1,Vx1,f1,d1,xdenom1);
             logd[i]=Clogd + sa2 * log(xi) - xi + log(dfound) - logscale + logscalef;
@@ -3354,7 +3354,7 @@ void tailsMSS(int n,double x[],double d[],double logd[],double F[],
 
             y=z;
             do{
-                dy = (z - y - log(y) / M_PI_2) / (1 + 1 / (y * M_PI_2));
+                dy = (z - y - log(y) * M_2_PI) / (1 + 1 / (y * M_PI_2));
                 y = y + dy;
             }
             while(fabs(dy)>1.e-10*y);
