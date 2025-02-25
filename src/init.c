@@ -1,18 +1,18 @@
-#include <stdlib.h>
+#include <R.h>
+#include <Rinternals.h>
+#include <Rversion.h>
 #include <R_ext/Rdynload.h>
 
-/* .C calls */
-extern void my_RtailsMSS(
-        double *Rlocation, double *x, double *d, double *logd, double *F,
-        double *logF, double *cF, double *logcF);
+// Declare your C functions
+extern SEXP RtailsMSS(SEXP);
 
-static const R_CMethodDef CEntries[] = {
-    {"my_RtailsMSS",    (DL_FUNC) &my_RtailsMSS,    14},
-    {NULL, 0}
+static const R_CallMethodDef CallEntries[] = {
+    {"RtailsMSS", (DL_FUNC) &RtailsMSS, 2},
+    {NULL, NULL, 0}
 };
 
-void R_init_FMStable(DllInfo *dll)
-{
-    R_registerRoutines(dll, CEntries, NULL, NULL, NULL);
+void R_init_yourpackage(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }
+
