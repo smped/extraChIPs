@@ -1,5 +1,6 @@
 #include <math.h>
 #include <R.h>
+#include <Rinternals.h>
 #include <stdio.h>
 #include <float.h>
 
@@ -7,6 +8,7 @@
 /* The specific use case here is the harmonic mean p and as such */
 /* Tables and if statements which are not required have been incrementally */
 /* commented out and a handful of constants defined to save recalculation */
+/* The gain in performance is currently about a 15x speed-up */
 
 /*
  * OI is the order of interpolation to be used
@@ -20,7 +22,9 @@
 #define FALSE 0
 #define TRUE 1
 
-static const double SQRT_PI = 1.772453850905515881919;
+static const double SQRT_PI = 1.77245385090551602729816748334115; // sqrt(M_PI)
+static const double xlowlimit = -44.900242184179755123; // -(1 + log(M_PI_2 * 1.0e30)) * M_2_PI
+// static const double logscalef = 0.4515827052894548647261952298948; // log(M_PI_2)
 
 
 /*====================================================================== */
@@ -107,8 +111,8 @@ double LogGamma(double x) {
 
     /* Abramowitz & Stegun equation 6.1.48 */
 
-    const double c0 = 0.9189385332046727417803297364056177;
-    const double a[7] = {
+    static const double c0 = 0.9189385332046727417803297364056177;
+    static const double a[7] = {
         1.0 / 12.0, 1.0 / 30.0, 53.0 / 210.0, 195.0 / 371.0,
         22999.0 / 22737.0, 29944523.0 / 19733142.0, 109535241009.0 / 48264275462.0
     };
@@ -153,73 +157,96 @@ void calc_recip_denom(int nx, double x[], double denom[]) {
     }
 }
 /*========================================================================= */
-void interpolate(double x,double *f,double *d,int nxn,double xn[],
-                 double fn[],double dn[],double xdenomn[])
+/**
+ * Performs interpolation to find values at point x using provided data points.
+ *
+ * @param x The point at which to interpolate
+ * @param f Pointer to store the interpolated function value
+ * @param d Pointer to store the interpolated derivative value
+ * @param nxn Number of data points in the arrays
+ * @param xn Array of x coordinates
+ * @param fn Array of function values
+ * @param dn Array of derivative values
+ * @param xdenomn Array of precomputed reciprocal denominators
+ */
+void interpolate(double x, double *f, double *d, int nxn, double xn[],
+                 double fn[], double dn[], double xdenomn[])
 {
     /* Find interpolated values for x using vectors xn, fn and dn with */
     /* reciprocals of denominators specified by array xdenomn */
-    double difference[OI],product,weight;
-    int low,high,mid,offset,start,k;
+    double difference[OI], product, weight;
+    int low, high, mid, offset, start, k;
 
-    /* First find the smallest index of a larger value of xn by binary chop */
-    low=0;
-    high=nxn-1;
-    if(xn[high]<x){
-        return;
+    /* Check if x is outside the range */
+    if (nxn <= 0 || x > xn[nxn - 1]) {
+        return;  /* Function returns without setting f and d */
     }
-    do{
-        mid=(low+high)/2;
-        if(xn[mid] >= x) high=mid;
-        else{
-            if(low == mid)break;
-            low=mid;
+
+    /* First find the smallest index of a larger value of xn by binary search */
+    low = 0;
+    high = nxn - 1;
+
+    while (low < high) {
+        mid = low + (high - low) / 2;  /* Avoids potential overflow */
+
+        if (xn[mid] >= x) {
+            high = mid;
+        } else {
+            low = mid + 1;
         }
-    } while(TRUE);
-
-    start=fmin(fmax(0,high-HOI),nxn-OI);
-    offset=start;
-    product=1;
-    for (k=0; k<OI; k++){
-        difference[k] = x - xn[k+offset];
-        product = product * difference[k];
     }
-    if(product == 0){
-        for (k=0; k<OI; k++){
-            /*Use appropriate alpha value */
-            if(x == xn[k+offset]){
-                *f = fn[k+offset];
-                *d = dn[k+offset];
-                break;
+
+    /* Calculate the optimal starting position for the interpolation window */
+    start = (high >= OI) ? ((high - OI + 1 < nxn - OI) ? high - OI + 1 : nxn - OI) : 0;
+    offset = start;
+
+    /* Compute differences and their product */
+    product = 1.0;
+    for (k = 0; k < OI; k++) {
+        difference[k] = x - xn[k + offset];
+        product *= difference[k];
+    }
+
+    /* Handle the case where x exactly matches one of the nodes */
+    if (fabs(product) < DBL_EPSILON) {
+        for (k = 0; k < OI; k++) {
+            if (fabs(x - xn[k + offset]) < DBL_EPSILON) {
+                *f = fn[k + offset];
+                *d = dn[k + offset];
+                return;
             }
         }
     }
-    else{
-        *f=0;
-        *d=0;
-        for (k=0; k<OI; k++){
-            weight = product * xdenomn[start*OI+k] / difference[k];
-            *f += weight * fn[k+offset];
-            *d += weight * dn[k+offset];
-        }
+
+    /* Perform the interpolation */
+    *f = 0.0;
+    *d = 0.0;
+    for (k = 0; k < OI; k++) {
+        /* Skip division by zero */
+        if (fabs(difference[k]) < DBL_EPSILON) continue;
+
+        weight = product * xdenomn[start * OI + k] / difference[k];
+        *f += weight * fn[k + offset];
+        *d += weight * dn[k + offset];
     }
 }
 /*=================================================================== */
-void interpolate_over_alpha(int nx,int nalpha,double alphalist[],
-                            double thisalpha,double tablef[],double tabled[],
-                                                                          double thisf[],double thisd[],double denom[])
+void interpolate_over_alpha(int nx, int nalpha, double alphalist[],
+                            double thisalpha, double tablef[], double tabled[],
+                            double thisf[],double thisd[],double denom[])
 {
     /* To interpolate the tables tablef and tabled over alpha */
-    double weight,product,difference[OI];
-    int i,j,k,start,offset;
+    double weight, product, difference[OI];
+    int i, j, k, start, offset;
 
     /* First find the smallest index of a larger value of alpha */
     /* (This could be made faster with a binary chop algorithm) */
     for (j=0; j<nalpha; j++){
         if(alphalist[j] > thisalpha)break;
     }
-    start=fmin(fmax(0,j-HOI),nalpha-OI);
-    offset=start;
-    product=1;
+    start = fmin(fmax(0, j - HOI), nalpha - OI);
+    offset = start;
+    product = 1;
     for (k=0; k<OI; k++){
         difference[k] = thisalpha - alphalist[k+offset];
         product = product * difference[k];
@@ -230,8 +257,8 @@ void interpolate_over_alpha(int nx,int nalpha,double alphalist[],
         for (k=0; k<OI; k++){
             if(thisalpha == alphalist[k+offset]){
                 for (i=0; i<nx; i++){
-                    thisf[i] = tablef[i*nalpha+(k+offset)];
-                    thisd[i] = tabled[i*nalpha+(k+offset)];
+                    thisf[i] = tablef[i * nalpha + (k + offset)];
+                    thisd[i] = tabled[i * nalpha + (k + offset)];
                 }
                 break;
             }
@@ -255,13 +282,13 @@ void interpolate_over_alpha(int nx,int nalpha,double alphalist[],
 }
 /*====================================================================== */
 
-static double previous_alpha=-999.;
-static double previous_oneminusalpha=-999.;
-static double previous_twominusalpha=-999.;
+static double previous_alpha = -999.;
+static double previous_oneminusalpha = -999.;
+static double previous_twominusalpha = -999.;
 
-static double sa2,nu,Calpha_M,midpoint,xi,ximid,xlowlimit;
-static double Clogd,alphastar,eta;
-static double ffound,dfound,logapprox,logscalef;
+static double sa2, nu, Calpha_M, midpoint, xi, ximid;
+static double Clogd, alphastar, eta;
+static double ffound, dfound, logapprox;
 
 /* Boolean variables stored as integers. */
 static int distributiontabulated;
@@ -273,7 +300,7 @@ static int distributiontabulated;
 /* Vy1 is alpha, Vx1 is proportional to 1/(alpha*xi)	*/
 #define nx1 70
 #define ny1 20
-static double f1[nx1],d1[nx1];
+static double f1[nx1], d1[nx1];
 static double xdenom1[(nx1 - OIM1) * OI];
 static double ydenom1[(ny1 - OIM1) * OI];
 
@@ -281,7 +308,6 @@ static double ydenom1[(ny1 - OIM1) * OI];
 /* Vy2 is alpha, Vx2 is proportional to x**(-1/alpha) */
 #define nx2 20
 #define ny2 20
-// static double f2[nx2],d2[nx2];
 static double xdenom2[(nx2 - OIM1) * OI];
 static double ydenom2[(ny2 - OIM1) * OI];
 
@@ -289,7 +315,6 @@ static double ydenom2[(ny2 - OIM1) * OI];
 /* Vy3 is alpha, Vx3 is proportional to x**(-1/alpha) */
 #define nx3 20
 #define ny3 20
-// static double f3[nx3],d3[nx3];
 static double xdenom3[(nx3 - OIM1) * OI];
 static double ydenom3[(ny3 - OIM1) * OI];
 
@@ -300,7 +325,6 @@ static double ydenom3[(ny3 - OIM1) * OI];
 /* Vy4 is alpha, Vx4 is based on x in the S0 parametrization */
 #define nx4 100
 #define ny4 17
-// static double f4[nx4],d4[nx4];
 static double xdenom4[(nx4 - OIM1) * OI];
 static double ydenom4[(ny4 - OIM1) * OI];
 static double f4_alpha2[nx4];
@@ -311,7 +335,6 @@ static double d4_alpha2[nx4];
 /* Vy5 is alpha, Vx5 is proportional to y**(-1/alpha) where x=y+eta y**(1-alpha) */
 #define nx5 20
 #define ny5 17
-// static double f5[nx5],d5[nx5];
 static double xdenom5[(nx5 - OIM1) * OI];
 static double ydenom5[(ny5 - OIM1) * OI];
 
@@ -320,7 +343,7 @@ static double ydenom5[(ny5 - OIM1) * OI];
 /* Vy6 is alpha, Vx6 is proportional to y**(-1/alpha) where x=y+eta y**(1-alpha) */
 #define nx6 20
 #define ny6 40
-static double f6[nx6],d6[nx6];
+static double f6[nx6], d6[nx6];
 static double xdenom6[(nx6 - OIM1) * OI];
 static double ydenom6[(ny6 - OIM1) * OI];
 
@@ -329,7 +352,7 @@ static double ydenom6[(ny6 - OIM1) * OI];
 /* Vy7 is alpha, Vx7 is x (S0 parametrization) */
 #define nx7 60
 #define ny7 40
-static double f7[nx7],d7[nx7];
+static double f7[nx7], d7[nx7];
 static double xdenom7[(nx7 - OIM1) * OI];
 static double ydenom7[(ny7 - OIM1) * OI];
 
@@ -3218,11 +3241,6 @@ static void setalpha(double alpha, double oneminusalpha, double twominusalpha)
     double sinangle;
     int i;
 
-    // /* If alpha is not in permissible range then print message but do nothing */
-    // if((alpha>2.) | (alpha <= 0.)){
-    //     return;
-    // }
-
     /* If alpha is 2 or the same as the last time, then do nothing. */
     if ((twominusalpha == 0) | ((alpha == previous_alpha) &
     (oneminusalpha == previous_oneminusalpha) &
@@ -3232,20 +3250,20 @@ static void setalpha(double alpha, double oneminusalpha, double twominusalpha)
     if (previous_alpha == -999.){
 
         /* Compute reciprocals of denominators for later interpolation */
-        calc_recip_denom(nx1,Vx1,xdenom1);
-        calc_recip_denom(ny1,Vy1,ydenom1);
-        calc_recip_denom(nx2,Vx2,xdenom2);
-        calc_recip_denom(ny2,Vy2,ydenom2);
-        calc_recip_denom(nx3,Vx3,xdenom3);
-        calc_recip_denom(ny3,Vy3,ydenom3);
-        calc_recip_denom(nx4,Vx4,xdenom4);
-        calc_recip_denom(ny4,Vy4,ydenom4);
-        calc_recip_denom(nx5,Vx5,xdenom5);
-        calc_recip_denom(ny5,Vy5,ydenom5);
-        calc_recip_denom(nx6,Vx6,xdenom6);
-        calc_recip_denom(ny6,Vy6,ydenom6);
-        calc_recip_denom(nx7,Vx7,xdenom7);
-        calc_recip_denom(ny7,Vy7,ydenom7);
+        calc_recip_denom(nx1, Vx1, xdenom1);
+        calc_recip_denom(ny1, Vy1, ydenom1);
+        calc_recip_denom(nx2, Vx2, xdenom2);
+        calc_recip_denom(ny2, Vy2, ydenom2);
+        calc_recip_denom(nx3, Vx3, xdenom3);
+        calc_recip_denom(ny3, Vy3, ydenom3);
+        calc_recip_denom(nx4, Vx4, xdenom4);
+        calc_recip_denom(ny4, Vy4, ydenom4);
+        calc_recip_denom(nx5, Vx5, xdenom5);
+        calc_recip_denom(ny5, Vy5, ydenom5);
+        calc_recip_denom(nx6, Vx6, xdenom6);
+        calc_recip_denom(ny6, Vy6, ydenom6);
+        calc_recip_denom(nx7, Vx7, xdenom7);
+        calc_recip_denom(ny7, Vy7, ydenom7);
 
         /* Also calculate Gaussian distribution for tabulated x's for use with table4 */
         for (i=0; i<nx4; i++){
@@ -3253,137 +3271,360 @@ static void setalpha(double alpha, double oneminusalpha, double twominusalpha)
             d4_alpha2[i] = 1 / (2 * SQRT_PI * exp(-Vx4[i] * Vx4[i] * .25));
         }
 
-    }			/* end of initialization */
-        /* ===================================================== */
-        /* Store standard numbers which vary with alpha */
-        previous_alpha=alpha;
-    previous_oneminusalpha=oneminusalpha;
-    previous_twominusalpha=twominusalpha;
-    distributiontabulated=FALSE;
+    }
+    /* end of initialization */
+    /* ===================================================== */
+    /* Store standard numbers which vary with alpha */
+    previous_alpha = alpha;
+    previous_oneminusalpha = oneminusalpha;
+    previous_twominusalpha = twominusalpha;
+    distributiontabulated = FALSE;
 
     /* Case when alpha > .5 */
-    alphastar=alpha;
-    ximid=.4;
+    alphastar = alpha;
+    ximid = .4;
     midpoint = (-log(M_PI_2 * ximid) - 1) * M_2_PI;
-    nu=1;
-    eta=0;
-    logscalef=log(M_PI_2);
-    /* Lower limit where xi=10**30; take density to be zero below here */
-    xlowlimit=-(1 + log(M_PI_2 * 1.E30)) * M_2_PI;
+    nu = 1;
+    eta = 0;
 
-    sa2=twominusalpha/(2 * alpha);
-    Clogd=log(nu / sqrt(2 * M_PI * alpha));
-    sinangle=sin(M_PI_2 * twominusalpha);
-    // Calpha_M=exp(LogGamma(alpha))*sinangle / M_PI;
+    /* Lower limit where xi=10**30; take density to be zero below here */
+    // xlowlimit = -(1 + log(M_PI_2 * 1.E30)) * M_2_PI; // Define as const above
+
+    sa2 = twominusalpha / (2 * alpha);
+    // Clogd = log(nu / sqrt(2 * M_PI * alpha)); // Subtract log(sqrt(2 * M_PI * alpha))??
+    Clogd = log(nu) - 0.5 * log(2 * M_PI * alpha);
+    sinangle = sin(M_PI_2 * twominusalpha);
     Calpha_M = exp(LogGamma(alpha)) * sinangle * M_1_PI;
 
-    interpolate_over_alpha(nx1,ny1,Vy1,alphastar,tablef1,tabled1,f1,d1,ydenom1);
-    interpolate_over_alpha(nx6,ny6,Vy6,alpha,tablef6,tabled6,f6,d6,ydenom6);
-    interpolate_over_alpha(nx7,ny7,Vy7,alpha,tablef7,tabled7,f7,d7,ydenom7);
+    interpolate_over_alpha(nx1, ny1, Vy1, alphastar, tablef1, tabled1, f1, d1, ydenom1);
+    interpolate_over_alpha(nx6, ny6, Vy6, alpha, tablef6, tabled6, f6, d6, ydenom6);
+    interpolate_over_alpha(nx7, ny7, Vy7, alpha, tablef7, tabled7, f7, d7, ydenom7);
 }
 /*========================================================================= */
-void tailsMSS(int n,double x[],double d[],double logd[],double F[],
-              double logF[],double cF[],double logcF[],
-                                                    double alpha,double oneminusalpha, double twominusalpha,
-                                                    double location,double logscale)
-
-    /*  Only need to return logd,F and cF. */
-    /*  For left-skewed, need to swap F and cF. */
+// /* The original version from FMStable                                   */
+// void tailsMSS(int n,double x[],double d[],double logd[],double F[],
+//               double logF[],double cF[],double logcF[], double alpha,
+//               double oneminusalpha, double twominusalpha, double location)
+//
+//     /*  Only need to return logd,F and cF. */
+//     /*  For left-skewed, need to swap F and cF. */
+// {
+//     /* Computes density, distribution function and complement for a maximally skew
+//      stable distribution skewed to the right */
+//     /* When alpha < 0.5:
+//      MSS variable is exp(logscale)*(parametrization C standard)-location
+//      log MSS variable is exp{location-exp(logscale)*(parametrization C standard)}
+//      When alpha >=0.5:
+//      MSS variable is exp(logscale)*(parametrization M=S0 standard)-location
+//      log MSS variable is exp{location-exp(logscale)*(parametrization M=S0 standard)}
+//      In both cases the log MSS variable = exp( - MSS variable) and
+//      MSS variable = -log( log MSS variable).		*/
+//
+//     // static const double roothalf=.7071067811865475244;
+//     // static const double log_density_mode2=-1.2655121234846454;
+//     // double z,y,dy,difference,logz,t,temp,temp2,approx;
+//     double z, y, dy, t;
+//     int i;
+//     static const double logscale = 0.45158270528945486473; // log(M_PI_2)
+//
+//     /* If appropriate, set up for new alpha */
+//     setalpha(alpha, oneminusalpha, twominusalpha);
+//
+//     /*Case when alpha is between 0.5 and 1.7 */
+//     for(i=0; i<n; i++){
+//         z = (x[i] - location) * M_2_PI;
+//
+//         /* Case when z is below limit where xi can be calculated */
+//         if(z < xlowlimit){
+//             F[i] = 0.;
+//             logF[i] = -DBL_MAX;
+//             cF[i] = 1.;
+//             logcF[i] = 0.;
+//             d[i] = 0.;
+//             logd[i] = -DBL_MAX;
+//         }
+//         /* Case covered by table 1: low range for x */
+//         else if(z < midpoint){
+//             xi = exp(-1 - M_PI_2 * z) * M_2_PI;
+//             t = .2 / (alphastar * xi);
+//             interpolate(t, &ffound, &dfound, nx1, Vx1, f1, d1, xdenom1);
+//             logd[i] = Clogd + sa2 * log(xi) - xi + log(dfound) - logscale + logscalef;
+//             d[i] = exp(logd[i]);
+//             logF[i] = -.5 * log(2 * M_PI * alpha * xi) - xi + log(ffound);
+//             F[i] = exp(logF[i]);
+//             logcF[i] = log1p(-F[i]);
+//             cF[i] = 1.-F[i];
+//         }
+//
+//         /* Case covered by table 7: middle range for alpha, middle range for x */
+//         else if(z < 7.3){
+//             t = (z - midpoint) / (7.3 - midpoint);
+//             interpolate(t, &ffound, &dfound, nx7, Vx7, f7, d7, xdenom7);
+//             logcF[i] = ffound;
+//             cF[i] = exp(ffound);
+//             F[i] = 1. - cF[i];
+//             logF[i] = log1p(-cF[i]);
+//             logd[i] = dfound - logscale;
+//             d[i] = exp(logd[i]);
+//         }
+//
+//         /* Case covered by table 6: middle range for alpha, upper range for x */
+//         else{
+//
+//             y = z;
+//             do{
+//                 dy = (z - y - log(y) * M_2_PI) / (1 + 1 / (y * M_PI_2));
+//                 y = y + dy;
+//             }
+//             while(fabs(dy) > 1.e-10 * y);
+//
+//             t = pow((0.2 * y), (-alpha));
+//             interpolate(t, &ffound, &dfound, nx6, Vx6, f6, d6, xdenom6);
+//             logapprox = log(2 * Calpha_M) - alpha * log(y);
+//             logcF[i] = logapprox + log(ffound);
+//             cF[i] = exp(logcF[i]);
+//             F[i] = 1. - cF[i];
+//             logF[i] = log1p(-cF[i]);
+//             logd[i] = logapprox - logscale + log(alpha * dfound) - log(y);
+//             d[i] = exp(logd[i]);
+//         }
+//     }
+//     // }
+// }
+/**
+ * Computes density, distribution function and complement for a maximally skew
+ * stable distribution skewed to the right.
+ *
+ * @param n Number of points to evaluate
+ * @param x Input array of values
+ * @param d Output array for density values
+ * @param logd Output array for log density values
+ * @param F Output array for distribution function values
+ * @param logF Output array for log distribution function values
+ * @param cF Output array for complementary distribution function values
+ * @param logcF Output array for log complementary distribution function values
+ * @param alpha Stability parameter (0 < alpha < 2)
+ * @param oneminusalpha Precomputed value (1 - alpha)
+ * @param twominusalpha Precomputed value (2 - alpha)
+ * @param location Location parameter
+ *
+ * @note When alpha < 0.5:
+ *   MSS variable is exp(logscale)*(parametrization C standard)-location
+ *   log MSS variable is exp{location-exp(logscale)*(parametrization C standard)}
+ * @note When alpha >= 0.5:
+ *   MSS variable is exp(logscale)*(parametrization M=S0 standard)-location
+ *   log MSS variable is exp{location-exp(logscale)*(parametrization M=S0 standard)}
+ * @note In both cases the log MSS variable = exp(-MSS variable) and
+ *   MSS variable = -log(log MSS variable).
+ */
+void tailsMSS(int n, double x[], double cF[], double location)
 {
-    /* Computes density, distribution function and complement for a maximally skew
-     stable distribution skewed to the right */
-    /* When alpha < 0.5:
-     MSS variable is exp(logscale)*(parametrization C standard)-location
-     log MSS variable is exp{location-exp(logscale)*(parametrization C standard)}
-     When alpha >=0.5:
-     MSS variable is exp(logscale)*(parametrization M=S0 standard)-location
-     log MSS variable is exp{location-exp(logscale)*(parametrization M=S0 standard)}
-     In both cases the log MSS variable = exp( - MSS variable) and
-     MSS variable = -log( log MSS variable).		*/
+    /* Constants */
+    static const double NEWTON_TOLERANCE = 1.0e-10;
 
-    // static const double roothalf=.7071067811865475244;
-    // static const double log_density_mode2=-1.2655121234846454;
-    // double z,y,dy,difference,logz,t,temp,temp2,approx,scale;
-    double z,y,dy,t,scale;
+    double z, y, dy, t;
     int i;
 
-    /* If appropriate, set up for new alpha */
-    setalpha(alpha, oneminusalpha, twominusalpha);
+    // Try declaring other variables here
+    double F[n];
+    double logF[n];
+    double logcF[n];
 
-    /*Case when alpha is between 0.5 and 1.7 */
-    scale=exp(logscale);
-    for(i=0; i<n; i++){
-        z=(x[i]-location)/scale;
-
-        /* Case when z is below limit where xi can be calculated */
-        if(z<xlowlimit){
-            F[i]=0.;
-            logF[i]=-DBL_MAX;
-            cF[i]=1.;
-            logcF[i]=0.;
-            d[i]=0.;
-            logd[i]=-DBL_MAX;
-        }
-        /* Case covered by table 1: low range for x */
-        else if(z<midpoint){
-            xi = exp(-1 - M_PI_2 * z) * M_2_PI;
-            t = .2 / (alphastar * xi);
-            interpolate(t,&ffound,&dfound,nx1,Vx1,f1,d1,xdenom1);
-            logd[i]=Clogd + sa2 * log(xi) - xi + log(dfound) - logscale + logscalef;
-            d[i]=exp(logd[i]);
-            logF[i]=-.5 * log(2 * M_PI * alpha * xi) - xi + log(ffound);
-            F[i]=exp(logF[i]);
-            logcF[i]=log1p(-F[i]);
-            cF[i]=1.-F[i];
-        }
-
-        /* Case covered by table 7: middle range for alpha, middle range for x */
-        else if(z<7.3){
-            t = (z - midpoint) / (7.3 - midpoint);
-            interpolate(t,&ffound,&dfound,nx7,Vx7,f7,d7,xdenom7);
-            logcF[i]=ffound;
-            cF[i]=exp(ffound);
-            F[i]=1.-cF[i];
-            logF[i]=log1p(-cF[i]);
-            logd[i]=dfound-logscale;
-            d[i]=exp(logd[i]);
-        }
-
-        /* Case covered by table 6: middle range for alpha, upper range for x */
-        else{
-
-            y=z;
-            do{
-                dy = (z - y - log(y) * M_2_PI) / (1 + 1 / (y * M_PI_2));
-                y = y + dy;
-            }
-            while(fabs(dy)>1.e-10*y);
-
-            t = pow((y / 5.), (-alpha));
-            interpolate(t,&ffound,&dfound,nx6,Vx6,f6,d6,xdenom6);
-            logapprox = log(2 * Calpha_M) - alpha * log(y);
-            logcF[i]=logapprox+log(ffound);
-            cF[i]=exp(logcF[i]);
-            F[i]=1.-cF[i];
-            logF[i]=log1p(-cF[i]);
-            logd[i]=logapprox-logscale+log(alpha*dfound/y);
-            d[i]=exp(logd[i]);
-        }
-    }
-    // }
-}
-/*====================================================================== */
-void my_RtailsMSS(double *Rlocation, double *x, double *d, double *logd,
-                  double *F, double *logF, double *cF, double *logcF)
-    /* Computes density, distribution function and complement for a maximally skew
-     stable distribution skewed to the right */
-{
-    int n = 1;
+    // Fixed parameters for this specific case
     double alpha = 1.0;
     double oneminusalpha = 0.0;
     double twominusalpha = 1.0;
-    double location = *Rlocation;
-    double logscale = log(M_PI_2);
-    tailsMSS(n,x,d,logd,F,logF,cF,logcF,alpha,oneminusalpha, twominusalpha,
-             location,logscale);
+
+    /* Input validation */
+    if (n <= 0 || !x || !cF) {
+        return;
+    }
+
+    /* Set up parameters for the current alpha value */
+    setalpha(alpha, oneminusalpha, twominusalpha);
+
+    /* Process each point */
+    for (i = 0; i < n; i++) {
+        /* Scale the input */
+        z = (x[i] - location) * M_2_PI;
+
+        /* Case 1: z below lower limit where xi can be calculated */
+        if (z < xlowlimit) {
+            F[i] = 0.0;
+            logF[i] = -DBL_MAX;
+            cF[i] = 1.0;
+            logcF[i] = 0.0;
+        }
+        /* Case 2: Low range for x - use table 1 */
+        else if (z < midpoint) {
+            xi = exp(-1.0 - M_PI_2 * z) * M_2_PI;
+            t = 0.2 / (alphastar * xi);
+
+            interpolate(t, &ffound, &dfound, nx1, Vx1, f1, d1, xdenom1);
+
+            /* Calculate and store all required values */
+            logF[i] = -0.5 * log(2.0 * M_PI * alpha * xi) - xi + log(ffound);
+            F[i] = exp(logF[i]);
+            logcF[i] = log1p(-F[i]);
+            cF[i] = 1.0 - F[i];
+        }
+        /* Case 3: Middle range for x - use table 7 */
+        else if (z < 7.3) {
+            t = (z - midpoint) / (7.3 - midpoint);
+
+            interpolate(t, &ffound, &dfound, nx7, Vx7, f7, d7, xdenom7);
+
+            /* Calculate and store all required values */
+            logcF[i] = ffound;
+            cF[i] = exp(ffound);
+            F[i] = 1.0 - cF[i];
+            logF[i] = log1p(-cF[i]);
+        }
+        /* Case 4: Upper range for x - use table 6 */
+        else {
+            /* Use Newton-Raphson to solve for y */
+            y = z;  /* Initial guess */
+
+            do {
+                /* Newton-Raphson iteration */
+                dy = (z - y - log(y) * M_2_PI) / (1.0 + 1.0 / (y * M_PI_2));
+                y = y + dy;
+            } while (fabs(dy) > NEWTON_TOLERANCE * y);
+
+            t = pow((0.2 * y), (-alpha));
+
+            interpolate(t, &ffound, &dfound, nx6, Vx6, f6, d6, xdenom6);
+
+            /* Calculate and store all required values */
+            logapprox = log(2.0 * Calpha_M) - alpha * log(y);
+            logcF[i] = logapprox + log(ffound);
+            cF[i] = exp(logcF[i]);
+            F[i] = 1.0 - cF[i];
+            logF[i] = log1p(-cF[i]);
+        }
+    }
 }
+/*====================================================================== */
+
+SEXP RtailsMSS(SEXP Rlocation, SEXP Rx) {
+    // Protect R objects from garbage collection
+    PROTECT(Rlocation = coerceVector(Rlocation, REALSXP));
+    PROTECT(Rx = coerceVector(Rx, REALSXP));
+
+    // Get C values from R objects
+    double location = REAL(Rlocation)[0];
+    double *x = REAL(Rx);
+    int n = LENGTH(Rx);
+
+    // Create output R object for cF only
+    SEXP RcF = PROTECT(allocVector(REALSXP, n));
+    double *cF = REAL(RcF);
+
+    // Call the C function
+    tailsMSS(n, x, cF, location);
+
+    // Unprotect all protected objects
+    UNPROTECT(3);
+
+    // Since we only need cF, we just return that directly
+    return RcF;
+}
+
+
+// Failed re-implementation of interpolate_over_alpha
+// /**
+//  * Interpolates function and derivative values across alpha parameter.
+//  *
+//  * @param nx Number of x points
+//  * @param nalpha Number of alpha values in the table
+//  * @param alphalist Array of alpha values
+//  * @param thisalpha The alpha value to interpolate at
+//  * @param tablef Table of function values (nx × nalpha)
+//  * @param tabled Table of derivative values (nx × nalpha)
+//  * @param thisf Output array for interpolated function values
+//  * @param thisd Output array for interpolated derivative values
+//  * @param denom Array of precomputed reciprocal denominators
+//  */
+// void interpolate_over_alpha(int nx, int nalpha, double alphalist[],
+//                             double thisalpha, double tablef[], double tabled[],
+//                                                                             double thisf[], double thisd[], double denom[])
+// {
+//     /* To interpolate the tables tablef and tabled over alpha */
+//     double weight, product, difference[OI];
+//     int i, j, k, start, offset;
+//
+//     /* Input validation */
+//     if (nx <= 0 || nalpha <= 0 || !alphalist || !tablef || !tabled || !thisf || !thisd || !denom) {
+//         return;
+//     }
+//
+//     /* Check if thisalpha is outside the range */
+//     if (thisalpha < alphalist[0] || thisalpha > alphalist[nalpha - 1]) {
+//         return;
+//     }
+//
+//     /* Find the smallest index of a larger value of alpha using binary search */
+//     int low = 0;
+//     int high = nalpha - 1;
+//
+//     while (low < high) {
+//         int mid = low + (high - low) / 2;
+//
+//         if (alphalist[mid] > thisalpha) {
+//             high = mid;
+//         } else if (alphalist[mid] < thisalpha) {
+//             low = mid + 1;
+//         } else {
+//             /* Exact match found */
+//             low = mid;
+//             break;
+//         }
+//     }
+//
+//     j = low;
+//
+//     /* Calculate the window for interpolation */
+//     start = (j >= HOI) ? ((j - HOI + 1 < nalpha - OI) ? j - HOI + 1 : nalpha - OI) : 0;
+//     offset = start;
+//
+//     /* Compute differences and their product */
+//     product = 1.0;
+//     for (k = 0; k < OI; k++) {
+//         difference[k] = thisalpha - alphalist[k + offset];
+//         product *= difference[k];
+//     }
+//
+//     /* Check if thisalpha exactly matches a tabulated value (within epsilon) */
+//     if (fabs(product) < DBL_EPSILON * 100.0) {
+//         for (k = 0; k < OI; k++) {
+//             if (fabs(thisalpha - alphalist[k + offset]) < DBL_EPSILON * 100.0) {
+//                 for (i = 0; i < nx; i++) {
+//                     thisf[i] = tablef[i * nalpha + (k + offset)];
+//                     thisd[i] = tabled[i * nalpha + (k + offset)];
+//                 }
+//                 return;
+//             }
+//         }
+//     }
+//
+//     /* Interpolate across alpha */
+//     for (i = 0; i < nx; i++) {
+//         thisf[i] = 0.0;
+//         thisd[i] = 0.0;
+//     }
+//
+//     for (k = 0; k < OI; k++) {
+//         /* Skip if difference is too close to zero */
+//         if (fabs(difference[k]) < DBL_EPSILON * 100.0) {
+//             continue;
+//         }
+//
+//         weight = product * denom[start * OI + k] / difference[k];
+//
+//         for (i = 0; i < nx; i++) {
+//             thisf[i] += weight * tablef[i * nalpha + (k + offset)];
+//             thisd[i] += weight * tabled[i * nalpha + (k + offset)];
+//         }
+//     }
+// }
+

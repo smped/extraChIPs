@@ -263,7 +263,7 @@ setMethod(
 
 # This is a modified version of harmonicmeanp::p.hmp developed by Prof Daniel
 # Wilson, and hardwired to simply return a combined asymptotically exact HMP.
-# Hardwiring like this gives a 10-fold speed-up. Further modifications may be
+# Hard-wiring like this gives a ~15-fold speed-up. Further modifications may be
 # possible, but this seems enough for now
 # @param p vector of p-values
 # @param w vector of weights
@@ -272,21 +272,9 @@ setMethod(
 .ec_HMP <- function(p, w) {
     n <- length(p)
     hmp <- sum(w) / sum(w / p)
-    loc <- log(n) + 1 + digamma(1) - log(2/pi)
+    loc <- log(n) + 1 + digamma(1) - log(2 / pi)
     dbl <- double(1)
-    # cout <- .C(
-    #     "RtailsMSS", 1, 0, 1, loc, log(pi/2), 1.0, 1/hmp,
-    #     out1 = dbl, out2 = dbl, out3 = dbl, out4 = dbl,
-    #     out5 = dbl, out6 = dbl, COPY = rep(c(FALSE, TRUE), c(7, 6)),
-    #     PACKAGE = "FMStable"
-    # )
-    # Still need to figure out if all of those outputs above can be dropped
-    Rcout <- .C(
-        "my_RtailsMSS", loc, 1/hmp, d = dbl, logd = dbl, `F` = dbl, logF = dbl,
-        cF = dbl, logcF = dbl,
-        COPY = rep(c(FALSE, TRUE), c(2, 6)), PACKAGE = "extraChIPs"
-    )
-    Rcout$cF
+    .Call("RtailsMSS", loc, 1 / hmp)
 }
 
 # Similar to the above, this produces the FWER-controlled version in a
@@ -299,14 +287,9 @@ setMethod(
 .ec_HMP_adj <- function(p, w, L) {
     hmp <- sum(w) / sum(w / p)
     w.sum <- sum(w)
-    loc <- log(L[[1]]) + 1 + digamma(1) - log(2/pi)
+    loc <- log(L[[1]]) + 1 + digamma(1) - log(2 / pi)
     dbl <- double(1)
-    Rcout <- .C(
-        "my_RtailsMSS", loc, w.sum/hmp, d = dbl, logd = dbl, `F` = dbl,
-        logF = dbl, cF = dbl, logcF = dbl,
-        COPY = rep(c(FALSE, TRUE), c(2, 6)), PACKAGE = "extraChIPs"
-    )
-    Rcout$cF
+    .Call("RtailsMSS", loc, w.sum / hmp)
 }
 
 
