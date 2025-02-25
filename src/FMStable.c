@@ -6,7 +6,7 @@
 /* Modified from FMStable by Geoff Robertson */
 /* The specific use case here is the harmonic mean p and as such */
 /* Tables and if statements which are not required have been incrementally */
-/* commented out */
+/* commented out and a handful of constants defined to save recalculation */
 
 /*
  * OI is the order of interpolation to be used
@@ -20,10 +20,7 @@
 #define FALSE 0
 #define TRUE 1
 
-#define SQRT2  1.414213562373095048801688724209698079
-#define PI 3.141592653589793238462643383279502884
-#define PI_2 1.570796326794896619231321691639751442
-#define SQRT_PI 1.772453850905515881919
+static const double SQRT_PI = 1.772453850905515881919;
 
 
 /*====================================================================== */
@@ -3252,8 +3249,8 @@ static void setalpha(double alpha, double oneminusalpha, double twominusalpha)
 
         /* Also calculate Gaussian distribution for tabulated x's for use with table4 */
         for (i=0; i<nx4; i++){
-            f4_alpha2[i]=normaltail(Vx4[i] / SQRT2);
-            d4_alpha2[i]=1 / (SQRT_4_PI * exp(-Vx4[i]*Vx4[i]*.25));
+            f4_alpha2[i]=normaltail(Vx4[i] / M_SQRT2);
+            d4_alpha2[i]=1 / (2 * SQRT_PI * exp(-Vx4[i] * Vx4[i] * .25));
         }
 
     }			/* end of initialization */
@@ -3267,17 +3264,18 @@ static void setalpha(double alpha, double oneminusalpha, double twominusalpha)
     /* Case when alpha > .5 */
     alphastar=alpha;
     ximid=.4;
-    midpoint=(-log(PI_2 * ximid)-1)/PI_2;
+    midpoint=(-log(M_PI_2 * ximid)-1)/M_PI_2;
     nu=1;
     eta=0;
-    logscalef=log(PI_2);
+    logscalef=log(M_PI_2);
     /* Lower limit where xi=10**30; take density to be zero below here */
-    xlowlimit=-(1 + log(PI_2 * 1.E30))/ PI_2;
+    xlowlimit=-(1 + log(M_PI_2 * 1.E30))/ M_PI_2;
 
     sa2=twominusalpha/(2 * alpha);
-    Clogd=log(nu/sqrt(2 * PI * alpha));
-    sinangle=sin(PI_2 * twominusalpha);
-    Calpha_M=exp(LogGamma(alpha))*sinangle / PI;
+    Clogd=log(nu / sqrt(2 * M_PI * alpha));
+    sinangle=sin(M_PI_2 * twominusalpha);
+    // Calpha_M=exp(LogGamma(alpha))*sinangle / M_PI;
+    Calpha_M = exp(LogGamma(alpha)) * sinangle * M_1_PI;
 
     interpolate_over_alpha(nx1,ny1,Vy1,alphastar,tablef1,tabled1,f1,d1,ydenom1);
     interpolate_over_alpha(nx6,ny6,Vy6,alpha,tablef6,tabled6,f6,d6,ydenom6);
@@ -3328,12 +3326,12 @@ void tailsMSS(int n,double x[],double d[],double logd[],double F[],
         }
         /* Case covered by table 1: low range for x */
         else if(z<midpoint){
-            xi = exp(-1 - PI_2 * z) / PI_2;
+            xi = exp(-1 - M_PI_2 * z) / M_PI_2;
             t = .2 / (alphastar * xi);
             interpolate(t,&ffound,&dfound,nx1,Vx1,f1,d1,xdenom1);
             logd[i]=Clogd + sa2 * log(xi) - xi + log(dfound) - logscale + logscalef;
             d[i]=exp(logd[i]);
-            logF[i]=-.5 * log(2 * PI * alpha * xi) - xi + log(ffound);
+            logF[i]=-.5 * log(2 * M_PI * alpha * xi) - xi + log(ffound);
             F[i]=exp(logF[i]);
             logcF[i]=log1p(-F[i]);
             cF[i]=1.-F[i];
@@ -3356,7 +3354,7 @@ void tailsMSS(int n,double x[],double d[],double logd[],double F[],
 
             y=z;
             do{
-                dy = (z - y - log(y) / PI_2) / (1 + 1 / (y * PI_2));
+                dy = (z - y - log(y) / M_PI_2) / (1 + 1 / (y * M_PI_2));
                 y = y + dy;
             }
             while(fabs(dy)>1.e-10*y);
@@ -3385,7 +3383,7 @@ void my_RtailsMSS(double *Rlocation, double *x, double *d, double *logd,
     double oneminusalpha = 0.0;
     double twominusalpha = 1.0;
     double location = *Rlocation;
-    double logscale = log(PI_2);
+    double logscale = log(M_PI_2);
     tailsMSS(n,x,d,logd,F,logF,cF,logcF,alpha,oneminusalpha, twominusalpha,
              location,logscale);
 }
