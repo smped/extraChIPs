@@ -8,19 +8,23 @@
 /* Tables and if statements which are not required have been incrementally */
 /* commented out */
 
-/* Standard defines */
-#define MIN(a,b) ((a)<(b)? (a):(b))
-#define MAX(a,b) ((a)<(b)? (b):(a))
-
+/*
+ * OI is the order of interpolation to be used
+ * HOI is half the order of interpolation to be used
+ * OIM1 is OI-1
+ */
 #define OI 16
 #define HOI 8
 #define OIM1 15
-/*      OI is the order of interpolation to be used
- HOI is half the order of interpolation to be used
- OIM1 is OI-1    */
 
 #define FALSE 0
 #define TRUE 1
+
+#define SQRT2  1.414213562373095048801688724209698079
+#define PI 3.141592653589793238462643383279502884
+#define PI_2 1.570796326794896619231321691639751442
+#define SQRT_PI 1.772453850905515881919
+
 
 /*====================================================================== */
 /**
@@ -81,51 +85,73 @@ double millsratio(double x)
 }
 /*=====================================================================*/
 
+/* Finds the right-hand tail probability for a standard normal distribution. */
 double normaltail(double z)
 {
-    /* Finds the right hand tail probability for a standard normal distribution */
-    /* Note that precision is poor if the argument z is negative. */
-    /* Will return zero if z is large. */
+    /* Standard normal density at zero: 1/sqrt(2π) */
+    static const double STANDARD_NORMAL_DENSITY = 0.39894228040143267793994605993438187;
 
     double val;
-    double const dnorm0=.39894228040143267793994605993438187;
-    if(z<0.) val=1.-dnorm0*exp(-.5*z*z)*millsratio(-z);
-    else val=dnorm0*exp(-.5*z*z)*millsratio(z);
+
+    if (z < 0.0) {
+        /* For negative z, use the fact that P(X > z) = 1 - P(X > -z) */
+        val = 1.0 - STANDARD_NORMAL_DENSITY * exp(-0.5 * z * z) * millsratio(-z);
+    } else {
+        /* For positive z, use Mills ratio directly */
+        val = STANDARD_NORMAL_DENSITY * exp(-0.5 * z * z) * millsratio(z);
+    }
+
     return val;
 }
 
 /*=====================================================================*/
 
-double LogGamma(double x)
-{
-    /*  Abramowitz & Stegun equation 6.1.48	 */
+double LogGamma(double x) {
 
-    double Z,val,c0=0.9189385332046727417803297364056177,
-        a0=1/12.,a1=1/30.,a2=53/210.,a3=195/371.,a4=22999/22737.,
-        a5=29944523./19733142.,a6=109535241009./48264275462.;
-    if(x>10) val=(x-.5)*log(x)+c0-x+a0/(x+a1/(x+a2/(x+a3/(x+a4/(x+a5/(x+a6/x))))));
-    else {
-        Z=x+9;
-        val=(Z-.5)*log(Z)+c0-Z+a0/(Z+a1/(Z+a2/(Z+a3/(Z+a4/(Z+a5/(Z+a6/Z
-        ))))))-log(x*(x+1)*(x+2)*(x+3)*(x+4)*(x+5)*(x+6)*(x+7)*(x+8));
+    /* Abramowitz & Stegun equation 6.1.48 */
+
+    const double c0 = 0.9189385332046727417803297364056177;
+    const double a[7] = {
+        1.0 / 12.0, 1.0 / 30.0, 53.0 / 210.0, 195.0 / 371.0,
+        22999.0 / 22737.0, 29944523.0 / 19733142.0, 109535241009.0 / 48264275462.0
+    };
+
+    double Z, val;
+
+    if (x > 10) {
+        val = (x - 0.5) * log(x) + c0 - x;
+        val += a[0] / (x + a[1] / (x + a[2] / (x + a[3] / (x + a[4] / (x + a[5] / (x + a[6] / x))))));
+    } else {
+        Z = x + 9;
+        val = (Z - 0.5) * log(Z) + c0 - Z;
+        val += a[0] / (Z + a[1] / (Z + a[2] / (Z + a[3] / (Z + a[4] / (Z + a[5] / (Z + a[6] / Z))))));
+        val -= log(x * (x + 1) * (x + 2) * (x + 3) * (x + 4) * (x + 5) * (x + 6) * (x + 7) * (x + 8));
     }
+
     return val;
 }
 
 /*====================================================================== */
-void calc_recip_denom(int nx,double x[],double denom[])
+void calc_recip_denom(int nx, double x[], double denom[]) {
+
     /* Calculates reciprocals of denominators for use in later interpolation */
-{
+
+    int i, j, k, offset;
     double product;
-    int i,j,k,offset;
-    for (i=0; i<nx-OIM1; i++){
-        offset=i;
-        for (j=0; j<OI; j++){
-            product=1;
-            for (k=0; k<OI; k++){
-                if(k != j)product=product*(x[j+offset]-x[k+offset]);
+
+    for (i = 0; i < nx - OIM1; i++) {
+        offset = i;
+
+        for (j = 0; j < OI; j++) {
+            product = 1.0;
+
+            for (k = 0; k < OI; k++) {
+                if (k != j) {
+                    product *= (x[j + offset] - x[k + offset]);
+                }
             }
-            denom[i*OI+j]=1./product;
+
+            denom[i * OI + j] = 1.0 / product;
         }
     }
 }
@@ -153,19 +179,19 @@ void interpolate(double x,double *f,double *d,int nxn,double xn[],
         }
     } while(TRUE);
 
-    start=MIN(MAX(0,high-HOI),nxn-OI);
+    start=fmin(fmax(0,high-HOI),nxn-OI);
     offset=start;
     product=1;
     for (k=0; k<OI; k++){
-        difference[k]=x-xn[k+offset];
-        product=product*difference[k];
+        difference[k] = x - xn[k+offset];
+        product = product * difference[k];
     }
     if(product == 0){
         for (k=0; k<OI; k++){
             /*Use appropriate alpha value */
             if(x == xn[k+offset]){
-                *f=fn[k+offset];
-                *d=dn[k+offset];
+                *f = fn[k+offset];
+                *d = dn[k+offset];
                 break;
             }
         }
@@ -174,16 +200,16 @@ void interpolate(double x,double *f,double *d,int nxn,double xn[],
         *f=0;
         *d=0;
         for (k=0; k<OI; k++){
-            weight=product*xdenomn[start*OI+k]/difference[k];
-            *f+=weight*fn[k+offset];
-            *d+=weight*dn[k+offset];
+            weight = product * xdenomn[start*OI+k] / difference[k];
+            *f += weight * fn[k+offset];
+            *d += weight * dn[k+offset];
         }
     }
 }
 /*=================================================================== */
 void interpolate_over_alpha(int nx,int nalpha,double alphalist[],
                             double thisalpha,double tablef[],double tabled[],
-                            double thisf[],double thisd[],double denom[])
+                                                                          double thisf[],double thisd[],double denom[])
 {
     /* To interpolate the tables tablef and tabled over alpha */
     double weight,product,difference[OI];
@@ -194,12 +220,12 @@ void interpolate_over_alpha(int nx,int nalpha,double alphalist[],
     for (j=0; j<nalpha; j++){
         if(alphalist[j] > thisalpha)break;
     }
-    start=MIN(MAX(0,j-HOI),nalpha-OI);
+    start=fmin(fmax(0,j-HOI),nalpha-OI);
     offset=start;
     product=1;
     for (k=0; k<OI; k++){
-        difference[k]=thisalpha-alphalist[k+offset];
-        product=product*difference[k];
+        difference[k] = thisalpha - alphalist[k+offset];
+        product = product * difference[k];
     }
 
     /* Minor option: when thisalpha is a tabulated value */
@@ -207,8 +233,8 @@ void interpolate_over_alpha(int nx,int nalpha,double alphalist[],
         for (k=0; k<OI; k++){
             if(thisalpha == alphalist[k+offset]){
                 for (i=0; i<nx; i++){
-                    thisf[i]=tablef[i*nalpha+(k+offset)];
-                    thisd[i]=tabled[i*nalpha+(k+offset)];
+                    thisf[i] = tablef[i*nalpha+(k+offset)];
+                    thisd[i] = tabled[i*nalpha+(k+offset)];
                 }
                 break;
             }
@@ -222,18 +248,15 @@ void interpolate_over_alpha(int nx,int nalpha,double alphalist[],
             thisd[i]=0;
         }
         for (k=0; k< OI; k++){
-            weight=product*denom[start*OI+k]/difference[k];
+            weight = product * denom[start * OI + k] / difference[k];
             for (i=0; i<nx; i++){
-                thisf[i]+=weight*tablef[i*nalpha+(k+offset)];
-                thisd[i]+=weight*tabled[i*nalpha+(k+offset)];
+                thisf[i] += weight * tablef[i * nalpha + (k + offset)];
+                thisd[i] += weight * tabled[i * nalpha + (k + offset)];
             }
         }
     }
 }
 /*====================================================================== */
-static const double pi=3.141592653589793238462643383279502884197;
-static const double hpi=1.57079632679489661923132169163975144209858;
-static const double neglarge=-1.7E308;
 
 static double previous_alpha=-999.;
 static double previous_oneminusalpha=-999.;
@@ -254,21 +277,24 @@ static int distributiontabulated;
 #define nx1 70
 #define ny1 20
 static double f1[nx1],d1[nx1];
-static double xdenom1[(nx1-OIM1)*OI],ydenom1[(ny1-OIM1)*OI];
+static double xdenom1[(nx1 - OIM1) * OI];
+static double ydenom1[(ny1 - OIM1) * OI];
 
 /* Second tables are for alpha < .5, alpha*xi < 1/5 and x<1 in C parametrization */
 /* Vy2 is alpha, Vx2 is proportional to x**(-1/alpha) */
 #define nx2 20
 #define ny2 20
 // static double f2[nx2],d2[nx2];
-static double xdenom2[(nx2-OIM1)*OI],ydenom2[(ny2-OIM1)*OI];
+static double xdenom2[(nx2 - OIM1) * OI];
+static double ydenom2[(ny2 - OIM1) * OI];
 
 /* Third tables are for alpha < .5, x > 1 in C parametrization */
 /* Vy3 is alpha, Vx3 is proportional to x**(-1/alpha) */
 #define nx3 20
 #define ny3 20
 // static double f3[nx3],d3[nx3];
-static double xdenom3[(nx3-OIM1)*OI],ydenom3[(ny3-OIM1)*OI];
+static double xdenom3[(nx3 - OIM1) * OI];
+static double ydenom3[(ny3 - OIM1) * OI];
 
 /* Fourth tables are for 1.7 <alpha < 2, -1.3 < x (M=S0) < 20 */
 /* Use the difference from the alpha=2 (normal) distribution for all larger x,
@@ -278,8 +304,10 @@ static double xdenom3[(nx3-OIM1)*OI],ydenom3[(ny3-OIM1)*OI];
 #define nx4 100
 #define ny4 17
 // static double f4[nx4],d4[nx4];
-static double xdenom4[(nx4-OIM1)*OI],ydenom4[(ny4-OIM1)*OI];
-static double f4_alpha2[nx4],d4_alpha2[nx4];
+static double xdenom4[(nx4 - OIM1) * OI];
+static double ydenom4[(ny4 - OIM1) * OI];
+static double f4_alpha2[nx4];
+static double d4_alpha2[nx4];
 
 /* Fifth tables are for 1.7 <alpha < 2, x (M=S0) > 20 */
 /* Use Zolotarev 2.5.6 */
@@ -287,7 +315,8 @@ static double f4_alpha2[nx4],d4_alpha2[nx4];
 #define nx5 20
 #define ny5 17
 // static double f5[nx5],d5[nx5];
-static double xdenom5[(nx5-OIM1)*OI],ydenom5[(ny5-OIM1)*OI];
+static double xdenom5[(nx5 - OIM1) * OI];
+static double ydenom5[(ny5 - OIM1) * OI];
 
 /* Sixth tables are for 0.5 <alpha < 1.7, x (M=S0) > 5 */
 /* Use Zolotarev 2.5.6 */
@@ -295,7 +324,8 @@ static double xdenom5[(nx5-OIM1)*OI],ydenom5[(ny5-OIM1)*OI];
 #define nx6 20
 #define ny6 40
 static double f6[nx6],d6[nx6];
-static double xdenom6[(nx6-OIM1)*OI],ydenom6[(ny6-OIM1)*OI];
+static double xdenom6[(nx6 - OIM1) * OI];
+static double ydenom6[(ny6 - OIM1) * OI];
 
 /* Seventh tables are for 0.5 <alpha < 1.7, from xi=2/5 to x=7.3 */
 /* 	Table 1 goes from xi=.2/alpha to xi=infinity, so regions overlap. */
@@ -303,7 +333,8 @@ static double xdenom6[(nx6-OIM1)*OI],ydenom6[(ny6-OIM1)*OI];
 #define nx7 60
 #define ny7 40
 static double f7[nx7],d7[nx7];
-static double xdenom7[(nx7-OIM1)*OI],ydenom7[(ny7-OIM1)*OI];
+static double xdenom7[(nx7 - OIM1) * OI];
+static double ydenom7[(ny7 - OIM1) * OI];
 
 static double Vx1 [ 70 ]= {
     .0000000000000000, .45990742405315702E-03, .18333067643362053E-02,
@@ -3221,8 +3252,8 @@ static void setalpha(double alpha, double oneminusalpha, double twominusalpha)
 
         /* Also calculate Gaussian distribution for tabulated x's for use with table4 */
         for (i=0; i<nx4; i++){
-            f4_alpha2[i]=normaltail(Vx4[i]/sqrt(2.));
-            d4_alpha2[i]=1/(sqrt(4*pi))*exp(-Vx4[i]*Vx4[i]*.25);
+            f4_alpha2[i]=normaltail(Vx4[i] / SQRT2);
+            d4_alpha2[i]=1 / (SQRT_4_PI * exp(-Vx4[i]*Vx4[i]*.25));
         }
 
     }			/* end of initialization */
@@ -3236,17 +3267,17 @@ static void setalpha(double alpha, double oneminusalpha, double twominusalpha)
     /* Case when alpha > .5 */
     alphastar=alpha;
     ximid=.4;
-    midpoint=(-log(hpi*ximid)-1)/hpi;
+    midpoint=(-log(PI_2 * ximid)-1)/PI_2;
     nu=1;
     eta=0;
-    logscalef=log(hpi);
+    logscalef=log(PI_2);
     /* Lower limit where xi=10**30; take density to be zero below here */
-    xlowlimit=-(1+log(hpi*1.E30))/hpi;
+    xlowlimit=-(1 + log(PI_2 * 1.E30))/ PI_2;
 
-    sa2=twominusalpha/(2*alpha);
-    Clogd=log(nu/sqrt(2*pi*alpha));
-    sinangle=sin(hpi*twominusalpha);
-    Calpha_M=exp(LogGamma(alpha))*sinangle/pi;
+    sa2=twominusalpha/(2 * alpha);
+    Clogd=log(nu/sqrt(2 * PI * alpha));
+    sinangle=sin(PI_2 * twominusalpha);
+    Calpha_M=exp(LogGamma(alpha))*sinangle / PI;
 
     interpolate_over_alpha(nx1,ny1,Vy1,alphastar,tablef1,tabled1,f1,d1,ydenom1);
     interpolate_over_alpha(nx6,ny6,Vy6,alpha,tablef6,tabled6,f6,d6,ydenom6);
@@ -3255,8 +3286,8 @@ static void setalpha(double alpha, double oneminusalpha, double twominusalpha)
 /*========================================================================= */
 void tailsMSS(int n,double x[],double d[],double logd[],double F[],
               double logF[],double cF[],double logcF[],
-              double alpha,double oneminusalpha, double twominusalpha,
-              double location,double logscale)
+                                                    double alpha,double oneminusalpha, double twominusalpha,
+                                                    double location,double logscale)
 
     /*  Only need to return logd,F and cF. */
     /*  For left-skewed, need to swap F and cF. */
@@ -3289,20 +3320,20 @@ void tailsMSS(int n,double x[],double d[],double logd[],double F[],
         /* Case when z is below limit where xi can be calculated */
         if(z<xlowlimit){
             F[i]=0.;
-            logF[i]=neglarge;
+            logF[i]=-DBL_MAX;
             cF[i]=1.;
             logcF[i]=0.;
             d[i]=0.;
-            logd[i]=neglarge;
+            logd[i]=-DBL_MAX;
         }
         /* Case covered by table 1: low range for x */
         else if(z<midpoint){
-            xi=exp(-1-hpi*z)/hpi;
-            t=.2/(alphastar*xi);
+            xi = exp(-1 - PI_2 * z) / PI_2;
+            t = .2 / (alphastar * xi);
             interpolate(t,&ffound,&dfound,nx1,Vx1,f1,d1,xdenom1);
-            logd[i]=Clogd+sa2*log(xi)-xi+log(dfound)-logscale+logscalef;
+            logd[i]=Clogd + sa2 * log(xi) - xi + log(dfound) - logscale + logscalef;
             d[i]=exp(logd[i]);
-            logF[i]=-.5*log(2*pi*alpha*xi)-xi+log(ffound);
+            logF[i]=-.5 * log(2 * PI * alpha * xi) - xi + log(ffound);
             F[i]=exp(logF[i]);
             logcF[i]=log1p(-F[i]);
             cF[i]=1.-F[i];
@@ -3310,7 +3341,7 @@ void tailsMSS(int n,double x[],double d[],double logd[],double F[],
 
         /* Case covered by table 7: middle range for alpha, middle range for x */
         else if(z<7.3){
-            t=(z-midpoint)/(7.3-midpoint);
+            t = (z - midpoint) / (7.3 - midpoint);
             interpolate(t,&ffound,&dfound,nx7,Vx7,f7,d7,xdenom7);
             logcF[i]=ffound;
             cF[i]=exp(ffound);
@@ -3323,22 +3354,22 @@ void tailsMSS(int n,double x[],double d[],double logd[],double F[],
         /* Case covered by table 6: middle range for alpha, upper range for x */
         else{
 
-          y=z;
-          do{
-            dy=(z-y-log(y)/hpi)/(1+1/(y*hpi));
-            y=y+dy;
-          }
-          while(fabs(dy)>1.e-10*y);
+            y=z;
+            do{
+                dy = (z - y - log(y) / PI_2) / (1 + 1 / (y * PI_2));
+                y = y + dy;
+            }
+            while(fabs(dy)>1.e-10*y);
 
-          t=pow((y/5.),(-alpha));
-          interpolate(t,&ffound,&dfound,nx6,Vx6,f6,d6,xdenom6);
-          logapprox=log(2*Calpha_M)-alpha*log(y);
-          logcF[i]=logapprox+log(ffound);
-          cF[i]=exp(logcF[i]);
-          F[i]=1.-cF[i];
-          logF[i]=log1p(-cF[i]);
-          logd[i]=logapprox-logscale+log(alpha*dfound/y);
-          d[i]=exp(logd[i]);
+            t = pow((y / 5.), (-alpha));
+            interpolate(t,&ffound,&dfound,nx6,Vx6,f6,d6,xdenom6);
+            logapprox = log(2 * Calpha_M) - alpha * log(y);
+            logcF[i]=logapprox+log(ffound);
+            cF[i]=exp(logcF[i]);
+            F[i]=1.-cF[i];
+            logF[i]=log1p(-cF[i]);
+            logd[i]=logapprox-logscale+log(alpha*dfound/y);
+            d[i]=exp(logd[i]);
         }
     }
     // }
@@ -3354,7 +3385,7 @@ void my_RtailsMSS(double *Rlocation, double *x, double *d, double *logd,
     double oneminusalpha = 0.0;
     double twominusalpha = 1.0;
     double location = *Rlocation;
-    double logscale = log(M_PI_2);
+    double logscale = log(PI_2);
     tailsMSS(n,x,d,logd,F,logF,cF,logcF,alpha,oneminusalpha, twominusalpha,
              location,logscale);
 }
