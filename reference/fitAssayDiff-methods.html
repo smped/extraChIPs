@@ -241,7 +241,7 @@ individually as conventionally specified.</p>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">counts</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Sample_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">ncols</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">DataFrame</span><span class="op">(</span>treat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"A"</span>, <span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"B"</span>, <span class="st">"B"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">df</span><span class="op">$</span><span class="va">treat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">treat</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  assays <span class="op">=</span> <span class="fu">SimpleList</span><span class="op">(</span>counts <span class="op">=</span> <span class="va">counts</span><span class="op">)</span>, colData <span class="op">=</span> <span class="va">df</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span><span class="va">treat</span>, <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -254,17 +254,17 @@ individually as conventionally specified.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DataFrame with 200 rows and 5 columns</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          logFC    logCPM           F     PValue       FDR</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;numeric&gt; &lt;numeric&gt;   &lt;numeric&gt;  &lt;numeric&gt; &lt;numeric&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    4.3118042   11.7021 10.79729617 0.00272349  0.544698</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    0.0832925   12.2407  0.00682725 0.93473200  0.996024</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    1.6788140   11.6748  2.04323371 0.16387523  0.996024</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   -1.1910443   12.0524  1.32867823 0.25872306  0.996024</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    0.5183814   12.0442  0.24296590 0.62589044  0.996024</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    4.3090759   11.7021 11.30887207 0.00313808  0.627616</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    0.0833607   12.2407  0.00799283 0.92966253  0.994965</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    1.6791893   11.6748  2.11603063 0.16147713  0.994965</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   -1.1910714   12.0524  1.56369574 0.22574111  0.994965</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    0.5181576   12.0442  0.27527931 0.60565317  0.994965</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ...        ...       ...         ...        ...       ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 196  0.0906305   12.7687  0.02760966   0.869216  0.996024</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 197  1.0957446   12.3006  1.21717268   0.279247  0.996024</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 198 -1.1430050   12.6072  2.87907802   0.100755  0.996024</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 199  0.1462205   12.3253  0.02519284   0.875019  0.996024</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 200  0.0459551   11.8591  0.00124162   0.972139  0.996024</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 196  0.0907008   12.7687  0.02288526  0.8812907  0.994965</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 197  1.0954842   12.3006  1.42572030  0.2466118  0.994965</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 198 -1.1430187   12.6072  3.15452006  0.0911301  0.994965</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 199  0.1461608   12.3253  0.03170114  0.8604991  0.994965</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 200  0.0461835   11.8591  0.00114604  0.9733340  0.994965</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
@@ -281,7 +281,7 @@ individually as conventionally specified.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.9000.</p>
 </div>
 
       </footer></div>

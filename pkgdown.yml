@@ -1,8 +1,8 @@
-pandoc: '3.2'
-pkgdown: 2.1.0.9000
-pkgdown_sha: 6f01c9267a1cee263216cec38eea10017d751dd8
+pandoc: '3.6'
+pkgdown: 2.1.1.9000
+pkgdown_sha: de95b13f1ca3d09bee29f2f2742692bf30a28f8d
 articles:
   differential_signal_fixed: differential_signal_fixed.html
   differential_signal_sliding: differential_signal_sliding.html
   range_based_functions: range_based_functions.html
-last_built: 2024-07-28T16:07Z
+last_built: 2025-02-25T13:21Z
