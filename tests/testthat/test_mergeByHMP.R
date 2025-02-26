@@ -35,7 +35,8 @@ test_that("Errors appear where expected", {
 })
 
 test_that(".ec_HMP returns correct values",{
-  # Doesn't matter if these are random every time. It's probs better actually
+
+  # Test Uniform
   p <- runif(10)
   w <- runif(10)
   w <- w / sum(w)
@@ -43,15 +44,32 @@ test_that(".ec_HMP returns correct values",{
     as.numeric(harmonicmeanp::p.hmp(p, w = w, L = 10, multilevel = FALSE)),
     extraChIPs:::.ec_HMP(p, w)
   )
-})
-
-test_that(".ec_HMP_adj returns correct values",{
-  # Doesn't matter if these are random every time. It's probs better actually
-  p <- runif(10)
-  w <- runif(10)
-  w <- w / sum(w)
   expect_equal(
-    as.numeric(harmonicmeanp::p.hmp(p, w = w, L = 100)) / sum(w),
-    extraChIPs:::.ec_HMP_adj(p, w, 100)
+      as.numeric(harmonicmeanp::p.hmp(p, w = w, L = 100)) / sum(w),
+      extraChIPs:::.ec_HMP_adj(p, w, 100)
   )
+
+  # Test low p-values
+  p <- rbeta(10, 1 / 10, 1)
+  expect_equal(
+      as.numeric(harmonicmeanp::p.hmp(p, w = w, L = 10, multilevel = FALSE)),
+      extraChIPs:::.ec_HMP(p, w)
+  )
+  expect_equal(
+      as.numeric(harmonicmeanp::p.hmp(p, w = w, L = 100)) / sum(w),
+      extraChIPs:::.ec_HMP_adj(p, w, 100)
+  )
+
+  # Test high p-values
+  p <- rbeta(10, 1, 1 / 10)
+  expect_equal(
+      as.numeric(harmonicmeanp::p.hmp(p, w = w, L = 10, multilevel = FALSE)),
+      extraChIPs:::.ec_HMP(p, w)
+  )
+  expect_equal(
+      as.numeric(harmonicmeanp::p.hmp(p, w = w, L = 100)) / sum(w),
+      extraChIPs:::.ec_HMP_adj(p, w, 100)
+  )
+
+
 })
