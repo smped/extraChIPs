@@ -265,6 +265,19 @@ void interpolate_over_alpha(int nx, int nalpha, double alphalist[],
         }
     }
 
+    /* Minor option: when thisalpha is a tabulated value */
+    if(product == 0){
+        for (k = 0; k < OI; k++){
+            if(thisalpha == alphalist[k + offset]){
+                for (i = 0; i < nx; i++){
+                    thisf[i] = tablef[i * nalpha + (k + offset)];
+                    thisd[i] = tabled[i * nalpha + (k + offset)];
+                }
+                break;
+            }
+        }
+    }
+
     /* Major option: need to interpolate */
     else{
         for (i=0; i<nx; i++){
@@ -279,6 +292,8 @@ void interpolate_over_alpha(int nx, int nalpha, double alphalist[],
             }
         }
     }
+
+
 }
 /*====================================================================== */
 
@@ -3301,121 +3316,9 @@ static void setalpha(double alpha, double oneminusalpha, double twominusalpha)
     interpolate_over_alpha(nx7, ny7, Vy7, alpha, tablef7, tabled7, f7, d7, ydenom7);
 }
 /*========================================================================= */
-// /* The original version from FMStable                                   */
-// void tailsMSS(int n,double x[],double d[],double logd[],double F[],
-//               double logF[],double cF[],double logcF[], double alpha,
-//               double oneminusalpha, double twominusalpha, double location)
-//
-//     /*  Only need to return logd,F and cF. */
-//     /*  For left-skewed, need to swap F and cF. */
-// {
-//     /* Computes density, distribution function and complement for a maximally skew
-//      stable distribution skewed to the right */
-//     /* When alpha < 0.5:
-//      MSS variable is exp(logscale)*(parametrization C standard)-location
-//      log MSS variable is exp{location-exp(logscale)*(parametrization C standard)}
-//      When alpha >=0.5:
-//      MSS variable is exp(logscale)*(parametrization M=S0 standard)-location
-//      log MSS variable is exp{location-exp(logscale)*(parametrization M=S0 standard)}
-//      In both cases the log MSS variable = exp( - MSS variable) and
-//      MSS variable = -log( log MSS variable).		*/
-//
-//     // static const double roothalf=.7071067811865475244;
-//     // static const double log_density_mode2=-1.2655121234846454;
-//     // double z,y,dy,difference,logz,t,temp,temp2,approx;
-//     double z, y, dy, t;
-//     int i;
-//     static const double logscale = 0.45158270528945486473; // log(M_PI_2)
-//
-//     /* If appropriate, set up for new alpha */
-//     setalpha(alpha, oneminusalpha, twominusalpha);
-//
-//     /*Case when alpha is between 0.5 and 1.7 */
-//     for(i=0; i<n; i++){
-//         z = (x[i] - location) * M_2_PI;
-//
-//         /* Case when z is below limit where xi can be calculated */
-//         if(z < xlowlimit){
-//             F[i] = 0.;
-//             logF[i] = -DBL_MAX;
-//             cF[i] = 1.;
-//             logcF[i] = 0.;
-//             d[i] = 0.;
-//             logd[i] = -DBL_MAX;
-//         }
-//         /* Case covered by table 1: low range for x */
-//         else if(z < midpoint){
-//             xi = exp(-1 - M_PI_2 * z) * M_2_PI;
-//             t = .2 / (alphastar * xi);
-//             interpolate(t, &ffound, &dfound, nx1, Vx1, f1, d1, xdenom1);
-//             logd[i] = Clogd + sa2 * log(xi) - xi + log(dfound) - logscale + logscalef;
-//             d[i] = exp(logd[i]);
-//             logF[i] = -.5 * log(2 * M_PI * alpha * xi) - xi + log(ffound);
-//             F[i] = exp(logF[i]);
-//             logcF[i] = log1p(-F[i]);
-//             cF[i] = 1.-F[i];
-//         }
-//
-//         /* Case covered by table 7: middle range for alpha, middle range for x */
-//         else if(z < 7.3){
-//             t = (z - midpoint) / (7.3 - midpoint);
-//             interpolate(t, &ffound, &dfound, nx7, Vx7, f7, d7, xdenom7);
-//             logcF[i] = ffound;
-//             cF[i] = exp(ffound);
-//             F[i] = 1. - cF[i];
-//             logF[i] = log1p(-cF[i]);
-//             logd[i] = dfound - logscale;
-//             d[i] = exp(logd[i]);
-//         }
-//
-//         /* Case covered by table 6: middle range for alpha, upper range for x */
-//         else{
-//
-//             y = z;
-//             do{
-//                 dy = (z - y - log(y) * M_2_PI) / (1 + 1 / (y * M_PI_2));
-//                 y = y + dy;
-//             }
-//             while(fabs(dy) > 1.e-10 * y);
-//
-//             t = pow((0.2 * y), (-alpha));
-//             interpolate(t, &ffound, &dfound, nx6, Vx6, f6, d6, xdenom6);
-//             logapprox = log(2 * Calpha_M) - alpha * log(y);
-//             logcF[i] = logapprox + log(ffound);
-//             cF[i] = exp(logcF[i]);
-//             F[i] = 1. - cF[i];
-//             logF[i] = log1p(-cF[i]);
-//             logd[i] = logapprox - logscale + log(alpha * dfound) - log(y);
-//             d[i] = exp(logd[i]);
-//         }
-//     }
-//     // }
-// }
 /**
  * Computes density, distribution function and complement for a maximally skew
  * stable distribution skewed to the right.
- *
- * @param n Number of points to evaluate
- * @param x Input array of values
- * @param d Output array for density values
- * @param logd Output array for log density values
- * @param F Output array for distribution function values
- * @param logF Output array for log distribution function values
- * @param cF Output array for complementary distribution function values
- * @param logcF Output array for log complementary distribution function values
- * @param alpha Stability parameter (0 < alpha < 2)
- * @param oneminusalpha Precomputed value (1 - alpha)
- * @param twominusalpha Precomputed value (2 - alpha)
- * @param location Location parameter
- *
- * @note When alpha < 0.5:
- *   MSS variable is exp(logscale)*(parametrization C standard)-location
- *   log MSS variable is exp{location-exp(logscale)*(parametrization C standard)}
- * @note When alpha >= 0.5:
- *   MSS variable is exp(logscale)*(parametrization M=S0 standard)-location
- *   log MSS variable is exp{location-exp(logscale)*(parametrization M=S0 standard)}
- * @note In both cases the log MSS variable = exp(-MSS variable) and
- *   MSS variable = -log(log MSS variable).
  */
 void tailsMSS(int n, double x[], double cF[], double location)
 {
@@ -3529,102 +3432,3 @@ SEXP RtailsMSS(SEXP Rlocation, SEXP Rx) {
     // Since we only need cF, we just return that directly
     return RcF;
 }
-
-
-// Failed re-implementation of interpolate_over_alpha
-// /**
-//  * Interpolates function and derivative values across alpha parameter.
-//  *
-//  * @param nx Number of x points
-//  * @param nalpha Number of alpha values in the table
-//  * @param alphalist Array of alpha values
-//  * @param thisalpha The alpha value to interpolate at
-//  * @param tablef Table of function values (nx × nalpha)
-//  * @param tabled Table of derivative values (nx × nalpha)
-//  * @param thisf Output array for interpolated function values
-//  * @param thisd Output array for interpolated derivative values
-//  * @param denom Array of precomputed reciprocal denominators
-//  */
-// void interpolate_over_alpha(int nx, int nalpha, double alphalist[],
-//                             double thisalpha, double tablef[], double tabled[],
-//                                                                             double thisf[], double thisd[], double denom[])
-// {
-//     /* To interpolate the tables tablef and tabled over alpha */
-//     double weight, product, difference[OI];
-//     int i, j, k, start, offset;
-//
-//     /* Input validation */
-//     if (nx <= 0 || nalpha <= 0 || !alphalist || !tablef || !tabled || !thisf || !thisd || !denom) {
-//         return;
-//     }
-//
-//     /* Check if thisalpha is outside the range */
-//     if (thisalpha < alphalist[0] || thisalpha > alphalist[nalpha - 1]) {
-//         return;
-//     }
-//
-//     /* Find the smallest index of a larger value of alpha using binary search */
-//     int low = 0;
-//     int high = nalpha - 1;
-//
-//     while (low < high) {
-//         int mid = low + (high - low) / 2;
-//
-//         if (alphalist[mid] > thisalpha) {
-//             high = mid;
-//         } else if (alphalist[mid] < thisalpha) {
-//             low = mid + 1;
-//         } else {
-//             /* Exact match found */
-//             low = mid;
-//             break;
-//         }
-//     }
-//
-//     j = low;
-//
-//     /* Calculate the window for interpolation */
-//     start = (j >= HOI) ? ((j - HOI + 1 < nalpha - OI) ? j - HOI + 1 : nalpha - OI) : 0;
-//     offset = start;
-//
-//     /* Compute differences and their product */
-//     product = 1.0;
-//     for (k = 0; k < OI; k++) {
-//         difference[k] = thisalpha - alphalist[k + offset];
-//         product *= difference[k];
-//     }
-//
-//     /* Check if thisalpha exactly matches a tabulated value (within epsilon) */
-//     if (fabs(product) < DBL_EPSILON * 100.0) {
-//         for (k = 0; k < OI; k++) {
-//             if (fabs(thisalpha - alphalist[k + offset]) < DBL_EPSILON * 100.0) {
-//                 for (i = 0; i < nx; i++) {
-//                     thisf[i] = tablef[i * nalpha + (k + offset)];
-//                     thisd[i] = tabled[i * nalpha + (k + offset)];
-//                 }
-//                 return;
-//             }
-//         }
-//     }
-//
-//     /* Interpolate across alpha */
-//     for (i = 0; i < nx; i++) {
-//         thisf[i] = 0.0;
-//         thisd[i] = 0.0;
-//     }
-//
-//     for (k = 0; k < OI; k++) {
-//         /* Skip if difference is too close to zero */
-//         if (fabs(difference[k]) < DBL_EPSILON * 100.0) {
-//             continue;
-//         }
-//
-//         weight = product * denom[start * OI + k] / difference[k];
-//
-//         for (i = 0; i < nx; i++) {
-//             thisf[i] += weight * tablef[i * nalpha + (k + offset)];
-//             thisd[i] += weight * tabled[i * nalpha + (k + offset)];
-//         }
-//     }
-// }
-
