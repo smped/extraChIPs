@@ -27,20 +27,13 @@ Depends:
   tibble
 Imports:
   BiocIO,
-  broom,
-  ComplexUpset,
   csaw,
   dplyr (>= 1.1.1),
   edgeR (>= 4.0),
   forcats,
   GenomeInfoDb,
-  GenomicAlignments,
-  GenomicInteractions,
-  ggforce,
   ggrepel,
   glue,
-  grDevices,
-  grid,
   InteractionSet,
   IRanges,
   matrixStats,
@@ -57,15 +50,18 @@ Imports:
   tidyr,
   tidyselect,
   utils,
-  vctrs,
-  VennDiagram
+  vctrs
 Suggests: 
   apeglm,
   BiocStyle,
+  ComplexUpset,
   covr,
   DESeq2,
   EnrichedHeatmap,
+  GenomicAlignments,
+  GenomicInteractions,
   Gviz,
+  ggforce,
   harmonicmeanp,
   here,
   knitr,
@@ -75,7 +71,8 @@ Suggests:
   quantro,
   rmarkdown,
   testthat (>= 3.0.0),
-  tidyverse
+  tidyverse,
+  VennDiagram
 biocViews: ChIPSeq, HiC, Sequencing, Coverage
 BiocType: Software
 VignetteBuilder: knitr

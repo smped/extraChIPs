@@ -49,8 +49,6 @@
 #'
 setGeneric("plotAssayPCA", function(x, ...) standardGeneric("plotAssayPCA"))
 #' @import SummarizedExperiment
-#' @importFrom broom tidy
-#' @importFrom dplyr left_join
 #' @importFrom tidyr pivot_wider
 #' @importFrom scales percent
 #' @importFrom stats prcomp
@@ -73,7 +71,6 @@ setMethod(
         if (is.null(colnames(x))) colnames(x) <- as.character(seq_len(ncol(x)))
         df <- as.data.frame(colData(x))
         args <- colnames(df)
-        df$row <- rownames(df) ## To match tidy(pca) later
         if (missing(colour)) {
             colour <- NULL
         } else {
@@ -121,32 +118,34 @@ setMethod(
             mat <- mat[keep_rows,]
         }
 
-        PC <- c() # avoiding R CMD check errors
         pca <- prcomp(
             x = t(mat), center = TRUE, scale. = TRUE, tol = tol, rank. = rank
         )
         max_comp <- length(pca$sdev)
         if (max(c(pc_x, pc_y)) > max_comp)
             stop("The highest available PC is ", max_comp)
-        pca_df <- tidy(pca)
-        pca_df <- left_join(pca_df, df, by = "row")
-        pca_df <- dplyr::filter(pca_df, PC %in% c(pc_x, pc_y))
+        pc_x <- paste0("PC", pc_x)
+        pc_y <- paste0("PC", pc_y)
+        pca_df <- data.frame( ## Similar to broom:tidy
+            row = rep(rownames(pca$x), each = ncol(pca$x)),
+            PC = rep(colnames(pca$x), times = nrow(pca$x)),
+            value = as.numeric(t(pca$x))
+        )
+        pca_df <- subset(pca_df, pca_df$PC %in% c(pc_x, pc_y))
+        pca_df <- cbind(pca_df, df[pca_df$row,])
         pca_df <- pivot_wider(
-            data = pca_df, names_from = "PC", values_from = "value",
-            names_prefix = "PC"
+            data = pca_df, names_from = "PC", values_from = "value"
         )
         prop_var <- pca$sdev^2 / sum(pca$sdev^2)
+        names(prop_var) <- paste0("PC", seq_along(prop_var))
         labs <- lapply(
             c(x = pc_x[[1]], y = pc_y[[1]]),
-            function(x) {
-                paste0("PC", x, " (", percent(prop_var[x], accuracy = 0.1), ")")
-            }
+            \(x) paste0(x, " (", percent(prop_var[x], accuracy = 0.1), ")")
         )
-        x <- sym(paste0("PC", pc_x))
-        y <- sym(paste0("PC", pc_y))
 
         plot_aes <- aes(
-            x = !!x, y = !!y, colour = !!colour, shape = !!shape, size = !!size
+            x = !!sym(pc_x), y = !!sym(pc_y), colour = !!colour, shape = !!shape,
+            size = !!size
         )
         p <- ggplot(pca_df, plot_aes) + xlab(labs$x) + ylab(labs$y)
         if (show_points) p <- p + geom_point()
@@ -155,7 +154,7 @@ setMethod(
             if (show_points) formals(lab_fun)$show.legend <- FALSE
             p <- p +
                 lab_fun(
-                    aes(x = {{ x }}, y = {{ y }}, label = {{ label }}), ...
+                    aes(x = !!sym(pc_x), y = !!sym(pc_y), label = {{ label }}), ...
                 )
         }
         p

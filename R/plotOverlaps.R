@@ -61,7 +61,6 @@
 #' @importFrom S4Vectors endoapply mcols
 #' @importFrom dplyr bind_cols
 #' @importFrom rlang list2 := !! sym
-#' @importFrom ComplexUpset upset
 #' @import ggplot2
 #' @rdname plotOverlaps-methods
 #' @aliases plotOverlaps
@@ -76,14 +75,13 @@ setMethod(
     sz_sets = 3.5, exp_sets = 0.25, merge_within = 1L, ignore.strand = TRUE
   ) {
 
-    stopifnot(is(x, "GRangesList"))
+    stopifnot(methods::is(x, "GRangesList"))
     nm <- names(x)
     n <- length(x)
     stopifnot(length(nm) == n)
     type <- match.arg(type)
     if (type == "auto") type <- ifelse(n > 3, "upset", "venn")
-    if (n == 1 & type == "upset")
-      stop("UpSet plots can only be drawn using more than one group")
+
     if (!is.null(var)) var <- match.arg(var[[1]], .mcolnames(x[[1]]))
 
     # Collapse as required
@@ -103,6 +101,11 @@ setMethod(
 
     } else {
 
+      if (n == 1) stop("UpSet plots can only be drawn using more than one group")
+
+      if (!requireNamespace('ComplexUpset', quietly = TRUE))
+        stop("Please install 'ComplexUpset' to use this function.")
+
       if (!is.numeric(mcols(x[[1]])[[var]]))
         stop(var, " must contain numeric values")
 
@@ -110,7 +113,7 @@ setMethod(
       tbl <- as_tibble(gr)
       f <- match.arg(f)
       f <- match.fun(f)
-      if (is(tbl[[var]], "list"))
+      if (methods::is(tbl[[var]], "list"))
         tbl[[var]] <- vapply(tbl[[var]], f, numeric(1))
 
       ## Setup the boxplot & key inputs
@@ -128,16 +131,13 @@ setMethod(
         dotArgs$set_sizes <- .makeSetSizes(hj_sets, sz_sets, exp_sets)
       dotArgs$sort_sets <- .sort_sets
       ip <- ip[!names(ip) %in% names(dotArgs)]
-      p <- do.call("upset", c(ip, dotArgs))
+      p <- do.call(ComplexUpset::upset, c(ip, dotArgs))
       return(p)
     }
 
   }
 )
 #'
-#' @importFrom methods is
-#' @importFrom ComplexUpset upset
-#' @importFrom grid grid.newpage
 #' @rdname plotOverlaps-methods
 #' @aliases plotOverlaps
 #' @export
@@ -158,10 +158,15 @@ setMethod(
     x <- lapply(x, unique)
 
     if (type == "upset") {
-      count <- c()
+
+      if (!requireNamespace('ComplexUpset', quietly = TRUE))
+          stop("Please install 'ComplexUpset' to use this function.")
+
       if (n == 1)
         stop("UpSet plots can only be drawn using more than one group")
+
       ## Setup the df
+      # count <- c()
       all_vals <- unique(unlist(x))
       df <- lapply(x, function(i) as.integer(all_vals %in% i))
 
@@ -176,12 +181,12 @@ setMethod(
       if (!"set_sizes" %in% names(dotArgs))
         dotArgs$set_sizes <- .makeSetSizes(hj_sets, sz_sets, exp_sets)
       dotArgs$sort_sets <- .sort_sets
-      p <- do.call("upset", c(ip, dotArgs))
+      p <- do.call(ComplexUpset::upset, c(ip, dotArgs))
       return(p)
     }
 
     if (type == "venn") {
-      grid.newpage()
+      grid::grid.newpage()
       if (n == 1) p <- .plotSingleVenn(x, fill = set_col, ...)
       if (n == 2) p <- .plotDoubleVenn(x, fill = set_col, ...)
       if (n == 3) p <- .plotTripleVenn(x, fill = set_col, ...)
@@ -191,27 +196,33 @@ setMethod(
   }
 )
 
-#' @importFrom VennDiagram draw.single.venn
 .plotSingleVenn <- function(x, ...) {
+  if (!requireNamespace('VennDiagram', quietly = TRUE))
+    stop("Please install 'VennDiagram' to use this function.")
   stopifnot(length(x) == 1)
-  draw.single.venn(area = length(x[[1]]), category = names(x)[[1]], ...)
+  VennDiagram::draw.single.venn(
+      area = length(x[[1]]), category = names(x)[[1]], ...
+  )
 }
 
-#' @importFrom VennDiagram draw.pairwise.venn
 .plotDoubleVenn <- function(x, ...) {
+  if (!requireNamespace('VennDiagram', quietly = TRUE))
+    stop("Please install 'VennDiagram' to use this function.")
   stopifnot(length(x) == 2)
   plotArgs <- setNames(lapply(x, length), c("area1", "area2"))
   plotArgs$cross.area <- sum(duplicated(unlist(x)))
   plotArgs$category <- names(x)
-  allowed <- c("gList1", "margin", names(formals(draw.pairwise.venn)))
+  vd_formals <- names(formals(VennDiagram::draw.pairwise.venn))
+  allowed <- c("gList1", "margin", vd_formals)
   dotArgs <- list(...)
   dotArgs <- dotArgs[names(dotArgs) %in% allowed]
-  do.call("draw.pairwise.venn", c(plotArgs, dotArgs))
+  do.call(VennDiagram::draw.pairwise.venn, c(plotArgs, dotArgs))
 
 }
 
-#' @importFrom VennDiagram draw.triple.venn
 .plotTripleVenn <- function(x, ...) {
+  if (!requireNamespace('VennDiagram', quietly = TRUE))
+    stop("Please install 'VennDiagram' to use this function.")
   stopifnot(length(x) == 3)
   plotArgs <- setNames(lapply(x, length), paste0("area", seq_len(3)))
   plotArgs$n12 <- sum(duplicated(unlist(x[c(1, 2)])))
@@ -220,17 +231,17 @@ setMethod(
   plotArgs$n123 <- sum(table(unlist(x)) == 3)
   plotArgs$category <- names(x)
   plotArgs$overrideTriple <- TRUE
-  allowed <- c("gList1", "margin", names(formals(draw.triple.venn)))
+  vd_formals <- names(formals(VennDiagram::draw.triple.venn))
+  allowed <- c("gList1", "margin", vd_formals)
   dotArgs <- list(...)
   dotArgs <- dotArgs[names(dotArgs) %in% allowed]
-  do.call("draw.triple.venn", c(plotArgs, dotArgs))
+  do.call(VennDiagram::draw.triple.venn, c(plotArgs, dotArgs))
 }
 
-#' @importFrom ComplexUpset upset_set_size
 #' @importFrom scales comma
 #' @importFrom rlang sym !!
 .makeSetSizes <- function(hj, sz, exp) {
-  upset_set_size() +
+    ComplexUpset::upset_set_size() +
     geom_text(
       aes(label = comma(after_stat(!!sym("count")))),  stat = 'count',
       hjust = hj, size = sz
@@ -238,13 +249,15 @@ setMethod(
     scale_y_reverse(expand = expansion(c(exp, 0)))
 }
 
-#' @importFrom ComplexUpset upset upset_default_themes upset_data upset_query
 .parseDotArgs <- function(set_col, n, nm, ...) {
   dotArgs <- list(...)
-  allowed <- unique(names(c(formals(upset), formals(upset_data))))
+  allowed <- unique(
+      names(c(formals(ComplexUpset::upset), formals(ComplexUpset::upset_data)))
+  )
   dotArgs <- dotArgs[names(dotArgs) %in% allowed]
   if (!'themes' %in% names(dotArgs)) {
-    dotArgs$themes <- upset_default_themes(panel.grid = element_blank())
+    dotArgs$themes <-
+        ComplexUpset::upset_default_themes(panel.grid = element_blank())
   }
   ## There is currently an issue with ComplexUpset. This places theme arguments
   ## which are not supported beyond ggplot2 3.5.0. This will remove them
@@ -256,14 +269,12 @@ setMethod(
 
   if (!is.null(set_col)) {
     ## Respect any existing set queries
-    existing_sets <- unlist(
-      lapply(dotArgs$queries, function(x) x$set)
-    )
+    existing_sets <- lapply(dotArgs$queries, function(x) x$set) |> unlist()
     set_col <- rep(set_col, n)
     names(set_col)[seq_len(n)] <- nm
     ql <- lapply(
       setdiff(nm, existing_sets),
-      function(i) upset_query(set = i, fill = set_col[[i]])
+      function(i) ComplexUpset::upset_query(set = i, fill = set_col[[i]])
     )
     dotArgs$queries <- c(dotArgs$queries, ql)
   }

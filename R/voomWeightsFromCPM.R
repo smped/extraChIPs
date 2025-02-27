@@ -59,9 +59,11 @@
 #' estimation of sample weights
 #'
 #' @examples
+#' library(csaw)
+#' library(edgeR)
 #' bamFiles <- system.file("exdata", c("rep1.bam", "rep2.bam"), package="csaw")
-#' wc <- csaw::windowCounts(bamFiles, filter=1)
-#' cpm <- edgeR::cpm(wc, log = TRUE)
+#' wc <- windowCounts(bamFiles, filter=1)
+#' cpm <- cpm(wc, log = TRUE)
 #' el <- voomWeightsFromCPM(cpm, lib.size = wc$totals)
 #'
 #' @importFrom methods new

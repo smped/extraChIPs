@@ -274,7 +274,6 @@ setMethod(
 #' @importFrom tidyselect all_of
 #' @importFrom scales comma
 #' @importFrom rlang !! sym .data
-#' @importFrom ggforce stat_pie
 #' @import ggplot2
 .plotDoublePie <- function(
         df, x, fill, width, .total_geom, .total_glue, .total_size,
@@ -282,6 +281,9 @@ setMethod(
         .cat_glue, .cat_colour, .cat_fill, .cat_size, .cat_alpha, .cat_adj,
         .scale_by, .scale_factor
 ) {
+
+    if (!requireNamespace('ggforce', quietly = TRUE))
+        stop("Please install 'ggforce' to use this function.")
 
     stopifnot(all(c(x, fill) %in% colnames(df)))
     df[[x]] <- as.factor(df[[x]])
@@ -372,7 +374,6 @@ setMethod(
 #' @importFrom tidyselect all_of
 #' @importFrom scales comma
 #' @importFrom rlang !! sym
-#' @importFrom ggforce stat_pie
 #' @importFrom glue glue
 #' @import ggplot2
 .plotTriplePie <- function(
@@ -381,6 +382,9 @@ setMethod(
         .cat_glue, .cat_colour, .cat_fill, .cat_size, .cat_alpha, .cat_adj,
         .scale_by, .scale_factor
 ) {
+
+    if (!requireNamespace('ggforce', quietly = TRUE))
+        stop("Please install 'ggforce' to use this function.")
 
     stopifnot(all(c(x, y, fill) %in% colnames(df)))
     df[[x]] <- as.factor(df[[x]])

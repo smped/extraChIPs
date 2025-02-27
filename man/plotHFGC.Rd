@@ -18,7 +18,7 @@ plotHFGC(
   cytobands,
   covtype = c("l", "heatmap"),
   linecol = c(),
-  gradient = hcl.colors(101, "viridis"),
+  gradient = grDevices::hcl.colors(101, "viridis"),
   hiccol = list(anchors = "lightblue", interactions = "red"),
   featcol,
   genecol,
