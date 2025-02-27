@@ -27,7 +27,6 @@ Depends:
   tibble
 Imports:
   BiocIO,
-  broom,
   ComplexUpset,
   csaw,
   dplyr (>= 1.1.1),
