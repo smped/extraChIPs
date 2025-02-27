@@ -50,9 +50,7 @@
 setGeneric("plotAssayPCA", function(x, ...) standardGeneric("plotAssayPCA"))
 #' @import SummarizedExperiment
 #' @importFrom tidyr pivot_wider
-#' @importFrom scales percent
 #' @importFrom stats prcomp
-#' @importFrom ggrepel geom_text_repel
 #' @importFrom matrixStats rowSds
 #' @importFrom rlang sym ensym enexpr !!
 #' @import ggplot2
@@ -67,6 +65,7 @@ setMethod(
         pc_x = 1, pc_y = 2, trans = NULL, n_max = Inf,
         tol = sqrt(.Machine$double.eps), rank = NULL, ...
     ) {
+
 
         if (is.null(colnames(x))) colnames(x) <- as.character(seq_len(ncol(x)))
         df <- as.data.frame(colData(x))
@@ -86,7 +85,7 @@ setMethod(
         if (missing(size)) {
             size <- NULL
         } else {
-            ## This may be passed as a manpulation of data
+            ## This may be passed as a manipulation of data
             size <- enexpr(size)
             if (is.character(size)) size <- ensym(size)
         }
@@ -97,6 +96,11 @@ setMethod(
             label <- sym(match.arg(label, args))
         }
         stopifnot(is.logical(show_points))
+
+        if (show_points & !is.null(label)) {
+            if (!requireNamespace('ggrepel', quietly = TRUE))
+                stop("Please install 'ggrepel' to use this function.")
+        }
 
         n_max <- min(nrow(x), n_max)
         ind <- seq_len(n_max)
@@ -136,11 +140,11 @@ setMethod(
         pca_df <- pivot_wider(
             data = pca_df, names_from = "PC", values_from = "value"
         )
-        prop_var <- pca$sdev^2 / sum(pca$sdev^2)
-        names(prop_var) <- paste0("PC", seq_along(prop_var))
+        perc_var <- paste0(round(100 * pca$sdev^2 / sum(pca$sdev^2), 1), "%")
+        names(perc_var) <- paste0("PC", seq_along(perc_var))
         labs <- lapply(
             c(x = pc_x[[1]], y = pc_y[[1]]),
-            \(x) paste0(x, " (", percent(prop_var[x], accuracy = 0.1), ")")
+            \(x) paste0(x, " (", perc_var[[x]], "%)")
         )
 
         plot_aes <- aes(
@@ -150,7 +154,7 @@ setMethod(
         p <- ggplot(pca_df, plot_aes) + xlab(labs$x) + ylab(labs$y)
         if (show_points) p <- p + geom_point()
         if (!is.null(label)) {
-            lab_fun <- ifelse(show_points, geom_text_repel, geom_text)
+            lab_fun <- ifelse(show_points, ggrepel::geom_text_repel, geom_text)
             if (show_points) formals(lab_fun)$show.legend <- FALSE
             p <- p +
                 lab_fun(

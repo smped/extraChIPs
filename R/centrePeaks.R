@@ -85,7 +85,7 @@ setMethod(
     signature = signature(x = "GRanges", y = "BamFile"),
     function(x, y, ...) {
         bfl <- BamFileList(y)
-        names(bfl) <- basename(path(y))
+        names(bfl) <- basename(y$path)
         centrePeaks(x, bfl, ...)
     }
 )
