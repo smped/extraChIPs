@@ -26,7 +26,6 @@ Depends:
   SummarizedExperiment,
   tibble
 Imports:
-  BiocIO,
   csaw,
   dplyr (>= 1.1.1),
   edgeR (>= 4.0),
