@@ -198,6 +198,7 @@ labels using this strategy enabling a wide variety of labelling approaches
 to be utilised.
 }
 \examples{
+library(grDevices)
 set.seed(200)
 df <- data.frame(
   feature = sample(

@@ -290,8 +290,6 @@
 #'
 #' @importFrom methods slot
 #' @importFrom InteractionSet anchors
-#' @importFrom GenomicInteractions calculateDistances
-#' @importFrom grDevices hcl.colors
 #' @import GenomicRanges
 #'
 #' @export
@@ -299,7 +297,7 @@ plotHFGC <- function(
         gr, hic, features, genes, coverage, annotation,
         zoom = 1, shift = 0, max = 1e7, axistrack = TRUE, cytobands,
         covtype = c("l", "heatmap"),
-        linecol = c(), gradient = hcl.colors(101, "viridis"),
+        linecol = c(), gradient = grDevices::hcl.colors(101, "viridis"),
         hiccol = list(anchors = "lightblue", interactions = "red"),
         featcol, genecol, annotcol, highlight = "blue",
         hicsize = 1, featsize = 1, genesize = 1, covsize = 4, annotsize = 0.5,
@@ -343,7 +341,8 @@ plotHFGC <- function(
         warning("Provided range is wider than the max permitted. Highlights may be unpredictable")
     if (length(hic_track)) {
         hic <- slot(hic_track, "giobject")
-        anchors <- anchors(hic[calculateDistances(hic) < max])
+        d <- GenomicInteractions::calculateDistances(hic)
+        anchors <- anchors(hic[d < max])
         anchors <- unlist(GRangesList(anchors))
         plot_range <- range(c(anchors, gr), ignore.strand = TRUE)
     }
@@ -444,8 +443,6 @@ plotHFGC <- function(
     )
 }
 
-#' @importFrom GenomicInteractions anchorOne anchorTwo
-#' @importFrom GenomicInteractions GenomicInteractions InteractionTrack
 #' @importFrom IRanges subsetByOverlaps
 #' @importFrom GenomeInfoDb seqnames
 .makeHiCTrack <- function(
@@ -454,19 +451,22 @@ plotHFGC <- function(
 ) {
 
     if (missing(.hic)) return(NULL)
-
     ## Checks have been performed previously on any provided object & params
+
+    if (!requireNamespace('GenomicInteractions', quietly = TRUE))
+        stop("Please install 'GenomicInteractions' to use this function.")
 
     ## Just keep cis interactions on the chromosome of interest
     .hic <- subsetByOverlaps(.hic, .gr)
     if (length(.hic) == 0) return(NULL)
     chr <- as.character(seqnames(.gr))[[1]]
-    cis <- seqnames(anchorOne(.hic)) == chr & seqnames(anchorTwo(.hic)) == chr
+    cis <- (seqnames(GenomicInteractions::anchorOne(.hic)) == chr) &
+        (seqnames(GenomicInteractions::anchorTwo(.hic)) == chr)
     if (sum(cis) == 0) return(NULL)
     .hic <- .hic[cis]
 
-    track <- InteractionTrack(
-        x = GenomicInteractions(.hic),
+    track <- GenomicInteractions::InteractionTrack(
+        x = GenomicInteractions::GenomicInteractions(.hic),
         chromosome = chr,
         name = .name
     )

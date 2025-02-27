@@ -98,6 +98,7 @@
 #' @param ... Not used
 #'
 #' @examples
+#' library(grDevices)
 #' set.seed(200)
 #' df <- data.frame(
 #'   feature = sample(
@@ -154,7 +155,6 @@ setMethod(
 #' @importFrom patchwork plot_layout area plot_spacer
 #' @importFrom rlang !! !!! sym syms .data ensym
 #' @importFrom scales comma percent
-#' @importFrom ggforce geom_arc_bar
 #' @importFrom stringr str_replace_all
 #' @importFrom forcats fct_relabel
 #' @importFrom glue glue
@@ -192,6 +192,9 @@ setMethod(
         layout = c(main = area(1, 1, 12, 12), lg1 = area(2, 12), lg2 = area(11, 12)),
         ...
     ) {
+
+        if (!requireNamespace('ggforce', quietly = TRUE))
+            stop("Please install 'ggforce' to use this function.")
 
         ## R CMD check declarations
         x0 <- y0 <- x1 <- yend <- explode <- ring <- c()
@@ -319,7 +322,7 @@ setMethod(
 
         ## Setup the default palette for the inner ring
         if (is.null(inner_palette))
-            inner_palette <- hcl.colors(length(lev_inner), "Viridis")
+            inner_palette <- grDevices::hcl.colors(length(lev_inner), "Viridis")
         if (is.null(names(inner_palette)))
             inner_palette <- setNames(
                 inner_palette[seq_along(lev_inner)], lev_inner
@@ -378,7 +381,7 @@ setMethod(
         }
 
         ## Create the basic plot
-        plt <- ggplot(plot_df) + geom_arc_bar(
+        plt <- ggplot(plot_df) + ggforce::geom_arc_bar(
             aes(
                 x0 = x0, y0 = y0, r0 = x, r = x1,
                 start = .data[["start"]], end = .data[["end"]],

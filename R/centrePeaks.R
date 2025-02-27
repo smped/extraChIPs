@@ -37,7 +37,6 @@
 #' @export
 #'
 setGeneric("centrePeaks", function(x, y, ...) standardGeneric("centrePeaks"))
-#' @importFrom GenomicAlignments coverage
 #' @importFrom Rsamtools ScanBamParam idxstatsBam
 #' @rdname centrePeaks-methods
 #' @export
@@ -47,6 +46,10 @@ setMethod(
     function(
         x, y, f = c("weighted.cov", "mean", "median"), BPPARAM = bpparam(), ...
     ) {
+
+        if (!requireNamespace('GenomicAlignments', quietly = TRUE))
+            stop("Please install 'GenomicAlignments' to use this function.")
+
         ## Set the function to use when calculating positions
         f <- match.arg(f)
 
@@ -63,7 +66,9 @@ setMethod(
         )
         t1 <- Sys.time()
         sbp <- ScanBamParam(which = x)
-        cov <- bplapply(y, coverage, param = sbp, BPPARAM = BPPARAM)
+        cov <- bplapply(
+            y, GenomicAlignments::coverage, param = sbp, BPPARAM = BPPARAM
+        )
         tot_aln <- vapply(y, \(i) sum(idxstatsBam(i)$mapped), numeric(1))
         t2 <- Sys.time()
         message(sprintf("done (%.2fs)", t2 - t1))
