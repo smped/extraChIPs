@@ -82,7 +82,6 @@ importPeaks <- function(
 #' @import GenomicRanges
 #' @importFrom IRanges overlapsAny
 #' @importFrom methods is
-#' @importFrom utils read.table
 .importPeakFile <- function(
         x, type, seqinfo, blacklist, pruning.mode, centre, nameRanges
 ) {
@@ -111,7 +110,7 @@ importPeaks <- function(
                  "character", rep("numeric", 4))[seq_along(colNames)]
 
     ## Parse
-    df <- read.table(x, sep = "\t", col.names = colNames, colClasses = classes)
+    df <- utils::read.table(x, sep = "\t", col.names = colNames, colClasses = classes)
     if (nameRanges) {
         if (length(unique(df[[4]])) == nrow(df)) rownames(df) <- df[["name"]]
         df <- df[-4] # The name column has been set as rownames
@@ -147,7 +146,6 @@ importPeaks <- function(
 #' @import GenomicRanges
 #' @importFrom IRanges overlapsAny
 #' @importFrom methods is
-#' @importFrom utils read.table
 .importBedFile <- function(x, seqinfo, blacklist, pruning.mode, nameRanges) {
 
     stopifnot(length(x) == 1)
@@ -162,14 +160,14 @@ importPeaks <- function(
 
     ## Define the colnames
     stopifnot(.isValidBed(x))
-    nCol <- min(ncol(read.table(x, sep = "\t", nrows = 1)), 6)
+    nCol <- min(ncol(utils::read.table(x, sep = "\t", nrows = 1)), 6)
     colNames <- c("seqnames", "start", "end", "name", "score", "strand")
     classes <- c(
         "character", "numeric", "numeric", "character", "numeric", "character"
     )
 
     ## Parse
-    df <- read.table(x, sep = "\t", header = FALSE)[seq_len(nCol)]
+    df <- utils::read.table(x, sep = "\t", header = FALSE)[seq_len(nCol)]
     df <- lapply(
         seq_len(nCol), function(i) df[[i]] <- as(df[[i]], classes[[i]])
     )
@@ -207,9 +205,8 @@ importPeaks <- function(
 }
 
 
-#' @importFrom utils read.table
 .isValidNarrow <- function(x) {
-    r1 <- read.table(x, sep = "\t", nrows = 1)
+    r1 <- utils::read.table(x, sep = "\t", nrows = 1)
     nCols <- ncol(r1) == 10
     if (!nCols) return(FALSE)
     charCols <- c(1, 4)
@@ -220,9 +217,8 @@ importPeaks <- function(
     all(allChars, allNumerics, strandOK)
 }
 
-#' @importFrom utils read.table
 .isValidBroad <- function(x) {
-    r1 <- read.table(x, sep = "\t", nrows = 1)
+    r1 <- utils::read.table(x, sep = "\t", nrows = 1)
     nCols <- ncol(r1) == 9
     if (!nCols) return(FALSE)
     charCols <- c(1, 4)
@@ -233,9 +229,8 @@ importPeaks <- function(
     all(allChars, allNumerics, strandOK)
 }
 
-#' @importFrom utils read.table
 .isValidBed <- function(x){
-    r1 <- read.table(x, sep = "\t", nrows = 1)
+    r1 <- utils::read.table(x, sep = "\t", nrows = 1)
     nCols <- ncol(r1)
     if (nCols < 3) return(FALSE)
     numericCols <- c(2, 3)

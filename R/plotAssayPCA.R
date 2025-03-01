@@ -50,11 +50,10 @@
 setGeneric("plotAssayPCA", function(x, ...) standardGeneric("plotAssayPCA"))
 #' @import SummarizedExperiment
 #' @importFrom tidyr pivot_wider
-#' @importFrom scales percent
 #' @importFrom stats prcomp
-#' @importFrom ggrepel geom_text_repel
 #' @importFrom matrixStats rowSds
 #' @importFrom rlang sym ensym enexpr !!
+#' @importFrom ggrepel geom_text_repel
 #' @import ggplot2
 #'
 #' @rdname plotAssayPCA-methods
@@ -67,6 +66,7 @@ setMethod(
         pc_x = 1, pc_y = 2, trans = NULL, n_max = Inf,
         tol = sqrt(.Machine$double.eps), rank = NULL, ...
     ) {
+
 
         if (is.null(colnames(x))) colnames(x) <- as.character(seq_len(ncol(x)))
         df <- as.data.frame(colData(x))
@@ -86,7 +86,7 @@ setMethod(
         if (missing(size)) {
             size <- NULL
         } else {
-            ## This may be passed as a manpulation of data
+            ## This may be passed as a manipulation of data
             size <- enexpr(size)
             if (is.character(size)) size <- ensym(size)
         }
@@ -136,11 +136,11 @@ setMethod(
         pca_df <- pivot_wider(
             data = pca_df, names_from = "PC", values_from = "value"
         )
-        prop_var <- pca$sdev^2 / sum(pca$sdev^2)
-        names(prop_var) <- paste0("PC", seq_along(prop_var))
+        perc_var <- paste0(round(100 * pca$sdev^2 / sum(pca$sdev^2), 1), "%")
+        names(perc_var) <- paste0("PC", seq_along(perc_var))
         labs <- lapply(
             c(x = pc_x[[1]], y = pc_y[[1]]),
-            \(x) paste0(x, " (", percent(prop_var[x], accuracy = 0.1), ")")
+            \(x) paste0(x, " (", perc_var[[x]], "%)")
         )
 
         plot_aes <- aes(

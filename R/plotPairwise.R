@@ -157,6 +157,10 @@ plotPairwise <- function(
     side_panel_width <- rep_len(side_panel_width, 2)
     rho_geom <- match.arg(rho_geom)
     label_geom <- match.arg(label_geom)
+    if (grepl("repel$", label_geom)) {
+        if (!requireNamespace('ggrepel', quietly = TRUE))
+            stop("Please install 'ggrepel' to use this function.")
+    }
 
     ## The basic df for plotting
     ol <- .makeOLaps(x, var, name_sep, p, method, ignore.strand, min_width)
@@ -207,8 +211,8 @@ plotPairwise <- function(
 #' @importFrom dplyr bind_rows
 #' @importFrom S4Vectors mcols
 #' @importFrom stringr str_trunc
-#' @importFrom ggrepel geom_text_repel geom_label_repel
 #' @importFrom rlang !!
+#' @importFrom ggrepel geom_text_repel geom_label_repel
 #' @keywords internal
 .addLabels <- function(
         x, p, ol, label, colour, x_lab, y_lab, min_d, .alpha, .size, .sep, .geom,

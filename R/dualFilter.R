@@ -111,7 +111,6 @@
 #' }
 #'
 #' @importFrom Rsamtools BamFileList ScanBamParam countBam
-#' @importFrom BiocIO path
 #' @importFrom IRanges overlapsAny
 #' @importFrom methods is
 #' @importFrom csaw windowCounts readParam scaleControlFilter
@@ -131,6 +130,7 @@ dualFilter <- function(
     bin.size = NULL, prior.count = 2, BPPARAM = bpparam()
 ) {
 
+
     ## Argument checks
     stopifnot(is(x, "RangedSummarizedExperiment"))
     stopifnot(is(ref, "GRanges"))
@@ -139,9 +139,9 @@ dualFilter <- function(
 
     ## Check the BamFiles exist
     stopifnot("bam.files" %in% colnames(colData(x)))
+    stopifnot(all(file.exists(colData(x)$bam.files)))
     bfl <- BamFileList(colData(x)$bam.files)
     names(bfl) <- colnames(x)
-    stopifnot(all(file.exists(path(bfl))))
 
     ## Check BiocParallel is ready to go
     if (!bpisup(BPPARAM)) {
@@ -179,8 +179,8 @@ dualFilter <- function(
         stopifnot(is(bg, "RangedSummarizedExperiment"))
         stopifnot(all(rowRanges(x) == rowRanges(bg)))
         stopifnot("bam.files" %in% colnames(colData(bg)))
+        stopifnot(all(file.exists(colData(bg)$bam.files)))
         bg_bfl <- BamFileList(colData(bg)$bam.files)
-        stopifnot(all(file.exists(path(bg_bfl))))
         names(bg_bfl) <- colnames(bg)
 
         ## Apply the filter using control samples using the csaw method which

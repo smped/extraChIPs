@@ -26,14 +26,13 @@ Depends:
   SummarizedExperiment,
   tibble
 Imports:
-  BiocIO,
   csaw,
   dplyr (>= 1.1.1),
   edgeR (>= 4.0),
   forcats,
   GenomeInfoDb,
-  ggrepel,
   glue,
+  ggrepel,
   InteractionSet,
   IRanges,
   matrixStats,
@@ -49,7 +48,6 @@ Imports:
   stringr,
   tidyr,
   tidyselect,
-  utils,
   vctrs
 Suggests: 
   apeglm,
