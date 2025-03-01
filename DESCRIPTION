@@ -32,6 +32,7 @@ Imports:
   forcats,
   GenomeInfoDb,
   glue,
+  ggrepel,
   InteractionSet,
   IRanges,
   matrixStats,
@@ -47,7 +48,6 @@ Imports:
   stringr,
   tidyr,
   tidyselect,
-  utils,
   vctrs
 Suggests: 
   apeglm,
@@ -60,7 +60,6 @@ Suggests:
   GenomicInteractions,
   Gviz,
   ggforce,
-  ggrepel,
   harmonicmeanp,
   here,
   knitr,

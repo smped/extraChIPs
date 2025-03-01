@@ -53,6 +53,7 @@ setGeneric("plotAssayPCA", function(x, ...) standardGeneric("plotAssayPCA"))
 #' @importFrom stats prcomp
 #' @importFrom matrixStats rowSds
 #' @importFrom rlang sym ensym enexpr !!
+#' @importFrom ggrepel geom_text_repel
 #' @import ggplot2
 #'
 #' @rdname plotAssayPCA-methods
@@ -96,11 +97,6 @@ setMethod(
             label <- sym(match.arg(label, args))
         }
         stopifnot(is.logical(show_points))
-
-        if (show_points & !is.null(label)) {
-            if (!requireNamespace('ggrepel', quietly = TRUE))
-                stop("Please install 'ggrepel' to use this function.")
-        }
 
         n_max <- min(nrow(x), n_max)
         ind <- seq_len(n_max)
@@ -154,7 +150,7 @@ setMethod(
         p <- ggplot(pca_df, plot_aes) + xlab(labs$x) + ylab(labs$y)
         if (show_points) p <- p + geom_point()
         if (!is.null(label)) {
-            lab_fun <- ifelse(show_points, ggrepel::geom_text_repel, geom_text)
+            lab_fun <- ifelse(show_points, geom_text_repel, geom_text)
             if (show_points) formals(lab_fun)$show.legend <- FALSE
             p <- p +
                 lab_fun(

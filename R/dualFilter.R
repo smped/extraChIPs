@@ -130,8 +130,6 @@ dualFilter <- function(
     bin.size = NULL, prior.count = 2, BPPARAM = bpparam()
 ) {
 
-    if (!requireNamespace('BiocIO', quietly = TRUE))
-        stop("Please install 'BiocIO' to use this function.")
 
     ## Argument checks
     stopifnot(is(x, "RangedSummarizedExperiment"))

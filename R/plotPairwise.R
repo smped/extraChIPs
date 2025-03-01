@@ -212,6 +212,7 @@ plotPairwise <- function(
 #' @importFrom S4Vectors mcols
 #' @importFrom stringr str_trunc
 #' @importFrom rlang !!
+#' @importFrom ggrepel geom_text_repel geom_label_repel
 #' @keywords internal
 .addLabels <- function(
         x, p, ol, label, colour, x_lab, y_lab, min_d, .alpha, .size, .sep, .geom,
@@ -241,11 +242,7 @@ plotPairwise <- function(
     )
     ol <- bind_rows(split_ol)
     if (nrow(ol) == 0) return(p)
-    if (grepl("repel$", .geom)) {
-        f <- utils::getFromNamespace(paste0("geom_", .geom), "ggrepel")
-    } else {
-        f <- match.fun(paste0("geom_", .geom))
-    }
+    f <- match.fun(paste0("geom_", .geom))
     p + f(
         aes(label = !!label, colour = {{ colour }}),
         data = ol, alpha = .alpha, size = .size, show.legend = FALSE
