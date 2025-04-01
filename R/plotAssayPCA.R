@@ -12,10 +12,13 @@
 #'
 #' @param x An object containing an assay slot
 #' @param assay The assay to perform PCA on
-#' @param colour The column name to be used for colours
-#' @param shape,size The column name(s) to be used for determining the shape
-#' or size of points
-#' @param label The column name to be used for labels
+#' @param colour,size The column names to be used for colours and point/label
+#' size. Can be fixed values (e.g. size = 3) and can also be a manipulation of
+#' a column, e.g. colour = log10(totals)
+#' @param shape The column name(s) to be used for determining the shape
+#' or size of points. Can also be a fixed value
+#' @param label The column name to be used for labels. Will default to the
+#' column names of the SummarizedExperiment
 #' @param show_points logical(1). Display the points. If `TRUE` any labels will
 #' repel. If `FALSE`, labels will appear at the exact points
 #' @param pc_x numeric(1) The PC to plot on the x-axis
@@ -23,10 +26,8 @@
 #' @param trans character(1). Any transformative function to be applied to the
 #' data before performing the PCA, e.g. `trans = "log2"`
 #' @param n_max Subsample the data to this many points before performing PCA
-#' @param tol Any rows with variance below this value will be excluded prior to
-#' passing to \link[stats]{prcomp}. All rows are scaled and centred by default
-#' @param rank Passed to \link[stats]{prcomp}
-#' @param ... Passed to \link[ggplot2]{geom_text}
+#' @param tol,rank Passed to \link[stats]{prcomp}
+#' @param ... Passed to \link[ggplot2]{geom_text} and \link[ggplot2]{geom_point}
 #'
 #' @examples
 #' data("se")
@@ -35,7 +36,7 @@
 #' plotAssayPCA(se, trans = "log1p", colour = "treatment", label = "sample")
 #' plotAssayPCA(
 #'   se, trans = "log1p", colour = "treatment", label = "sample",
-#'   size = totals / 1e3
+#'   size = log10(totals), shape = 17
 #' )
 #' plotAssayPCA(
 #'   se, trans = "log1p", colour = "treatment", label = "sample",
@@ -49,12 +50,10 @@
 #'
 setGeneric("plotAssayPCA", function(x, ...) standardGeneric("plotAssayPCA"))
 #' @import SummarizedExperiment
-#' @importFrom tidyr pivot_wider
-#' @importFrom stats prcomp
-#' @importFrom matrixStats rowSds
-#' @importFrom rlang sym ensym enexpr !!
-#' @importFrom ggrepel geom_text_repel
 #' @import ggplot2
+#' @importFrom tidyr pivot_wider
+#' @importFrom rlang sym ensym enexpr !! enquo
+#' @importFrom ggrepel geom_text_repel
 #'
 #' @rdname plotAssayPCA-methods
 #' @export
@@ -62,68 +61,69 @@ setMethod(
     "plotAssayPCA",
     signature = signature(x = "SummarizedExperiment"),
     function(
-        x, assay = "counts", colour, shape, size, label, show_points = TRUE,
-        pc_x = 1, pc_y = 2, trans = NULL, n_max = Inf,
-        tol = sqrt(.Machine$double.eps), rank = NULL, ...
+        x, assay = "counts", colour = NULL, shape = NULL, size = NULL,
+        label = "colnames", show_points = TRUE, pc_x = 1, pc_y = 2, trans = NULL,
+        n_max = Inf, tol = sqrt(.Machine$double.eps), rank = NULL, ...
     ) {
 
 
         if (is.null(colnames(x))) colnames(x) <- as.character(seq_len(ncol(x)))
         df <- as.data.frame(colData(x))
+        df$colnames <- colnames(x)
         args <- colnames(df)
-        if (missing(colour)) {
-            colour <- NULL
-        } else {
-            colour <- as.character(ensym(colour))
-            colour <- sym(match.arg(colour, args))
+
+        ## PCs must be realistic
+        max_comp <- ncol(x)
+        if (max(c(pc_x, pc_y)) > max_comp)
+            stop("The highest available PC is ", max_comp)
+
+        param_list <- list(...)
+        if (!is.null(shape)) {
+            shape <- shape[[1]]
+            if (is.numeric(shape) & shape %in% seq(0, 127)) {
+                param_list$shape <- shape
+            } else {
+                shape <- as.character(ensym(shape))
+                shape <- sym(match.arg(shape, args))
+            }
         }
-        if (missing(shape)) {
-            shape <- NULL
+        ## This may be passed as a manipulation of data
+        colour_quo <- enquo(colour)
+        if (length(ls(environment(colour_quo))) == 0) {
+            ## This will be a non formula
+            if (!is.null(colour)) {
+                if (is.numeric(colour)) {
+                    param_list$colour <- colour
+                } else {
+                    colour <- as.character(ensym(colour))
+                    colour <- sym(match.arg(colour, args))
+                }
+            }
         } else {
-            shape <- as.character(ensym(shape))
-            shape <- sym(match.arg(shape, args))
+            colour <- colour_quo
         }
-        if (missing(size)) {
-            size <- NULL
+        ## This may also be passed as a manipulation of data
+        size_quo <- enquo(size)
+        if (length(ls(environment(size_quo))) == 0) {
+            ## This will be a non formula
+            if (!is.null(size)) {
+                if (is.numeric(size)) {
+                    param_list$size <- size
+                } else {
+                    size <- as.character(ensym(size))
+                    size <- sym(match.arg(size, args))
+                }
+            }
         } else {
-            ## This may be passed as a manipulation of data
-            size <- enexpr(size)
-            if (is.character(size)) size <- ensym(size)
+            size <- size_quo
         }
-        if (missing(label)) {
-            label <- NULL
-        } else {
+        if (!is.null(label)) {
             label <- as.character(ensym(label))
             label <- sym(match.arg(label, args))
         }
         stopifnot(is.logical(show_points))
 
-        n_max <- min(nrow(x), n_max)
-        ind <- seq_len(n_max)
-        if (n_max < nrow(x)) ind <- sample.int(nrow(x), n_max, replace = FALSE)
-
-        mat <- assay(x[ind,], assay)
-        if (!is.null(trans)) {
-            mat <- match.fun(trans)(mat)
-            trans_ok <- all(
-                is.matrix(mat), nrow(mat) == length(ind),
-                colnames(mat) == colnames(x)
-            )
-            if (!trans_ok) stop("This transformation is not applicable")
-        }
-        if (!is.null(tol)) {
-            keep_rows <- rowSds(mat) >= tol
-            if (sum(keep_rows) == 0)
-                stop("Values are constant across all ranges")
-            mat <- mat[keep_rows,]
-        }
-
-        pca <- prcomp(
-            x = t(mat), center = TRUE, scale. = TRUE, tol = tol, rank. = rank
-        )
-        max_comp <- length(pca$sdev)
-        if (max(c(pc_x, pc_y)) > max_comp)
-            stop("The highest available PC is ", max_comp)
+        pca <- .runAssayPCA(x, assay, trans, n_max, tol, rank)
         pc_x <- paste0("PC", pc_x)
         pc_y <- paste0("PC", pc_y)
         pca_df <- data.frame( ## Similar to broom:tidy
@@ -142,22 +142,49 @@ setMethod(
             c(x = pc_x[[1]], y = pc_y[[1]]),
             \(x) paste0(x, " (", perc_var[[x]], "%)")
         )
-
         plot_aes <- aes(
-            x = !!sym(pc_x), y = !!sym(pc_y), colour = !!colour, shape = !!shape,
-            size = !!size
+            x = !!sym(pc_x), y = !!sym(pc_y), colour = {{ colour }},
+            shape = {{ shape }}, size = {{ size }}, label = {{ label }}
         )
-        p <- ggplot(pca_df, plot_aes) + xlab(labs$x) + ylab(labs$y)
-        if (show_points) p <- p + geom_point()
+        if (is.numeric(shape)) plot_aes$shape <- NULL
+        if (is.numeric(size)) plot_aes$size <- NULL
+        p <- ggplot(pca_df, plot_aes) + labs(x = labs$x, y = labs$y)
+        if (show_points) p <- p + do.call("geom_point", param_list)
         if (!is.null(label)) {
-            lab_fun <- ifelse(show_points, geom_text_repel, geom_text)
-            if (show_points) formals(lab_fun)$show.legend <- FALSE
-            p <- p +
-                lab_fun(
-                    aes(x = !!sym(pc_x), y = !!sym(pc_y), label = {{ label }}), ...
-                )
+            lab_fun <- ifelse(show_points, "geom_text_repel", "geom_text")
+            if (show_points) param_list$show.legend <- FALSE
+            param_list$shape <- NULL
+            p <- p + do.call(lab_fun, param_list)
         }
         p
     }
 )
 
+#' @keywords internal
+#' @importFrom stats prcomp
+#' @importFrom matrixStats rowSds
+.runAssayPCA <- function(x, assay, trans, n_max, tol, rank) {
+    n_max <- min(nrow(x), n_max)
+    ind <- seq_len(n_max)
+    if (n_max < nrow(x)) ind <- sample.int(nrow(x), n_max, replace = FALSE)
+
+    mat <- assay(x[ind,], assay)
+    if (!is.null(trans)) {
+        mat <- match.fun(trans)(mat)
+        trans_ok <- all(
+            is.matrix(mat), nrow(mat) == length(ind),
+            colnames(mat) == colnames(x)
+        )
+        if (!trans_ok) stop("This transformation is not applicable")
+    }
+    if (!is.null(tol)) {
+        keep_rows <- rowSds(mat) >= tol
+        if (sum(keep_rows) == 0)
+            stop("Values are constant across all ranges")
+        mat <- mat[keep_rows,]
+    }
+
+    prcomp(
+        x = t(mat), center = TRUE, scale. = TRUE, tol = tol, rank. = rank
+    )
+}

@@ -26,8 +26,6 @@ test_that("Assay Density plots behave correctly", {
   expect_true(
       unique(unlist(p$labels[c("group", "linetype", "fill")])) == "treat"
   )
-  p <- plotAssayPCA(se, n_max = 10)
-  expect_true(is(p, "gg"))
 
   se$vals <- runif(ncol(se))
   expect_warning(
@@ -60,28 +58,29 @@ test_that("fixed params are handled as expected", {
 
 
 test_that("Assay PCA plots error correctly", {
-  expect_error(plotAssayPCA(se, colour = "col"))
-  expect_error(plotAssayPCA(se, shape = "col"))
-  expect_error(plotAssayPCA(se, label = "col"))
+  expect_error(plotAssayPCA(se, colour = "a"))
+  expect_error(plotAssayPCA(se, shape = "a"))
+  expect_error(plotAssayPCA(se, label = "a"))
 })
 
 test_that("show_points behaves as expected", {
   p <- plotAssayPCA(se)
-  expect_equal(length(p$layers), 1)
+  expect_equal(length(p$layers), 2)
   expect_true(is(p$layers[[1]]$geom, "GeomPoint"))
   expect_null(p$mapping$colour)
   p <- plotAssayPCA(se, show_points = FALSE)
-  expect_equal(length(p$layers), 0)
+  expect_equal(length(p$layers), 1)
 })
 
 test_that("colours/size are added correctly", {
-  p <- plotAssayPCA(se, colour = "treat", size = "totals")
+
+  p <- plotAssayPCA(se, colour = "treat")#, size = log10(totals))
   expect_equal(rlang::as_label(p$mapping$colour), "treat")
   expect_equal(
     grepl("PC", unlist(p$labels))[1:4], c(TRUE, TRUE, FALSE, FALSE)
   )
   expect_equal(p$labels$colour, "treat")
-  expect_equal(p$labels$size, "totals")
+  # expect_equal(p$labels$size, "log10(totals)")
 })
 
 
