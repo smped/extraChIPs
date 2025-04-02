@@ -10,10 +10,10 @@ plotAssayPCA(x, ...)
 \S4method{plotAssayPCA}{SummarizedExperiment}(
   x,
   assay = "counts",
-  colour,
-  shape,
-  size,
-  label,
+  colour = NULL,
+  shape = NULL,
+  size = NULL,
+  label = "colnames",
   show_points = TRUE,
   pc_x = 1,
   pc_y = 2,
@@ -27,16 +27,19 @@ plotAssayPCA(x, ...)
 \arguments{
 \item{x}{An object containing an assay slot}
 
-\item{...}{Passed to \link[ggplot2]{geom_text}}
+\item{...}{Passed to \link[ggplot2]{geom_text} and \link[ggplot2]{geom_point}}
 
 \item{assay}{The assay to perform PCA on}
 
-\item{colour}{The column name to be used for colours}
+\item{colour, size}{The column names to be used for colours and point/label
+size. Can be fixed values (e.g. size = 3) and can also be a manipulation of
+a column, e.g. colour = log10(totals)}
 
-\item{shape, size}{The column name(s) to be used for determining the shape
-or size of points}
+\item{shape}{The column name(s) to be used for determining the shape
+or size of points. Can also be a fixed value}
 
-\item{label}{The column name to be used for labels}
+\item{label}{The column name to be used for labels. Will default to the
+column names of the SummarizedExperiment}
 
 \item{show_points}{logical(1). Display the points. If \code{TRUE} any labels will
 repel. If \code{FALSE}, labels will appear at the exact points}
@@ -50,10 +53,7 @@ data before performing the PCA, e.g. \code{trans = "log2"}}
 
 \item{n_max}{Subsample the data to this many points before performing PCA}
 
-\item{tol}{Any rows with variance below this value will be excluded prior to
-passing to \link[stats]{prcomp}. All rows are scaled and centred by default}
-
-\item{rank}{Passed to \link[stats]{prcomp}}
+\item{tol, rank}{Passed to \link[stats]{prcomp}}
 }
 \value{
 A ggplot2 object
@@ -73,7 +73,7 @@ se$sample <- colnames(se)
 plotAssayPCA(se, trans = "log1p", colour = "treatment", label = "sample")
 plotAssayPCA(
   se, trans = "log1p", colour = "treatment", label = "sample",
-  size = totals / 1e3
+  size = log10(totals), shape = 17
 )
 plotAssayPCA(
   se, trans = "log1p", colour = "treatment", label = "sample",

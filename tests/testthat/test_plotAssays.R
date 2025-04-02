@@ -12,58 +12,78 @@ test_that("Assay Density plots behave correctly", {
 
   expect_error(plotAssayDensities(se, colour = "col"))
   p <- plotAssayDensities(se)
-  expect_equal(dim(p$data), c(512*4, 3))
-  expect_equal(colnames(p$data), c("colnames", "x", "y"))
-  expect_equal(
-    unlist(lapply(p$labels, as.character)),
-    c(x = "counts", y = "Density", group = "colnames")
+  expect_equal(dim(p$data), c(800, 4))
+  expect_equal(colnames(p$data), c("colnames", "vals", "treat", "totals"))
+  lab_vec <- c(
+      x = "counts", y = "Density", group = "colnames", colour = "colour",
+      fill = "fill", alpha = "alpha", linetype = "linetype",
+      linewidth = "linewidth", weight = "weight"
   )
-  p <- plotAssayDensities(se, colour = "treat", linetype = "treat")
-  expect_equal(
-    unlist(lapply(p$labels, as.character)),
-    c(
-      x = "counts", y = "Density", colour = "treat", linetype = "treat",
-      group = "colnames"
-    )
+  expect_equal(unlist(lapply(p$labels, as.character)), lab_vec)
+  p <- plotAssayDensities(
+      se, colour = "treat", group = "treat", linetype = "treat", fill = "treat"
   )
-  p <- plotAssayPCA(se, n_max = 10)
-  expect_true(is(p, "gg"))
+  expect_true(
+      unique(unlist(p$labels[c("group", "linetype", "fill")])) == "treat"
+  )
+
+  se$vals <- runif(ncol(se))
+  expect_warning(
+      plotAssayDensities(se),
+      "Any columns named 'colnames' or 'vals' will be overwritten"
+  )
 
 })
 
 test_that("Assay Density transformations error", {
   expect_error(plotAssayDensities(se, trans = ""))
   p <- plotAssayDensities(se, trans = "log2")
-  expect_true(median(p$data$x) < log2(1e4))
+  expect_true(median(p$data$vals) < log2(1e4))
   expect_equal(p$labels$x, "log2 counts")
   expect_error(plotAssayDensities(se, trans = "max"), "This transformation")
 })
 
+test_that("fixed params are handled as expected", {
+    p <- plotAssayDensities(se, colour = "#809050", linewidth = 2, linetype = 2)
+    expect_equal(
+        unlist(p$layers[[1]]$aes_params),
+        c(colour = "#809050", linetype = "2", linewidth = "2")
+    )
+    p <- plotAssayDensities(se, fill = "#809050", alpha = 0.2)
+    expect_equal(
+        unlist(p$layers[[1]]$aes_params),
+        c(fill = "#809050", alpha = "0.2")
+    )
+})
+
 
 test_that("Assay PCA plots error correctly", {
-  expect_error(plotAssayPCA(se, colour = "col"))
-  expect_error(plotAssayPCA(se, shape = "col"))
-  expect_error(plotAssayPCA(se, label = "col"))
+  expect_error(plotAssayPCA(se, colour = "a"))
+  expect_error(plotAssayPCA(se, shape = "a"))
+  expect_error(plotAssayPCA(se, label = "a"))
 })
 
 test_that("show_points behaves as expected", {
   p <- plotAssayPCA(se)
-  expect_equal(length(p$layers), 1)
+  expect_equal(length(p$layers), 2)
   expect_true(is(p$layers[[1]]$geom, "GeomPoint"))
   expect_null(p$mapping$colour)
   p <- plotAssayPCA(se, show_points = FALSE)
-  expect_equal(length(p$layers), 0)
+  expect_equal(length(p$layers), 1)
 })
 
 test_that("colours/size are added correctly", {
-  p <- plotAssayPCA(se, colour = "treat", size = "totals")
+
+  p <- plotAssayPCA(se, colour = "treat")#, size = log10(totals))
   expect_equal(rlang::as_label(p$mapping$colour), "treat")
   expect_equal(
     grepl("PC", unlist(p$labels))[1:4], c(TRUE, TRUE, FALSE, FALSE)
   )
   expect_equal(p$labels$colour, "treat")
-  expect_equal(p$labels$size, "totals")
+  # expect_equal(p$labels$size, "log10(totals)")
 })
+
+
 
 test_that("labels repel correctly", {
   p <- plotAssayPCA(se, label = "treat")

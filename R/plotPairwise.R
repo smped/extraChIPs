@@ -272,6 +272,7 @@ plotPairwise <- function(
 #' @importFrom rlang !! sym
 #' @importFrom forcats fct_relabel fct_na_value_to_level
 #' @importFrom stringr str_replace_na
+#' @importFrom stats density
 #' @keywords internal
 .addXSide <- function(p, ol, x, xside, xside_var, label_side, alpha) {
     ## NB: This will be drawn above the plot
@@ -327,6 +328,7 @@ plotPairwise <- function(
 #' @importFrom rlang !! sym
 #' @importFrom forcats fct_relabel fct_na_value_to_level
 #' @importFrom stringr str_replace_na
+#' @importFrom stats density
 #' @keywords internal
 .addYSide <- function(p, ol, x, yside, yside_var, lab, alpha) {
     ## NB: This will be drawn to the right of the plot

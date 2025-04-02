@@ -10,9 +10,12 @@ plotAssayDensities(x, ...)
 \S4method{plotAssayDensities}{SummarizedExperiment}(
   x,
   assay = "counts",
-  colour,
-  linetype,
-  group,
+  group = NULL,
+  colour = NULL,
+  fill = NULL,
+  linetype = NULL,
+  linewidth = NULL,
+  alpha = NULL,
   trans = NULL,
   n_max = Inf,
   ...
@@ -21,18 +24,19 @@ plotAssayDensities(x, ...)
 \arguments{
 \item{x}{A SummarizedExperiment object}
 
-\item{...}{Passed to \link[stats]{density}}
+\item{...}{Passed to \link[ggplot2]{geom_density}}
 
 \item{assay}{An assay within x}
 
-\item{colour}{Optional column in colData to colour lines by. To remove any
-colours, set this argument to \code{NULL}}
+\item{group}{Used by \link[ggplot2]{geom_line}. Defaults to the column names
+but treatment groups can also be specified to summarise within groups}
 
-\item{linetype}{Any optional column in colData used to determine linetype}
+\item{colour, fill, alpha}{Optional column in colData to set the respective
+aesthetics. Can also be any valid colour specification as a fixed value or
+a fixed alpha value}
 
-\item{group}{Used by \link[ggplot2]{geom_line}. Defaults to the sample names
-but setting to NULL will over-write this and only groups specified by colour
-or linetype will be drawn}
+\item{linetype, linewidth}{Any optional column in colData used to determine
+linetype or linewidth. Can also be fixed values}
 
 \item{trans}{character(1). Any transformative function to be applied to the
 data before calculating the density, e.g. \code{trans = "log2"}}
