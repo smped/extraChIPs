@@ -35,13 +35,8 @@
 #' plotAssayRle(se, trans = "log1p", fill = "treatment", by_x = "treatment")
 #'
 #' @import SummarizedExperiment
-#' @importFrom tidyr unnest
-#' @importFrom tidyselect all_of
-#' @importFrom dplyr group_by mutate ungroup
-#' @importFrom rlang !! sym .data ensym
-#' @importFrom stats median
 #' @import ggplot2
-#'
+#' @importFrom rlang !! sym .data ensym
 #' @rdname plotAssayRle-methods
 #' @aliases plotAssayRle
 #' @export
@@ -49,69 +44,80 @@ setMethod(
     "plotAssayRle",
     signature = signature(x = "SummarizedExperiment"),
     function(
-        x, assay = "counts", colour, fill, rle_group, by_x, n_max = Inf,
-        trans = NULL, ...
+        x, assay = "counts", colour = NULL, fill = NULL, rle_group = NULL,
+        by_x = "colnames", n_max = Inf, trans = NULL, ...
     ) {
 
         if (is.null(colnames(x))) colnames(x) <- as.character(seq_len(ncol(x)))
-        df <- as.data.frame(colData(x))
-        df$colnames <- colnames(x)
-        args <- colnames(df)
-        if (missing(colour)) {
-            colour <- NULL
-        } else {
-            colour <- as.character(ensym(colour))
-            colour <- sym(match.arg(colour, args))
+        args <- c(colnames(colData(x)), "colnames")
+
+        param_list <- list(...)
+        if (!is.null(colour)) {
+            colour <- colour[[1]]
+            if (.validColour(colour)) {
+                param_list$colour <- colour
+            } else {
+                colour <- as.character(ensym(colour))
+                colour <- sym(match.arg(colour, args))
+            }
         }
-        if (missing(fill)) {
-            fill <- NULL
-        } else {
-            fill <- as.character(ensym(fill))
-            fill <- sym(match.arg(fill, args))
+        if (!is.null(fill)) {
+            fill <- fill[[1]]
+            if (.validColour(fill)) {
+                param_list$fill <- fill
+            } else {
+                fill <- as.character(ensym(fill))
+                fill <- sym(match.arg(fill, args))
+            }
         }
-        if (missing(rle_group)) {
-            rle_group <- NULL
-        } else {
+        if (!is.null(rle_group)) {
             rle_group <- as.character(ensym(rle_group))
             rle_group <- sym(match.arg(rle_group, args))
         }
-        if (missing(by_x)) {
-            by_x <- sym("colnames")
-            x_lab <- "Sample"
-        } else {
+        if (!is.null(by_x)) {
             by_x <- as.character(ensym(by_x))
             by_x <- sym(match.arg(by_x, args))
-            x_lab <- as.character(by_x)
         }
 
-        n_max <- min(nrow(x), n_max)
-        ind <- seq_len(n_max)
-        if (n_max < nrow(x)) ind <- sample.int(nrow(x), n_max, replace = FALSE)
-
-        mat <- assay(x, assay)[ind,]
+        df <- .getRleDf(x, assay, trans, n_max, rle_group)
+        x_lab <- gsub("colnames", "Sample", as.character(by_x))
         y_lab <- paste0("RLE (", assay, ")")
-        if (!is.null(trans)) {
-            mat <- match.fun(trans)(mat)
-            trans_ok <- all(
-                is.matrix(mat), nrow(mat) == length(ind),
-                colnames(mat) == colnames(x)
-            )
-            if (!trans_ok) stop("This transformation is not applicable")
-            y_lab <- paste0("RLE (", trans, " ", assay, ")")
-        }
-
-        df$vals <- split(t(mat), seq_len(ncol(x)))
-        df <- unnest(df, all_of("vals"))
-        if (!is.null(rle_group)) df <- group_by(df, !!rle_group)
-        df <- mutate(df, rle = !!sym("vals") - median(!!sym("vals")))
-        df <- ungroup(df)
+        if (!is.null(trans)) y_lab <- paste0("RLE (", trans, " ", assay, ")")
 
         ggplot(
-            df,
-            aes(!!by_x, .data[["rle"]], fill = !!fill, colour = !!colour)
-        ) +
-            geom_boxplot(...) +
-            labs(x = x_lab, y = y_lab)
+            df, aes(!!by_x, .data[["rle"]], fill = !!fill, colour = !!colour)
+        ) + do.call("geom_boxplot", param_list) + labs(x = x_lab, y = y_lab)
 
     }
 )
+
+#' @keywords internal
+#' @importFrom tidyr unnest
+#' @importFrom dplyr group_by mutate ungroup
+#' @importFrom rlang !! sym
+#' @importFrom stats median
+.getRleDf <- function(x, assay, trans, n_max, rle_group) {
+
+    n_max <- min(nrow(x), n_max)
+    ind <- seq_len(n_max)
+    if (n_max < nrow(x)) ind <- sample.int(nrow(x), n_max, replace = FALSE)
+
+    mat <- assay(x, assay)[ind,]
+
+    if (!is.null(trans)) {
+        mat <- match.fun(trans)(mat)
+        trans_ok <- all(
+            is.matrix(mat), nrow(mat) == length(ind),
+            colnames(mat) == colnames(x)
+        )
+        if (!trans_ok) stop("This transformation is not applicable")
+    }
+
+    df <- as.data.frame(colData(x))
+    df$colnames <- rownames(df)
+    df$vals <- split(t(mat), seq_len(ncol(x)))
+    df <- unnest(df, all_of("vals"))
+    if (!is.null(rle_group)) df <- group_by(df, !!rle_group)
+    df <- mutate(df, rle = !!sym("vals") - median(!!sym("vals")))
+    ungroup(df)
+}

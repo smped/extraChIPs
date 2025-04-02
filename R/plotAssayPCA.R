@@ -92,7 +92,8 @@ setMethod(
         if (length(ls(environment(colour_quo))) == 0) {
             ## This will be a non formula
             if (!is.null(colour)) {
-                if (is.numeric(colour)) {
+                colour <- colour[[1]]
+                if (.validColour(colour)) {
                     param_list$colour <- colour
                 } else {
                     colour <- as.character(ensym(colour))

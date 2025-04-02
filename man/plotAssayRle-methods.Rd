@@ -10,10 +10,10 @@ plotAssayRle(x, ...)
 \S4method{plotAssayRle}{SummarizedExperiment}(
   x,
   assay = "counts",
-  colour,
-  fill,
-  rle_group,
-  by_x,
+  colour = NULL,
+  fill = NULL,
+  rle_group = NULL,
+  by_x = "colnames",
   n_max = Inf,
   trans = NULL,
   ...

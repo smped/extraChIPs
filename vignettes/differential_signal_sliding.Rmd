@@ -4,7 +4,6 @@ author:
 - name: Stevie Pederson
   affiliation: 
   - Black Ochre Data Laboratories, Telethon Kids Institute, Adelaide, Australia
-  - Dame Roma Mitchell Cancer Researc Laboratories, University of Adelaide
   - John Curtin School of Medical Research, Australian National University
   email: stephen.pederson.au@gmail.com
 package: extraChIPs
@@ -489,7 +488,7 @@ the original window with the lowest p-value is returned.
 ```{r results-gr, eval = FALSE}
 results_gr <- mergeByHMP(fit_gr, inc_cols = "overlaps_ref", merge_within = 120) %>% 
   addDiffStatus(drop = TRUE)
-arrange(results_gr, hmp)[1:5]
+arrange(results_gr, hmPValue)[1:5]
 ```
 
     ## GRanges object with 5 ranges and 10 metadata columns:
@@ -500,14 +499,14 @@ arrange(results_gr, hmp)[1:5]
     ##   [3]    chr10 74008161-74008760      * |        13         2         0
     ##   [4]    chr10 63858841-63859040      * |         3         1         0
     ##   [5]    chr10 63859401-63859760      * |         7         1         0
-    ##       overlaps_ref            keyval_range    logCPM     logFC         hmp
+    ##       overlaps_ref            keyval_range    logCPM     logFC    hmPValue
     ##          <logical>               <GRanges> <numeric> <numeric>   <numeric>
     ##   [1]         TRUE chr10:79257761-79257880   7.01563   1.82950 2.08382e-12
     ##   [2]         TRUE chr10:43689681-43689800   6.49125   1.78743 8.37664e-09
     ##   [3]         TRUE chr10:74008441-74008560   6.48379   1.81692 9.27730e-09
     ##   [4]         TRUE chr10:63858881-63859000   5.98361   1.75311 6.38262e-07
     ##   [5]         TRUE chr10:63859601-63859720   5.98163   1.82260 1.02640e-06
-    ##           hmp_fdr    status
+    ##      hmPValue_fdr    status
     ##         <numeric>  <factor>
     ##   [1] 1.49827e-09 Increased
     ##   [2] 2.22346e-06 Increased
@@ -546,13 +545,13 @@ A <- fit_gr %>%
   ggtitle("MA Plot: All Retained Sliding Windows")
 B <- results_gr %>% 
   as_tibble() %>% 
-  mutate(`FDR < 0.05` = hmp_fdr < 0.05) %>% 
+  mutate(`FDR < 0.05` = hmPValue_fdr < 0.05) %>% 
   ggplot(aes(logCPM, logFC)) +
   geom_point(aes(colour = `FDR < 0.05`), alpha = 0.6) +
   geom_smooth(se = FALSE, method = "loess") +
   geom_label_repel(
     aes(label = range, colour = `FDR < 0.05`),
-    data = . %>% dplyr::filter(hmp_fdr == min(hmp_fdr)),
+    data = . %>% dplyr::filter(hmPValue_fdr == min(hmPValue_fdr)),
     show.legend = FALSE
   ) +
   geom_label(
@@ -816,7 +815,7 @@ tmm_results <- mapByFeature(
   tmm_results, genes = gencode$gene,
   prom = select(promoters, gene_id, gene_name)
 )
-tmm_results %>% filter(hmp_fdr < 0.05) %>% arrange(hmp)
+tmm_results %>% filter(hmPValue_fdr < 0.05) %>% arrange(hmPValue)
 ```
 
     ## GRanges object with 21 ranges and 13 metadata columns:
@@ -833,7 +832,7 @@ tmm_results %>% filter(hmp_fdr < 0.05) %>% arrange(hmp)
     ##   [19]    chr10 90615361-90615640      * |         4         2         0
     ##   [20]    chr10 63696921-63697240      * |         6         3         0
     ##   [21]    chr10 74878001-74878360      * |         7         3         0
-    ##        overlaps_ref            keyval_range    logCPM     logFC         hmp
+    ##        overlaps_ref            keyval_range    logCPM     logFC    hmPValue
     ##           <logical>               <GRanges> <numeric> <numeric>   <numeric>
     ##    [1]         TRUE chr10:79257761-79257880   7.02793   1.85621 6.20766e-13
     ##    [2]         TRUE chr10:43689681-43689800   6.51086   1.81157 4.45187e-09
@@ -846,7 +845,7 @@ tmm_results %>% filter(hmp_fdr < 0.05) %>% arrange(hmp)
     ##   [19]         TRUE chr10:90615361-90615480   5.97947   1.14308 0.000804490
     ##   [20]         TRUE chr10:63697121-63697240   6.00058   1.11473 0.001074487
     ##   [21]         TRUE chr10:74878201-74878320   6.19539   1.05769 0.001437350
-    ##            hmp_fdr      status       tss               gene_id       gene_name
+    ##       hmPValue_fdr      status       tss               gene_id       gene_name
     ##          <numeric> <character> <logical>       <CharacterList> <CharacterList>
     ##    [1] 4.46331e-10   Increased     FALSE ENSG00000156113.25_17          KCNMA1
     ##    [2] 1.21750e-06   Increased     FALSE ENSG00000198915.12_14        RASGEF1A
@@ -876,7 +875,7 @@ tmm_results %>%
   geom_label_repel(
     aes(label = label),
     data = . %>% 
-      arrange(hmp) %>% 
+      arrange(hmPValue) %>% 
       dplyr::slice(1:20) %>% 
       mutate(
         label  = vapply(gene_name, paste, character(1), collapse = "; ") %>% 
@@ -981,7 +980,7 @@ regions were defined.
 ```{r bet-overlap, eval = FALSE}
 tmm_results$bestOverlap <- bestOverlap(tmm_results, regions) %>% 
   factor(levels = names(regions))
-filter(tmm_results, hmp_fdr < 0.05, bestOverlap == "promoter")
+filter(tmm_results, hmPValue_fdr < 0.05, bestOverlap == "promoter")
 ```
 
     ## GRanges object with 2 ranges and 14 metadata columns:
@@ -989,11 +988,11 @@ filter(tmm_results, hmp_fdr < 0.05, bestOverlap == "promoter")
     ##          <Rle>         <IRanges>  <Rle> | <integer> <integer> <integer>
     ##   [1]    chr10 76779561-76780200      * |        14         4         0
     ##   [2]    chr10 79623321-79635960      * |       314        13         0
-    ##       overlaps_ref            keyval_range    logCPM     logFC         hmp
+    ##       overlaps_ref            keyval_range    logCPM     logFC    hmPValue
     ##          <logical>               <GRanges> <numeric> <numeric>   <numeric>
     ##   [1]         TRUE chr10:76779721-76779840   6.21638  1.244849 0.000194483
     ##   [2]         TRUE chr10:79630321-79630440   7.71543  0.906496 0.000100434
-    ##          hmp_fdr      status       tss
+    ##     hmPValue_fdr      status       tss
     ##        <numeric> <character> <logical>
     ##   [1] 0.00932221   Increased     FALSE
     ##   [2] 0.00515801   Increased      TRUE
@@ -1133,7 +1132,7 @@ Let’s check the coverage across the most highly-ranked region with
 default settings.
 
 ```{r gr, eval = FALSE}
-gr <- filter(tmm_results, hmp_fdr < 0.05, str_detect(bestOverlap, '^Prom'))[1]
+gr <- filter(tmm_results, hmPValue_fdr < 0.05, str_detect(bestOverlap, '^Prom'))[1]
 ```
 
 The most important option to consider when showing coverage is whether
