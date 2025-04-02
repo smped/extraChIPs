@@ -179,8 +179,7 @@ setMethod(
     }
     if (!is.null(tol)) {
         keep_rows <- rowSds(mat) >= tol
-        if (sum(keep_rows) == 0)
-            stop("Values are constant across all ranges")
+        if (sum(keep_rows) == 0) stop("Values are constant across all ranges")
         mat <- mat[keep_rows,]
     }
 
