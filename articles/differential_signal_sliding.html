@@ -89,8 +89,7 @@ Windows</h1>
 Pederson</h4>
             <address class="author_afil">
       Black Ochre Data Laboratories, Telethon Kids Institute, Adelaide,
-AustraliaDame Roma Mitchell Cancer Researc Laboratories, University of
-AdelaideJohn Curtin School of Medical Research, Australian National
+AustraliaJohn Curtin School of Medical Research, Australian National
 University<br><a class="author_email" href="mailto:#"></a><a href="mailto:stephen.pederson.au@gmail.com" class="email">stephen.pederson.au@gmail.com</a>
       </address>
                   
@@ -539,7 +538,7 @@ lowest p-value is returned.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">results_gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/mergeByHMP-methods.html">mergeByHMP</a></span><span class="op">(</span><span class="va">fit_gr</span>, inc_cols <span class="op">=</span> <span class="st">"overlaps_ref"</span>, merge_within <span class="op">=</span> <span class="fl">120</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/addDiffStatus-methods.html">addDiffStatus</a></span><span class="op">(</span>drop <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">results_gr</span>, <span class="va">hmp</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span></code></pre></div>
+<span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">results_gr</span>, <span class="va">hmPValue</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span></code></pre></div>
 <pre><code><span><span class="co">## GRanges object with 5 ranges and 10 metadata columns:</span></span>
 <span><span class="co">##       seqnames            ranges strand | n_windows      n_up    n_down</span></span>
 <span><span class="co">##          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;</span></span>
@@ -548,14 +547,14 @@ lowest p-value is returned.</p>
 <span><span class="co">##   [3]    chr10 74008161-74008760      * |        13         2         0</span></span>
 <span><span class="co">##   [4]    chr10 63858841-63859040      * |         3         1         0</span></span>
 <span><span class="co">##   [5]    chr10 63859401-63859760      * |         7         1         0</span></span>
-<span><span class="co">##       overlaps_ref            keyval_range    logCPM     logFC         hmp</span></span>
+<span><span class="co">##       overlaps_ref            keyval_range    logCPM     logFC    hmPValue</span></span>
 <span><span class="co">##          &lt;logical&gt;               &lt;GRanges&gt; &lt;numeric&gt; &lt;numeric&gt;   &lt;numeric&gt;</span></span>
 <span><span class="co">##   [1]         TRUE chr10:79257761-79257880   7.01563   1.82950 2.08382e-12</span></span>
 <span><span class="co">##   [2]         TRUE chr10:43689681-43689800   6.49125   1.78743 8.37664e-09</span></span>
 <span><span class="co">##   [3]         TRUE chr10:74008441-74008560   6.48379   1.81692 9.27730e-09</span></span>
 <span><span class="co">##   [4]         TRUE chr10:63858881-63859000   5.98361   1.75311 6.38262e-07</span></span>
 <span><span class="co">##   [5]         TRUE chr10:63859601-63859720   5.98163   1.82260 1.02640e-06</span></span>
-<span><span class="co">##           hmp_fdr    status</span></span>
+<span><span class="co">##      hmPValue_fdr    status</span></span>
 <span><span class="co">##         &lt;numeric&gt;  &lt;factor&gt;</span></span>
 <span><span class="co">##   [1] 1.49827e-09 Increased</span></span>
 <span><span class="co">##   [2] 2.22346e-06 Increased</span></span>
@@ -594,13 +593,13 @@ merged windows.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"MA Plot: All Retained Sliding Windows"</span><span class="op">)</span></span>
 <span><span class="va">B</span> <span class="op">&lt;-</span> <span class="va">results_gr</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>`FDR &lt; 0.05` <span class="op">=</span> <span class="va">hmp_fdr</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>`FDR &lt; 0.05` <span class="op">=</span> <span class="va">hmPValue_fdr</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">logCPM</span>, <span class="va">logFC</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="va">`FDR &lt; 0.05`</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html" class="external-link">geom_smooth</a></span><span class="op">(</span>se <span class="op">=</span> <span class="cn">FALSE</span>, method <span class="op">=</span> <span class="st">"loess"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggrepel.slowkow.com/reference/geom_text_repel.html" class="external-link">geom_label_repel</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">range</span>, colour <span class="op">=</span> <span class="va">`FDR &lt; 0.05`</span><span class="op">)</span>,</span>
-<span>    data <span class="op">=</span> <span class="va">.</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">hmp_fdr</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">hmp_fdr</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    data <span class="op">=</span> <span class="va">.</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">hmPValue_fdr</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">hmPValue_fdr</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    show.legend <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></span><span class="op">(</span></span>
@@ -858,7 +857,7 @@ listed. As can be seen, 4 potential promoter regions are found for
 <span>  <span class="va">tmm_results</span>, genes <span class="op">=</span> <span class="va">gencode</span><span class="op">$</span><span class="va">gene</span>,</span>
 <span>  prom <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">promoters</span>, <span class="va">gene_id</span>, <span class="va">gene_name</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">tmm_results</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">hmp_fdr</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">hmp</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">tmm_results</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">hmPValue_fdr</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">hmPValue</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## GRanges object with 21 ranges and 13 metadata columns:</span></span>
 <span><span class="co">##        seqnames            ranges strand | n_windows      n_up    n_down</span></span>
 <span><span class="co">##           &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;</span></span>
@@ -873,7 +872,7 @@ listed. As can be seen, 4 potential promoter regions are found for
 <span><span class="co">##   [19]    chr10 90615361-90615640      * |         4         2         0</span></span>
 <span><span class="co">##   [20]    chr10 63696921-63697240      * |         6         3         0</span></span>
 <span><span class="co">##   [21]    chr10 74878001-74878360      * |         7         3         0</span></span>
-<span><span class="co">##        overlaps_ref            keyval_range    logCPM     logFC         hmp</span></span>
+<span><span class="co">##        overlaps_ref            keyval_range    logCPM     logFC    hmPValue</span></span>
 <span><span class="co">##           &lt;logical&gt;               &lt;GRanges&gt; &lt;numeric&gt; &lt;numeric&gt;   &lt;numeric&gt;</span></span>
 <span><span class="co">##    [1]         TRUE chr10:79257761-79257880   7.02793   1.85621 6.20766e-13</span></span>
 <span><span class="co">##    [2]         TRUE chr10:43689681-43689800   6.51086   1.81157 4.45187e-09</span></span>
@@ -886,7 +885,7 @@ listed. As can be seen, 4 potential promoter regions are found for
 <span><span class="co">##   [19]         TRUE chr10:90615361-90615480   5.97947   1.14308 0.000804490</span></span>
 <span><span class="co">##   [20]         TRUE chr10:63697121-63697240   6.00058   1.11473 0.001074487</span></span>
 <span><span class="co">##   [21]         TRUE chr10:74878201-74878320   6.19539   1.05769 0.001437350</span></span>
-<span><span class="co">##            hmp_fdr      status       tss               gene_id       gene_name</span></span>
+<span><span class="co">##       hmPValue_fdr      status       tss               gene_id       gene_name</span></span>
 <span><span class="co">##          &lt;numeric&gt; &lt;character&gt; &lt;logical&gt;       &lt;CharacterList&gt; &lt;CharacterList&gt;</span></span>
 <span><span class="co">##    [1] 4.46331e-10   Increased     FALSE ENSG00000156113.25_17          KCNMA1</span></span>
 <span><span class="co">##    [2] 1.21750e-06   Increased     FALSE ENSG00000198915.12_14        RASGEF1A</span></span>
@@ -914,7 +913,7 @@ MA-plot for presentation of final results.</p>
 <span>  <span class="fu"><a href="https://ggrepel.slowkow.com/reference/geom_text_repel.html" class="external-link">geom_label_repel</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">label</span><span class="op">)</span>,</span>
 <span>    data <span class="op">=</span> <span class="va">.</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">hmp</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">hmPValue</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>      <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>        label  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="va">gene_name</span>, <span class="va">paste</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>, collapse <span class="op">=</span> <span class="st">"; "</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -1015,17 +1014,17 @@ which the regions were defined.</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tmm_results</span><span class="op">$</span><span class="va">bestOverlap</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bestOverlap-methods.html">bestOverlap</a></span><span class="op">(</span><span class="va">tmm_results</span>, <span class="va">regions</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span>levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">regions</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">tmm_results</span>, <span class="va">hmp_fdr</span> <span class="op">&lt;</span> <span class="fl">0.05</span>, <span class="va">bestOverlap</span> <span class="op">==</span> <span class="st">"promoter"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">tmm_results</span>, <span class="va">hmPValue_fdr</span> <span class="op">&lt;</span> <span class="fl">0.05</span>, <span class="va">bestOverlap</span> <span class="op">==</span> <span class="st">"promoter"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## GRanges object with 2 ranges and 14 metadata columns:</span></span>
 <span><span class="co">##       seqnames            ranges strand | n_windows      n_up    n_down</span></span>
 <span><span class="co">##          &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;</span></span>
 <span><span class="co">##   [1]    chr10 76779561-76780200      * |        14         4         0</span></span>
 <span><span class="co">##   [2]    chr10 79623321-79635960      * |       314        13         0</span></span>
-<span><span class="co">##       overlaps_ref            keyval_range    logCPM     logFC         hmp</span></span>
+<span><span class="co">##       overlaps_ref            keyval_range    logCPM     logFC    hmPValue</span></span>
 <span><span class="co">##          &lt;logical&gt;               &lt;GRanges&gt; &lt;numeric&gt; &lt;numeric&gt;   &lt;numeric&gt;</span></span>
 <span><span class="co">##   [1]         TRUE chr10:76779721-76779840   6.21638  1.244849 0.000194483</span></span>
 <span><span class="co">##   [2]         TRUE chr10:79630321-79630440   7.71543  0.906496 0.000100434</span></span>
-<span><span class="co">##          hmp_fdr      status       tss</span></span>
+<span><span class="co">##     hmPValue_fdr      status       tss</span></span>
 <span><span class="co">##        &lt;numeric&gt; &lt;character&gt; &lt;logical&gt;</span></span>
 <span><span class="co">##   [1] 0.00932221   Increased     FALSE</span></span>
 <span><span class="co">##   [2] 0.00515801   Increased      TRUE</span></span>
@@ -1162,7 +1161,7 @@ of which are provided with <code>extraChIPs</code>.</p>
 <p>Let’s check the coverage across the most highly-ranked region with
 default settings.</p>
 <div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">tmm_results</span>, <span class="va">hmp_fdr</span> <span class="op">&lt;</span> <span class="fl">0.05</span>, <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">bestOverlap</span>, <span class="st">'^Prom'</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">gr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">tmm_results</span>, <span class="va">hmPValue_fdr</span> <span class="op">&lt;</span> <span class="fl">0.05</span>, <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">bestOverlap</span>, <span class="st">'^Prom'</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span></code></pre></div>
 <p>The most important option to consider when showing coverage is
 whether to display tracks individually or as overlapping tracks. Passing
 a BigWigFileList will plot each file on a separate track by default,
