@@ -74,13 +74,25 @@ test_that("show_points behaves as expected", {
 
 test_that("colours/size are added correctly", {
 
-  p <- plotAssayPCA(se, colour = "treat")#, size = log10(totals))
+  p <- plotAssayPCA(se, colour = "treat", shape = 4, size = "totals")
+  mappings <- c(
+      x = "PC1", y = "PC2", colour = "treat", size = "totals", label = "colnames"
+  )
+  expect_equal(vapply(p$mapping, rlang::as_label, character(1)), mappings)
   expect_equal(rlang::as_label(p$mapping$colour), "treat")
+  expect_equal(rlang::as_label(p$mapping$size), "totals")
   expect_equal(
     grepl("PC", unlist(p$labels))[1:4], c(TRUE, TRUE, FALSE, FALSE)
   )
   expect_equal(p$labels$colour, "treat")
+  expect_true(p$layers[[1]]$aes_params$shape == 4)
   # expect_equal(p$labels$size, "log10(totals)")
+
+  p <- plotAssayRle(se, colour = "blue", fill = "white", trans = "log2")
+  expect_equal(p$mapping$fill, "white")
+  expect_equal(p$mapping$colour, "blue")
+  expect_true(grepl("log2", p$labels$y))
+
 })
 
 
