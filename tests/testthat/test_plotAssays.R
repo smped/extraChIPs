@@ -76,7 +76,8 @@ test_that("colours/size are added correctly", {
 
   p <- plotAssayPCA(se, colour = "treat", shape = 4, size = "totals")
   mappings <- c(
-      x = "PC1", y = "PC2", colour = "treat", size = "totals", label = "colnames"
+      x = "PC1", y = "PC2", colour = "treat", size = "totals",
+      label = "colnames", fill = "NULL"
   )
   expect_equal(vapply(p$mapping, rlang::as_label, character(1)), mappings)
   expect_equal(rlang::as_label(p$mapping$colour), "treat")

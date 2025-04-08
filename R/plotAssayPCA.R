@@ -15,8 +15,8 @@
 #' @param colour,size The column names to be used for colours and point/label
 #' size. Can be fixed values (e.g. size = 3) and can also be a manipulation of
 #' a column, e.g. colour = log10(totals)
-#' @param shape The column name(s) to be used for determining the shape
-#' or size of points. Can also be a fixed value
+#' @param shape,fill The column name(s) to be used for determining the shape
+#' or fill colour of plotted points. Can also be a fixed value
 #' @param label The column name to be used for labels. Will default to the
 #' column names of the SummarizedExperiment
 #' @param show_points logical(1). Display the points. If `TRUE` any labels will
@@ -61,7 +61,7 @@ setMethod(
     "plotAssayPCA",
     signature = signature(x = "SummarizedExperiment"),
     function(
-        x, assay = "counts", colour = NULL, shape = NULL, size = NULL,
+        x, assay = "counts", colour = NULL, shape = NULL, size = NULL, fill = NULL,
         label = "colnames", show_points = TRUE, pc_x = 1, pc_y = 2, trans = NULL,
         n_max = Inf, tol = sqrt(.Machine$double.eps), rank = NULL, ...
     ) {
@@ -85,6 +85,15 @@ setMethod(
             } else {
                 shape <- as.character(ensym(shape))
                 shape <- sym(match.arg(shape, args))
+            }
+        }
+        if (!is.null(fill)) {
+            fill <- fill[[1]]
+            if (.validColour(fill)) {
+                param_list$fill <- fill
+            } else {
+                fill <- as.character(ensym(fill))
+                fill <- sym(match.arg(fill, args))
             }
         }
         ## This may be passed as a manipulation of data
@@ -145,7 +154,8 @@ setMethod(
         )
         plot_aes <- aes(
             x = !!sym(pc_x), y = !!sym(pc_y), colour = {{ colour }},
-            shape = {{ shape }}, size = {{ size }}, label = {{ label }}
+            shape = {{ shape }}, size = {{ size }}, label = {{ label }},
+            fill = {{ fill }}
         )
         if (is.numeric(shape)) plot_aes$shape <- NULL
         if (is.numeric(size)) plot_aes$size <- NULL
@@ -155,6 +165,7 @@ setMethod(
             lab_fun <- ifelse(show_points, "geom_text_repel", "geom_text")
             if (show_points) param_list$show.legend <- FALSE
             param_list$shape <- NULL
+            param_list$fill <- NULL
             p <- p + do.call(lab_fun, param_list)
         }
         p
