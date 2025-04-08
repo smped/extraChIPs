@@ -109,3 +109,7 @@
 # Changes in 1.9.6
 
 - Added the function `centrePeaks()` to recentre peaks using any files with coverage
+
+# Changes in 1.11.2
+
+- Changed handling of arguments in plotting functions, setting NULL as the primary default value

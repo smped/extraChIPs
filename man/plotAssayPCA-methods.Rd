@@ -13,6 +13,7 @@ plotAssayPCA(x, ...)
   colour = NULL,
   shape = NULL,
   size = NULL,
+  fill = NULL,
   label = "colnames",
   show_points = TRUE,
   pc_x = 1,
@@ -35,8 +36,8 @@ plotAssayPCA(x, ...)
 size. Can be fixed values (e.g. size = 3) and can also be a manipulation of
 a column, e.g. colour = log10(totals)}
 
-\item{shape}{The column name(s) to be used for determining the shape
-or size of points. Can also be a fixed value}
+\item{shape, fill}{The column name(s) to be used for determining the shape
+or fill colour of plotted points. Can also be a fixed value}
 
 \item{label}{The column name to be used for labels. Will default to the
 column names of the SummarizedExperiment}
