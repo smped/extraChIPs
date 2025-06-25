@@ -57,7 +57,8 @@
 #' @importFrom IRanges SplitDataFrameList
 #' @importFrom dplyr left_join
 #' @importFrom BiocParallel SerialParam bplapply bpisup bpstart bpstop
-#' @importFrom GenomeInfoDb seqlevels keepSeqlevels
+#' @importFrom GenomeInfoDb keepSeqlevels
+#' @importFrom Seqinfo seqlevels
 #' @rdname getProfileData-methods
 #' @export
 setMethod(

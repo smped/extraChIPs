@@ -34,7 +34,7 @@
 #'
 #' @importFrom methods as
 #' @import GenomicRanges
-#' @importFrom GenomeInfoDb seqinfo<- seqlevels
+#' @importFrom Seqinfo seqinfo<- seqlevels
 #' @rdname colToRanges-methods
 #' @aliases colToRanges
 #' @export
@@ -53,7 +53,7 @@ setMethod(
     }
 )
 #' @import GenomicRanges
-#' @importFrom GenomeInfoDb seqinfo
+#' @importFrom Seqinfo seqinfo
 #' @rdname colToRanges-methods
 #' @aliases colToRanges
 #' @export
@@ -67,7 +67,7 @@ setMethod(
     }
 )
 #' @import GenomicRanges
-#' @importFrom GenomeInfoDb seqinfo<- seqlevels
+#' @importFrom Seqinfo seqinfo<- seqlevels
 #' @importFrom S4Vectors DataFrame
 #' @importClassesFrom IRanges CompressedList
 #' @rdname colToRanges-methods

@@ -36,7 +36,7 @@
 #' peaks <- importPeaks(fl)
 #' peaks
 #'
-#' @importFrom GenomeInfoDb seqinfo seqnames
+#' @importFrom Seqinfo seqinfo seqnames
 #' @importFrom glue glue
 #' @import GenomicRanges
 #' @export
