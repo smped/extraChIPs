@@ -42,9 +42,9 @@
 #' ex <- list(
 #'   x = letters[1:5], y = letters[c(6:15, 26)], z = letters[c(2, 10:25)]
 #' )
-#' plotOverlaps(ex, type = "upset")
+#' #plotOverlaps(ex, type = "upset")
 #' plotOverlaps(ex, type = "venn", set_col = 1:3, alpha = 0.3)
-#' plotOverlaps(ex, type = "upset", set_col = 1:3, labeller = stringr::str_to_title)
+#' #plotOverlaps(ex, type = "upset", set_col = 1:3, labeller = stringr::str_to_title)
 #' plotOverlaps(ex[1:2])
 #'
 #' ## GRangesList object will produce a boxplot of summarised values in the
@@ -52,7 +52,7 @@
 #' data("peaks")
 #' grl <- peaks[1:3]
 #' names(grl) <- gsub("_peaks.+", "", names(grl))
-#' plotOverlaps(grl, type = 'upset', var = 'score', f = 'max')
+#' #plotOverlaps(grl, type = 'upset', var = 'score', f = 'max')
 #'
 #' ## If only two samples are present, a VennDiagram will be produced
 #' plotOverlaps(grl[1:2], set_col = c("green", "blue"))

@@ -441,7 +441,7 @@ setMethod(
         lab_df <- dplyr::filter(lab_df, N > .min_p * sum(N))
         lab_df <- mutate(lab_df, lab = glue(.total_glue))
         p <- p + lab_fun(
-            aes(!!sym(x), !!sym(y), label = !!sym("lab")),
+            aes(!!sym("x"), !!sym("y"), label = !!sym("lab")),
             data = lab_df,
             fill = .total_fill, colour = .total_colour,
             size = .total_size, alpha = .total_alpha,

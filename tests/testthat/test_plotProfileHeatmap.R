@@ -4,7 +4,7 @@ pd <- getProfileData(bw, gr, upstream = 100, bins = 10)
 
 test_that("Correct plot is returned", {
   p <- plotProfileHeatmap(pd, profileCol = "profile_data")
-  expect_equal(is(p), "ggside")
+  expect_equal(is(p), "ggside::ggside")
   expect_equal(nrow(p$data), 10)
   expect_equal(colnames(p$data), c("range", "score", "position", "bp"))
   expect_null(p$labels$y)
@@ -16,7 +16,7 @@ test_that("Correct plot is returned", {
 
 test_that("Histogram is omitted when requested", {
   p <- plotProfileHeatmap(pd, profileCol = "profile_data", summariseBy = "none")
-  expect_equal(is(p), "gg")
+  expect_equal(is(p), "ggplot2::ggplot")
   expect_equal(is(p$facet), "FacetNull")
 })
 
