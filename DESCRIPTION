@@ -53,7 +53,7 @@ Imports:
 Suggests: 
   apeglm,
   BiocStyle,
-  ComplexUpset,
+  SimpleUpset,
   covr,
   DESeq2,
   EnrichedHeatmap,
