@@ -13,14 +13,15 @@ plotOverlaps(x, ...)
   type = c("auto", "venn", "upset"),
   var = NULL,
   f = c("mean", "median", "max", "min", "sd"),
+  merge_within = 1L,
+  ignore.strand = TRUE,
   set_col = NULL,
   ...,
-  .sort_sets = "ascending",
+  label_size = 3.5,
   hj_sets = 1.15,
-  sz_sets = 3.5,
-  exp_sets = 0.25,
-  merge_within = 1L,
-  ignore.strand = TRUE
+  exp_sets = 0.2,
+  vj_intersect = -0.5,
+  exp_intersect = 0.1
 )
 
 \S4method{plotOverlaps}{list}(
@@ -28,10 +29,11 @@ plotOverlaps(x, ...)
   type = c("auto", "venn", "upset"),
   set_col = NULL,
   ...,
-  .sort_sets = "ascending",
+  label_size = 3.5,
   hj_sets = 1.15,
-  sz_sets = 3.5,
-  exp_sets = 0.25
+  exp_sets = 0.2,
+  vj_intersect = -0.5,
+  exp_intersect = 0.1
 )
 }
 \arguments{
@@ -39,7 +41,7 @@ plotOverlaps(x, ...)
 
 \item{...}{Passed to \link[VennDiagram]{draw.pairwise.venn} (or
 \code{draw.single/triple.venn}) for Venn Diagrams, and to
-\link[ComplexUpset]{upset} for UpSet plots}
+\link[SimpleUpset]{simpleUpSet} for UpSet plots}
 
 \item{type}{The type of plot to be produced}
 
@@ -49,20 +51,22 @@ plotOverlaps(x, ...)
 \item{f}{Summarisation function. Must return a single value from any
 numeric vector}
 
-\item{set_col}{Colours to be assigned to each set}
-
-\item{.sort_sets}{passed to \code{sort_sets} in \link[ComplexUpset]{upset}}
-
-\item{hj_sets}{Horizontal adjustment of set size labels}
-
-\item{sz_sets}{Text size for set size labels. Passed internally to
-\code{geom_text(size = sz_sets)}}
-
-\item{exp_sets}{X-axis expansion for set size panel}
-
 \item{merge_within}{Passed to \link{makeConsensus}}
 
 \item{ignore.strand}{Passed to \link[GenomicRanges]{reduce}}
+
+\item{set_col}{Colours to be assigned to each set}
+
+\item{label_size}{Text size for set and intersection labels. Passed
+internally to \code{geom_text(size = label_size)}}
+
+\item{hj_sets}{Horizontal adjustment of set size labels}
+
+\item{exp_sets}{X-axis expansion for set size panel}
+
+\item{vj_intersect}{Vertical adjustment of intersection size labels}
+
+\item{exp_intersect}{Y-axis expansion for intersections size panel}
 }
 \value{
 Either a VennDiagram (i.e. grid) object, or a ComplexUpset plot
@@ -91,7 +95,7 @@ ex <- list(
 )
 plotOverlaps(ex, type = "upset")
 plotOverlaps(ex, type = "venn", set_col = 1:3, alpha = 0.3)
-plotOverlaps(ex, type = "upset", set_col = 1:3, labeller = stringr::str_to_title)
+plotOverlaps(ex, type = "upset", set_col = 1:3)
 plotOverlaps(ex[1:2])
 
 ## GRangesList object will produce a boxplot of summarised values in the
@@ -102,6 +106,6 @@ names(grl) <- gsub("_peaks.+", "", names(grl))
 plotOverlaps(grl, type = 'upset', var = 'score', f = 'max')
 
 ## If only two samples are present, a VennDiagram will be produced
-plotOverlaps(grl[1:2], set_col = c("green", "blue"))
+plotOverlaps(grl[1:2], set_col = c("green", "blue"), cex = 1.5, cat.cex = 1.5)
 
 }

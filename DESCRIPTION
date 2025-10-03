@@ -21,7 +21,7 @@ Depends:
   BiocParallel,
   R (>= 4.2.0),
   GenomicRanges,
-  ggplot2 (>= 3.5.0),
+  ggplot2 (>= 4.0.0),
   ggside (>= 0.3.1),
   SummarizedExperiment,
   tibble
@@ -52,7 +52,7 @@ Imports:
 Suggests: 
   apeglm,
   BiocStyle,
-  ComplexUpset,
+  SimpleUpset,
   covr,
   DESeq2,
   EnrichedHeatmap,
@@ -75,5 +75,5 @@ biocViews: ChIPSeq, HiC, Sequencing, Coverage
 BiocType: Software
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)  
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Config/testthat/edition: 3

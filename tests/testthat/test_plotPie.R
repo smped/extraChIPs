@@ -20,23 +20,23 @@ test_that("plotPie Errors where expected", {
 test_that(".plotSinglePie creates expected data structures", {
 
     p <- plotPie(df, "feature")
-    expect_true(is(p, "gg"))
-    expect_true(is.factor(p$data$feature))
-    expect_equal(length(p$data$feature), 3)
+    expect_true(is(p, "ggplot2::ggplot"))
+    expect_true(is.factor(p@data$feature))
+    expect_equal(length(p@data$feature), 3)
     expect_equal(
-        vapply(p$layers, function(x) is(x$geom), character(1)),
+        unname(vapply(p@layers, function(x) is(x$geom), character(1))),
         paste0("Geom", c("Col", "Label", "Label"))
     )
 
     p <- plotPie(df, "feature", total_geom = "none")
     expect_equal(
-        vapply(p$layers, function(x) is(x$geom), character(1)),
+        unname(vapply(p@layers, function(x) is(x$geom), character(1))),
         paste0("Geom", c("Col", "Label"))
     )
 
     p <- plotPie(df, "feature", cat_geom = "text")
     expect_equal(
-        vapply(p$layers, function(x) is(x$geom), character(1)),
+        unname(vapply(p@layers, function(x) is(x$geom), character(1))),
         paste0("Geom", c("Col", "Text", "Label"))
     )
 
@@ -45,29 +45,33 @@ test_that(".plotSinglePie creates expected data structures", {
 test_that(".plotDoublePie creates the expected data structures", {
 
     p <- plotPie(df, "feature", "TF1")
-    expect_equal(dim(p$data), c(9, 12))
+    expect_equal(dim(p@data), c(9, 12))
     expect_equal(
-        colnames(p$data),
+        colnames(p@data),
         c(
             "feature", "TF1", "value", "p", "label_radians", "N", "n", "lab",
             "r", "x", "lab_x", "lab_y"
         )
     )
     expect_equal(
-        vapply(p$layers, function(x) is(x$geom), character(1)),
+        unname(vapply(p@layers, function(x) is(x$geom), character(1))),
         paste0("Geom", c("ArcBar", "Label", "Label"))
     )
     expect_equal(
-        p$labels[c("x", "y", "fill", "r", "label")],
-        list(
-            x = "TF1", y = "y", fill = "feature", r = "width * r",
-            label = "lab"
+        vapply(p@labels, as.character, character(1)),
+        c(x = "TF1", fill = "feature")
+    )
+    expect_equal(
+        vapply(p@layers$stat_pie$mapping, as_label, character(1)),
+        c(
+            x0 = "x", y0 = "1", r0 = "0", r = "width * r", fill = "feature",
+            amount = "value"
         )
     )
 
     p <- plotPie(df, "feature", "TF1", total_geom = "none", cat_geom = "text")
     expect_equal(
-        vapply(p$layers, function(x) is(x$geom), character(1)),
+        unname(vapply(p@layers, function(x) is(x$geom), character(1))),
         paste0("Geom", c("ArcBar", "Text"))
     )
 
@@ -76,28 +80,26 @@ test_that(".plotDoublePie creates the expected data structures", {
 test_that(".plotTriplePie creates the expected data structures", {
 
     p <- plotPie(df, "feature", "TF1", "TF2")
-    expect_equal(dim(p$data), c(27, 14))
+    expect_equal(dim(p@data), c(27, 14))
     expect_equal(
-        colnames(p$data),
+        colnames(p@data),
         c(
             "feature", "TF1", "TF2", "value", "p", "label_radians", "N", "n",
             "lab", "r", "x", "y", "lab_x", "lab_y"
         )
     )
     expect_equal(
-        vapply(p$layers, function(x) is(x$geom), character(1)),
+        unname(vapply(p@layers, function(x) is(x$geom), character(1))),
         paste0("Geom", c("ArcBar", "Label", "Label"))
     )
     expect_equal(
-        p$labels[c("x", "y", "fill", "r", "label")],
-        list(
-            x = "TF1", y = "TF2", fill = "feature", r = "width * r", label = "lab"
-        )
+        p@labels[c("x", "y", "fill")],
+        list(x = "TF1", y = "TF2", fill = "feature")
     )
 
     p <- plotPie(df, "feature", "TF1", "TF2", total_geom = "none", cat_geom = "text")
     expect_equal(
-        vapply(p$layers, function(x) is(x$geom), character(1)),
+        unname(vapply(p@layers, function(x) is(x$geom), character(1))),
         paste0("Geom", c("ArcBar", "Text"))
     )
 })
@@ -107,12 +109,12 @@ test_that("Scaling by columns works as expected", {
     gr <- ex_prom
     mcols(gr) <- df[seq_along(gr),]
     p <- plotPie(gr, fill = "feature")
-    expect_equal(sum(p$data$n), length(gr))
+    expect_equal(sum(p@data$n), length(gr))
     p <- plotPie(gr, fill = "feature", scale_by = "width")
-    expect_equal(sum(p$data$n), sum(width(gr) / 1e3))
+    expect_equal(sum(p@data$n), sum(width(gr) / 1e3))
     df$scale <- 0.5
     p <- plotPie(df, fill = "feature", x = "TF1", scale_by = "scale", scale_factor = 1)
-    expect_equal(sum(p$data$value), nrow(df) / 2)
+    expect_equal(sum(p@data$value), nrow(df) / 2)
     df$scale <- "a"
     expect_error(plotPie(df, fill = "feature", x = "TF1", scale_by = "scale"))
 })
@@ -120,10 +122,10 @@ test_that("Scaling by columns works as expected", {
 test_that("DataFrame objects work as expected", {
     p <- plotPie(DataFrame(df), fill = "feature")
     expect_true(is(p, "gg"))
-    expect_true(is.factor(p$data$feature))
-    expect_equal(length(p$data$feature), 3)
+    expect_true(is.factor(p@data$feature))
+    expect_equal(length(p@data$feature), 3)
     expect_equal(
-        vapply(p$layers, function(x) is(x$geom), character(1)),
+        unname(vapply(p@layers, function(x) is(x$geom), character(1))),
         paste0("Geom", c("Col", "Label", "Label"))
     )
 })

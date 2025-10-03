@@ -28,14 +28,15 @@
 #' @param set_col Colours to be assigned to each set
 #' @param ... Passed to \link[VennDiagram]{draw.pairwise.venn} (or
 #' `draw.single/triple.venn`) for Venn Diagrams, and to
-#' \link[ComplexUpset]{upset} for UpSet plots
-#' @param .sort_sets passed to `sort_sets` in \link[ComplexUpset]{upset}
+#' \link[SimpleUpset]{simpleUpSet} for UpSet plots
 #' @param ignore.strand Passed to \link[GenomicRanges]{reduce}
 #' @param merge_within Passed to \link{makeConsensus}
-#' @param sz_sets Text size for set size labels. Passed internally to
-#' `geom_text(size = sz_sets)`
+#' @param label_size Text size for set and intersection labels. Passed
+#' internally to `geom_text(size = label_size)`
 #' @param hj_sets Horizontal adjustment of set size labels
+#' @param vj_intersect Vertical adjustment of intersection size labels
 #' @param exp_sets X-axis expansion for set size panel
+#' @param exp_intersect Y-axis expansion for intersections size panel
 #'
 #' @examples
 #' ## Examples using a list of character vectors
@@ -44,7 +45,7 @@
 #' )
 #' plotOverlaps(ex, type = "upset")
 #' plotOverlaps(ex, type = "venn", set_col = 1:3, alpha = 0.3)
-#' plotOverlaps(ex, type = "upset", set_col = 1:3, labeller = stringr::str_to_title)
+#' plotOverlaps(ex, type = "upset", set_col = 1:3)
 #' plotOverlaps(ex[1:2])
 #'
 #' ## GRangesList object will produce a boxplot of summarised values in the
@@ -55,7 +56,7 @@
 #' plotOverlaps(grl, type = 'upset', var = 'score', f = 'max')
 #'
 #' ## If only two samples are present, a VennDiagram will be produced
-#' plotOverlaps(grl[1:2], set_col = c("green", "blue"))
+#' plotOverlaps(grl[1:2], set_col = c("green", "blue"), cex = 1.5, cat.cex = 1.5)
 #'
 #' @import GenomicRanges
 #' @importFrom S4Vectors endoapply mcols
@@ -71,8 +72,10 @@ setMethod(
   function(
     x, type = c("auto", "venn", "upset"), var = NULL,
     f = c("mean", "median", "max", "min", "sd"),
-    set_col = NULL, ..., .sort_sets = "ascending", hj_sets = 1.15,
-    sz_sets = 3.5, exp_sets = 0.25, merge_within = 1L, ignore.strand = TRUE
+    merge_within = 1L, ignore.strand = TRUE, set_col = NULL, ...,
+    label_size = 3.5,
+    hj_sets = 1.15, exp_sets = 0.2,
+    vj_intersect = - 0.5, exp_intersect = 0.1
   ) {
 
     stopifnot(methods::is(x, "GRangesList"))
@@ -95,16 +98,14 @@ setMethod(
       l <- lapply(nm, function(x) as.character(gr)[mcols(gr)[[x]]])
       names(l) <- nm
       plotOverlaps(
-        l, type, set_col = set_col, .sort_sets = .sort_sets,
-        hj_sets = hj_sets, sz_sets = sz_sets, exp_sets = exp_sets, ...
+        l, type, set_col = set_col, sz_sets = label_size,
+        hj_sets = hj_sets, exp_sets = exp_sets,
+        exp_intersect = exp_intersect, vj_intersect = vj_intersect, ...
       )
 
     } else {
 
       if (n == 1) stop("UpSet plots can only be drawn using more than one group")
-
-      if (!requireNamespace('ComplexUpset', quietly = TRUE))
-        stop("Please install 'ComplexUpset' to use this function.")
 
       if (!is.numeric(mcols(x[[1]])[[var]]))
         stop(var, " must contain numeric values")
@@ -116,27 +117,17 @@ setMethod(
       if (methods::is(tbl[[var]], "list"))
         tbl[[var]] <- vapply(tbl[[var]], f, numeric(1))
 
-      ## Setup the boxplot & key inputs
-      ann <- list2(
-        "{var}" := list(
-          aes = aes(x = !!sym("intersection"), y = !!sym(var)),
-          geom = geom_boxplot(na.rm = TRUE)
-        )
+      p <- .makeUpSet(
+        tbl, nm, var, set_col, label_size, hj_sets, exp_sets, exp_intersect,
+        vj_intersect, ...
       )
-      ip <- list(data = tbl, intersect = nm, annotations = ann)
-
-      ## Add default arguments, respecting any supplied
-      dotArgs <- .parseDotArgs(set_col, n, nm, ...)
-      if (!"set_sizes" %in% names(dotArgs))
-        dotArgs$set_sizes <- .makeSetSizes(hj_sets, sz_sets, exp_sets)
-      dotArgs$sort_sets <- .sort_sets
-      ip <- ip[!names(ip) %in% names(dotArgs)]
-      p <- do.call(ComplexUpset::upset, c(ip, dotArgs))
       return(p)
+
     }
 
   }
 )
+
 #'
 #' @rdname plotOverlaps-methods
 #' @aliases plotOverlaps
@@ -145,8 +136,8 @@ setMethod(
   "plotOverlaps",
   signature = "list",
   function(
-    x, type = c("auto", "venn", "upset"), set_col = NULL, ...,
-    .sort_sets = 'ascending', hj_sets = 1.15, sz_sets = 3.5, exp_sets = 0.25
+    x, type = c("auto", "venn", "upset"), set_col = NULL, ..., label_size = 3.5,
+    hj_sets = 1.15, exp_sets = 0.2, vj_intersect = - 0.5, exp_intersect = 0.1
   ) {
 
     stopifnot(length(names(x)) == length(x))
@@ -159,29 +150,21 @@ setMethod(
 
     if (type == "upset") {
 
-      if (!requireNamespace('ComplexUpset', quietly = TRUE))
-          stop("Please install 'ComplexUpset' to use this function.")
-
       if (n == 1)
         stop("UpSet plots can only be drawn using more than one group")
 
       ## Setup the df
-      # count <- c()
       all_vals <- unique(unlist(x))
-      df <- lapply(x, function(i) as.integer(all_vals %in% i))
+      df <- lapply(x, function(i) all_vals %in% i)
 
       ## Ensure colnames are respected
-      col_names <- names(df)
-      df <- as.data.frame(df, row.names = all_vals)
-      colnames(df) <- col_names
-      ip <- list(data = df, intersect = names(df))
+      nm <- names(df)
+      df <- as.data.frame(df)
 
-      ## Add default arguments, respecting any supplied
-      dotArgs <- .parseDotArgs(set_col, n, nm, ...)
-      if (!"set_sizes" %in% names(dotArgs))
-        dotArgs$set_sizes <- .makeSetSizes(hj_sets, sz_sets, exp_sets)
-      dotArgs$sort_sets <- .sort_sets
-      p <- do.call(ComplexUpset::upset, c(ip, dotArgs))
+      p <- .makeUpSet(
+        df, sets = nm, var = NULL, set_col, label_size, hj_sets, exp_sets,
+        exp_intersect, vj_intersect, ...
+      )
       return(p)
     }
 
@@ -195,6 +178,42 @@ setMethod(
 
   }
 )
+
+#' @keywords internal
+.makeUpSet <- function(
+    x, sets, var, set_col, label_size, hj_sets, exp_sets,
+    exp_intersect, vj_intersect, ...
+) {
+
+  if (!requireNamespace('SimpleUpset', quietly = TRUE))
+    stop("Please install 'SimpleUpset' to use this function.")
+
+  ## Now use SimpleUpset
+  args <- list(x = x, sets = sets)
+  if (is.null(set_col)) {
+    args$set_layers <- SimpleUpset::default_set_layers(
+      hjust = hj_sets, label_size = label_size, expand = c(exp_sets, 0)
+    )
+  } else {
+    args$set_layers <- SimpleUpset::default_set_layers(
+      fill = "set", hjust = hj_sets, label_size = label_size,
+      expand = c(exp_sets, 0),
+      scale_fill_manual(values = rep_len(set_col, length(sets))),
+      guides(fill = guide_none())
+    )
+  }
+  args$intersect_layers = SimpleUpset::default_intersect_layers(
+    expand = c(0, exp_intersect), label_size = label_size,
+    vjust = vj_intersect
+  )
+  if (!is.null(var)) {
+    var <- match.arg(var, colnames(x))
+    args$annotation <- list(aes(y = !!sym(var)), geom_boxplot())
+  }
+  args <- c(args, list(...))
+  do.call(SimpleUpset::simpleUpSet, args)
+
+}
 
 .plotSingleVenn <- function(x, ...) {
   if (!requireNamespace('VennDiagram', quietly = TRUE))
@@ -238,48 +257,6 @@ setMethod(
   do.call(VennDiagram::draw.triple.venn, c(plotArgs, dotArgs))
 }
 
-#' @importFrom scales comma
-#' @importFrom rlang sym !!
-.makeSetSizes <- function(hj, sz, exp) {
-    ComplexUpset::upset_set_size() +
-    geom_text(
-      aes(label = comma(after_stat(!!sym("count")))),  stat = 'count',
-      hjust = hj, size = sz
-    ) +
-    scale_y_reverse(expand = expansion(c(exp, 0)))
-}
-
-.parseDotArgs <- function(set_col, n, nm, ...) {
-  dotArgs <- list(...)
-  allowed <- unique(
-      names(c(formals(ComplexUpset::upset), formals(ComplexUpset::upset_data)))
-  )
-  dotArgs <- dotArgs[names(dotArgs) %in% allowed]
-  if (!'themes' %in% names(dotArgs)) {
-    dotArgs$themes <-
-        ComplexUpset::upset_default_themes(panel.grid = element_blank())
-  }
-  ## There is currently an issue with ComplexUpset. This places theme arguments
-  ## which are not supported beyond ggplot2 3.5.0. This will remove them
-  valid_theme_args <- names(formals(theme))
-  dotArgs$themes <- lapply(
-      dotArgs$themes,
-      \(x) lapply(x, \(y) do.call("theme", y[names(y) %in% valid_theme_args]))
-  )
-
-  if (!is.null(set_col)) {
-    ## Respect any existing set queries
-    existing_sets <- lapply(dotArgs$queries, function(x) x$set) |> unlist()
-    set_col <- rep(set_col, n)
-    names(set_col)[seq_len(n)] <- nm
-    ql <- lapply(
-      setdiff(nm, existing_sets),
-      function(i) ComplexUpset::upset_query(set = i, fill = set_col[[i]])
-    )
-    dotArgs$queries <- c(dotArgs$queries, ql)
-  }
-  dotArgs
-}
 
 #' @importFrom S4Vectors mcols
 #' @keywords internal
