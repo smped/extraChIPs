@@ -269,7 +269,7 @@ plotPairwise <- function(
 
 #' @import ggside
 #' @importFrom S4Vectors mcols
-#' @importFrom rlang !! sym
+#' @importFrom rlang !! sym as_label
 #' @importFrom forcats fct_relabel fct_na_value_to_level
 #' @importFrom stringr str_replace_na
 #' @importFrom stats density
@@ -295,7 +295,7 @@ plotPairwise <- function(
     stopifnot(col %in% colnames(ol))
     ol <- droplevels(dplyr::filter(ol, !is.na(!!sym(nm[[1]]))))
     if (xside == "density") {
-        x_lab <- p$labels$x
+        x_lab <- as_label(p@mapping$x)
         p <- p + geom_xsidedensity(
             aes(x = !!sym(x_lab), y = after_stat(density), fill = !!sym(col)),
             alpha = alpha,
@@ -325,7 +325,7 @@ plotPairwise <- function(
 
 #' @import ggside
 #' @importFrom S4Vectors mcols
-#' @importFrom rlang !! sym
+#' @importFrom rlang !! sym as_label
 #' @importFrom forcats fct_relabel fct_na_value_to_level
 #' @importFrom stringr str_replace_na
 #' @importFrom stats density
@@ -352,7 +352,7 @@ plotPairwise <- function(
     stopifnot(col %in% colnames(ol))
     ol <- droplevels(dplyr::filter(ol, !is.na(!!sym(nm[[2]]))))
     if (yside == "density") {
-        y_lab <- p$labels$y
+        y_lab <- as_label(p@mapping$y)
         p <- p + geom_ysidedensity(
             aes(y = !!sym(y_lab), x = after_stat(density), fill = !!sym(col)),
             alpha = alpha,

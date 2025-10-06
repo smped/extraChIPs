@@ -58,49 +58,55 @@ test_that("plotOverlaps dispatches type = 'auto' correctly", {
     p <- plotOverlaps(ex, type = 'upset')
     expect_true(is(p, 'patchwork'))
     expect_equal(
-        p$data,
+        p@data,
         structure(
             list(
-                value = c(TRUE, FALSE, TRUE, FALSE, FALSE, TRUE,  FALSE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, FALSE, FALSE),
-                intersection = structure(
-                    c(1L, 1L, 1L, 2L, 2L, 2L, 3L, 3L, 3L, 4L, 4L, 4L, 5L, 5L, 5L),
-                    levels = c("1-3", "1", "2", "2-3", "3"), class = "factor"
+                intersect = structure(
+                    c(4L, 5L, 5L, 3L, 2L, 2L, 1L), levels = c("1", "2", "3", "4", "5"),  class = "factor"
                 ),
-                group = structure(
-                    c(3L, 2L, 1L, 3L, 2L, 1L, 3L, 2L, 1L, 3L, 2L, 1L, 3L, 2L, 1L),
-                    levels = c("1", "2", "3"), class = "factor")
+                degree = structure(
+                    c(1L, 2L, 2L, 1L, 2L, 2L, 1L), levels = c("1", "2"), class = "factor"
                 ),
-            row.names = c(NA, 15L), class = "data.frame"
+                set = structure(
+                    c(1L, 1L, 3L, 2L, 2L, 3L, 3L), levels = c("x", "y", "z"),  class = "factor"
+                ),
+                in_group = c(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE),
+                set_int = c(1L, 1L, 3L, 2L, 2L, 3L, 3L),
+                x = c(TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE),
+                y = c(FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, FALSE),
+                z = c(FALSE, TRUE, TRUE, FALSE, TRUE, TRUE, TRUE)
+            ),
+            row.names = c(NA, -7L),
+            class = c("tbl_df", "tbl", "data.frame")
         )
     )
-    expect_equal(length(p$layers), 4)
+    expect_equal(length(p@layers), 4)
     expect_error(
         plotOverlaps(ex[1], type = "upset"),
         "UpSet plots can only be drawn using more than one group"
     )
-    expect_equal(length(p$patches$plots), 3)
-    expect_equal(
-        as_label(p$patches$plots[[3]]$layers[[3]]$mapping$label),
-        "comma(after_stat(count))"
-    )
+    # expect_equal(length(p$patches$plots), 3)
 })
 
 test_that("plotOverlaps adds annotations as expected", {
     p <- plotOverlaps(grl, type = 'upset', var = 'score', set_col = "red")
     expect_true(is(p, 'patchwork'))
-    expect_equal(length(p$patches$plots), 5)
-    bp <- p$patches$plots[[2]]
-    expect_true(is(bp, "gg"))
+    expect_equal(length(p), 4)
+    expect_equal(length(p[[2]]), 2)
+    bp <- p[[2]][[1]]
+    expect_true(is_ggplot(bp))
     expect_equal(
-        bp$data$range, c("chr1:1-10", "chr1:12-15", "chr1:21-40", "chr1:46-50")
+        bp@data$range, c("chr1:1-10", "chr1:12-15", "chr1:21-40", "chr1:46-50")
     )
     expect_equal(
-        bp$data$score,
+        bp@data$score,
         c(-0.502192350531457, 0.886784809417845, 0.0565284486730913, 0.318630087617032)
     )
-    expect_equal(bp$labels$y, "score")
-    expect_true(is(bp$layers[[1]]$geom, "GeomBoxplot"))
-    expect_equal(p$patches$plots[[5]]$geom[[1]]$geom_params$fill, "red")
+    expect_equal(as_label(bp@mapping$y), "score")
+    expect_true(is(bp@layers[[1]]$geom, "GeomBoxplot"))
+    expect_equal(as_label(p[[3]]@layers$geom_bar$mapping$fill), "set")
+    expect_true(is(p[[3]]@scales$scales[[3]], "ScaleDiscrete"))
+    expect_equal(ggplot_build(p[[3]])@data[[2]]$fill, rep("red", 2))
 
 })
 
@@ -118,5 +124,8 @@ test_that("Simple errors are caught", {
     expect_error(
         plotOverlaps(grl2, type = "upset", var = "letters"),
         "letters must contain numeric values"
+    )
+    expect_error(
+        plotOverlaps(grl[1], type = "upset"), "UpSet plots can only.+"
     )
 })

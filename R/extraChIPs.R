@@ -55,9 +55,6 @@
 #'   * [importPeaks()] imports large numbers of broadPeak or narrowPeak files
 #'   * [makeConsensus()] forms consensus peaks from overlapping ranges within a
 #'   GRangesList()
-#'   * [voomWeightsFromCPM()] allows creation of an [limma::EList-class] object
-#'   as would be created from counts by [limma::voom()], but using
-#'   [edgeR::cpm()] values as input.
 #'
 #' @author
 #' Stevie Pederson

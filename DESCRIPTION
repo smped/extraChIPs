@@ -1,5 +1,5 @@
 Package: extraChIPs
-Version: 1.11.2
+Version: 1.13.3
 Title: Additional functions for working with ChIP-Seq data
 Authors@R: person("Stevie", "Pederson", 
   email = "stephen.pederson.au@gmail.com", 
@@ -21,9 +21,10 @@ Depends:
   BiocParallel,
   R (>= 4.2.0),
   GenomicRanges,
-  ggplot2 (>= 3.5.0),
-  ggside (>= 0.3.1),
-  SummarizedExperiment,
+  ggplot2 (>= 4.0.0),
+  ggside (>= 0.4.0),
+  Seqinfo,
+  SummarizedExperiment (>= 1.39.1),
   tibble
 Imports:
   csaw,
@@ -52,7 +53,7 @@ Imports:
 Suggests: 
   apeglm,
   BiocStyle,
-  ComplexUpset,
+  SimpleUpset,
   covr,
   DESeq2,
   EnrichedHeatmap,
@@ -75,5 +76,5 @@ biocViews: ChIPSeq, HiC, Sequencing, Coverage
 BiocType: Software
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)  
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Config/testthat/edition: 3

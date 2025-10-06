@@ -22,10 +22,10 @@ grl <- GRangesList(TF1 = gr1, TF2 = gr2)
 test_that(
   "plotPairwise works correctly", {
     p <- plotPairwise(grl, var = "logFC", colour = "status")
-    expect_true(is(p, "ggside"))
+    expect_true(is(p, "ggside::ggside"))
 
     p <- plotPairwise(grl, var = "logFC")
-    expect_true(is(p, "ggside"))
+    expect_true(is(p, "ggside::ggside"))
     expect_true(is(p$layers[[4]]$geom, "GeomSmooth"))
     p <- plotPairwise(grl, var = "logFC", smooth = FALSE)
     expect_true(is(p$layers[[4]]$geom, "GeomText"))
@@ -37,12 +37,12 @@ test_that(
     gr2$status <- as.factor(gr2$status)
     grl <- GRangesList(TF1 = gr1, TF2 = gr2)
     p <- plotPairwise(grl, var = "logFC", colour = "status", xside = "density", yside = "density")
-    expect_true(is(p, "ggside"))
+    expect_true(is(p, "ggside::ggside"))
     p <- plotPairwise(grl, var = "logFC", colour = "status", xside = "violin", yside = "violin")
-    expect_true(is(p, "ggside"))
+    expect_true(is(p, "ggside::ggside"))
 
     p <- plotPairwise(grl, var = "logFC", colour = "status", label = "gene")
-    expect_true(is(p, "ggside"))
+    expect_true(is(p, "ggside::ggside"))
 
   }
 )
