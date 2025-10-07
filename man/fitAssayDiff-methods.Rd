@@ -115,7 +115,7 @@ for previous normalisation strategies to be performed on the data.
 If testing with \link[DESeq2]{nbinomWaldTest}, applying RLE normalisation
 without groups, and using colSums for library sizes (instead of total
 alignments), the standard normalisation factors from
-\link[DESeq2]{estimateSizeFactors} will be used.
+\code{DESeq2::estimateSizeFactors} will be used.
 In all other scenarios, normalisation factors as returned by
 \link[edgeR]{normLibSizes} will be used.
 The fitType is set to 'local' when estimating dispersions, and this can be
