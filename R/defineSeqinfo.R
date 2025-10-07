@@ -44,7 +44,7 @@ defineSeqinfo <- function(
     eval(parse(text = fn))
 }
 
-#' @importFrom Seqinfo Seqinfo
+#' @importFrom GenomeInfoDb Seqinfo
 .make_T2T <- function(chr) {
     seqnames <- c(seq_len(22), "X", "Y")
     if (chr) seqnames <- paste0("chr", seqnames)
@@ -59,7 +59,7 @@ defineSeqinfo <- function(
     Seqinfo(seqnames, seqlen, circ, "T2T-CHM13v2.0")
 }
 
-#' @importFrom Seqinfo Seqinfo
+#' @importFrom GenomeInfoDb Seqinfo
 .make_GRCh38 <- function(chr, mito = NULL) {
     seqnames <- c(seq_len(22), "X", "Y", mito)
     if (chr) seqnames <- paste0("chr", seqnames)
@@ -74,7 +74,7 @@ defineSeqinfo <- function(
     Seqinfo(seqnames, seqlen, circ, "GRCh38")
 }
 
-#' @importFrom Seqinfo Seqinfo
+#' @importFrom GenomeInfoDb Seqinfo
 .make_hg38 <- function(chr, mito = NULL) {
     seqnames <- c(seq_len(22), "X", "Y", mito)
     if (chr) seqnames <- paste0("chr", seqnames)
@@ -89,7 +89,7 @@ defineSeqinfo <- function(
     Seqinfo(seqnames, seqlen, circ, "hg38")
 }
 
-#' @importFrom Seqinfo Seqinfo
+#' @importFrom GenomeInfoDb Seqinfo
 .make_GRCh37 <- function(chr, mito = NULL) {
     seqnames <- c(seq_len(22), "X", "Y", mito)
     if (chr) seqnames <- paste0("chr", seqnames)
@@ -104,7 +104,7 @@ defineSeqinfo <- function(
     Seqinfo(seqnames, seqlen, circ, "GRCh37")
 }
 
-#' @importFrom Seqinfo Seqinfo
+#' @importFrom GenomeInfoDb Seqinfo
 .make_hg19 <- function(chr, mito = NULL) {
     seqnames <- c(seq_len(22), "X", "Y", mito)
     if (chr) seqnames <- paste0("chr", seqnames)
@@ -119,7 +119,7 @@ defineSeqinfo <- function(
     Seqinfo(seqnames, seqlen, circ, "hg19")
 }
 
-#' @importFrom Seqinfo Seqinfo
+#' @importFrom GenomeInfoDb Seqinfo
 .make_GRCm39  <- function(chr, mito = NULL) {
     seqnames <- c(seq_len(19), "X", "Y", mito)
     if (chr) seqnames <- paste0("chr", seqnames)
@@ -133,7 +133,7 @@ defineSeqinfo <- function(
     Seqinfo(seqnames, seqlen, circ, "GRCm39")
 }
 
-#' @importFrom Seqinfo Seqinfo
+#' @importFrom GenomeInfoDb Seqinfo
 .make_mm39  <- function(chr, mito = NULL) {
     seqnames <- c(seq_len(19), "X", "Y", mito)
     if (chr) seqnames <- paste0("chr", seqnames)
@@ -147,7 +147,7 @@ defineSeqinfo <- function(
     Seqinfo(seqnames, seqlen, circ, "mm39")
 }
 
-#' @importFrom Seqinfo Seqinfo
+#' @importFrom GenomeInfoDb Seqinfo
 .make_GRCm38  <- function(chr, mito = NULL) {
     seqnames <- c(seq_len(19), "X", "Y", mito)
     if (chr) seqnames <- paste0("chr", seqnames)
@@ -161,7 +161,7 @@ defineSeqinfo <- function(
     Seqinfo(seqnames, seqlen, circ, "GRCm38")
 }
 
-#' @importFrom Seqinfo Seqinfo
+#' @importFrom GenomeInfoDb Seqinfo
 .make_mm10  <- function(chr, mito = NULL) {
     seqnames <- c(seq_len(19), "X", "Y", mito)
     if (chr) seqnames <- paste0("chr", seqnames)

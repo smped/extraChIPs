@@ -64,7 +64,7 @@
 #'
 setGeneric("mergeByCol", function(x, ...) standardGeneric("mergeByCol"))
 #' @importClassesFrom S4Vectors HitsList
-#' @importFrom Seqinfo seqinfo seqinfo<-
+#' @importFrom GenomeInfoDb seqinfo seqinfo<-
 #' @importFrom S4Vectors subjectHits queryHits mcols<- mcols
 #' @importFrom dplyr group_by summarise n across
 #' @importFrom rlang sym !!

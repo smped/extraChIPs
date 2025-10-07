@@ -430,7 +430,7 @@ plotHFGC <- function(
 }
 
 
-#' @importFrom Seqinfo genome seqnames
+#' @importFrom GenomeInfoDb genome seqnames
 #' @importFrom rtracklayer ucscGenomes
 .makeIdeoTrack <- function(.gr, .bands, .fontsize) {
     if (missing(.bands)) return(NULL)
@@ -444,7 +444,7 @@ plotHFGC <- function(
 }
 
 #' @importFrom IRanges subsetByOverlaps
-#' @importFrom Seqinfo seqnames
+#' @importFrom GenomeInfoDb seqnames
 .makeHiCTrack <- function(
         .hic, .gr, .fontsize, .tracksize, .cex, .rot, .col, .name, .col.title,
         .bg.title
@@ -663,8 +663,7 @@ plotHFGC <- function(
 #' @importFrom rtracklayer import.bw
 #' @importFrom S4Vectors mcols
 #' @importFrom stringr str_count str_pad
-#' @importFrom GenomeInfoDb keepSeqlevels
-#' @importFrom Seqinfo seqlevels
+#' @importFrom GenomeInfoDb seqlevels keepSeqlevels
 #' @import GenomicRanges
 .makeCoverageTracks <- function(
         .coverage, .gr, .fontsize, .type = c("l", "heatmap"), .linecol,
@@ -802,7 +801,7 @@ plotHFGC <- function(
 
 #' @importFrom methods is
 #' @importFrom S4Vectors mcols
-#' @importFrom Seqinfo seqnames
+#' @importFrom GenomeInfoDb seqnames
 .checkHFGCArgs <- function(
         gr, zoom, shift, hic, features, genes, coverage, annotation, axistrack,
         cytobands, max, hiccol, linecol, genecol, featcol, annotcol, type, ylim,

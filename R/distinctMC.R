@@ -27,7 +27,7 @@
 #' distinctMC(gr, gene, .keep_all = TRUE)
 #'
 #' @importFrom dplyr distinct
-#' @importFrom Seqinfo seqinfo
+#' @importFrom GenomeInfoDb seqinfo
 #' @importFrom rlang sym !!
 #' @importFrom methods is
 #'

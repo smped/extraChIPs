@@ -192,7 +192,7 @@ setMethod(
 
 }
 
-#' @importFrom Seqinfo seqinfo
+#' @importFrom GenomeInfoDb seqinfo
 #' @import SummarizedExperiment
 #' @keywords internal
 .emptySE <- function(.x) {

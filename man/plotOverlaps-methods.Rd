@@ -95,6 +95,7 @@ ex <- list(
 )
 plotOverlaps(ex, type = "upset")
 plotOverlaps(ex, type = "venn", set_col = 1:3, alpha = 0.3)
+plotOverlaps(ex, type = "upset", set_col = 1:3)
 plotOverlaps(ex[1:2])
 
 ## GRangesList object will produce a boxplot of summarised values in the

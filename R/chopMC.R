@@ -25,7 +25,7 @@
 #'
 #' @importFrom tidyr chop all_of
 #' @importFrom S4Vectors mcols mcols<-
-#' @importFrom Seqinfo seqinfo
+#' @importFrom GenomeInfoDb seqinfo
 #' @import GenomicRanges
 #'
 #' @export

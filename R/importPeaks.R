@@ -15,7 +15,7 @@
 #' @param seqinfo A seqinfo object to be applied to the GRanges objects
 #' @param pruning.mode How to handle conflicts if supplying a seqinfo object.
 #' Defaults to `pruning.mode = "coarse"`. Only "coarse" and "error" are
-#' implemented. See \link[Seqinfo]{seqinfo}.
+#' implemented. See \link[GenomeInfoDb]{seqinfo}.
 #' @param sort logical. Should the ranges be sorted during import
 #' @param setNames logical Set basename(x) as the name for each element of the
 #' GRangesList
@@ -36,7 +36,7 @@
 #' peaks <- importPeaks(fl)
 #' peaks
 #'
-#' @importFrom Seqinfo seqinfo seqnames
+#' @importFrom GenomeInfoDb seqinfo seqnames
 #' @importFrom glue glue
 #' @import GenomicRanges
 #' @export

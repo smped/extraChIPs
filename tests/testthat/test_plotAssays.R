@@ -15,22 +15,22 @@ test_that("Assay Density plots behave correctly", {
   expect_equal(dim(p$data), c(800, 4))
   expect_equal(colnames(p$data), c("colnames", "vals", "treat", "totals"))
   lab_vec <- c(
-      x = "vals", group = "colnames", colour = "NULL",
-      fill = "NULL", alpha = "NULL", linetype = "NULL",
-      linewidth = "NULL"
+    x = "vals", group = "colnames", colour = "NULL",
+    fill = "NULL", alpha = "NULL", linetype = "NULL",
+    linewidth = "NULL"
   )
   expect_equal(vapply(p@mapping, as_label, character(1)), lab_vec)
   p <- plotAssayDensities(
-      se, colour = "treat", group = "treat", linetype = "treat", fill = "treat"
+    se, colour = "treat", group = "treat", linetype = "treat", fill = "treat"
   )
   expect_true(
-      unique(vapply(p@mapping, as_label, character(1))[c("group", "linetype", "fill")]) == "treat"
+    unique(vapply(p@mapping, as_label, character(1))[c("group", "linetype", "fill")]) == "treat"
   )
 
   se$vals <- runif(ncol(se))
   expect_warning(
-      plotAssayDensities(se),
-      "Any columns named 'colnames' or 'vals' will be overwritten"
+    plotAssayDensities(se),
+    "Any columns named 'colnames' or 'vals' will be overwritten"
   )
 
 })
@@ -44,16 +44,16 @@ test_that("Assay Density transformations error", {
 })
 
 test_that("fixed params are handled as expected", {
-    p <- plotAssayDensities(se, colour = "#809050", linewidth = 2, linetype = 2)
-    expect_equal(
-        unlist(p@layers[[1]]$aes_params),
-        c(colour = "#809050", linetype = "2", linewidth = "2")
-    )
-    p <- plotAssayDensities(se, fill = "#809050", alpha = 0.2)
-    expect_equal(
-        unlist(p@layers[[1]]$aes_params),
-        c(fill = "#809050", alpha = "0.2")
-    )
+  p <- plotAssayDensities(se, colour = "#809050", linewidth = 2, linetype = 2)
+  expect_equal(
+    unlist(p@layers[[1]]$aes_params),
+    c(colour = "#809050", linetype = "2", linewidth = "2")
+  )
+  p <- plotAssayDensities(se, fill = "#809050", alpha = 0.2)
+  expect_equal(
+    unlist(p@layers[[1]]$aes_params),
+    c(fill = "#809050", alpha = "0.2")
+  )
 })
 
 
@@ -76,8 +76,8 @@ test_that("colours/size are added correctly", {
 
   p <- plotAssayPCA(se, colour = "treat", shape = 4, size = "totals")
   mappings <- c(
-      x = "PC1", y = "PC2", colour = "treat", size = "totals",
-      label = "colnames", fill = "NULL"
+    x = "PC1", y = "PC2", colour = "treat", size = "totals",
+    label = "colnames", fill = "NULL"
   )
   expect_equal(vapply(p@mapping, rlang::as_label, character(1)), mappings)
   expect_equal(
@@ -104,9 +104,9 @@ test_that("labels repel correctly", {
 })
 
 test_that("data is transformed correctly", {
-    expect_error(plotAssayPCA(se, trans = ""))
-    expect_error(plotAssayPCA(se, trans = "max"), "This transformation is not")
-    expect_true(is(plotAssayPCA(se, trans = "log2"), "gg"))
+  expect_error(plotAssayPCA(se, trans = ""))
+  expect_error(plotAssayPCA(se, trans = "max"), "This transformation is not")
+  expect_true(is(plotAssayPCA(se, trans = "log2"), "gg"))
 })
 
 test_that("plotAssayRle errors correctly", {
@@ -140,18 +140,18 @@ test_that("plotAssayRle creates a plot", {
 
 test_that("plotAssayHeatmap creates a plot", {
 
-    p <- plotAssayHeatmap(se[1:10,], trans = "log10")
-    expect_equal(c("index", "colnames", "value", "treat", "totals"), colnames(p$data))
-    expect_equal(dim(p@data), c(40, 5))
-    rowRanges(se) <- GRanges(paste0("chr:", seq_len(nrow(se))))
-    p <- plotAssayHeatmap(se[1:10,], trans = "log10")
-    expect_equal(c("range", "colnames", "value", "treat", "totals"), colnames(p$data))
-    expect_true(is(p, "ggplot2::ggplot"))
-    p <- plotAssayHeatmap(se[1:10,], trans = "log10", ysideline = TRUE)
-    expect_true(is(p, "ggside::ggside"))
-    expect_error(
-        plotAssayHeatmap(se, n_max = 1),
-        "Only 1 ranges can be drawn. Please change the n_max parameter if you wish to draw more."
-    )
+  p <- plotAssayHeatmap(se[1:10,], trans = "log10")
+  expect_equal(c("index", "colnames", "value", "treat", "totals"), colnames(p$data))
+  expect_equal(dim(p@data), c(40, 5))
+  rowRanges(se) <- GRanges(paste0("chr:", seq_len(nrow(se))))
+  p <- plotAssayHeatmap(se[1:10,], trans = "log10")
+  expect_equal(c("range", "colnames", "value", "treat", "totals"), colnames(p$data))
+  expect_true(is(p, "ggplot2::ggplot"))
+  p <- plotAssayHeatmap(se[1:10,], trans = "log10", ysideline = TRUE)
+  expect_true(is(p, "ggside::ggside"))
+  expect_error(
+    plotAssayHeatmap(se, n_max = 1),
+    "Only 1 ranges can be drawn. Please change the n_max parameter if you wish to draw more."
+  )
 
 })

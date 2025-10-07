@@ -30,7 +30,7 @@ type, i.e. narrow or broad}
 
 \item{pruning.mode}{How to handle conflicts if supplying a seqinfo object.
 Defaults to \code{pruning.mode = "coarse"}. Only "coarse" and "error" are
-implemented. See \link[Seqinfo]{seqinfo}.}
+implemented. See \link[GenomeInfoDb]{seqinfo}.}
 
 \item{sort}{logical. Should the ranges be sorted during import}
 

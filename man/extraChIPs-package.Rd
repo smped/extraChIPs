@@ -69,6 +69,9 @@ using italics.
 \item \code{\link[=importPeaks]{importPeaks()}} imports large numbers of broadPeak or narrowPeak files
 \item \code{\link[=makeConsensus]{makeConsensus()}} forms consensus peaks from overlapping ranges within a
 GRangesList()
+\item \code{\link[=voomWeightsFromCPM]{voomWeightsFromCPM()}} allows creation of an \link[limma:EList]{limma::EList} object
+as would be created from counts by \code{\link[limma:voom]{limma::voom()}}, but using
+\code{\link[edgeR:cpm]{edgeR::cpm()}} values as input.
 }
 }
 
