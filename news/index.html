@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.12.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.12.1</span>
       </span>
     </div>
 
@@ -64,145 +64,251 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.99.0" id="changes-in-version-0990-2022-03-28">Changes in version 0.99.0 (2022-03-28)<a class="anchor" aria-label="anchor" href="#changes-in-version-0990-2022-03-28"></a></h2>
-<ul><li>Submitted to Bioconductor</li>
+<h2 class="page-header" data-toc-text="1.12.1" id="extrachips-1121">extraChIPs 1.12.1<a class="anchor" aria-label="anchor" href="#extrachips-1121"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-1-12-1">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-12-1"></a></h3>
+<ul><li>Patched for ggplot2 v4.0.0</li>
+<li>Switched to <code>SimpleUpset</code> for Upset plots</li>
 </ul></div>
+</div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.1.1" id="changes-in-version-111-2022-06-01">Changes in version 1.1.1 (2022-06-01)<a class="anchor" aria-label="anchor" href="#changes-in-version-111-2022-06-01"></a></h2>
-<ul><li>Bugfix so <code><a href="../reference/as_tibble.html">as_tibble()</a></code> respects original column names</li>
+<h2 class="page-header" data-toc-text="1.11.2" id="extrachips-1112">extraChIPs 1.11.2<a class="anchor" aria-label="anchor" href="#extrachips-1112"></a></h2>
+<div class="section level3">
+<h3 id="changes-1-11-2">Changes<a class="anchor" aria-label="anchor" href="#changes-1-11-2"></a></h3>
+<ul><li>Changed handling of arguments in plotting functions, setting NULL as the primary default value</li>
 </ul></div>
+</div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.1.2" id="changes-in-version-112-2022-07-22">Changes in version 1.1.2 (2022-07-22)<a class="anchor" aria-label="anchor" href="#changes-in-version-112-2022-07-22"></a></h2>
-<ul><li>Added <code>collapseTranscripts = "auto"</code> as the default for <code><a href="../reference/plotHFGC.html">plotHFGC()</a></code>
-</li>
-<li>
-<code><a href="../reference/getProfileData-methods.html">getProfileData()</a></code> now returns log2 transformed data by default</li>
-<li>
-<code><a href="../reference/getProfileData-methods.html">getProfileData()</a></code> now uses <code><a href="https://rdrr.io/pkg/BiocParallel/man/bplapply.html" class="external-link">bplapply()</a></code> internally</li>
-<li>Bugfixes for <code><a href="../reference/plotPie-methods.html">plotPie()</a></code>, <code><a href="../reference/distinctMC.html">distinctMC()</a></code> <code><a href="../reference/colToRanges-methods.html">colToRanges()</a></code> and <code><a href="../reference/stitchRanges.html">stitchRanges()</a></code>
-</li>
+<h2 class="page-header" data-toc-text="1.11.1" id="extrachips-1111">extraChIPs 1.11.1<a class="anchor" aria-label="anchor" href="#extrachips-1111"></a></h2>
+<p>No user-facing changes</p>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.11.0" id="extrachips-1110">extraChIPs 1.11.0<a class="anchor" aria-label="anchor" href="#extrachips-1110"></a></h2>
+<p>Bioconductor 3.20 release</p>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.9.6" id="extrachips-196">extraChIPs 1.9.6<a class="anchor" aria-label="anchor" href="#extrachips-196"></a></h2>
+<div class="section level3">
+<h3 id="new-features-1-9-6">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-9-6"></a></h3>
+<ul><li>Added <code><a href="../reference/centrePeaks-methods.html">centrePeaks()</a></code> to recentre peaks using any files with coverage</li>
 </ul></div>
+</div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.1.3" id="changes-in-version-113-2022-08-01">Changes in version 1.1.3 (2022-08-01)<a class="anchor" aria-label="anchor" href="#changes-in-version-113-2022-08-01"></a></h2>
-<ul><li>Added <code><a href="../reference/plotOverlaps-methods.html">plotOverlaps()</a></code> for generation of Venn Diagrams and ComplexUpset plots</li>
-</ul></div>
-    <div class="section level2">
-<h2 class="page-header" data-toc-text="1.1.5" id="changes-in-version-115-2022-10-11">Changes in version 1.1.5 (2022-10-11)<a class="anchor" aria-label="anchor" href="#changes-in-version-115-2022-10-11"></a></h2>
-<ul><li>Added <code><a href="../reference/makeConsensus.html">makeConsensus()</a></code> and updated vignette</li>
-</ul></div>
-    <div class="section level2">
-<h2 class="page-header" data-toc-text="1.3.4" id="changes-in-version-134-22-12-20">Changes in version 1.3.4 (22-12-20)<a class="anchor" aria-label="anchor" href="#changes-in-version-134-22-12-20"></a></h2>
-<ul><li>Added <code><a href="../reference/mergeBySig-methods.html">mergeBySig()</a></code>
-</li>
-</ul></div>
-    <div class="section level2">
-<h2 class="page-header" data-toc-text="1.3.5" id="changes-in-version-135-23-01-31">Changes in version 1.3.5 (23-01-31)<a class="anchor" aria-label="anchor" href="#changes-in-version-135-23-01-31"></a></h2>
-<ul><li>Added <code><a href="../reference/plotSplitDonut-methods.html">plotSplitDonut()</a></code>
-</li>
-<li>Bugfix in <code><a href="../reference/plotAssayDensities-methods.html">plotAssayDensities()</a></code> and <code><a href="../reference/plotAssayRle-methods.html">plotAssayRle()</a></code> along with enabling plotting by group</li>
-</ul></div>
-    <div class="section level2">
-<h2 class="page-header" data-toc-text="1.3.6" id="changes-in-136-23-03-12">Changes in 1.3.6 (23-03-12)<a class="anchor" aria-label="anchor" href="#changes-in-136-23-03-12"></a></h2>
-<ul><li>Expanded arguments for <code>plotSpliDonut()</code>
-</li>
-<li>Added <code><a href="../reference/mergeByHMP-methods.html">mergeByHMP()</a></code> for merging overlapping windows using the harmonic mean p</li>
-</ul></div>
-    <div class="section level2">
-<h2 class="page-header" data-toc-text="1.3.7" id="changes-in-137-23-03-20">Changes in 1.3.7 (23-03-20)<a class="anchor" aria-label="anchor" href="#changes-in-137-23-03-20"></a></h2>
-<ul><li>Added <code><a href="../reference/plotAssayHeatmap-methods.html">plotAssayHeatmap()</a></code>
-</li>
-<li>Added <code><a href="../reference/fitAssayDiff-methods.html">fitAssayDiff()</a></code> and added coercion of <code>TopTags</code> objects</li>
-</ul></div>
-    <div class="section level2">
-<h2 class="page-header" data-toc-text="1.3.8" id="changes-in-138-23-03-20">Changes in 1.3.8 (23-03-20)<a class="anchor" aria-label="anchor" href="#changes-in-138-23-03-20"></a></h2>
-<ul><li>Added using coverage to makeConsensus()</li>
-</ul></div>
-    <div class="section level2">
-<h2 class="page-header" data-toc-text="1.3.9" id="changes-in-139-23-04-10">Changes in 1.3.9 (23-04-10)<a class="anchor" aria-label="anchor" href="#changes-in-139-23-04-10"></a></h2>
-<ul><li>Changed labelling strategy for <code><a href="../reference/plotPie-methods.html">plotPie()</a></code>
+<h2 class="page-header" data-toc-text="1.7.7" id="extrachips-177">extraChIPs 1.7.7<a class="anchor" aria-label="anchor" href="#extrachips-177"></a></h2>
+<div class="section level3">
+<h3 id="improvements-1-7-7">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-7-7"></a></h3>
+<ul><li>Added <code>merge_within</code> to <code><a href="../reference/makeConsensus.html">makeConsensus()</a></code> for better handling when <code>method = "coverage"</code>
 </li>
 </ul></div>
+</div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.4.2" id="changes-in-142-23-06-20">Changes in 1.4.2 (23-06-20)<a class="anchor" aria-label="anchor" href="#changes-in-142-23-06-20"></a></h2>
-<ul><li>Added Fixed-width vignette &amp; edited sliding window</li>
-<li>Added <code>se</code> and <code>peaks</code> as example data for man pages and vignettes</li>
-<li>Included <code><a href="../reference/defineRegions.html">defineRegions()</a></code>
-</li>
-<li>Enabled <code>plotHFCG()</code> without Ideogram tracks</li>
-<li>Enabled use of offsets for normalisation in <code><a href="../reference/fitAssayDiff-methods.html">fitAssayDiff()</a></code>
+<h2 class="page-header" data-toc-text="1.7.6" id="extrachips-176">extraChIPs 1.7.6<a class="anchor" aria-label="anchor" href="#extrachips-176"></a></h2>
+<div class="section level3">
+<h3 id="new-features-1-7-6">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-7-6"></a></h3>
+<ul><li>Added the DESeq2 Wald statistic to options for <code><a href="../reference/fitAssayDiff-methods.html">fitAssayDiff()</a></code>
 </li>
 </ul></div>
+</div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.5.5" id="changes-in-155-23-06-28">Changes in 1.5.5 (23-06-28)<a class="anchor" aria-label="anchor" href="#changes-in-155-23-06-28"></a></h2>
-<ul><li>Added <code><a href="../reference/plotPairwise.html">plotPairwise()</a></code> and <code><a href="../reference/addDiffStatus-methods.html">addDiffStatus()</a></code>
+<h2 class="page-header" data-toc-text="1.5.14" id="extrachips-1514">extraChIPs 1.5.14<a class="anchor" aria-label="anchor" href="#extrachips-1514"></a></h2>
+<div class="section level3">
+<h3 id="improvements-1-5-14">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-5-14"></a></h3>
+<ul><li>Added <code>p_mu0</code> to output of <code><a href="../reference/fitAssayDiff-methods.html">fitAssayDiff()</a></code>
+</li>
+<li>Added <code>respectLevels</code> and filtering to <code><a href="../reference/plotProfileHeatmap-methods.html">plotProfileHeatmap()</a></code>
 </li>
 </ul></div>
+</div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.5.6" id="changes-in-156-23-07-01">Changes in 1.5.6 (23-07-01)<a class="anchor" aria-label="anchor" href="#changes-in-156-23-07-01"></a></h2>
-<ul><li>Added <code><a href="../reference/mapGrlCols.html">mapGrlCols()</a></code>
+<h2 class="page-header" data-toc-text="1.5.13" id="extrachips-1513">extraChIPs 1.5.13<a class="anchor" aria-label="anchor" href="#extrachips-1513"></a></h2>
+<div class="section level3">
+<h3 id="improvements-1-5-13">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-5-13"></a></h3>
+<ul><li>Added handling of unquoted column names to most plotting functions</li>
+<li>Added passing of specific columns to <code><a href="../reference/dualFilter.html">dualFilter()</a></code>
+</li>
+<li>Added <code>drop</code> argument to <code><a href="../reference/addDiffStatus-methods.html">addDiffStatus()</a></code>
 </li>
 </ul></div>
+</div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.5.7" id="changes-in-157-23-07-08">Changes in 1.5.7 (23-07-08)<a class="anchor" aria-label="anchor" href="#changes-in-157-23-07-08"></a></h2>
+<h2 class="page-header" data-toc-text="1.5.12" id="extrachips-1512">extraChIPs 1.5.12<a class="anchor" aria-label="anchor" href="#extrachips-1512"></a></h2>
+<div class="section level3">
+<h3 id="new-features-1-5-12">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-5-12"></a></h3>
+<ul><li>Added <code><a href="../reference/plotGrlCol.html">plotGrlCol()</a></code>
+</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.5.11" id="extrachips-1511">extraChIPs 1.5.11<a class="anchor" aria-label="anchor" href="#extrachips-1511"></a></h2>
+<div class="section level3">
+<h3 id="new-features-1-5-11">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-5-11"></a></h3>
+<ul><li>Added <code><a href="../reference/defineSeqinfo.html">defineSeqinfo()</a></code>
+</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.5.10" id="extrachips-1510">extraChIPs 1.5.10<a class="anchor" aria-label="anchor" href="#extrachips-1510"></a></h2>
+<div class="section level3">
+<h3 id="improvements-1-5-10">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-5-10"></a></h3>
+<ul><li>Added bed format to <code><a href="../reference/importPeaks.html">importPeaks()</a></code>
+</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.5.8" id="extrachips-158">extraChIPs 1.5.8<a class="anchor" aria-label="anchor" href="#extrachips-158"></a></h2>
+<div class="section level3">
+<h3 id="improvements-1-5-8">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-5-8"></a></h3>
+<ul><li>Added control of side-axis label position for <code><a href="../reference/plotProfileHeatmap-methods.html">plotProfileHeatmap()</a></code>
+</li>
+<li>Added option to return merged key-value ranges for <code><a href="../reference/mergeByHMP-methods.html">mergeByHMP()</a></code>
+</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.5.7" id="extrachips-157">extraChIPs 1.5.7<a class="anchor" aria-label="anchor" href="#extrachips-157"></a></h2>
+<div class="section level3">
+<h3 id="improvements-1-5-7">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-5-7"></a></h3>
 <ul><li>Matched DiffBind and csaw settings for <code><a href="../reference/fitAssayDiff-methods.html">fitAssayDiff()</a></code>
 </li>
 <li>Added <code>min_win</code> to all merging functions</li>
 <li>Added <code>n_max</code> to <code><a href="../reference/getProfileData-methods.html">getProfileData()</a></code>
 </li>
 </ul></div>
+</div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.5.8" id="changes-in-158-23-07-14">Changes in 1.5.8 (23-07-14)<a class="anchor" aria-label="anchor" href="#changes-in-158-23-07-14"></a></h2>
-<ul><li>Added control of side-axis label position for <code><a href="../reference/plotProfileHeatmap-methods.html">plotProfileHeatmap()</a></code>
-</li>
-<li>Added option to return merged key-value ranges for <code><a href="../reference/mergeByHMP-methods.html">mergeByHMP()</a></code>
-</li>
-</ul></div>
-    <div class="section level2">
-<h2 class="page-header" data-toc-text="1.5.10" id="changes-in-1510-23-08-11">Changes in 1.5.10 (23-08-11)<a class="anchor" aria-label="anchor" href="#changes-in-1510-23-08-11"></a></h2>
-<ul><li>Added bed format to <code><a href="../reference/importPeaks.html">importPeaks()</a></code>
+<h2 class="page-header" data-toc-text="1.5.6" id="extrachips-156">extraChIPs 1.5.6<a class="anchor" aria-label="anchor" href="#extrachips-156"></a></h2>
+<div class="section level3">
+<h3 id="new-features-1-5-6">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-5-6"></a></h3>
+<ul><li>Added <code><a href="../reference/mapGrlCols.html">mapGrlCols()</a></code>
 </li>
 </ul></div>
+</div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.5.11" id="changes-in-1511-23-08-26">Changes in 1.5.11 (23-08-26)<a class="anchor" aria-label="anchor" href="#changes-in-1511-23-08-26"></a></h2>
-<ul><li>Added <code><a href="../reference/defineSeqinfo.html">defineSeqinfo()</a></code>
+<h2 class="page-header" data-toc-text="1.5.5" id="extrachips-155">extraChIPs 1.5.5<a class="anchor" aria-label="anchor" href="#extrachips-155"></a></h2>
+<div class="section level3">
+<h3 id="new-features-1-5-5">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-5-5"></a></h3>
+<ul><li>Added <code><a href="../reference/plotPairwise.html">plotPairwise()</a></code> and <code><a href="../reference/addDiffStatus-methods.html">addDiffStatus()</a></code>
 </li>
 </ul></div>
+</div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.5.12" id="changes-in-1512-23-08-30">Changes in 1.5.12 (23-08-30)<a class="anchor" aria-label="anchor" href="#changes-in-1512-23-08-30"></a></h2>
-<ul><li>Added <code><a href="../reference/plotGrlCol.html">plotGrlCol()</a></code>
+<h2 class="page-header" data-toc-text="1.4.2" id="extrachips-142">extraChIPs 1.4.2<a class="anchor" aria-label="anchor" href="#extrachips-142"></a></h2>
+<div class="section level3">
+<h3 id="new-features-1-4-2">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-4-2"></a></h3>
+<ul><li>Added fixed-width vignette and edited sliding window vignette</li>
+<li>Added <code>se</code> and <code>peaks</code> as example data for man pages and vignettes</li>
+<li>Added <code><a href="../reference/defineRegions.html">defineRegions()</a></code>
 </li>
 </ul></div>
-    <div class="section level2">
-<h2 class="page-header" data-toc-text="1.5.13" id="changes-in-1513-23-09-24">Changes in 1.5.13 (23-09-24)<a class="anchor" aria-label="anchor" href="#changes-in-1513-23-09-24"></a></h2>
-<ul><li>Added handling of unquoted column names to most plotting functions</li>
-<li>Added passing of specific columns to dualFilter</li>
-<li>Added <code>drop</code> to addDiffStatus</li>
-</ul></div>
-    <div class="section level2">
-<h2 class="page-header" data-toc-text="1.5.14" id="changes-in-1514-23-09-24">Changes in 1.5.14 (23-09-24)<a class="anchor" aria-label="anchor" href="#changes-in-1514-23-09-24"></a></h2>
-<ul><li>Added p_mu0 to output of <code><a href="../reference/fitAssayDiff-methods.html">fitAssayDiff()</a></code>
-</li>
-<li>Added <code>respectLevels</code> and filtering to <code><a href="../reference/plotProfileHeatmap-methods.html">plotProfileHeatmap()</a></code>
+<div class="section level3">
+<h3 id="improvements-1-4-2">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-4-2"></a></h3>
+<ul><li>Enabled <code><a href="../reference/plotHFGC.html">plotHFGC()</a></code> without Ideogram tracks</li>
+<li>Enabled use of offsets for normalisation in <code><a href="../reference/fitAssayDiff-methods.html">fitAssayDiff()</a></code>
 </li>
 </ul></div>
+</div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.7.6" id="changes-in-176">Changes in 1.7.6<a class="anchor" aria-label="anchor" href="#changes-in-176"></a></h2>
-<ul><li>Added the DESeq2 Wald statistic to options for <code><a href="../reference/fitAssayDiff-methods.html">fitAssayDiff()</a></code>
+<h2 class="page-header" data-toc-text="1.3.9" id="extrachips-139">extraChIPs 1.3.9<a class="anchor" aria-label="anchor" href="#extrachips-139"></a></h2>
+<div class="section level3">
+<h3 id="improvements-1-3-9">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-3-9"></a></h3>
+<ul><li>Changed labelling strategy for <code><a href="../reference/plotPie-methods.html">plotPie()</a></code>
 </li>
 </ul></div>
+</div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.7.7" id="changes-in-177">Changes in 1.7.7<a class="anchor" aria-label="anchor" href="#changes-in-177"></a></h2>
-<ul><li>Added <code>merge_within</code> to <code><a href="../reference/makeConsensus.html">makeConsensus()</a></code> for better handling when <code>method = "coverage"</code>
+<h2 class="page-header" data-toc-text="1.3.8" id="extrachips-138">extraChIPs 1.3.8<a class="anchor" aria-label="anchor" href="#extrachips-138"></a></h2>
+<div class="section level3">
+<h3 id="improvements-1-3-8">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-3-8"></a></h3>
+<ul><li>Added coverage option to <code><a href="../reference/makeConsensus.html">makeConsensus()</a></code>
 </li>
 </ul></div>
+</div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.9.6" id="changes-in-196">Changes in 1.9.6<a class="anchor" aria-label="anchor" href="#changes-in-196"></a></h2>
-<ul><li>Added the function <code><a href="../reference/centrePeaks-methods.html">centrePeaks()</a></code> to recentre peaks using any files with coverage</li>
+<h2 class="page-header" data-toc-text="1.3.7" id="extrachips-137">extraChIPs 1.3.7<a class="anchor" aria-label="anchor" href="#extrachips-137"></a></h2>
+<div class="section level3">
+<h3 id="new-features-1-3-7">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-3-7"></a></h3>
+<ul><li>Added <code><a href="../reference/plotAssayHeatmap-methods.html">plotAssayHeatmap()</a></code>
+</li>
+<li>Added <code><a href="../reference/fitAssayDiff-methods.html">fitAssayDiff()</a></code> and coercion of <code>TopTags</code> objects</li>
 </ul></div>
+</div>
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.11.2" id="changes-in-1112">Changes in 1.11.2<a class="anchor" aria-label="anchor" href="#changes-in-1112"></a></h2>
-<ul><li>Changed handling of arguments in plotting functions, setting NULL as the primary default value</li>
+<h2 class="page-header" data-toc-text="1.3.6" id="extrachips-136">extraChIPs 1.3.6<a class="anchor" aria-label="anchor" href="#extrachips-136"></a></h2>
+<div class="section level3">
+<h3 id="new-features-1-3-6">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-3-6"></a></h3>
+<ul><li>Added <code><a href="../reference/mergeByHMP-methods.html">mergeByHMP()</a></code> for merging overlapping windows using the harmonic mean p-value</li>
 </ul></div>
+<div class="section level3">
+<h3 id="improvements-1-3-6">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-3-6"></a></h3>
+<ul><li>Expanded arguments for <code><a href="../reference/plotSplitDonut-methods.html">plotSplitDonut()</a></code>
+</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.3.5" id="extrachips-135">extraChIPs 1.3.5<a class="anchor" aria-label="anchor" href="#extrachips-135"></a></h2>
+<div class="section level3">
+<h3 id="new-features-1-3-5">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-3-5"></a></h3>
+<ul><li>Added <code><a href="../reference/plotSplitDonut-methods.html">plotSplitDonut()</a></code>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-1-3-5">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-3-5"></a></h3>
+<ul><li>Fixed bug in <code><a href="../reference/plotAssayDensities-methods.html">plotAssayDensities()</a></code> and <code><a href="../reference/plotAssayRle-methods.html">plotAssayRle()</a></code> and enabled plotting by group</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.3.4" id="extrachips-134">extraChIPs 1.3.4<a class="anchor" aria-label="anchor" href="#extrachips-134"></a></h2>
+<div class="section level3">
+<h3 id="new-features-1-3-4">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-3-4"></a></h3>
+<ul><li>Added <code><a href="../reference/mergeBySig-methods.html">mergeBySig()</a></code>
+</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.1.5" id="extrachips-115">extraChIPs 1.1.5<a class="anchor" aria-label="anchor" href="#extrachips-115"></a></h2>
+<div class="section level3">
+<h3 id="new-features-1-1-5">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-1-5"></a></h3>
+<ul><li>Added <code><a href="../reference/makeConsensus.html">makeConsensus()</a></code> and updated vignette</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.1.3" id="extrachips-113">extraChIPs 1.1.3<a class="anchor" aria-label="anchor" href="#extrachips-113"></a></h2>
+<div class="section level3">
+<h3 id="new-features-1-1-3">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-1-3"></a></h3>
+<ul><li>Added <code><a href="../reference/plotOverlaps-methods.html">plotOverlaps()</a></code> for generation of Venn Diagrams and ComplexUpset plots</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.1.2" id="extrachips-112">extraChIPs 1.1.2<a class="anchor" aria-label="anchor" href="#extrachips-112"></a></h2>
+<div class="section level3">
+<h3 id="improvements-1-1-2">Improvements<a class="anchor" aria-label="anchor" href="#improvements-1-1-2"></a></h3>
+<ul><li>Added <code>collapseTranscripts = "auto"</code> as default for <code><a href="../reference/plotHFGC.html">plotHFGC()</a></code>
+</li>
+<li>
+<code><a href="../reference/getProfileData-methods.html">getProfileData()</a></code> now returns log2 transformed data by default</li>
+<li>
+<code><a href="../reference/getProfileData-methods.html">getProfileData()</a></code> now uses <code><a href="https://rdrr.io/pkg/BiocParallel/man/bplapply.html" class="external-link">bplapply()</a></code> internally</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-1-1-2">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-1-2"></a></h3>
+<ul><li>Fixed bugs in <code><a href="../reference/plotPie-methods.html">plotPie()</a></code>, <code><a href="../reference/distinctMC.html">distinctMC()</a></code>, <code><a href="../reference/colToRanges-methods.html">colToRanges()</a></code>, and <code><a href="../reference/stitchRanges.html">stitchRanges()</a></code>
+</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.1.1" id="extrachips-111">extraChIPs 1.1.1<a class="anchor" aria-label="anchor" href="#extrachips-111"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-1-1-1">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-1-1"></a></h3>
+<ul><li>Fixed <code><a href="../reference/as_tibble.html">as_tibble()</a></code> to respect original column names</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.99.0" id="extrachips-0990">extraChIPs 0.99.0<a class="anchor" aria-label="anchor" href="#extrachips-0990"></a></h2>
+<div class="section level3">
+<h3 id="major-changes-0-99-0">Major Changes<a class="anchor" aria-label="anchor" href="#major-changes-0-99-0"></a></h3>
+<ul><li>Submitted to Bioconductor</li>
+</ul></div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

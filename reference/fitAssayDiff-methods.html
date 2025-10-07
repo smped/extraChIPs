@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.12.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.12.1</span>
       </span>
     </div>
 
@@ -212,7 +212,7 @@ for previous normalisation strategies to be performed on the data.</p>
 <p>If testing with <a href="https://rdrr.io/pkg/DESeq2/man/nbinomWaldTest.html" class="external-link">nbinomWaldTest</a>, applying RLE normalisation
 without groups, and using colSums for library sizes (instead of total
 alignments), the standard normalisation factors from
-estimateSizeFactors will be used.
+<code>DESeq2::estimateSizeFactors</code> will be used.
 In all other scenarios, normalisation factors as returned by
 <a href="https://rdrr.io/pkg/edgeR/man/calcNormFactors.html" class="external-link">normLibSizes</a> will be used.
 The fitType is set to 'local' when estimating dispersions, and this can be
