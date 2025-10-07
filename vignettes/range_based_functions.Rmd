@@ -339,6 +339,6 @@ knitr::include_graphics("stitched.png")
 
 # Session Info
 
-```{r}
+```{r session-info}
 sessionInfo()
 ```
