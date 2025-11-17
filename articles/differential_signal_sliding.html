@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.12.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.0</span>
       </span>
     </div>
 
@@ -286,8 +286,8 @@ Fragment sizes for each sample were also estimated to be around
 <span>  filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">bfl</span><span class="op">)</span>,</span>
 <span>  param <span class="op">=</span> <span class="va">rp</span></span>
 <span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqlevels</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqlevels</a></span><span class="op">(</span><span class="va">sq</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqinfo</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">sq</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/pkg/Seqinfo/man/seqinfo.html" class="external-link">seqlevels</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Seqinfo/man/seqinfo.html" class="external-link">seqlevels</a></span><span class="op">(</span><span class="va">sq</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/Seqinfo/man/seqinfo.html" class="external-link">seqinfo</a></span><span class="op">(</span><span class="va">wincounts</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">sq</span></span></code></pre></div>
 <p>This produces a <code>RangedSummarizedExperiment</code> with windows
 included which passed the minimum threshold of 7 total reads. We can
 check which windows passed this threshold using
@@ -437,7 +437,7 @@ repel by default if the points are shown.</p>
 <span><span class="va">A</span> <span class="op">+</span> <span class="va">B</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_layout.html" class="external-link">plot_layout</a></span><span class="op">(</span>guides <span class="op">=</span> <span class="st">"collect"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span>tag_levels <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="differential_signal_sliding_files/figure-gfm/plot-density-pca-1.png" alt="*A) Densities for logCPM values across all samples after discarding windows less likely to contain H3K27ac signal using `dualFilter()` B) PCA plot based on the logCPM assay*" width="480"><p class="caption">
+<img src="differential_signal_sliding_files/figure-gfm/plot-density-pca-1.png" class="r-plt" alt="*A) Densities for logCPM values across all samples after discarding windows less likely to contain H3K27ac signal using `dualFilter()` B) PCA plot based on the logCPM assay*" width="480"><p class="caption">
 <em>A) Densities for logCPM values across all samples after discarding
 windows less likely to contain H3K27ac signal using
 <code><a href="../reference/dualFilter.html">dualFilter()</a></code> B) PCA plot based on the logCPM assay</em>
@@ -467,7 +467,7 @@ broadly consistent between these treatment groups.</p>
 <span><span class="va">a</span> <span class="op">+</span> <span class="va">b</span> <span class="op">+</span> <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_layout.html" class="external-link">plot_layout</a></span><span class="op">(</span>guides <span class="op">=</span> <span class="st">"collect"</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span>tag_levels <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="differential_signal_sliding_files/figure-gfm/plot-assay-rle-1.png" alt="*RLE plots (A) across all samples and (B) with values calculated within treatment groups*" width="384"><p class="caption">
+<img src="differential_signal_sliding_files/figure-gfm/plot-assay-rle-1.png" class="r-plt" alt="*RLE plots (A) across all samples and (B) with values calculated within treatment groups*" width="384"><p class="caption">
 <em>RLE plots (A) across all samples and (B) with values calculated
 within treatment groups</em>
 </p>
@@ -617,7 +617,7 @@ merged windows.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"MA Plot: Merged Windows"</span><span class="op">)</span></span>
 <span><span class="va">A</span> <span class="op">+</span> <span class="va">B</span> <span class="op">+</span> <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">plot_annotation</a></span><span class="op">(</span>tag_levels <span class="op">=</span> <span class="st">"A"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="differential_signal_sliding_files/figure-gfm/plot-ma-libsize-1.png" alt="*MA Plots using A) all sliding windows (after filtering before merging) and B) the final set of merged windows. The most highly ranked merged window is also labelled in the set of merged windows. Blue lines represent a loess curve through the data.*" width="384"><p class="caption">
+<img src="differential_signal_sliding_files/figure-gfm/plot-ma-libsize-1.png" class="r-plt" alt="*MA Plots using A) all sliding windows (after filtering before merging) and B) the final set of merged windows. The most highly ranked merged window is also labelled in the set of merged windows. Blue lines represent a loess curve through the data.*" width="384"><p class="caption">
 <em>MA Plots using A) all sliding windows (after filtering before
 merging) and B) the final set of merged windows. The most highly ranked
 merged window is also labelled in the set of merged windows. Blue lines
@@ -773,8 +773,8 @@ and exons.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/GFFFile-class.html" class="external-link">import.gff</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/plyranges/man/ranges-filter-overlaps.html" class="external-link">filter_by_overlaps</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="st">"chr10:42354900-100000000"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/split.html" class="external-link">split</a></span><span class="op">(</span><span class="va">.</span><span class="op">$</span><span class="va">type</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqlevels</a></span><span class="op">(</span><span class="va">gencode</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqlevels</a></span><span class="op">(</span><span class="va">sq</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqinfo</a></span><span class="op">(</span><span class="va">gencode</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">sq</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/pkg/Seqinfo/man/seqinfo.html" class="external-link">seqlevels</a></span><span class="op">(</span><span class="va">gencode</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Seqinfo/man/seqinfo.html" class="external-link">seqlevels</a></span><span class="op">(</span><span class="va">sq</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/Seqinfo/man/seqinfo.html" class="external-link">seqinfo</a></span><span class="op">(</span><span class="va">gencode</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">sq</span></span></code></pre></div>
 <p>Now we’ve loaded our gene annotations at multiple levels, we can
 easily define Transcription Start Sites (TSS) using transcript
 definitions and the function <code><a href="../reference/reduceMC.html">reduceMC()</a></code>. This function is
@@ -924,7 +924,7 @@ MA-plot for presentation of final results.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_colour_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">status_colours</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_shape_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">19</span>, <span class="fl">21</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="differential_signal_sliding_files/figure-gfm/plot-ma-mapped-1.png" alt="*MA-plot with the top 20 regions by significance labelled according to the most likely gene influenced by the detected signal. Regions which directly overlap a TSS are shown as empty circles*" width="384"><p class="caption">
+<img src="differential_signal_sliding_files/figure-gfm/plot-ma-mapped-1.png" class="r-plt" alt="*MA-plot with the top 20 regions by significance labelled according to the most likely gene influenced by the detected signal. Regions which directly overlap a TSS are shown as empty circles*" width="384"><p class="caption">
 <em>MA-plot with the top 20 regions by significance labelled according
 to the most likely gene influenced by the detected signal. Regions which
 directly overlap a TSS are shown as empty circles</em>
@@ -1077,7 +1077,7 @@ creating the plot. External formatting functions such as
 <span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">region_colours</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="differential_signal_sliding_files/figure-gfm/plot-pie-labels-1.png" alt="*Pie chart showing customised labels. Here the regions have been modified to use title case in the labels, but without modifying the underlying data.*" width="384"><p class="caption">
+<img src="differential_signal_sliding_files/figure-gfm/plot-pie-labels-1.png" class="r-plt" alt="*Pie chart showing customised labels. Here the regions have been modified to use title case in the labels, but without modifying the underlying data.*" width="384"><p class="caption">
 <em>Pie chart showing customised labels. Here the regions have been
 modified to use title case in the labels, but without modifying the
 underlying data.</em>
@@ -1099,7 +1099,7 @@ window to the overlapping regions.</p>
 <span>  inner_palette <span class="op">=</span> <span class="va">region_colours</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="differential_signal_sliding_files/figure-gfm/plot-donut-default-1.png" alt="*Split-Donut chart showing status with overlapping region*" width="384"><p class="caption">
+<img src="differential_signal_sliding_files/figure-gfm/plot-donut-default-1.png" class="r-plt" alt="*Split-Donut chart showing status with overlapping region*" width="384"><p class="caption">
 <em>Split-Donut chart showing status with overlapping region</em>
 </p>
 </div>
@@ -1117,7 +1117,7 @@ syntax for labels and exploding key segments of interest.</p>
 <span>  outer_label <span class="op">=</span> <span class="st">"text"</span>, outer_min_p <span class="op">=</span> <span class="fl">0</span>, outer_max_p <span class="op">=</span> <span class="fl">0.02</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="differential_signal_sliding_files/figure-gfm/plot-donut-customised-1.png" alt="*Split-Donut chart exploding key regions and customising labels.*" width="384"><p class="caption">
+<img src="differential_signal_sliding_files/figure-gfm/plot-donut-customised-1.png" class="r-plt" alt="*Split-Donut chart exploding key regions and customising labels.*" width="384"><p class="caption">
 <em>Split-Donut chart exploding key regions and customising labels.</em>
 </p>
 </div>
@@ -1251,7 +1251,7 @@ primary promoter appears unaffected by DHT treatment.</p>
 <span>  annotation <span class="op">=</span> <span class="va">cov_annot</span>, annotcol <span class="op">=</span> <span class="va">status_colours</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Unchanged"</span>, <span class="st">"Increased"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="differential_signal_sliding_files/figure-gfm/plot-hfgc-with-annot-1.png" alt="The addition of an annotation track for the coverage tracks shows which regions were retained during the analysis, as well as those which were considered as showing changed or unchanged signal" width="384"><p class="caption">
+<img src="differential_signal_sliding_files/figure-gfm/plot-hfgc-with-annot-1.png" class="r-plt" alt="The addition of an annotation track for the coverage tracks shows which regions were retained during the analysis, as well as those which were considered as showing changed or unchanged signal" width="384"><p class="caption">
 The addition of an annotation track for the coverage tracks shows which
 regions were retained during the analysis, as well as those which were
 considered as showing changed or unchanged signal
@@ -1273,7 +1273,7 @@ the HFGC components.</p>
 </h2>
 <div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R version 4.5.1 (2025-06-13)</span></span>
+<pre><code><span><span class="co">## R version 4.5.2 (2025-10-31)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
 <span><span class="co">## Running under: Ubuntu 24.04.3 LTS</span></span>
 <span><span class="co">## </span></span>
@@ -1297,87 +1297,88 @@ the HFGC components.</p>
 <span><span class="co">## [8] base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">##  [1] ggrepel_0.9.6               quantro_1.42.0             </span></span>
+<span><span class="co">##  [1] ggrepel_0.9.6               quantro_1.44.0             </span></span>
 <span><span class="co">##  [3] magrittr_2.0.4              here_1.0.2                 </span></span>
 <span><span class="co">##  [5] glue_1.8.0                  scales_1.4.0               </span></span>
-<span><span class="co">##  [7] plyranges_1.28.0            extraChIPs_1.12.1          </span></span>
+<span><span class="co">##  [7] plyranges_1.30.1            extraChIPs_1.15.0          </span></span>
 <span><span class="co">##  [9] ggside_0.4.0                patchwork_1.3.2            </span></span>
-<span><span class="co">## [11] edgeR_4.6.3                 limma_3.64.3               </span></span>
-<span><span class="co">## [13] rtracklayer_1.68.0          BiocParallel_1.42.2        </span></span>
-<span><span class="co">## [15] csaw_1.42.0                 SummarizedExperiment_1.38.1</span></span>
-<span><span class="co">## [17] Biobase_2.68.0              MatrixGenerics_1.20.0      </span></span>
-<span><span class="co">## [19] matrixStats_1.5.0           Rsamtools_2.24.1           </span></span>
-<span><span class="co">## [21] Biostrings_2.76.0           XVector_0.48.0             </span></span>
-<span><span class="co">## [23] GenomicRanges_1.60.0        GenomeInfoDb_1.44.3        </span></span>
-<span><span class="co">## [25] IRanges_2.42.0              S4Vectors_0.46.0           </span></span>
-<span><span class="co">## [27] BiocGenerics_0.54.0         generics_0.1.4             </span></span>
+<span><span class="co">## [11] edgeR_4.8.0                 limma_3.66.0               </span></span>
+<span><span class="co">## [13] rtracklayer_1.70.0          BiocParallel_1.44.0        </span></span>
+<span><span class="co">## [15] csaw_1.44.0                 SummarizedExperiment_1.40.0</span></span>
+<span><span class="co">## [17] Biobase_2.70.0              MatrixGenerics_1.22.0      </span></span>
+<span><span class="co">## [19] matrixStats_1.5.0           Rsamtools_2.26.0           </span></span>
+<span><span class="co">## [21] Biostrings_2.78.0           XVector_0.50.0             </span></span>
+<span><span class="co">## [23] GenomicRanges_1.62.0        IRanges_2.44.0             </span></span>
+<span><span class="co">## [25] S4Vectors_0.48.0            Seqinfo_1.0.0              </span></span>
+<span><span class="co">## [27] BiocGenerics_0.56.0         generics_0.1.4             </span></span>
 <span><span class="co">## [29] lubridate_1.9.4             forcats_1.0.1              </span></span>
-<span><span class="co">## [31] stringr_1.5.2               dplyr_1.1.4                </span></span>
-<span><span class="co">## [33] purrr_1.1.0                 readr_2.1.5                </span></span>
+<span><span class="co">## [31] stringr_1.6.0               dplyr_1.1.4                </span></span>
+<span><span class="co">## [33] purrr_1.2.0                 readr_2.1.5                </span></span>
 <span><span class="co">## [35] tidyr_1.3.1                 tibble_3.3.0               </span></span>
 <span><span class="co">## [37] ggplot2_4.0.0               tidyverse_2.0.0            </span></span>
-<span><span class="co">## [39] BiocStyle_2.36.0           </span></span>
+<span><span class="co">## [39] BiocStyle_2.38.0           </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
 <span><span class="co">##   [1] RColorBrewer_1.1-3        jsonlite_2.0.0           </span></span>
-<span><span class="co">##   [3] GenomicFeatures_1.60.0    farver_2.1.2             </span></span>
+<span><span class="co">##   [3] GenomicFeatures_1.62.0    farver_2.1.2             </span></span>
 <span><span class="co">##   [5] rmarkdown_2.30            fs_1.6.6                 </span></span>
-<span><span class="co">##   [7] BiocIO_1.18.0             ragg_1.5.0               </span></span>
-<span><span class="co">##   [9] vctrs_0.6.5               multtest_2.64.0          </span></span>
-<span><span class="co">##  [11] memoise_2.0.1             DelayedMatrixStats_1.30.0</span></span>
+<span><span class="co">##   [7] BiocIO_1.20.0             ragg_1.5.0               </span></span>
+<span><span class="co">##   [9] vctrs_0.6.5               multtest_2.66.0          </span></span>
+<span><span class="co">##  [11] memoise_2.0.1             DelayedMatrixStats_1.32.0</span></span>
 <span><span class="co">##  [13] RCurl_1.98-1.17           askpass_1.2.1            </span></span>
-<span><span class="co">##  [15] htmltools_0.5.8.1         S4Arrays_1.8.1           </span></span>
-<span><span class="co">##  [17] curl_7.0.0                Rhdf5lib_1.30.0          </span></span>
-<span><span class="co">##  [19] SparseArray_1.8.1         rhdf5_2.52.1             </span></span>
+<span><span class="co">##  [15] htmltools_0.5.8.1         S4Arrays_1.10.0          </span></span>
+<span><span class="co">##  [17] curl_7.0.0                Rhdf5lib_1.32.0          </span></span>
+<span><span class="co">##  [19] SparseArray_1.10.1        rhdf5_2.54.0             </span></span>
 <span><span class="co">##  [21] sass_0.4.10               nor1mix_1.3-3            </span></span>
 <span><span class="co">##  [23] bslib_0.9.0               htmlwidgets_1.6.4        </span></span>
 <span><span class="co">##  [25] desc_1.4.3                plyr_1.8.9               </span></span>
-<span><span class="co">##  [27] cachem_1.1.0              GenomicAlignments_1.44.0 </span></span>
+<span><span class="co">##  [27] cachem_1.1.0              GenomicAlignments_1.46.0 </span></span>
 <span><span class="co">##  [29] lifecycle_1.0.4           iterators_1.0.14         </span></span>
 <span><span class="co">##  [31] pkgconfig_2.0.3           Matrix_1.7-4             </span></span>
 <span><span class="co">##  [33] R6_2.6.1                  fastmap_1.2.0            </span></span>
-<span><span class="co">##  [35] GenomeInfoDbData_1.2.14   digest_0.6.37            </span></span>
-<span><span class="co">##  [37] siggenes_1.82.0           reshape_0.8.10           </span></span>
-<span><span class="co">##  [39] AnnotationDbi_1.70.0      rprojroot_2.1.1          </span></span>
-<span><span class="co">##  [41] RSQLite_2.4.3             textshaping_1.0.3        </span></span>
-<span><span class="co">##  [43] base64_2.0.2              timechange_0.3.0         </span></span>
-<span><span class="co">##  [45] httr_1.4.7                abind_1.4-8              </span></span>
-<span><span class="co">##  [47] compiler_4.5.1            beanplot_1.3.1           </span></span>
-<span><span class="co">##  [49] rngtools_1.5.2            bit64_4.6.0-1            </span></span>
-<span><span class="co">##  [51] withr_3.0.2               doParallel_1.0.17        </span></span>
-<span><span class="co">##  [53] S7_0.2.0                  DBI_1.2.3                </span></span>
-<span><span class="co">##  [55] HDF5Array_1.36.0          MASS_7.3-65              </span></span>
-<span><span class="co">##  [57] openssl_2.3.4             DelayedArray_0.34.1      </span></span>
-<span><span class="co">##  [59] rjson_0.2.23              tools_4.5.1              </span></span>
-<span><span class="co">##  [61] rentrez_1.2.4             quadprog_1.5-8           </span></span>
-<span><span class="co">##  [63] h5mread_1.0.1             restfulr_0.0.16          </span></span>
-<span><span class="co">##  [65] InteractionSet_1.36.1     nlme_3.1-168             </span></span>
-<span><span class="co">##  [67] rhdf5filters_1.20.0       grid_4.5.1               </span></span>
-<span><span class="co">##  [69] gtable_0.3.6              tzdb_0.5.0               </span></span>
-<span><span class="co">##  [71] preprocessCore_1.70.0     data.table_1.17.8        </span></span>
-<span><span class="co">##  [73] hms_1.1.3                 xml2_1.4.0               </span></span>
-<span><span class="co">##  [75] metapod_1.16.0            foreach_1.5.2            </span></span>
-<span><span class="co">##  [77] pillar_1.11.1             genefilter_1.90.0        </span></span>
-<span><span class="co">##  [79] splines_4.5.1             lattice_0.22-7           </span></span>
-<span><span class="co">##  [81] bit_4.6.0                 survival_3.8-3           </span></span>
-<span><span class="co">##  [83] GEOquery_2.76.0           annotate_1.86.1          </span></span>
-<span><span class="co">##  [85] tidyselect_1.2.1          locfit_1.5-9.12          </span></span>
-<span><span class="co">##  [87] knitr_1.50                bookdown_0.45            </span></span>
-<span><span class="co">##  [89] xfun_0.53                 scrime_1.3.5             </span></span>
-<span><span class="co">##  [91] statmod_1.5.0             stringi_1.8.7            </span></span>
-<span><span class="co">##  [93] UCSC.utils_1.4.0          yaml_2.3.10              </span></span>
-<span><span class="co">##  [95] evaluate_1.0.5            codetools_0.2-20         </span></span>
-<span><span class="co">##  [97] minfi_1.54.1              BiocManager_1.30.26      </span></span>
-<span><span class="co">##  [99] cli_3.6.5                 bumphunter_1.50.0        </span></span>
+<span><span class="co">##  [35] digest_0.6.38             siggenes_1.84.0          </span></span>
+<span><span class="co">##  [37] reshape_0.8.10            AnnotationDbi_1.72.0     </span></span>
+<span><span class="co">##  [39] rprojroot_2.1.1           RSQLite_2.4.4            </span></span>
+<span><span class="co">##  [41] textshaping_1.0.4         base64_2.0.2             </span></span>
+<span><span class="co">##  [43] timechange_0.3.0          httr_1.4.7               </span></span>
+<span><span class="co">##  [45] abind_1.4-8               compiler_4.5.2           </span></span>
+<span><span class="co">##  [47] beanplot_1.3.1            rngtools_1.5.2           </span></span>
+<span><span class="co">##  [49] bit64_4.6.0-1             withr_3.0.2              </span></span>
+<span><span class="co">##  [51] doParallel_1.0.17         S7_0.2.0                 </span></span>
+<span><span class="co">##  [53] DBI_1.2.3                 HDF5Array_1.38.0         </span></span>
+<span><span class="co">##  [55] MASS_7.3-65               openssl_2.3.4            </span></span>
+<span><span class="co">##  [57] DelayedArray_0.36.0       rjson_0.2.23             </span></span>
+<span><span class="co">##  [59] tools_4.5.2               rentrez_1.2.4            </span></span>
+<span><span class="co">##  [61] quadprog_1.5-8            h5mread_1.2.0            </span></span>
+<span><span class="co">##  [63] restfulr_0.0.16           InteractionSet_1.38.0    </span></span>
+<span><span class="co">##  [65] nlme_3.1-168              rhdf5filters_1.22.0      </span></span>
+<span><span class="co">##  [67] grid_4.5.2                gtable_0.3.6             </span></span>
+<span><span class="co">##  [69] tzdb_0.5.0                preprocessCore_1.72.0    </span></span>
+<span><span class="co">##  [71] data.table_1.17.8         hms_1.1.4                </span></span>
+<span><span class="co">##  [73] xml2_1.4.1                metapod_1.18.0           </span></span>
+<span><span class="co">##  [75] foreach_1.5.2             pillar_1.11.1            </span></span>
+<span><span class="co">##  [77] genefilter_1.92.0         splines_4.5.2            </span></span>
+<span><span class="co">##  [79] lattice_0.22-7            bit_4.6.0                </span></span>
+<span><span class="co">##  [81] survival_3.8-3            GEOquery_2.78.0          </span></span>
+<span><span class="co">##  [83] annotate_1.88.0           tidyselect_1.2.1         </span></span>
+<span><span class="co">##  [85] locfit_1.5-9.12           knitr_1.50               </span></span>
+<span><span class="co">##  [87] bookdown_0.45             xfun_0.54                </span></span>
+<span><span class="co">##  [89] scrime_1.3.5              statmod_1.5.1            </span></span>
+<span><span class="co">##  [91] stringi_1.8.7             UCSC.utils_1.6.0         </span></span>
+<span><span class="co">##  [93] yaml_2.3.10               evaluate_1.0.5           </span></span>
+<span><span class="co">##  [95] codetools_0.2-20          cigarillo_1.0.0          </span></span>
+<span><span class="co">##  [97] minfi_1.56.0              BiocManager_1.30.26      </span></span>
+<span><span class="co">##  [99] cli_3.6.5                 bumphunter_1.52.0        </span></span>
 <span><span class="co">## [101] xtable_1.8-4              systemfonts_1.3.1        </span></span>
 <span><span class="co">## [103] jquerylib_0.1.4           dichromat_2.0-0.1        </span></span>
-<span><span class="co">## [105] Rcpp_1.1.0                png_0.1-8                </span></span>
-<span><span class="co">## [107] XML_3.99-0.19             parallel_4.5.1           </span></span>
-<span><span class="co">## [109] blob_1.2.4                pkgdown_2.1.3.9000       </span></span>
-<span><span class="co">## [111] mclust_6.1.1              doRNG_1.8.6.2            </span></span>
-<span><span class="co">## [113] sparseMatrixStats_1.20.0  bitops_1.0-9             </span></span>
-<span><span class="co">## [115] illuminaio_0.50.0         crayon_1.5.3             </span></span>
-<span><span class="co">## [117] rlang_1.1.6               KEGGREST_1.48.1</span></span></code></pre>
+<span><span class="co">## [105] Rcpp_1.1.0                GenomeInfoDb_1.46.0      </span></span>
+<span><span class="co">## [107] png_0.1-8                 XML_3.99-0.20            </span></span>
+<span><span class="co">## [109] parallel_4.5.2            blob_1.2.4               </span></span>
+<span><span class="co">## [111] pkgdown_2.2.0.9000        mclust_6.1.2             </span></span>
+<span><span class="co">## [113] doRNG_1.8.6.2             sparseMatrixStats_1.22.0 </span></span>
+<span><span class="co">## [115] bitops_1.0-9              illuminaio_0.52.0        </span></span>
+<span><span class="co">## [117] crayon_1.5.3              rlang_1.1.6              </span></span>
+<span><span class="co">## [119] KEGGREST_1.50.0</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -1471,7 +1472,7 @@ Combining Dependent Tests.” <em>Proc. Natl. Acad. Sci. U. S. A.</em> 116
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.9000.</p>
 </div>
 
       </footer>

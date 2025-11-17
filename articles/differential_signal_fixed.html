@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.12.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.0</span>
       </span>
     </div>
 
@@ -255,7 +255,7 @@ by default.</p>
 <span>  set_col <span class="op">=</span> <span class="va">treat_colours</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">samples</span><span class="op">$</span><span class="va">treatment</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="differential_signal_fixed_files/figure-html/plot-overlaps-1.png" alt="*UpSet plot showing overlapping peaks across all replicates*" width="700"><p class="caption">
+<img src="differential_signal_fixed_files/figure-html/plot-overlaps-1.png" class="r-plt" alt="*UpSet plot showing overlapping peaks across all replicates*" width="700"><p class="caption">
 <em>UpSet plot showing overlapping peaks across all replicates</em>
 </p>
 </div>
@@ -270,7 +270,7 @@ lower, even in the sample with the strongest signal.</p>
 <span>   set_col <span class="op">=</span> <span class="va">treat_colours</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">samples</span><span class="op">$</span><span class="va">treatment</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="differential_signal_fixed_files/figure-html/plot-overlaps-score-1.png" alt="*UpSet plot showing overlapping peaks across all replicates, with the maximum score across all replicates shown in the upper panel.*" width="700"><p class="caption">
+<img src="differential_signal_fixed_files/figure-html/plot-overlaps-score-1.png" class="r-plt" alt="*UpSet plot showing overlapping peaks across all replicates, with the maximum score across all replicates shown in the upper panel.*" width="700"><p class="caption">
 <em>UpSet plot showing overlapping peaks across all replicates, with the
 maximum score across all replicates shown in the upper panel.</em>
 </p>
@@ -346,7 +346,7 @@ instead of an UpSet plot.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRangesList-class.html" class="external-link">GRangesList</a></span><span class="op">(</span>E2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/genomic-range-squeezers.html" class="external-link">granges</a></span><span class="op">(</span><span class="va">consensus_e2</span><span class="op">)</span>, E2DHT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/genomic-range-squeezers.html" class="external-link">granges</a></span><span class="op">(</span><span class="va">consensus_e2dht</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="../reference/plotOverlaps-methods.html">plotOverlaps</a></span><span class="op">(</span>set_col <span class="op">=</span> <span class="va">treat_colours</span><span class="op">[</span><span class="va">treat_levels</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="differential_signal_fixed_files/figure-html/venn-consensus-overlap-1.png" alt="*Overlap between consensus peaks identified in a treatment-specific manner*" width="576"><p class="caption">
+<img src="differential_signal_fixed_files/figure-html/venn-consensus-overlap-1.png" class="r-plt" alt="*Overlap between consensus peaks identified in a treatment-specific manner*" width="576"><p class="caption">
 <em>Overlap between consensus peaks identified in a treatment-specific
 manner</em>
 </p>
@@ -457,7 +457,7 @@ required <code>DataFrame()</code> structure.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotAssayDensities-methods.html">plotAssayDensities</a></span><span class="op">(</span><span class="va">se</span>, assay <span class="op">=</span> <span class="st">"counts"</span>, colour <span class="op">=</span> <span class="st">"treat"</span>, trans <span class="op">=</span> <span class="st">"log1p"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_colour_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">treat_colours</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="differential_signal_fixed_files/figure-html/plot-assay-densities-1.png" alt="*Count densities for all samples, using the log+1 transformation*" width="700"><p class="caption">
+<img src="differential_signal_fixed_files/figure-html/plot-assay-densities-1.png" class="r-plt" alt="*Count densities for all samples, using the log+1 transformation*" width="700"><p class="caption">
 <em>Count densities for all samples, using the log+1 transformation</em>
 </p>
 </div>
@@ -467,7 +467,7 @@ the data lies.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotAssayPCA-methods.html">plotAssayPCA</a></span><span class="op">(</span><span class="va">se</span>, assay <span class="op">=</span> <span class="st">"logCPM"</span>, colour <span class="op">=</span> <span class="st">"treat"</span>, label <span class="op">=</span> <span class="st">"sample"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_colour_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">treat_colours</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="differential_signal_fixed_files/figure-html/plot-pca-1.png" alt="*PCA plot using logCPM values and showing that replicate variability is larger than variability between treatment groups.*" width="700"><p class="caption">
+<img src="differential_signal_fixed_files/figure-html/plot-pca-1.png" class="r-plt" alt="*PCA plot using logCPM values and showing that replicate variability is larger than variability between treatment groups.*" width="700"><p class="caption">
 <em>PCA plot using logCPM values and showing that replicate variability
 is larger than variability between treatment groups.</em>
 </p>
@@ -541,7 +541,7 @@ signal, and that these windows are truly the regions of interest.</p>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_colour_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"black"</span>, <span class="st">"red"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="differential_signal_fixed_files/figure-html/plot-ma-1.png" alt="*MA-plot after fitting using TMM normalisation and applying a fold-change threshold during testing. Points are labelled using the original windows obtained when merging replicates and treatment groups.*" width="700"><p class="caption">
+<img src="differential_signal_fixed_files/figure-html/plot-ma-1.png" class="r-plt" alt="*MA-plot after fitting using TMM normalisation and applying a fold-change threshold during testing. Points are labelled using the original windows obtained when merging replicates and treatment groups.*" width="700"><p class="caption">
 <em>MA-plot after fitting using TMM normalisation and applying a
 fold-change threshold during testing. Points are labelled using the
 original windows obtained when merging replicates and treatment
@@ -563,8 +563,8 @@ level.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/rtracklayer/man/GFFFile-class.html" class="external-link">import.gff</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/plyranges/man/ranges-filter-overlaps.html" class="external-link">filter_by_overlaps</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/GRanges-class.html" class="external-link">GRanges</a></span><span class="op">(</span><span class="st">"chr10:42354900-100000000"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/split.html" class="external-link">split</a></span><span class="op">(</span><span class="va">.</span><span class="op">$</span><span class="va">type</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqlevels</a></span><span class="op">(</span><span class="va">gencode</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqlevels</a></span><span class="op">(</span><span class="va">sq</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/GenomeInfoDb/man/seqinfo.html" class="external-link">seqinfo</a></span><span class="op">(</span><span class="va">gencode</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">sq</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/pkg/Seqinfo/man/seqinfo.html" class="external-link">seqlevels</a></span><span class="op">(</span><span class="va">gencode</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Seqinfo/man/seqinfo.html" class="external-link">seqlevels</a></span><span class="op">(</span><span class="va">sq</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/Seqinfo/man/seqinfo.html" class="external-link">seqinfo</a></span><span class="op">(</span><span class="va">gencode</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">sq</span></span></code></pre></div>
 <p>Mapping to genes using <code><a href="../reference/mapByFeature.html">mapByFeature()</a></code> uses additional
 annotations, such as whether the peak overlaps a promoter, enhancer or
 long-range interaction. Here we’ll just use promoters, so let’s create a
@@ -738,7 +738,7 @@ log-transformation so we’ll set <code>log = FALSE</code> in our call to
 </h3>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R version 4.5.1 (2025-06-13)</span></span>
+<pre><code><span><span class="co">## R version 4.5.2 (2025-10-31)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
 <span><span class="co">## Running under: Ubuntu 24.04.3 LTS</span></span>
 <span><span class="co">## </span></span>
@@ -762,91 +762,92 @@ log-transformation so we’ll set <code>log = FALSE</code> in our call to
 <span><span class="co">## [8] base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">##  [1] quantro_1.42.0              here_1.0.2                 </span></span>
+<span><span class="co">##  [1] quantro_1.44.0              here_1.0.2                 </span></span>
 <span><span class="co">##  [3] ggrepel_0.9.6               glue_1.8.0                 </span></span>
-<span><span class="co">##  [5] scales_1.4.0                plyranges_1.28.0           </span></span>
-<span><span class="co">##  [7] extraChIPs_1.12.1           ggside_0.4.0               </span></span>
-<span><span class="co">##  [9] patchwork_1.3.2             edgeR_4.6.3                </span></span>
-<span><span class="co">## [11] limma_3.64.3                rtracklayer_1.68.0         </span></span>
-<span><span class="co">## [13] BiocParallel_1.42.2         csaw_1.42.0                </span></span>
-<span><span class="co">## [15] SummarizedExperiment_1.38.1 Biobase_2.68.0             </span></span>
-<span><span class="co">## [17] MatrixGenerics_1.20.0       matrixStats_1.5.0          </span></span>
-<span><span class="co">## [19] Rsamtools_2.24.1            Biostrings_2.76.0          </span></span>
-<span><span class="co">## [21] XVector_0.48.0              GenomicRanges_1.60.0       </span></span>
-<span><span class="co">## [23] GenomeInfoDb_1.44.3         IRanges_2.42.0             </span></span>
-<span><span class="co">## [25] S4Vectors_0.46.0            BiocGenerics_0.54.0        </span></span>
+<span><span class="co">##  [5] scales_1.4.0                plyranges_1.30.1           </span></span>
+<span><span class="co">##  [7] extraChIPs_1.15.0           ggside_0.4.0               </span></span>
+<span><span class="co">##  [9] patchwork_1.3.2             edgeR_4.8.0                </span></span>
+<span><span class="co">## [11] limma_3.66.0                rtracklayer_1.70.0         </span></span>
+<span><span class="co">## [13] BiocParallel_1.44.0         csaw_1.44.0                </span></span>
+<span><span class="co">## [15] SummarizedExperiment_1.40.0 Biobase_2.70.0             </span></span>
+<span><span class="co">## [17] MatrixGenerics_1.22.0       matrixStats_1.5.0          </span></span>
+<span><span class="co">## [19] Rsamtools_2.26.0            Biostrings_2.78.0          </span></span>
+<span><span class="co">## [21] XVector_0.50.0              GenomicRanges_1.62.0       </span></span>
+<span><span class="co">## [23] IRanges_2.44.0              S4Vectors_0.48.0           </span></span>
+<span><span class="co">## [25] Seqinfo_1.0.0               BiocGenerics_0.56.0        </span></span>
 <span><span class="co">## [27] generics_0.1.4              lubridate_1.9.4            </span></span>
-<span><span class="co">## [29] forcats_1.0.1               stringr_1.5.2              </span></span>
-<span><span class="co">## [31] dplyr_1.1.4                 purrr_1.1.0                </span></span>
+<span><span class="co">## [29] forcats_1.0.1               stringr_1.6.0              </span></span>
+<span><span class="co">## [31] dplyr_1.1.4                 purrr_1.2.0                </span></span>
 <span><span class="co">## [33] readr_2.1.5                 tidyr_1.3.1                </span></span>
 <span><span class="co">## [35] tibble_3.3.0                ggplot2_4.0.0              </span></span>
-<span><span class="co">## [37] tidyverse_2.0.0             BiocStyle_2.36.0           </span></span>
+<span><span class="co">## [37] tidyverse_2.0.0             BiocStyle_2.38.0           </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
-<span><span class="co">##   [1] splines_4.5.1             BiocIO_1.18.0            </span></span>
-<span><span class="co">##   [3] bitops_1.0-9              preprocessCore_1.70.0    </span></span>
-<span><span class="co">##   [5] XML_3.99-0.19             lifecycle_1.0.4          </span></span>
+<span><span class="co">##   [1] splines_4.5.2             BiocIO_1.20.0            </span></span>
+<span><span class="co">##   [3] bitops_1.0-9              preprocessCore_1.72.0    </span></span>
+<span><span class="co">##   [5] XML_3.99-0.20             lifecycle_1.0.4          </span></span>
 <span><span class="co">##   [7] doParallel_1.0.17         rprojroot_2.1.1          </span></span>
 <span><span class="co">##   [9] lattice_0.22-7            MASS_7.3-65              </span></span>
 <span><span class="co">##  [11] base64_2.0.2              scrime_1.3.5             </span></span>
-<span><span class="co">##  [13] magrittr_2.0.4            minfi_1.54.1             </span></span>
+<span><span class="co">##  [13] magrittr_2.0.4            minfi_1.56.0             </span></span>
 <span><span class="co">##  [15] sass_0.4.10               rmarkdown_2.30           </span></span>
 <span><span class="co">##  [17] jquerylib_0.1.4           yaml_2.3.10              </span></span>
-<span><span class="co">##  [19] metapod_1.16.0            doRNG_1.8.6.2            </span></span>
+<span><span class="co">##  [19] metapod_1.18.0            doRNG_1.8.6.2            </span></span>
 <span><span class="co">##  [21] askpass_1.2.1             DBI_1.2.3                </span></span>
 <span><span class="co">##  [23] RColorBrewer_1.1-3        abind_1.4-8              </span></span>
 <span><span class="co">##  [25] quadprog_1.5-8            RCurl_1.98-1.17          </span></span>
-<span><span class="co">##  [27] GenomeInfoDbData_1.2.14   rentrez_1.2.4            </span></span>
-<span><span class="co">##  [29] genefilter_1.90.0         SimpleUpset_0.1.2        </span></span>
-<span><span class="co">##  [31] annotate_1.86.1           pkgdown_2.1.3.9000       </span></span>
-<span><span class="co">##  [33] DelayedMatrixStats_1.30.0 codetools_0.2-20         </span></span>
-<span><span class="co">##  [35] DelayedArray_0.34.1       xml2_1.4.0               </span></span>
-<span><span class="co">##  [37] tidyselect_1.2.1          futile.logger_1.4.3      </span></span>
-<span><span class="co">##  [39] UCSC.utils_1.4.0          farver_2.1.2             </span></span>
-<span><span class="co">##  [41] beanplot_1.3.1            illuminaio_0.50.0        </span></span>
-<span><span class="co">##  [43] GenomicAlignments_1.44.0  jsonlite_2.0.0           </span></span>
-<span><span class="co">##  [45] multtest_2.64.0           survival_3.8-3           </span></span>
-<span><span class="co">##  [47] iterators_1.0.14          systemfonts_1.3.1        </span></span>
-<span><span class="co">##  [49] foreach_1.5.2             tools_4.5.1              </span></span>
-<span><span class="co">##  [51] ragg_1.5.0                Rcpp_1.1.0               </span></span>
-<span><span class="co">##  [53] SparseArray_1.8.1         mgcv_1.9-3               </span></span>
-<span><span class="co">##  [55] xfun_0.53                 HDF5Array_1.36.0         </span></span>
+<span><span class="co">##  [27] rentrez_1.2.4             genefilter_1.92.0        </span></span>
+<span><span class="co">##  [29] SimpleUpset_0.1.3         annotate_1.88.0          </span></span>
+<span><span class="co">##  [31] pkgdown_2.2.0.9000        DelayedMatrixStats_1.32.0</span></span>
+<span><span class="co">##  [33] codetools_0.2-20          DelayedArray_0.36.0      </span></span>
+<span><span class="co">##  [35] xml2_1.4.1                tidyselect_1.2.1         </span></span>
+<span><span class="co">##  [37] futile.logger_1.4.3       UCSC.utils_1.6.0         </span></span>
+<span><span class="co">##  [39] farver_2.1.2              beanplot_1.3.1           </span></span>
+<span><span class="co">##  [41] illuminaio_0.52.0         GenomicAlignments_1.46.0 </span></span>
+<span><span class="co">##  [43] jsonlite_2.0.0            multtest_2.66.0          </span></span>
+<span><span class="co">##  [45] survival_3.8-3            iterators_1.0.14         </span></span>
+<span><span class="co">##  [47] systemfonts_1.3.1         foreach_1.5.2            </span></span>
+<span><span class="co">##  [49] tools_4.5.2               ragg_1.5.0               </span></span>
+<span><span class="co">##  [51] Rcpp_1.1.0                SparseArray_1.10.1       </span></span>
+<span><span class="co">##  [53] mgcv_1.9-4                xfun_0.54                </span></span>
+<span><span class="co">##  [55] GenomeInfoDb_1.46.0       HDF5Array_1.38.0         </span></span>
 <span><span class="co">##  [57] withr_3.0.2               formatR_1.14             </span></span>
 <span><span class="co">##  [59] BiocManager_1.30.26       fastmap_1.2.0            </span></span>
-<span><span class="co">##  [61] rhdf5filters_1.20.0       openssl_2.3.4            </span></span>
-<span><span class="co">##  [63] digest_0.6.37             timechange_0.3.0         </span></span>
-<span><span class="co">##  [65] R6_2.6.1                  textshaping_1.0.3        </span></span>
-<span><span class="co">##  [67] dichromat_2.0-0.1         RSQLite_2.4.3            </span></span>
-<span><span class="co">##  [69] h5mread_1.0.1             utf8_1.2.6               </span></span>
-<span><span class="co">##  [71] data.table_1.17.8         InteractionSet_1.36.1    </span></span>
-<span><span class="co">##  [73] httr_1.4.7                htmlwidgets_1.6.4        </span></span>
-<span><span class="co">##  [75] S4Arrays_1.8.1            pkgconfig_2.0.3          </span></span>
-<span><span class="co">##  [77] gtable_0.3.6              blob_1.2.4               </span></span>
-<span><span class="co">##  [79] S7_0.2.0                  siggenes_1.82.0          </span></span>
-<span><span class="co">##  [81] htmltools_0.5.8.1         bookdown_0.45            </span></span>
-<span><span class="co">##  [83] png_0.1-8                 lambda.r_1.2.4           </span></span>
-<span><span class="co">##  [85] knitr_1.50                tzdb_0.5.0               </span></span>
-<span><span class="co">##  [87] rjson_0.2.23              nlme_3.1-168             </span></span>
-<span><span class="co">##  [89] curl_7.0.0                bumphunter_1.50.0        </span></span>
-<span><span class="co">##  [91] cachem_1.1.0              rhdf5_2.52.1             </span></span>
-<span><span class="co">##  [93] parallel_4.5.1            AnnotationDbi_1.70.0     </span></span>
-<span><span class="co">##  [95] restfulr_0.0.16           desc_1.4.3               </span></span>
-<span><span class="co">##  [97] GEOquery_2.76.0           pillar_1.11.1            </span></span>
-<span><span class="co">##  [99] grid_4.5.1                reshape_0.8.10           </span></span>
-<span><span class="co">## [101] vctrs_0.6.5               xtable_1.8-4             </span></span>
-<span><span class="co">## [103] evaluate_1.0.5            VennDiagram_1.7.3        </span></span>
-<span><span class="co">## [105] GenomicFeatures_1.60.0    futile.options_1.0.1     </span></span>
-<span><span class="co">## [107] cli_3.6.5                 locfit_1.5-9.12          </span></span>
-<span><span class="co">## [109] compiler_4.5.1            rlang_1.1.6              </span></span>
-<span><span class="co">## [111] crayon_1.5.3              rngtools_1.5.2           </span></span>
-<span><span class="co">## [113] labeling_0.4.3            nor1mix_1.3-3            </span></span>
-<span><span class="co">## [115] mclust_6.1.1              plyr_1.8.9               </span></span>
-<span><span class="co">## [117] fs_1.6.6                  stringi_1.8.7            </span></span>
-<span><span class="co">## [119] Matrix_1.7-4              hms_1.1.3                </span></span>
-<span><span class="co">## [121] sparseMatrixStats_1.20.0  bit64_4.6.0-1            </span></span>
-<span><span class="co">## [123] Rhdf5lib_1.30.0           KEGGREST_1.48.1          </span></span>
-<span><span class="co">## [125] statmod_1.5.0             memoise_2.0.1            </span></span>
-<span><span class="co">## [127] bslib_0.9.0               bit_4.6.0</span></span></code></pre>
+<span><span class="co">##  [61] rhdf5filters_1.22.0       openssl_2.3.4            </span></span>
+<span><span class="co">##  [63] digest_0.6.38             timechange_0.3.0         </span></span>
+<span><span class="co">##  [65] R6_2.6.1                  textshaping_1.0.4        </span></span>
+<span><span class="co">##  [67] dichromat_2.0-0.1         RSQLite_2.4.4            </span></span>
+<span><span class="co">##  [69] cigarillo_1.0.0           h5mread_1.2.0            </span></span>
+<span><span class="co">##  [71] utf8_1.2.6                data.table_1.17.8        </span></span>
+<span><span class="co">##  [73] InteractionSet_1.38.0     httr_1.4.7               </span></span>
+<span><span class="co">##  [75] htmlwidgets_1.6.4         S4Arrays_1.10.0          </span></span>
+<span><span class="co">##  [77] pkgconfig_2.0.3           gtable_0.3.6             </span></span>
+<span><span class="co">##  [79] blob_1.2.4                S7_0.2.0                 </span></span>
+<span><span class="co">##  [81] siggenes_1.84.0           htmltools_0.5.8.1        </span></span>
+<span><span class="co">##  [83] bookdown_0.45             png_0.1-8                </span></span>
+<span><span class="co">##  [85] lambda.r_1.2.4            knitr_1.50               </span></span>
+<span><span class="co">##  [87] tzdb_0.5.0                rjson_0.2.23             </span></span>
+<span><span class="co">##  [89] nlme_3.1-168              curl_7.0.0               </span></span>
+<span><span class="co">##  [91] bumphunter_1.52.0         cachem_1.1.0             </span></span>
+<span><span class="co">##  [93] rhdf5_2.54.0              parallel_4.5.2           </span></span>
+<span><span class="co">##  [95] AnnotationDbi_1.72.0      restfulr_0.0.16          </span></span>
+<span><span class="co">##  [97] desc_1.4.3                GEOquery_2.78.0          </span></span>
+<span><span class="co">##  [99] pillar_1.11.1             grid_4.5.2               </span></span>
+<span><span class="co">## [101] reshape_0.8.10            vctrs_0.6.5              </span></span>
+<span><span class="co">## [103] xtable_1.8-4              evaluate_1.0.5           </span></span>
+<span><span class="co">## [105] VennDiagram_1.7.3         GenomicFeatures_1.62.0   </span></span>
+<span><span class="co">## [107] futile.options_1.0.1      cli_3.6.5                </span></span>
+<span><span class="co">## [109] locfit_1.5-9.12           compiler_4.5.2           </span></span>
+<span><span class="co">## [111] rlang_1.1.6               crayon_1.5.3             </span></span>
+<span><span class="co">## [113] rngtools_1.5.2            labeling_0.4.3           </span></span>
+<span><span class="co">## [115] nor1mix_1.3-3             mclust_6.1.2             </span></span>
+<span><span class="co">## [117] plyr_1.8.9                fs_1.6.6                 </span></span>
+<span><span class="co">## [119] stringi_1.8.7             Matrix_1.7-4             </span></span>
+<span><span class="co">## [121] hms_1.1.4                 sparseMatrixStats_1.22.0 </span></span>
+<span><span class="co">## [123] bit64_4.6.0-1             Rhdf5lib_1.32.0          </span></span>
+<span><span class="co">## [125] KEGGREST_1.50.0           statmod_1.5.1            </span></span>
+<span><span class="co">## [127] memoise_2.0.1             bslib_0.9.0              </span></span>
+<span><span class="co">## [129] bit_4.6.0</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -914,7 +915,7 @@ Analysis of ChIP-Seq (MACS).” <em>Genome Biol.</em> 9 (9): R137.
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.9000.</p>
 </div>
 
       </footer>
