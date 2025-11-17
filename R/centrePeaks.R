@@ -93,6 +93,7 @@ setMethod(
 #' @importClassesFrom rtracklayer BigWigFileList
 #' @importFrom rtracklayer import.bw
 #' @importFrom S4Vectors splitAsList Rle
+#' @importFrom GenomicRanges setdiff
 #' @rdname centrePeaks-methods
 #' @export
 setMethod(

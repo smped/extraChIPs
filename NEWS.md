@@ -11,10 +11,6 @@
 
 - Changed handling of arguments in plotting functions, setting NULL as the primary default value
 
-# extraChIPs 1.11.1
-
-No user-facing changes
-
 # extraChIPs 1.11.0
 
 Bioconductor 3.20 release

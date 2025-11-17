@@ -1,5 +1,5 @@
 Package: extraChIPs
-Version: 1.12.1
+Version: 1.15.0
 Title: Additional functions for working with ChIP-Seq data
 Authors@R: person("Stevie", "Pederson", 
   email = "stephen.pederson.au@gmail.com", 
@@ -22,8 +22,9 @@ Depends:
   R (>= 4.2.0),
   GenomicRanges,
   ggplot2 (>= 4.0.0),
-  ggside (>= 0.3.1),
-  SummarizedExperiment,
+  ggside (>= 0.4.0),
+  Seqinfo,
+  SummarizedExperiment (>= 1.39.1),
   tibble
 Imports:
   csaw,
