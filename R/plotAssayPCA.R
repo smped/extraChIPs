@@ -150,7 +150,7 @@ setMethod(
         names(perc_var) <- paste0("PC", seq_along(perc_var))
         labs <- lapply(
             c(x = pc_x[[1]], y = pc_y[[1]]),
-            \(x) paste0(x, " (", perc_var[[x]], "%)")
+            \(x) paste0(x, " (", perc_var[[x]], ")")
         )
         plot_aes <- aes(
             x = !!sym(pc_x), y = !!sym(pc_y), colour = {{ colour }},
