@@ -157,8 +157,8 @@ setMethod(
       df <- lapply(x, function(i) all_vals %in% i)
 
       ## Ensure colnames are respected
-      nm <- names(df)
       df <- as.data.frame(df)
+      names(df) <- nm
 
       p <- .makeUpSet(
         df, sets = nm, var = NULL, set_col, label_size, hj_sets, exp_sets,
