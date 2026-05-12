@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.14.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.0</span>
       </span>
     </div>
 
@@ -87,6 +87,7 @@
 <span>  offset <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  weighted <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span>,</span>
+<span>  legacy <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  null <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"interval"</span>, <span class="st">"worst.case"</span><span class="op">)</span>,</span>
 <span>  robust <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"apeglm"</span>, <span class="st">"ashr"</span>, <span class="st">"normal"</span><span class="op">)</span></span>
@@ -164,6 +165,10 @@ is created during model fitting for method = 'qlf'</p></dd>
 when applying a TMM-type normalisation strategy</p></dd>
 
 
+<dt id="arg-legacy">legacy<a class="anchor" aria-label="anchor" href="#arg-legacy"></a></dt>
+<dd><p>See <a href="https://rdrr.io/pkg/edgeR/man/glmQLFit.html" class="external-link">glmQLFit</a></p></dd>
+
+
 <dt id="arg-null">null<a class="anchor" aria-label="anchor" href="#arg-null"></a></dt>
 <dd><p>Passed to <a href="https://rdrr.io/pkg/edgeR/man/glmTreat.html" class="external-link">glmTreat</a>
 <a href="https://rdrr.io/pkg/edgeR/man/glmQLFit.html" class="external-link">glmQLFit</a> when method = "qlf".
@@ -171,7 +176,8 @@ If method = "lt", instead passed to <a href="https://rdrr.io/pkg/limma/man/lmFit
 
 
 <dt id="arg-robust">robust<a class="anchor" aria-label="anchor" href="#arg-robust"></a></dt>
-<dd><p>Passed to <a href="https://rdrr.io/pkg/limma/man/ebayes.html" class="external-link">treat</a> and <a href="https://rdrr.io/pkg/limma/man/ebayes.html" class="external-link">eBayes</a></p></dd>
+<dd><p>Passed to <a href="https://rdrr.io/pkg/limma/man/ebayes.html" class="external-link">treat</a> and <a href="https://rdrr.io/pkg/limma/man/ebayes.html" class="external-link">eBayes</a>, or to
+<a href="https://rdrr.io/pkg/edgeR/man/glmQLFit.html" class="external-link">glmQLFit</a></p></dd>
 
 
 <dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
@@ -248,23 +254,22 @@ individually as conventionally specified.</p>
 <span class="r-in"><span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu">fitAssayDiff</span><span class="op">(</span><span class="va">se</span>, design <span class="op">=</span> <span class="va">X</span>, lib.size <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Creating DGE list...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating experiment-wide normalisation factors...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Estimating dispersions...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Running glmQLFit...</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DataFrame with 200 rows and 5 columns</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          logFC    logCPM          F    PValue       FDR</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;numeric&gt; &lt;numeric&gt;  &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     0.749037   10.7688  0.2131836  0.649080  0.993722</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     0.203735   13.0209  0.2093590  0.652017  0.993722</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3     0.314357   12.5005  0.1605486  0.692741  0.993722</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4     0.670556   11.5596  0.2703578  0.608586  0.993722</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    -0.268084   12.1153  0.0644155  0.802142  0.993722</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ...        ...       ...        ...       ...       ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 196 -0.0503165   12.3107 0.00372841  0.951894  0.993722</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 197  0.5868742   12.6758 0.82132353  0.375180  0.993722</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 198 -0.3545575   12.0742 0.10151868  0.753194  0.993722</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 199 -0.7986674   12.2094 0.66249000  0.424909  0.993722</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 200 -0.2616856   12.9204 0.28235821  0.600793  0.993722</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          logFC    logCPM           F     PValue       FDR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;numeric&gt; &lt;numeric&gt;   &lt;numeric&gt;  &lt;numeric&gt; &lt;numeric&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    4.3081457   11.7021 11.42524472 0.00308997  0.617994</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    0.0833824   12.2407  0.00806086 0.92938517  0.994906</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    1.6793103   11.6748  2.13611404 0.15995332  0.994906</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   -1.1910801   12.0524  1.58485570 0.22307357  0.994906</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    0.5180861   12.0442  0.27822834 0.60387480  0.994906</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ...        ...       ...         ...        ...       ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 196  0.0907232   12.7687  0.02316309  0.8806131  0.994906</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 197  1.0954010   12.3006  1.43553532  0.2453664  0.994906</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 198 -1.1430230   12.6072  3.20264451  0.0892198  0.994906</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 199  0.1461418   12.3253  0.03206468  0.8597518  0.994906</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 200  0.0462564   11.8591  0.00113878  0.9734263  0.994906</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
