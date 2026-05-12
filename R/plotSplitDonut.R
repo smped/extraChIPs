@@ -69,6 +69,7 @@
 #' @param label_colour,inner_label_colour,outer_label_colour Takes any colour
 #' specification, with the additional option of 'palette'. In this special case,
 #' the same palette as is used for each segment will be applied.
+#' @param label_fill,inner_label_fill,outer_label_fill Takes any fixed colour
 #' @param min_p,inner_min_p,outer_min_p only display labels for segments
 #' representing greater than this proportion of the total. If inner/outer values
 #' are specified, the values in `min_p` will be ignored for that layer
@@ -178,6 +179,7 @@ setMethod(
         label_size = 3, inner_label_size = NULL, outer_label_size = NULL,
         label_colour = "black", inner_label_colour = NULL,
         outer_label_colour = NULL,
+        label_fill = "white", inner_label_fill = NULL, outer_label_fill = NULL,
         min_p = 0.05, inner_min_p = NULL, outer_min_p = NULL,
         max_p = 1, inner_max_p = NULL, outer_max_p = NULL,
         inner_pattern = ".", outer_pattern = ".",
@@ -230,6 +232,8 @@ setMethod(
         if (is.null(outer_label_size)) outer_label_size <- label_size
         if (is.null(inner_label_colour)) inner_label_colour <- label_colour
         if (is.null(outer_label_colour)) outer_label_colour <- label_colour
+        if (is.null(inner_label_fill)) inner_label_fill <- label_fill
+        if (is.null(outer_label_fill)) outer_label_fill <- label_fill
         if (is.null(inner_nudge_r)) inner_nudge_r <- nudge_r
         if (is.null(outer_nudge_r)) outer_nudge_r <- nudge_r
         stopifnot(is.character(inner_pattern) & is.character(outer_pattern))
@@ -404,8 +408,8 @@ setMethod(
             plt <- .addLabel(
                 plt = plt, df = plot_df, label_type = inner_label,
                 label_colour = inner_label_colour, label_size = inner_label_size,
-                label_alpha = inner_label_alpha, min_p = inner_min_p,
-                max_p = inner_max_p, pattern = inner_pattern,
+                label_alpha = inner_label_alpha, label_fill = inner_label_fill,
+                min_p = inner_min_p, max_p = inner_max_p, pattern = inner_pattern,
                 nudge_r = inner_nudge_r, r = r_inner, .x = "x", .ring = "inner"
             )
         }
@@ -413,8 +417,8 @@ setMethod(
             plt <- .addLabel(
                 plt = plt, df = plot_df, label_type = outer_label,
                 label_colour = outer_label_colour, label_size = outer_label_size,
-                label_alpha = outer_label_alpha, min_p = outer_min_p,
-                max_p = outer_max_p, pattern = outer_pattern,
+                label_alpha = outer_label_alpha, label_fill = outer_label_fill,
+                min_p = outer_min_p, max_p = outer_max_p, pattern = outer_pattern,
                 nudge_r = outer_nudge_r, r = 1, .x = "x1", .ring = "outer"
             )
         }
@@ -442,8 +446,8 @@ setMethod(
 #' @keywords internal
 #' @importFrom rlang sym !!
 .addLabel <- function(
-        plt, df, label_type, label_colour, label_size, label_alpha, min_p, max_p,
-        pattern, nudge_r, r, .x, .ring
+        plt, df, label_type, label_colour, label_size, label_alpha, label_fill,
+        min_p, max_p, pattern, nudge_r, r, .x, .ring
 ) {
 
     ## Filter df for key parameters
@@ -455,27 +459,30 @@ setMethod(
     ## Add labels
     lab_fun <- match.fun(paste0("geom_", label_type))
     if (label_colour != "palette") {
-        plt <- plt + lab_fun(
-            aes(
+        args <- list(
+            data = df,
+            mapping = aes(
                 x = sin(!!sym("mid")) * (!!sym(.x) + nudge_r * r) + !!sym("x0") ,
                 y = cos(!!sym("mid")) * (!!sym(.x) + nudge_r * r) + !!sym("y0"),
                 angle = !!sym("angle"), label = !!sym("lab")
             ),
-            data = df,
-            size = label_size, alpha = label_alpha, colour = label_colour
+            size = label_size, alpha = label_alpha, colour = label_colour,
+            fill = label_fill
         )
     } else {
-        plt <- plt + lab_fun(
-            aes(
+        args <- list(
+            data = df,
+            mapping = aes(
                 x = sin(!!sym("mid")) * (!!sym(.x) + nudge_r * r) + !!sym("x0"),
                 y = cos(!!sym("mid")) * (!!sym(.x) + nudge_r * r) + !!sym("y0"),
                 colour = !!sym("colour"), angle = !!sym("angle"),
                 label = !!sym("lab")
             ),
-            data = df,
-            size = label_size, alpha = label_alpha, show.legend = FALSE
+            size = label_size, alpha = label_alpha, show.legend = FALSE,
+            fill = label_fill
         )
     }
-    plt
+    if (label_type == "text") args$fill <- NULL
+    plt + do.call(lab_fun, args)
 
 }

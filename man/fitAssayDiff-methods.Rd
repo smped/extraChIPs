@@ -22,6 +22,7 @@ fitAssayDiff(x, ...)
   offset = NULL,
   weighted = FALSE,
   ...,
+  legacy = FALSE,
   null = c("interval", "worst.case"),
   robust = FALSE,
   type = c("apeglm", "ashr", "normal")
@@ -69,11 +70,14 @@ is created during model fitting for method = 'qlf'}
 \item{weighted}{logical(1) Passed to  \link[edgeR]{normLibSizes}. Only used
 when applying a TMM-type normalisation strategy}
 
+\item{legacy}{See \link[edgeR]{glmQLFit}}
+
 \item{null}{Passed to \link[edgeR]{glmTreat}
 \link[edgeR]{glmQLFit} when method = "qlf".
 If method = "lt", instead passed to \link[limma]{lmFit}}
 
-\item{robust}{Passed to \link[limma]{treat} and \link[limma]{eBayes}}
+\item{robust}{Passed to \link[limma]{treat} and \link[limma]{eBayes}, or to
+\link[edgeR]{glmQLFit}}
 
 \item{type}{Passed to \link[DESeq2]{lfcShrink}}
 }
