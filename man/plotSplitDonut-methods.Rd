@@ -39,6 +39,9 @@ plotSplitDonut(object, ...)
   label_colour = "black",
   inner_label_colour = NULL,
   outer_label_colour = NULL,
+  label_fill = "white",
+  inner_label_fill = NULL,
+  outer_label_fill = NULL,
   min_p = 0.05,
   inner_min_p = NULL,
   outer_min_p = NULL,
@@ -117,6 +120,8 @@ labels}
 \item{label_colour, inner_label_colour, outer_label_colour}{Takes any colour
 specification, with the additional option of 'palette'. In this special case,
 the same palette as is used for each segment will be applied.}
+
+\item{label_fill, inner_label_fill, outer_label_fill}{Takes any fixed colour}
 
 \item{min_p, inner_min_p, outer_min_p}{only display labels for segments
 representing greater than this proportion of the total. If inner/outer values
