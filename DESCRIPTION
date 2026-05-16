@@ -1,5 +1,5 @@
 Package: extraChIPs
-Version: 1.17.0
+Version: 1.17.1
 Title: Additional functions for working with ChIP-Seq data
 Authors@R: person("Stevie", "Pederson", 
   email = "stephen.pederson.au@gmail.com", 
@@ -76,5 +76,5 @@ biocViews: ChIPSeq, HiC, Sequencing, Coverage
 BiocType: Software
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)  
-RoxygenNote: 7.3.3
 Config/testthat/edition: 3
+Config/roxygen2/version: 8.0.0

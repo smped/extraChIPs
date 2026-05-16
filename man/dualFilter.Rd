@@ -8,12 +8,14 @@ dualFilter(
   x,
   bg = NULL,
   ref,
-  q = 0.5,
+  q = 0.75,
   logCPM = TRUE,
   keep.totals = TRUE,
-  bin.size = NULL,
+  bin.size = 10000,
   prior.count = 2,
-  BPPARAM = bpparam()
+  BPPARAM = bpparam(),
+  restrict = NULL,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -41,6 +43,13 @@ size}
 \link[csaw]{filterWindowsProportion}}
 
 \item{BPPARAM}{Settings for running in parallel}
+
+\item{restrict}{Restrict the calculations to a subset of chromosomes. Will
+only apply when preparing counts for passing to the internal call to
+\link[csaw]{scaleControlFilter}}
+
+\item{verbose}{Receive progress messages as different steps of the function
+are begun}
 }
 \value{
 A \link[SummarizedExperiment]{RangedSummarizedExperiment} which is a

@@ -45,7 +45,12 @@
 #' size
 #' @param prior.count Passed to \link[csaw]{filterWindowsControl} and
 #' \link[csaw]{filterWindowsProportion}
+#' @param restrict Restrict the calculations to a subset of chromosomes. Will
+#' only apply when preparing counts for passing to the internal call to
+#' \link[csaw]{scaleControlFilter}
 #' @param BPPARAM Settings for running in parallel
+#' @param verbose Receive progress messages as different steps of the function
+#' are begun
 #'
 #' @return
 #' A \link[SummarizedExperiment]{RangedSummarizedExperiment} which is a
@@ -114,7 +119,7 @@
 #' @importFrom IRanges overlapsAny
 #' @importFrom methods is
 #' @importFrom csaw windowCounts readParam scaleControlFilter
-#' @importFrom csaw filterWindowsControl filterWindowsProportion
+#' @importFrom csaw filterWindowsProportion reform getWidths
 #' @importFrom BiocParallel bpparam bplapply bpisup bpstart bpstop
 #' @importFrom edgeR cpm
 #' @importFrom S4Vectors metadata metadata<-
@@ -126,10 +131,23 @@
 #'
 #' @export
 dualFilter <- function(
-    x, bg = NULL, ref, q = 0.5, logCPM = TRUE, keep.totals = TRUE,
-    bin.size = NULL, prior.count = 2, BPPARAM = bpparam()
+        x, bg = NULL, ref, q = 0.75, logCPM = TRUE, keep.totals = TRUE,
+        bin.size = 1e4, prior.count = 2, BPPARAM = bpparam(), restrict = NULL,
+        verbose = FALSE
 ) {
 
+    if (!(keep.totals)) {
+        msp <- paste(
+            "The 'keep.totals' argument in 'dualFilter()' is deprecated and will",
+            "be removed in the next release cycle",
+            "Library sizes will then be taken from the complete BAM-level counts,",
+            "not the retained windows, which is the more appropriate",
+            "behaviour for ChIP-seq library size normalisation.",
+            "If you require custom library sizes, set 'x$totals' manually after",
+            "calling 'dualFilter()'."
+        )
+        .Deprecated(msg = msg)
+    }
 
     ## Argument checks
     stopifnot(is(x, "RangedSummarizedExperiment"))
@@ -164,7 +182,7 @@ dualFilter <- function(
         message(msg)
     } else {
 
-                ## Check the different options for providing the input sample
+        ## Check the different options for providing the input sample
         if (!is(bg, "RangedSummarizedExperiment")) {
             ## Perform selection by numeric given colnames are optional
             i <- bg # Default if numeric
@@ -183,41 +201,57 @@ dualFilter <- function(
         bg_bfl <- BamFileList(colData(bg)$bam.files)
         names(bg_bfl) <- colnames(bg)
 
-        ## Apply the filter using control samples using the csaw method which
-        ## counts all bam files across the entire genome again
-        ## This is currently very slow and an alternative method may be better
-        ## Maybe it's worth trying to restrict to a subset of chromosomes as the
-        ## steps are 1) Calculate the normalisation factor for bg counts, then
-        ## 2) recalculate the filter. Perhaps subsetting the genome will give
-        ## similar results. TODO...
+        if (is.null(bin.size)) {
+            bin.size <- max(20 * max(width(x)), 2e3)
+            message("Setting bin.size as ", bin.size)
+        }
+
         rp <- readParam()
         if (!is.null(metadata(x)$param)) rp <- metadata(x)$param
-        if (is.null(bin.size)) bin.size <- max(10 * max(width(x)), 2e3)
+        if (!is.null(restrict)) {
+            lv <- slot(rp, "restrict")
+            restrict <- intersect(restrict, lv)
+            if (length(restrict)) rp <- reform(rp, restrict = restrict)
+        }
+
+        if (verbose) message("Reading signal counts...")
         signal_counts <- windowCounts(
             bam.files = bfl,
             spacing = bin.size, filter = 0, param = rp, BPPARAM = BPPARAM
         )
         if (keep.totals) signal_counts$totals <- x[,names(bfl)]$totals
+        if (verbose) message("Reading bg counts...")
         bg_counts <- windowCounts(
             bam.files = bg_bfl,
             spacing = bin.size, filter = 0, param = rp, BPPARAM = BPPARAM
         )
         if (keep.totals) bg_counts$totals <- bg[,names(bg_bfl)]$totals
+        if (verbose) message("Running scaleControlFilter")
         scf <- scaleControlFilter(signal_counts, bg_counts)
-        if (!keep.totals) {
-            x$totals <- signal_counts$totals
-            bg$totals <- bg_counts$totals
-        }
-        control_filter <- filterWindowsControl(
-            data = x, background = bg, prior.count = prior.count,
-            scale.info = scf
-        )$filter
+
+        ## Replicate filterWindowsControl without the copy-on-modify RAM blowout
+        bg_totals_scaled <- bg$totals * scf$scale
+        ## .scaledAverage only needs the counts assay + totals, not the full RSE
+        ## Pass lightweight substitutes and only return the filter.stat
+        relative.width <- getWidths(bg) / getWidths(x)
+        lib.adjust <- prior.count * mean(bg_totals_scaled) / mean(x$totals)
+        if (verbose) message("Running scaledAverage on signal")
+        abundances <- .scaledAverage(x, scale = 1, prior.count = prior.count)
+        if (verbose) message("Running scaledAverage on background")
+        bg.ab <- .scaledAverage(
+            bg, scale = relative.width, prior.count = lib.adjust,
+            lib.size = bg_totals_scaled
+        )  # avoids the totals mutation
+        control_filter <- abundances - bg.ab
+
+        ## Now proceed as previously
         q <- sqrt(q)
         cuts$control <- quantile(control_filter[ol], probs = 1 - q)
         keep_control <- control_filter > cuts$control
     }
 
     ## Apply the filter using the expression percentile. This is quick already
+    if (verbose) message("Running filterWindowsProportion")
     prop_filter <- filterWindowsProportion(x, prior.count = prior.count)$filter
     cuts$prop <- quantile(prop_filter[ol & keep_control], probs = 1 - q)
 
@@ -240,4 +274,45 @@ dualFilter <- function(
 
     out
 
+}
+
+
+#' @keywords internal
+.scaledAverage <- function(y, scale = 1, prior.count = NULL, lib.size = NULL) {
+    ## This directly lifts the scaledAverage function from csaw, but allows
+    ## for passing of the library size which can help avoid copy-on-modify
+    ## issues in functions which call this as a lower-level function
+    ## Credit to Aaron Lun for the original
+    stopifnot("counts" %in% assayNames(y))
+    counts <- assay(y, i = "counts", withDimnames = FALSE)
+    if (is.null(lib.size)) lib.size <- y$totals
+    if (!is.null(y$norm.factors)) {
+        lib.size <- lib.size * y$norm.factors
+    }
+    dispersion <- 0.05
+    if (is.null(prior.count)) {
+        prior.count <- formals(edgeR::aveLogCPM.DGEList)$prior.count
+    }
+    is.zero <- scale == 0
+    is.neg <- scale < 0
+    failed <- is.zero | is.neg
+    if (any(failed)) {
+        scale[failed] <- 1
+    }
+    empty <- matrix(0, nrow(counts), ncol(counts))
+    ap <- edgeR::addPriorCount(empty, lib.size = lib.size, prior.count = prior.count)
+    ap$y <- ap$y * scale
+    ap$y <- ap$y + counts
+    ave <- edgeR::mglmOneGroup(y = ap$y, offset = ap$offset, dispersion = dispersion)
+    ave <- (ave - log(scale) + log(1e+06))/log(2)
+    if (any(failed)) {
+        if (length(failed) == 1) {
+            ave[] <- ifelse(is.zero, -Inf, NA_real_)
+        }
+        else {
+            ave[is.neg] <- NA_real_
+            ave[is.zero] <- -Inf
+        }
+    }
+    return(ave)
 }
