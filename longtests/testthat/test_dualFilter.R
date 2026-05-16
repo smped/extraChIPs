@@ -135,16 +135,15 @@ test_that("dualFilter runs as expected without 'bg'", {
 
 })
 
-test_that("keep.totals performs correctly", {
-    filtcounts <- dualFilter(
-        x = wincounts[, !is.na(wincounts$treat)],
-        bg = wincounts[, is.na(wincounts$treat)],
-        ref = peaks,
-        q = 0.8,
-        keep.totals = FALSE
+test_that("keep.totals is deprecated", {
+    expect_warning(
+        dualFilter(
+            x = wincounts[, !is.na(wincounts$treat)],
+            bg = wincounts[, is.na(wincounts$treat)],
+            ref = peaks, keep.totals = FALSE
+        ),
+        "The 'keep.totals' argument .+"
     )
-    expect_equal(dim(filtcounts), c(102, 2))
-    expect_equal(sum(filtcounts$totals), 5446)
 })
 
 

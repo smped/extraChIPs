@@ -137,7 +137,7 @@ dualFilter <- function(
 ) {
 
     if (!(keep.totals)) {
-        msp <- paste(
+        msg <- paste(
             "The 'keep.totals' argument in 'dualFilter()' is deprecated and will",
             "be removed in the next release cycle",
             "Library sizes will then be taken from the complete BAM-level counts,",
