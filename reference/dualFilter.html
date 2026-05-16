@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.1</span>
       </span>
     </div>
 
@@ -73,12 +73,14 @@
 <span>  <span class="va">x</span>,</span>
 <span>  bg <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">ref</span>,</span>
-<span>  q <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  q <span class="op">=</span> <span class="fl">0.75</span>,</span>
 <span>  logCPM <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  keep.totals <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  bin.size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  bin.size <span class="op">=</span> <span class="fl">10000</span>,</span>
 <span>  prior.count <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  BPPARAM <span class="op">=</span> <span class="fu">bpparam</span><span class="op">(</span><span class="op">)</span></span>
+<span>  BPPARAM <span class="op">=</span> <span class="fu">bpparam</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  restrict <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -127,6 +129,17 @@ size</p></dd>
 
 <dt id="arg-bpparam">BPPARAM<a class="anchor" aria-label="anchor" href="#arg-bpparam"></a></dt>
 <dd><p>Settings for running in parallel</p></dd>
+
+
+<dt id="arg-restrict">restrict<a class="anchor" aria-label="anchor" href="#arg-restrict"></a></dt>
+<dd><p>Restrict the calculations to a subset of chromosomes. Will
+only apply when preparing counts for passing to the internal call to
+<a href="https://rdrr.io/pkg/csaw/man/filterWindows.html" class="external-link">scaleControlFilter</a></p></dd>
+
+
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
+<dd><p>Receive progress messages as different steps of the function
+are begun</p></dd>
 
 </dl></div>
     <div id="value">
