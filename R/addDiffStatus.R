@@ -47,7 +47,8 @@ setMethod(
     "addDiffStatus",
     signature = signature(x = "data.frame"),
     function(
-        x, fc_col = "logFC", sig_col = c("FDR", "hmp_fdr", "p_fdr", "adj.P.Value"),
+        x, fc_col = "logFC",
+        sig_col = c("FDR", "hmp_fdr", "p_fdr", "adj.P.Value", "PValue_fdr", "fdr"),
         alpha = 0.05, cutoff = 0, up = "Increased", down = "Decreased",
         other = "Unchanged", missing = "Undetected", new_col = "status",
         drop = FALSE, ...
