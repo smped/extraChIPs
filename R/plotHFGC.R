@@ -325,6 +325,7 @@ plotHFGC <- function(
         collapseTranscripts = collapseTranscripts, maxTrans = maxTrans
     )
     stopifnot(checkArgs)
+    gr <- granges(gr)
 
     ## Add a step for restricting to standard chromosomes!!!
 
