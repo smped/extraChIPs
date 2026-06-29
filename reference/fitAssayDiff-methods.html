@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.16.2</span>
       </span>
     </div>
 
@@ -87,7 +87,6 @@
 <span>  offset <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  weighted <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span>,</span>
-<span>  legacy <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  null <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"interval"</span>, <span class="st">"worst.case"</span><span class="op">)</span>,</span>
 <span>  robust <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"apeglm"</span>, <span class="st">"ashr"</span>, <span class="st">"normal"</span><span class="op">)</span></span>
@@ -165,10 +164,6 @@ is created during model fitting for method = 'qlf'</p></dd>
 when applying a TMM-type normalisation strategy</p></dd>
 
 
-<dt id="arg-legacy">legacy<a class="anchor" aria-label="anchor" href="#arg-legacy"></a></dt>
-<dd><p>See <a href="https://rdrr.io/pkg/edgeR/man/glmQLFit.html" class="external-link">glmQLFit</a></p></dd>
-
-
 <dt id="arg-null">null<a class="anchor" aria-label="anchor" href="#arg-null"></a></dt>
 <dd><p>Passed to <a href="https://rdrr.io/pkg/edgeR/man/glmTreat.html" class="external-link">glmTreat</a>
 <a href="https://rdrr.io/pkg/edgeR/man/glmQLFit.html" class="external-link">glmQLFit</a> when method = "qlf".
@@ -176,8 +171,7 @@ If method = "lt", instead passed to <a href="https://rdrr.io/pkg/limma/man/lmFit
 
 
 <dt id="arg-robust">robust<a class="anchor" aria-label="anchor" href="#arg-robust"></a></dt>
-<dd><p>Passed to <a href="https://rdrr.io/pkg/limma/man/ebayes.html" class="external-link">treat</a> and <a href="https://rdrr.io/pkg/limma/man/ebayes.html" class="external-link">eBayes</a>, or to
-<a href="https://rdrr.io/pkg/edgeR/man/glmQLFit.html" class="external-link">glmQLFit</a></p></dd>
+<dd><p>Passed to <a href="https://rdrr.io/pkg/limma/man/ebayes.html" class="external-link">treat</a> and <a href="https://rdrr.io/pkg/limma/man/ebayes.html" class="external-link">eBayes</a></p></dd>
 
 
 <dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
@@ -254,6 +248,7 @@ individually as conventionally specified.</p>
 <span class="r-in"><span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu">fitAssayDiff</span><span class="op">(</span><span class="va">se</span>, design <span class="op">=</span> <span class="va">X</span>, lib.size <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Creating DGE list...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating experiment-wide normalisation factors...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Estimating dispersions...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Running glmQLFit...</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DataFrame with 200 rows and 5 columns</span>
@@ -286,7 +281,7 @@ individually as conventionally specified.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer></div>
