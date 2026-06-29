@@ -16,7 +16,7 @@ around GenomicRanges objects
 Many of the range-based functions included in this package have a focus on
 retaining the \code{mcols} information whilst manipulating the ranges, such as
 \code{\link[=reduceMC]{reduceMC()}} which not only reduces the Ranges, but collapses the \code{mcols}
-into vectors or \link[IRanges:CompressedList]{IRanges::CompressedList} objects.
+into vectors or \link[IRanges:CompressedList-class]{IRanges::CompressedList} objects.
 Key function from this group are:
 \itemize{
 \item \code{\link[=reduceMC]{reduceMC()}}, \code{\link[=setdiffMC]{setdiffMC()}}, \code{\link[=intersectMC]{intersectMC()}}, \code{\link[=unionMC]{unionMC()}}, \code{\link[=distinctMC]{distinctMC()}}
@@ -36,7 +36,7 @@ reference ranges where signal is confidently expected
 gene, using any optional combination of promoters, enhancers and HiC
 interactions
 \item \code{\link[=grlToSE]{grlToSE()}} takes selected columns from a GRangesList and sets them as
-assays within a \link[SummarizedExperiment:RangedSummarizedExperiment]{SummarizedExperiment::RangedSummarizedExperiment} object.
+assays within a \link[SummarizedExperiment:RangedSummarizedExperiment-class]{SummarizedExperiment::RangedSummarizedExperiment} object.
 Used for combining peak intensities or results across multiple ChIP targets.
 }
 }
@@ -55,7 +55,7 @@ as prepared by \code{\link[=getProfileData]{getProfileData()}}
 multiple annotation columns within a GRanges object.
 \item \code{\link[=plotAssayDensities]{plotAssayDensities()}}, \code{\link[=plotAssayPCA]{plotAssayPCA()}} and \code{\link[=plotAssayRle]{plotAssayRle()}} provide
 simple interfaces to plotting key values from a
-\link[SummarizedExperiment:RangedSummarizedExperiment]{SummarizedExperiment::RangedSummarizedExperiment}.
+\link[SummarizedExperiment:RangedSummarizedExperiment-class]{SummarizedExperiment::RangedSummarizedExperiment}.
 }
 }
 

@@ -1,18 +1,3 @@
-# extraChIPs 1.17.2
-
-## Bug Fixes
-
-- Improved memory consumption for `dualFilter()`
-- Deprecated `keep.totals` & set default bin size to be 10kb
-
-
-# extraChIPs 1.17.1
-
-## Bug Fixes
-
-- Better handled label background colours for plotSplitDonut
-- Updated `fitAssayDiff()` for compatability with edgeR v4.0.0
-
 # extraChIPs 1.12.1
 
 ## Bug Fixes

@@ -52,8 +52,7 @@
 #' @param keyval Return the key-value range as the window associated with the
 #' minimum p-value, or by merging the ranges from all windows with raw p-values
 #' below the merged harmonic-mean p-value
-#' @param hm_pre Prefix to add to the beginning of all HMP-derived columns.
-#' Since version 1.17.3, this now defaults to "", instead of the previous "hm"
+#' @param hm_pre Prefix to add to the beginning of all HMP-derived columns
 #' @param ... Not used
 #'
 #' @return
@@ -90,7 +89,7 @@ setMethod(
         x, df = NULL, w = NULL,
         logfc = "logFC", pval = "P", cpm = "logCPM", inc_cols = NULL,
         p_adj_method = "fdr", merge_within = 1L, ignore_strand = TRUE,
-        min_win = 1, keyval = c("min", "merged"), hm_pre = "", ...
+        min_win = 1, keyval = c("min", "merged"), hm_pre = "hm", ...
     ){
 
         ## Checks & defining the key columns
