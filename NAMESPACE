@@ -83,158 +83,202 @@ importClassesFrom(S4Vectors,HitsList)
 importClassesFrom(SummarizedExperiment,RangedSummarizedExperiment)
 importClassesFrom(rtracklayer,BigWigFile)
 importClassesFrom(rtracklayer,BigWigFileList)
-importFrom(BiocParallel,SerialParam)
-importFrom(BiocParallel,bpisup)
-importFrom(BiocParallel,bplapply)
-importFrom(BiocParallel,bpparam)
-importFrom(BiocParallel,bpstart)
-importFrom(BiocParallel,bpstop)
+importFrom(BiocParallel,
+  SerialParam,
+  bpisup,
+  bplapply,
+  bpparam,
+  bpstart,
+  bpstop
+)
 importFrom(GenomeInfoDb,keepSeqlevels)
 importFrom(GenomicRanges,setdiff)
-importFrom(IRanges,RleList)
-importFrom(IRanges,RleViewsList)
-importFrom(IRanges,SplitDataFrameList)
-importFrom(IRanges,Views)
-importFrom(IRanges,commonColnames)
-importFrom(IRanges,overlapsAny)
-importFrom(IRanges,subsetByOverlaps)
-importFrom(IRanges,viewMaxs)
-importFrom(IRanges,viewWhichMaxs)
+importFrom(IRanges,
+  RleList,
+  RleViewsList,
+  SplitDataFrameList,
+  Views,
+  commonColnames,
+  overlapsAny,
+  subsetByOverlaps,
+  viewMaxs,
+  viewWhichMaxs
+)
 importFrom(InteractionSet,anchors)
 importFrom(RColorBrewer,brewer.pal)
-importFrom(Rsamtools,BamFileList)
-importFrom(Rsamtools,ScanBamParam)
-importFrom(Rsamtools,countBam)
-importFrom(Rsamtools,idxstatsBam)
-importFrom(S4Vectors,"mcols<-")
-importFrom(S4Vectors,"metadata<-")
-importFrom(S4Vectors,DataFrame)
-importFrom(S4Vectors,Rle)
-importFrom(S4Vectors,SimpleList)
-importFrom(S4Vectors,endoapply)
-importFrom(S4Vectors,mcols)
-importFrom(S4Vectors,metadata)
-importFrom(S4Vectors,queryHits)
-importFrom(S4Vectors,splitAsList)
-importFrom(S4Vectors,subjectHits)
-importFrom(S4Vectors,subset)
-importFrom(Seqinfo,"seqinfo<-")
-importFrom(Seqinfo,Seqinfo)
-importFrom(Seqinfo,genome)
-importFrom(Seqinfo,seqinfo)
-importFrom(Seqinfo,seqlevels)
-importFrom(Seqinfo,seqnames)
-importFrom(csaw,combineTests)
-importFrom(csaw,filterWindowsControl)
-importFrom(csaw,filterWindowsProportion)
-importFrom(csaw,getBestTest)
-importFrom(csaw,minimalTests)
-importFrom(csaw,readParam)
-importFrom(csaw,scaleControlFilter)
-importFrom(csaw,windowCounts)
-importFrom(dplyr,across)
-importFrom(dplyr,arrange)
-importFrom(dplyr,bind_cols)
-importFrom(dplyr,bind_rows)
-importFrom(dplyr,case_when)
-importFrom(dplyr,desc)
-importFrom(dplyr,distinct)
-importFrom(dplyr,filter)
-importFrom(dplyr,group_by)
-importFrom(dplyr,inner_join)
-importFrom(dplyr,left_join)
-importFrom(dplyr,mutate)
-importFrom(dplyr,mutate_all)
-importFrom(dplyr,n)
-importFrom(dplyr,pick)
-importFrom(dplyr,select)
-importFrom(dplyr,summarise)
-importFrom(dplyr,ungroup)
-importFrom(edgeR,DGEList)
-importFrom(edgeR,cpm)
-importFrom(edgeR,estimateDisp)
-importFrom(edgeR,glmQLFTest)
-importFrom(edgeR,glmQLFit)
-importFrom(edgeR,glmTreat)
-importFrom(edgeR,normLibSizes)
-importFrom(edgeR,topTags)
-importFrom(forcats,fct_cross)
-importFrom(forcats,fct_explicit_na)
-importFrom(forcats,fct_inorder)
-importFrom(forcats,fct_na_value_to_level)
-importFrom(forcats,fct_relabel)
-importFrom(forcats,fct_rev)
-importFrom(ggrepel,geom_label_repel)
-importFrom(ggrepel,geom_text_repel)
-importFrom(glue,glue)
-importFrom(glue,glue_collapse)
-importFrom(matrixStats,rowMeans2)
-importFrom(matrixStats,rowMedians)
-importFrom(matrixStats,rowSds)
-importFrom(matrixStats,weightedMean)
-importFrom(methods,as)
-importFrom(methods,is)
-importFrom(methods,new)
-importFrom(methods,slot)
-importFrom(methods,slotNames)
-importFrom(patchwork,area)
-importFrom(patchwork,plot_layout)
-importFrom(patchwork,plot_spacer)
-importFrom(rlang,"!!!")
-importFrom(rlang,"!!")
-importFrom(rlang,":=")
-importFrom(rlang,.data)
-importFrom(rlang,as_label)
-importFrom(rlang,enexpr)
-importFrom(rlang,enquo)
-importFrom(rlang,ensym)
-importFrom(rlang,eval_tidy)
-importFrom(rlang,list2)
-importFrom(rlang,quo_is_null)
-importFrom(rlang,quos)
-importFrom(rlang,sym)
-importFrom(rlang,syms)
-importFrom(rtracklayer,BigWigFile)
-importFrom(rtracklayer,BigWigFileList)
-importFrom(rtracklayer,import.bw)
-importFrom(rtracklayer,ucscGenomes)
-importFrom(scales,comma)
-importFrom(scales,percent)
-importFrom(stats,approxfun)
-importFrom(stats,as.formula)
-importFrom(stats,cor)
-importFrom(stats,density)
-importFrom(stats,lowess)
-importFrom(stats,median)
-importFrom(stats,model.matrix)
-importFrom(stats,na.omit)
-importFrom(stats,p.adjust)
-importFrom(stats,p.adjust.methods)
-importFrom(stats,prcomp)
-importFrom(stats,quantile)
-importFrom(stats,setNames)
-importFrom(stats,weighted.mean)
-importFrom(stringr,str_count)
-importFrom(stringr,str_pad)
-importFrom(stringr,str_replace_all)
-importFrom(stringr,str_replace_na)
-importFrom(stringr,str_sort)
-importFrom(stringr,str_to_title)
-importFrom(stringr,str_trim)
-importFrom(stringr,str_trunc)
-importFrom(tibble,as_tibble)
-importFrom(tibble,tibble)
-importFrom(tidyr,all_of)
-importFrom(tidyr,chop)
-importFrom(tidyr,complete)
-importFrom(tidyr,nest)
-importFrom(tidyr,pivot_longer)
-importFrom(tidyr,pivot_wider)
-importFrom(tidyr,unite)
-importFrom(tidyr,unnest)
-importFrom(tidyselect,all_of)
-importFrom(tidyselect,ends_with)
-importFrom(tidyselect,everything)
+importFrom(Rsamtools,
+  BamFileList,
+  ScanBamParam,
+  countBam,
+  idxstatsBam
+)
+importFrom(S4Vectors,
+  "mcols<-",
+  "metadata<-",
+  DataFrame,
+  Rle,
+  SimpleList,
+  endoapply,
+  mcols,
+  metadata,
+  queryHits,
+  splitAsList,
+  subjectHits,
+  subset
+)
+importFrom(Seqinfo,
+  "seqinfo<-",
+  Seqinfo,
+  genome,
+  seqinfo,
+  seqlevels,
+  seqnames
+)
+importFrom(csaw,
+  combineTests,
+  filterWindowsControl,
+  filterWindowsProportion,
+  getBestTest,
+  minimalTests,
+  readParam,
+  scaleControlFilter,
+  windowCounts
+)
+importFrom(dplyr,
+  across,
+  arrange,
+  bind_cols,
+  bind_rows,
+  case_when,
+  desc,
+  distinct,
+  filter,
+  group_by,
+  inner_join,
+  left_join,
+  mutate,
+  mutate_all,
+  n,
+  pick,
+  select,
+  summarise,
+  ungroup
+)
+importFrom(edgeR,
+  DGEList,
+  cpm,
+  estimateDisp,
+  glmQLFTest,
+  glmQLFit,
+  glmTreat,
+  normLibSizes,
+  topTags
+)
+importFrom(forcats,
+  fct_cross,
+  fct_explicit_na,
+  fct_inorder,
+  fct_na_value_to_level,
+  fct_relabel,
+  fct_rev
+)
+importFrom(ggrepel,
+  geom_label_repel,
+  geom_text_repel
+)
+importFrom(glue,
+  glue,
+  glue_collapse
+)
+importFrom(matrixStats,
+  rowMeans2,
+  rowMedians,
+  rowSds,
+  weightedMean
+)
+importFrom(methods,
+  as,
+  is,
+  new,
+  slot,
+  slotNames
+)
+importFrom(patchwork,
+  area,
+  plot_layout,
+  plot_spacer
+)
+importFrom(rlang,
+  "!!!",
+  "!!",
+  ":=",
+  .data,
+  as_label,
+  enexpr,
+  enquo,
+  ensym,
+  eval_tidy,
+  list2,
+  quo_is_null,
+  quos,
+  sym,
+  syms
+)
+importFrom(rtracklayer,
+  BigWigFile,
+  BigWigFileList,
+  import.bw,
+  ucscGenomes
+)
+importFrom(scales,
+  comma,
+  percent
+)
+importFrom(stats,
+  approxfun,
+  as.formula,
+  cor,
+  density,
+  lowess,
+  median,
+  model.matrix,
+  na.omit,
+  p.adjust,
+  p.adjust.methods,
+  prcomp,
+  quantile,
+  setNames,
+  weighted.mean
+)
+importFrom(stringr,
+  str_count,
+  str_pad,
+  str_replace_all,
+  str_replace_na,
+  str_sort,
+  str_to_title,
+  str_trim,
+  str_trunc
+)
+importFrom(tibble,
+  as_tibble,
+  tibble
+)
+importFrom(tidyr,
+  all_of,
+  chop,
+  complete,
+  nest,
+  pivot_longer,
+  pivot_wider,
+  unite,
+  unnest
+)
+importFrom(tidyselect,
+  all_of,
+  ends_with,
+  everything
+)
 importFrom(vctrs,vec_proxy)
 importMethodsFrom(SummarizedExperiment,'assay<-')
 importMethodsFrom(SummarizedExperiment,'colData<-')
