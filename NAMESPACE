@@ -136,12 +136,11 @@ importFrom(Seqinfo,
 )
 importFrom(csaw,
   combineTests,
+  filterWindowsControl,
   filterWindowsProportion,
   getBestTest,
-  getWidths,
   minimalTests,
   readParam,
-  reform,
   scaleControlFilter,
   windowCounts
 )

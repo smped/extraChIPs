@@ -51,9 +51,9 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - { os: ubuntu-latest, r: 'next', bioc: 'devel', cont: "bioconductor/bioconductor_docker:devel", rspm: "https://packagemanager.rstudio.com/cran/__linux__/jammy/latest" }
-          - { os: macOS-latest, r: 'next', bioc: 'devel'}
-          - { os: windows-latest, r: 'next', bioc: 'devel'}
+          - { os: ubuntu-latest, r: '4.6', bioc: '3.23', cont: "bioconductor/bioconductor_docker:RELEASE_3_23", rspm: "https://packagemanager.rstudio.com/cran/__linux__/jammy/latest" }
+          - { os: macOS-latest, r: '4.6', bioc: '3.23'}
+          - { os: windows-latest, r: '4.6', bioc: '3.23'}
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       RSPM: ${{ matrix.config.rspm }}
@@ -101,16 +101,16 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.R_LIBS_USER }}
-          key: ${{ env.cache-version }}-${{ runner.os }}-biocversion-devel-r-4.6-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ env.cache-version }}-${{ runner.os }}-biocversion-devel-r-4.6-
+          key: ${{ env.cache-version }}-${{ runner.os }}-biocversion-3.23-r-4.6-${{ hashFiles('.github/depends.Rds') }}
+          restore-keys: ${{ env.cache-version }}-${{ runner.os }}-biocversion-3.23-r-4.6-
 
       - name: Cache R packages on Linux
         if: "!contains(github.event.head_commit.message, '/nocache') && runner.os == 'Linux' "
         uses: actions/cache@v3
         with:
           path: /home/runner/work/_temp/Library
-          key: ${{ env.cache-version }}-${{ runner.os }}-biocversion-devel-r-4.6-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ env.cache-version }}-${{ runner.os }}-biocversion-devel-r-4.6-
+          key: ${{ env.cache-version }}-${{ runner.os }}-biocversion-3.23-r-4.6-${{ hashFiles('.github/depends.Rds') }}
+          restore-keys: ${{ env.cache-version }}-${{ runner.os }}-biocversion-3.23-r-4.6-
 
 
       - name: Install macOS system dependencies
@@ -149,7 +149,7 @@ jobs:
           ## Try installing the package dependencies in steps. First the local
           ## dependencies, then any remaining dependencies to avoid the
           ## issues described at
-          ## https://stat.ethz.ch/pipermail/bioc-devel/2020-April/016675.html
+          ## https://stat.ethz.ch/pipermail/bioc-3.23/2020-April/016675.html
           ## https://github.com/r-lib/remotes/issues/296
           ## Ideally, all dependencies should get installed in the first pass.
 
@@ -262,7 +262,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@master
         with:
-          name: ${{ runner.os }}-biocversion-devel-r-4.6-results
+          name: ${{ runner.os }}-biocversion-3.23-r-4.6-results
           path: check
 
       - uses: docker/build-push-action@v1

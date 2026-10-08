@@ -89,12 +89,10 @@
 #' @param weighted logical(1) Passed to  \link[edgeR]{normLibSizes}. Only used
 #' when applying a TMM-type normalisation strategy
 #' @param ... Passed to \link[edgeR]{normLibSizes} and
-#' @param legacy See \link[edgeR]{glmQLFit}
 #' @param null Passed to \link[edgeR]{glmTreat}
 #' \link[edgeR]{glmQLFit} when method = "qlf".
 #' If method = "lt", instead passed to \link[limma]{lmFit}
-#' @param robust Passed to \link[limma]{treat} and \link[limma]{eBayes}, or to
-#' \link[edgeR]{glmQLFit}
+#' @param robust Passed to \link[limma]{treat} and \link[limma]{eBayes}
 #' @param type Passed to \link[DESeq2]{lfcShrink}
 #'
 #' @examples
@@ -129,7 +127,7 @@ setMethod(
         lib.size = "totals", method = c("qlf", "lt", "wald"),
         norm = c("none", "TMM", "RLE", "TMMwsp", "upperquartile"),
         groups = NULL, fc = 1, lfc = log2(fc), asRanges = FALSE,
-        offset = NULL, weighted = FALSE, ..., legacy = FALSE,
+        offset = NULL, weighted = FALSE, ...,
         null = c("interval", "worst.case"), robust = FALSE,
         type = c("apeglm", "ashr", "normal")
     ) {
@@ -148,8 +146,7 @@ setMethod(
         if (method == "qlf") {
             ## Only required for GLM fits
             fit <- .se2DGEGLM(
-                x, assay, design, lib.size, norm, groups, offset, weighted,
-                legacy, robust, ...
+                x, assay, design, lib.size, norm, groups, offset, weighted, ...
             )
             fit0 <- glmQLFTest(fit, coef = coef) # fits mu0
             res0 <- topTags(
@@ -263,8 +260,7 @@ setMethod(
 #' @import SummarizedExperiment
 #' @importFrom edgeR DGEList normLibSizes estimateDisp glmQLFit
 .se2DGEGLM <- function(
-        x, assay, design, lib.size, norm, groups, offset, weighted, legacy,
-        robust, ...
+        x, assay, design, lib.size, norm, groups, offset, weighted, ...
 ) {
 
     ## 1. Create a DGE list
@@ -301,14 +297,13 @@ setMethod(
         ## Both DiffBind and csaw set doWeighting = FALSE. They're smart people
         dge <- normLibSizes(dge, method = norm, doWeighting = weighted, ...)
     }
-    ## As of edgeR 4.0, dispersions are not required and this is controlled
-    ## using legacy = FALSE
-    if (legacy == TRUE) {
-        message("Estimating dispersions...")
-        dge <- estimateDisp(dge, design = design, ...)
-    }
+    message("Estimating dispersions...")
+    # dge <- estimateDisp(dge, design = design, ...)
+    ## Switch to the method used by DiffBind
+    dge <- edgeR::estimateGLMTrendedDisp(dge, design = design)
+    dge <- edgeR::estimateGLMTagwiseDisp(dge, design = design)
     message("Running glmQLFit...")
-    glmQLFit(dge, design = design, legacy = legacy, robust = robust, ...)
+    glmQLFit(dge, design = design, ...)
 
 }
 
