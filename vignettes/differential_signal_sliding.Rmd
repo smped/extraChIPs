@@ -394,7 +394,9 @@ A + B +
 ```
 
 ```{r add-dens-pca, echo = FALSE, eval = TRUE, fig.cap = "*A) Densities for logCPM values across all samples after discarding windows less likely to contain H3K27ac signal using `dualFilter()` B) PCA plot based on the logCPM assay*"}
-knitr::include_graphics("differential_signal_sliding_files/figure-gfm/plot-density-pca-1.png")
+knitr::include_graphics(
+  system.file("figures/plot-density-pca-1.png", package = "extraChIPs")
+)
 ```
 
 
@@ -425,7 +427,9 @@ a + b + plot_layout(guides = "collect") +
 ```
 
 ```{r add-rle-plot, eval = TRUE, echo = FALSE, fig.cap = "*RLE plots (A) across all samples and (B) with values calculated within treatment groups*"}
-knitr::include_graphics("differential_signal_sliding_files/figure-gfm/plot-assay-rle-1.png")
+knitr::include_graphics(
+  system.file("figures/plot-assay-rle-1.png", package = "extraChIPs")
+)
 ```
 
 
@@ -571,7 +575,9 @@ A + B + plot_annotation(tag_levels = "A")
 ```
 
 ```{r add-ma-plot, echo=FALSE, eval=TRUE, fig.cap="*MA Plots using A) all sliding windows (after filtering before merging) and B) the final set of merged windows. The most highly ranked merged window is also labelled in the set of merged windows. Blue lines represent a loess curve through the data.*"}
-knitr::include_graphics("differential_signal_sliding_files/figure-gfm/plot-ma-libsize-1.png")
+knitr::include_graphics(
+  system.file("figures/plot-ma-libsize-1.png", package = "extraChIPs")
+)
 ```
 
 
@@ -888,7 +894,9 @@ tmm_results %>%
 ```
 
 ```{r add-ma-mapped-plot, eval = TRUE, echo = FALSE, fig.cap = "*MA-plot with the top 20 regions by significance labelled according to the most likely gene influenced by the detected signal. Regions which directly overlap a TSS are shown as empty circles*"}
-knitr::include_graphics("differential_signal_sliding_files/figure-gfm/plot-ma-mapped-1.png")
+knitr::include_graphics(
+  system.file("figures/plot-ma-mapped-1.png",  package = "extraChIPs")
+)
 ```
 
 
@@ -1049,7 +1057,9 @@ plotPie(
 ```
 
 ```{r add-pit, eval = TRUE, echo = FALSE, fig.cap = "*Pie chart showing customised labels. Here the regions have been modified to use title case in the labels, but without modifying the underlying data.*"}
-knitr::include_graphics("differential_signal_sliding_files/figure-gfm/plot-pie-labels-1.png")
+knitr::include_graphics(
+  system.file("figures/plot-pie-labels-1.png", package = "extraChIPs")
+)
 ```
 
 
@@ -1072,7 +1082,9 @@ plotSplitDonut(
 ```
 
 ```{r add-donut, eval = TRUE, echo=FALSE, fig.cap = "*Split-Donut chart showing status with overlapping region*"}
-knitr::include_graphics("differential_signal_sliding_files/figure-gfm/plot-donut-default-1.png")
+knitr::include_graphics(
+  system.file("figures/plot-donut-default-1.png", package = "extraChIPs")
+)
 ```
 
 A key advantage of `plotSplitDonut()` is the ability to provide separate
@@ -1092,7 +1104,9 @@ plotSplitDonut(
 ```
 
 ```{r add-donut-customised, eval=TRUE, echo=FALSE, fig.cap = "*Split-Donut chart exploding key regions and customising labels.*"}
-knitr::include_graphics("differential_signal_sliding_files/figure-gfm/plot-donut-customised-1.png")
+knitr::include_graphics(
+  system.file("figures/plot-donut-customised-1.png", package = "extraChIPs")
+)
 ```
 
 ## Coverage Plots
@@ -1239,7 +1253,9 @@ plotHFGC(
 ```
 
 ```{r add-hfgc, eval=TRUE, echo=FALSE, fig.cap = "The addition of an annotation track for the coverage tracks shows which regions were retained during the analysis, as well as those which were considered as showing changed or unchanged signal"}
-knitr::include_graphics("differential_signal_sliding_files/figure-gfm/plot-hfgc-with-annot-1.png")
+knitr::include_graphics(
+  system.file("figures/plot-hfgc-with-annot-1.png", package = "extraChIPs")
+)
 ```
 
 
