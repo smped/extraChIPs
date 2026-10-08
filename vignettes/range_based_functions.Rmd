@@ -334,7 +334,9 @@ the region defined as a 'promoter' acted as a barrier and ranges were not
 stitched together across this barrier.
 
 ```{r plot-stitched, echo = FALSE, fig.height=3, fig.width=8}
-knitr::include_graphics("stitched.png")
+knitr::include_graphics(
+    system.file("figures/stitched.png", package = "extraChIPs")
+)
 ```
 
 # Session Info
