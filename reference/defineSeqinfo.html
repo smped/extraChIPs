@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">extraChIPs</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.16.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.5</span>
       </span>
     </div>
 
@@ -116,32 +116,32 @@ for ChIP-Seq analysis</p>
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">defineSeqinfo</span><span class="op">(</span><span class="st">"GRCh37"</span>, <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Seqinfo object with 24 sequences from GRCh37 genome:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   seqnames seqlengths isCircular genome</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   chr1      249250621      FALSE GRCh37</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   chr2      243199373      FALSE GRCh37</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   chr3      198022430      FALSE GRCh37</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   chr4      191154276      FALSE GRCh37</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   chr5      180915260      FALSE GRCh37</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ...             ...        ...    ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   chr20      63025520      FALSE GRCh37</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   chr21      48129895      FALSE GRCh37</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   chr22      51304566      FALSE GRCh37</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   chrX      155270560      FALSE GRCh37</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   chrY       59373566      FALSE GRCh37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   seqnames seqnames seqlengths isCircular genome</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   1            chr1  249250621      FALSE GRCh37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   2            chr2  243199373      FALSE GRCh37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   3            chr3  198022430      FALSE GRCh37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   4            chr4  191154276      FALSE GRCh37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   5            chr5  180915260      FALSE GRCh37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ...           ...        ...        ...    ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   20          chr20   63025520      FALSE GRCh37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   21          chr21   48129895      FALSE GRCh37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   22          chr22   51304566      FALSE GRCh37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   23           chrX  155270560      FALSE GRCh37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   24           chrY   59373566      FALSE GRCh37</span>
 <span class="r-in"><span><span class="fu">defineSeqinfo</span><span class="op">(</span><span class="st">"GRCh37"</span>, <span class="cn">FALSE</span>, <span class="st">"MT"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Seqinfo object with 25 sequences (1 circular) from GRCh37 genome:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   seqnames seqlengths isCircular genome</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1         249250621      FALSE GRCh37</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   2         243199373      FALSE GRCh37</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   3         198022430      FALSE GRCh37</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   4         191154276      FALSE GRCh37</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   5         180915260      FALSE GRCh37</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ...             ...        ...    ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   21         48129895      FALSE GRCh37</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   22         51304566      FALSE GRCh37</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   X         155270560      FALSE GRCh37</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Y          59373566      FALSE GRCh37</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   MT            16571       TRUE GRCh37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   seqnames seqnames seqlengths isCircular genome</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   1               1  249250621      FALSE GRCh37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   2               2  243199373      FALSE GRCh37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   3               3  198022430      FALSE GRCh37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   4               4  191154276      FALSE GRCh37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   5               5  180915260      FALSE GRCh37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ...           ...        ...        ...    ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   21             21   48129895      FALSE GRCh37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   22             22   51304566      FALSE GRCh37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   23              X  155270560      FALSE GRCh37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   24              Y   59373566      FALSE GRCh37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   25             MT      16571       TRUE GRCh37</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
@@ -158,7 +158,7 @@ for ChIP-Seq analysis</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>
